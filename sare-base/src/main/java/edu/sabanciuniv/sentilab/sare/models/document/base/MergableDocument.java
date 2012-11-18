@@ -13,11 +13,11 @@ import edu.sabanciuniv.sentilab.utils.extensions.MapsExtensions;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
 
 /**
- * The base class for documents that can merged into each other.
+ * The base class for documents that can be merged into each other.
  * @author Mus'ab Husaini
  */
 public abstract class MergableDocument
-	extends PersistentDocument {
+	extends TokenizedDocument {
 
 	/**
 	 * 

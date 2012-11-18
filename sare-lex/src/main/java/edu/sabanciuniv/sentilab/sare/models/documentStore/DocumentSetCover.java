@@ -3,12 +3,13 @@ package edu.sabanciuniv.sentilab.sare.models.documentStore;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
+import edu.sabanciuniv.sentilab.sare.models.document.SetCoverDocument;
+import edu.sabanciuniv.sentilab.sare.models.documentStore.base.GenericDocumentStore;
 
 @Entity
 @DiscriminatorValue("SetCover")
 public class DocumentSetCover
-	extends DocumentStoreBase {
+	extends GenericDocumentStore<SetCoverDocument> {
 
 	/**
 	 * 

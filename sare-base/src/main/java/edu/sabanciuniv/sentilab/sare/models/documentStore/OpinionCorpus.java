@@ -3,12 +3,13 @@ package edu.sabanciuniv.sentilab.sare.models.documentStore;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
+import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
+import edu.sabanciuniv.sentilab.sare.models.documentStore.base.GenericDocumentStore;
 
 @Entity
 @DiscriminatorValue("Opinion")
 public class OpinionCorpus
-	extends DocumentStoreBase {
+	extends GenericDocumentStore<OpinionDocument> {
 	
 	/**
 	 * 

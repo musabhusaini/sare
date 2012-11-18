@@ -4,13 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import edu.sabanciuniv.sentilab.sare.models.document.base.MergableDocument;
+import edu.sabanciuniv.sentilab.sare.models.document.base.PersistentDocument;
+import edu.sabanciuniv.sentilab.sare.models.document.base.GenericDocument;
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizedDocument;
 
 @Entity
 @DiscriminatorValue("SetCover")
 public class SetCoverDocument
-	extends MergableDocument {
+	extends GenericDocument<SetCoverDocument> {
 
 	/**
 	 * 
@@ -20,6 +21,22 @@ public class SetCoverDocument
 	@Column
 	private double weight;
 
+	/**
+	 * Creates a new instance of {@link SetCoverDocument}.
+	 */
+	public SetCoverDocument() {
+		//
+	}
+	
+	/**
+	 * Creates a new instance of {@link SetCoverDocument}.
+	 * @param baseDocument the {@code PersistentDocument} used as the base document for this instance.
+	 */
+	public SetCoverDocument(PersistentDocument baseDocument) {
+		this();
+		this.setBaseDocument(baseDocument);
+	}
+	
 	@Override
 	public String getContent() {
 		return this.baseDocument != null ? this.baseDocument.getContent() : null;

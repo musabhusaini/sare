@@ -14,8 +14,7 @@ import com.google.common.collect.Maps;
 
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions.TagCaptureOptions;
-import edu.sabanciuniv.sentilab.sare.models.document.base.tests.impl.PersistentDocumentTestImpl;
-import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
+import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
 
@@ -23,13 +22,13 @@ public class TokenizedDocumentTests {
 
 	private String testContent;
 	private TokenizingOptions testTokenizingOptions;
-	private PersistentDocumentTestImpl testDocument;
+	private OpinionDocument testDocument;
 	private Map<String, Double> testNnjjMap;
 	private Map<String, Double> testNnjjLemmMap;
 	
 	@Before
 	public void setUp() throws Exception {
-		DocumentStoreBase store = new OpinionCorpus()
+		OpinionCorpus store = (OpinionCorpus)new OpinionCorpus()
 			.setLanguage("en");
 		
 		this.testContent = "The quick brown fox jumps over lazy dogs. Why would a lazy dog take this humiliation?";
@@ -50,7 +49,7 @@ public class TokenizedDocumentTests {
 		this.testTokenizingOptions = new TokenizingOptions()
 			.setTags(EnumSet.of(TagCaptureOptions.STARTS_WITH, TagCaptureOptions.IGNORE_CASE), "NN", "JJ");
 		
-		this.testDocument = (PersistentDocumentTestImpl)new PersistentDocumentTestImpl()
+		this.testDocument = (OpinionDocument)new OpinionDocument()
 			.setStore(store);
 	}
 

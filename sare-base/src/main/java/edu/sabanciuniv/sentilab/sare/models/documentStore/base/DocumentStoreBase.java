@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.google.common.collect.Lists;
+
 import edu.sabanciuniv.sentilab.sare.models.document.base.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject;
 
@@ -76,7 +78,11 @@ public abstract class DocumentStoreBase
 	 * @return the {@link Collection} of {@link DocumentStoreBase} objects that derive from this store.
 	 */
 	public Collection<DocumentStoreBase> getDerivedStores() {
-		return derivedStores;
+		if (this.derivedStores == null) {
+			this.derivedStores = Lists.newArrayList();
+		}
+		
+		return this.derivedStores;
 	}
 
 	/**
@@ -131,21 +137,6 @@ public abstract class DocumentStoreBase
 	 */
 	public DocumentStoreBase setDescription(String description) {
 		this.description = description;
-		return this;
-	}
-	
-	@Override
-	public Collection<PersistentDocument> getDocuments()  {
-		return this.documents;
-	}
-
-	/**
-	 * Sets the documents in this store.
-	 * @param documents the documents to set.
-	 * @return the {@code this} object.
-	 */
-	public DocumentStoreBase setDocuments(Collection<PersistentDocument> documents) {
-		this.documents = documents;
 		return this;
 	}
 }

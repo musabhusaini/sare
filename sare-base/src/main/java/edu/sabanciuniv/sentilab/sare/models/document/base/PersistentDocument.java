@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.google.common.collect.Lists;
+
 import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
 
 /**
@@ -24,7 +26,7 @@ import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase
 @Entity
 @Table(name = "documents")
 public abstract class PersistentDocument
-	extends TokenizedDocument {
+	extends MergableDocument {
 
 	/**
 	 * 
@@ -41,21 +43,6 @@ public abstract class PersistentDocument
 	
 	@OneToMany(mappedBy = "baseDocument", cascade = CascadeType.ALL)
 	protected Collection<PersistentDocument> derivedDocuments;
-	
-	@Override
-	public DocumentStoreBase getStore() {
-		return this.store;
-	}
-	
-	/**
-	 * Sets the document store that this document is stored under.
-	 * @param stores the {@link DocumentStoreBase} to store this document under.
-	 * @return the {@code this} object.
-	 */
-	public PersistentDocument setStore(DocumentStoreBase store) {
-		this.store = store;
-		return this;
-	}
 	
 	/**
 	 * Gets this document's base document.
@@ -80,6 +67,10 @@ public abstract class PersistentDocument
 	 * @return the {@link Collection} of {@link PersistentDocument} objects that are the derived documents of this document.
 	 */
 	public Collection<PersistentDocument> getDerivedDocuments() {
+		if (this.derivedDocuments == null) {
+			this.derivedDocuments = Lists.newArrayList();
+		}
+		
 		return this.derivedDocuments;
 	}
 

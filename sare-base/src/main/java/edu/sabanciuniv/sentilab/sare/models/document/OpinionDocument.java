@@ -4,12 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import edu.sabanciuniv.sentilab.sare.models.document.base.MergableDocument;
+import edu.sabanciuniv.sentilab.sare.models.document.base.GenericDocument;
 
 @Entity
 @DiscriminatorValue("Opinion")
 public class OpinionDocument
-	extends MergableDocument {
+	extends GenericDocument<OpinionDocument> {
 
 	/**
 	 * 

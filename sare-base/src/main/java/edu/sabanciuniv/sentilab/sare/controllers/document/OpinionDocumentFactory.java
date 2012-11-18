@@ -1,64 +1,48 @@
 package edu.sabanciuniv.sentilab.sare.controllers.document;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
+import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
+import org.w3c.dom.Node;
 
 import edu.sabanciuniv.sentilab.sare.controllers.document.base.DocumentController;
 import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
-import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
+import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
+/**
+ * A factory for creating {@link OpinionDocument} objects.
+ * @author Mus'ab Husaini
+ */
 public class OpinionDocumentFactory
 	extends DocumentController {
 
-	private OpinionDocument create(DocumentStoreBase corpus, String content, double polarity) {
+	private OpinionDocument create(OpinionCorpus corpus, String content, double polarity) {
 		return (OpinionDocument)new OpinionDocument()
 			.setContent(content)
 			.setPolarity(polarity)
 			.setStore(corpus);
 	}
 
-	public OpinionDocument create(DocumentStoreBase store, byte[] content, String encoding, String format) {
-		return this.create(store, "", 0.0);
-	}
-	
-	public OpinionDocument create(DocumentStoreBase store, byte[] content, String format) {
-		return this.create(store, content, null, format);
-	}
-	
-	public OpinionDocument create(DocumentStoreBase store, InputStream stream, String encoding, String format)
-		throws IOException {
+	/**
+	 * Creates a {@link OpinionDocument} object within a given corpus from a given XML node.
+	 * @param corpus the {@link OpinionCorpus} object to store the document under.
+	 * @param node the {@link Node} object containing the XML representation of the document.
+	 * @return the newly-created {@link OpinionDocument} object.
+	 * @throws XPathException when there is an error parsing the XML element.
+	 */
+	public OpinionDocument create(OpinionCorpus corpus, Node node)
+		throws XPathException {
 		
-		Validate.notNull(stream, CannedMessages.NULL_ARGUMENT, "stream");
-		return this.create(store, IOUtils.toByteArray(stream), format);
-	}
-	
-	public OpinionDocument create(DocumentStoreBase store, InputStream stream, String format)
-		throws IOException {
+		Validate.notNull(node, CannedMessages.NULL_ARGUMENT, "node");
 		
-		return this.create(store, stream, null, format);
-	}
-	
-	public OpinionDocument create(DocumentStoreBase store, File file, String encoding)
-		throws IOException {
-		
-		Validate.notNull(file, CannedMessages.NULL_ARGUMENT, "file");
-		return this.create(store, FileUtils.readFileToByteArray(file), encoding, FilenameUtils.getExtension(file.getPath()));
-	}
-	
-	public OpinionDocument create(DocumentStoreBase store, File file)
-		throws IOException {
-		
-		return this.create(store, file, null);
-	}
-
-	public OpinionDocument create(DocumentStoreBase store, String content, String format) {
-		return this.create(store, content.getBytes(), format);
+		XPathFactory factory = XPathFactory.newInstance();
+	    XPath xpath = factory.newXPath();
+	    double polarity = (double)xpath.compile("./@polarity").evaluate(node, XPathConstants.NUMBER);
+	    
+	    return this.create(corpus, node.getTextContent(), polarity);
 	}
 }

@@ -14,8 +14,7 @@ import com.google.common.collect.Maps;
 
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions.TagCaptureOptions;
-import edu.sabanciuniv.sentilab.sare.models.document.base.tests.impl.MergableDocumentTestImpl;
-import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
+import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
 
@@ -33,8 +32,8 @@ public class MergableDocumentTests {
 	private String testContent1;
 	private String testContent2;
 	
-	private MergableDocumentTestImpl testDocument1;
-	private MergableDocumentTestImpl testDocument2;
+	private OpinionDocument testDocument1;
+	private OpinionDocument testDocument2;
 	
 	private Map<String, Double> testMergeMap1;
 	private Map<String, Double> testMergeMap2;
@@ -52,7 +51,7 @@ public class MergableDocumentTests {
 
 	@Before
 	public void setUp() throws Exception {
-		DocumentStoreBase store = new OpinionCorpus()
+		OpinionCorpus store = (OpinionCorpus)new OpinionCorpus()
 			.setLanguage("en");
 		
 		testTokenizingOptions = new TokenizingOptions()
@@ -60,7 +59,7 @@ public class MergableDocumentTests {
 			.setTags(EnumSet.of(TagCaptureOptions.STARTS_WITH, TagCaptureOptions.IGNORE_CASE), "NN", "JJ");
 		
 		testContent1 = "The quick brown fox jumps over lazy dogs. Why would a lazy dog take this humiliation?";
-		testDocument1 = (MergableDocumentTestImpl)new MergableDocumentTestImpl()
+		testDocument1 = (OpinionDocument)new OpinionDocument()
 			.setStore(store)
 			.setTokenizingOptions(testTokenizingOptions);
 		
@@ -76,7 +75,7 @@ public class MergableDocumentTests {
 		testMergeMap1.put("brown/JJ", 1.0);
 		
 		testContent2 = "Why must the fox humiliate the lazy dog in this way?";
-		testDocument2 = (MergableDocumentTestImpl)new MergableDocumentTestImpl()
+		testDocument2 = (OpinionDocument)new OpinionDocument()
 			.setStore(store)
 			.setTokenizingOptions(testTokenizingOptions);
 		
