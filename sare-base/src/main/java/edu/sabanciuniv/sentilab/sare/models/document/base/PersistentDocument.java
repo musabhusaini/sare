@@ -26,7 +26,7 @@ import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase
 @Entity
 @Table(name = "documents")
 public abstract class PersistentDocument
-	extends MergableDocument {
+	extends TokenizedDocument {
 
 	/**
 	 * 

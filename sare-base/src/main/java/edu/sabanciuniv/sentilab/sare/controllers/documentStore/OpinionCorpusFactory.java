@@ -55,15 +55,15 @@ public class OpinionCorpusFactory
 	    String description = (String)xpath.compile("./@description").evaluate(corpusNode, XPathConstants.STRING);
 	    String language = (String)xpath.compile("./@language").evaluate(corpusNode, XPathConstants.STRING);
 	    
-	    if (StringUtils.isEmpty(corpus.getTitle())) {
+	    if (StringUtils.isNotEmpty(title)) {
 	    	corpus.setTitle(title);
 	    }
 	    
-	    if (StringUtils.isEmpty(corpus.getDescription())) {
+	    if (StringUtils.isNotEmpty(description)) {
 	    	corpus.setDescription(description);
 	    }
 	    
-	    if (StringUtils.isEmpty(corpus.getLanguage())) {
+	    if (StringUtils.isNotEmpty(language)) {
 	    	corpus.setLanguage(language);
 	    }
 	    

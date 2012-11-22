@@ -162,4 +162,9 @@ public abstract class TokenizedDocument
 		this.tokenizedContent = this.getContent();
 		return this;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getContent();
+	}
 }

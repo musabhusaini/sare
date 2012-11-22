@@ -1,6 +1,7 @@
 package edu.sabanciuniv.sentilab.sare.models.documentStore.base;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -53,7 +54,7 @@ public abstract class DocumentStoreBase
 	protected String description;
 	
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-	protected Collection<PersistentDocument> documents;
+	protected List<PersistentDocument> documents;
 
 	/**
 	 * Gets the base store for this store.
@@ -112,7 +113,7 @@ public abstract class DocumentStoreBase
 	
 	@Override
 	public String getLanguage() {
-		return language;
+		return this.language == null ? "en"	: this.language;
 	}
 
 	/**

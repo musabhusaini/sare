@@ -1,9 +1,6 @@
 package edu.sabanciuniv.sentilab.sare.controllers.document;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 
 import org.apache.commons.lang3.Validate;
 import org.w3c.dom.Node;
@@ -41,8 +38,8 @@ public class OpinionDocumentFactory
 		
 		XPathFactory factory = XPathFactory.newInstance();
 	    XPath xpath = factory.newXPath();
-	    double polarity = (double)xpath.compile("./@polarity").evaluate(node, XPathConstants.NUMBER);
+	    Double polarity = (Double)xpath.compile("./@polarity").evaluate(node, XPathConstants.NUMBER);
 	    
-	    return this.create(corpus, node.getTextContent(), polarity);
+	    return this.create(corpus, node.getTextContent().trim(), polarity);
 	}
 }

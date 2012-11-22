@@ -1,7 +1,6 @@
 package edu.sabanciuniv.sentilab.sare.models.document.base;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -17,10 +16,26 @@ import com.google.common.collect.Lists;
  */
 public class TokenizingOptions {
 
+	/**
+	 * An {@code enum} of various tag-capture options.
+	 * @author Mus'ab Husaini
+	 */
 	public enum TagCaptureOptions {
+		/**
+		 * Option to ignore case of tags.
+		 */
 		IGNORE_CASE,
+		/**
+		 * Option to match the start of tags.
+		 */
 		STARTS_WITH,
+		/**
+		 * Option to match the end of tags.
+		 */
 		ENDS_WITH,
+		/**
+		 * Option to use the provided pattern strings as regular expression patterns.
+		 */
 		PATTERN
 	}
 	
@@ -45,7 +60,7 @@ public class TokenizingOptions {
 	 * @return the {@code this} object.
 	 */
 	public TokenizingOptions setTags(Iterable<Pattern> tags) {
-		this.tags = tags == null ? new ArrayList<Pattern>() : Lists.newArrayList(tags);
+		this.tags = tags == null ? null : Lists.newArrayList(tags);
 		return this;
 	}
 	

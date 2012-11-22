@@ -54,4 +54,9 @@ public class OpinionDocument
 		this.polarity = polarity;
 		return this;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s [polarity = %1.2f]", super.toString(), this.getPolarity());
+	}
 }

@@ -12,10 +12,13 @@ import org.junit.Test;
 
 import com.google.common.collect.Maps;
 
+import edu.sabanciuniv.sentilab.sare.models.document.base.MergableDocument;
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
+import edu.sabanciuniv.sentilab.sare.models.document.SetCoverDocument;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
+import edu.sabanciuniv.sentilab.sare.models.documentStore.DocumentSetCover;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
 
 public class MergableDocumentTests {
@@ -35,6 +38,9 @@ public class MergableDocumentTests {
 	private OpinionDocument testDocument1;
 	private OpinionDocument testDocument2;
 	
+	private MergableDocument<?> testMergableDocument1;
+	private MergableDocument<?> testMergableDocument2;
+	
 	private Map<String, Double> testMergeMap1;
 	private Map<String, Double> testMergeMap2;
 	
@@ -47,6 +53,14 @@ public class MergableDocumentTests {
 		testDocument2
 			.setContent(testContent2)
 			.retokenize();
+		
+		DocumentSetCover setCover = new DocumentSetCover(testDocument1.getStore());
+		testMergableDocument1 = (SetCoverDocument)new SetCoverDocument(testDocument1)
+			.setStore(setCover)
+			.setTokenizingOptions(testTokenizingOptions);
+		testMergableDocument2 = (SetCoverDocument)new SetCoverDocument(testDocument2)
+			.setStore(setCover)
+			.setTokenizingOptions(testTokenizingOptions);
 	}
 
 	@Before
@@ -90,9 +104,9 @@ public class MergableDocumentTests {
 
 	@Test
 	public void testGetMergedWeight() {
-		double weight1 = testDocument1
+		double weight1 = testMergableDocument1
 			.getMergedWeight(testDocument2);
-		double weight2 = testDocument2
+		double weight2 = testMergableDocument2
 			.getMergedWeight(testDocument1);
 		
 		assertFalse(weight1 == weight2);
@@ -102,11 +116,11 @@ public class MergableDocumentTests {
 	
 	@Test
 	public void testMerge() {
-		Map<LinguisticToken, Double> mergeMap1 = testDocument1
-			.merge(testDocument2)
+		Map<LinguisticToken, Double> mergeMap1 = testMergableDocument1
+			.merge(testMergableDocument2)
 			.getTokenWeightMap();
 		
-		Map<LinguisticToken, Double> weightMap2 = testDocument2.getTokenWeightMap();
+		Map<LinguisticToken, Double> weightMap2 = testMergableDocument2.getTokenWeightMap();
 		for (Entry<LinguisticToken, Double> entry : mergeMap1.entrySet()) {
 			Double value = weightMap2.get(entry.getKey());
 			assertTrue(value == null || value == 0.0);
@@ -114,11 +128,11 @@ public class MergableDocumentTests {
 		
 		resetDocuments();
 	
-		Map<LinguisticToken, Double> mergeMap2 = (testDocument2)
-			.merge(testDocument1)
+		Map<LinguisticToken, Double> mergeMap2 = (testMergableDocument2)
+			.merge(testMergableDocument1)
 			.getTokenWeightMap();
 		
-		Map<LinguisticToken, Double> weightMap1 = testDocument1.getTokenWeightMap();
+		Map<LinguisticToken, Double> weightMap1 = testMergableDocument1.getTokenWeightMap();
 		for (Entry<LinguisticToken, Double> entry : mergeMap2.entrySet()) {
 			Double value = weightMap1.get(entry.getKey());
 			assertTrue(value == null || value == 0.0);

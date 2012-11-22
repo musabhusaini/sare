@@ -16,8 +16,8 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
  * The base class for documents that can be merged into each other.
  * @author Mus'ab Husaini
  */
-public abstract class MergableDocument
-	extends TokenizedDocument {
+public abstract class MergableDocument<T extends MergableDocument<T>>
+	extends GenericDocument<T> {
 
 	/**
 	 * 
@@ -54,13 +54,13 @@ public abstract class MergableDocument
 	 * @param other the {@link TokenizedDocument} object to merge.
 	 * @return the {@code this} object.
 	 */
-	public MergableDocument merge(TokenizedDocument other) {
+	public MergableDocument<T> merge(TokenizedDocument other) {
 		Map<LinguisticToken, Double> mergedMap = this.getMergedMap(other);
 		for (Entry<LinguisticToken, Double> mergedEntry : mergedMap.entrySet()) {
 			this.setTokenWeight(mergedEntry.getKey(), mergedEntry.getValue());
 			
 			if (other instanceof MergableDocument) {
-				((MergableDocument)other).setTokenWeight(mergedEntry.getKey(), 0);
+				((MergableDocument<?>)other).setTokenWeight(mergedEntry.getKey(), 0);
 			}
 		}
 		
