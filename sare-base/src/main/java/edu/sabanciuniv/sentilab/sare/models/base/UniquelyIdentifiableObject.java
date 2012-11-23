@@ -15,6 +15,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang3.Validate;
 
+import edu.sabanciuniv.sentilab.core.models.IModel;
+import edu.sabanciuniv.sentilab.core.models.IUniquelyIdentifiable;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**

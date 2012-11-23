@@ -10,10 +10,10 @@ import org.junit.Test;
 
 import com.google.common.collect.Iterables;
 
+import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.documentStore.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.*;
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
 
 public class OpinionCorpusFactoryTests {
 	

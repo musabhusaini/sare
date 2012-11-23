@@ -1,4 +1,4 @@
-package edu.sabanciuniv.sentilab.sare.models.factory.base;
+package edu.sabanciuniv.sentilab.core.models.factory;
 
 /**
  * An exception that is thrown when the {@link IFactoryOptions} object provided to a {@code create} method are not correct.

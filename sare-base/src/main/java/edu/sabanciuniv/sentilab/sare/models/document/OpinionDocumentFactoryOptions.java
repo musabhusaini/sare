@@ -2,8 +2,8 @@ package edu.sabanciuniv.sentilab.sare.models.document;
 
 import org.w3c.dom.Node;
 
+import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IFactoryOptions;
 
 /**
  * The default set of options that can be used to construct an {@link OpinionDocument} object.

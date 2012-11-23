@@ -1,7 +1,7 @@
-package edu.sabanciuniv.sentilab.sare.models.factory.base;
+package edu.sabanciuniv.sentilab.core.models.factory;
 
-import edu.sabanciuniv.sentilab.sare.controllers.factory.base.IFactory;
-import edu.sabanciuniv.sentilab.sare.models.base.IModel;
+import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
+import edu.sabanciuniv.sentilab.core.models.IModel;
 
 /**
  * A class that extends this interface provides options for an implementation of the {@link IFactory} interface.

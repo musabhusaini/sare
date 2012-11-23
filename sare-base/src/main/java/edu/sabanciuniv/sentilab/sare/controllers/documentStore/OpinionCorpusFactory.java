@@ -10,12 +10,12 @@ import org.apache.commons.lang3.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
+import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.document.OpinionDocumentFactory;
 import edu.sabanciuniv.sentilab.sare.controllers.documentStore.base.DocumentStoreController;
-import edu.sabanciuniv.sentilab.sare.controllers.factory.base.IFactory;
 import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocumentFactoryOptions;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.*;
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**

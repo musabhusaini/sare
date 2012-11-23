@@ -138,11 +138,10 @@ public abstract class TokenizedDocument
 		this.setTokenWeightMap(new HashMap<LinguisticToken, Double>());
 		
 		// get the right NLP based on the language of the corpus.
-		ILinguisticProcessor nlp = new LinguisticProcessorFactory(
-			new LinguisticProcessorFactoryOptions()
+		ILinguisticProcessor nlp = new LinguisticProcessorFactory()
+			.create(new LinguisticProcessorFactoryOptions()
 				.setMustTag(true)
-				.setLanguage(this.getStore().getLanguage())
-			).create();
+				.setLanguage(this.getStore().getLanguage()));
 		
 		// create the map from tokens.
 		LinguisticText nlpText = nlp.tag(this.getContent());

@@ -1,10 +1,13 @@
 package edu.sabanciuniv.sentilab.utils.text.nlp.base;
 
+import edu.sabanciuniv.sentilab.core.controllers.IController;
+
 /**
  * A class that implements this interface will be able to provide NLP capabilities.
  * @author Mus'ab Husaini
  */
-public interface ILinguisticProcessor {
+public interface ILinguisticProcessor
+	extends IController {
 	
 	/**
 	 * Decomposes a given text using NLP to its sentences and tokens.

@@ -1,4 +1,4 @@
-package edu.sabanciuniv.sentilab.sare.models.base;
+package edu.sabanciuniv.sentilab.core.models;
 
 import java.util.UUID;
 

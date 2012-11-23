@@ -7,6 +7,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import edu.sabanciuniv.sentilab.core.controllers.IController;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
@@ -18,7 +19,8 @@ import edu.stanford.nlp.util.CoreMap;
  * Wraps some basic functionality of the Stanford Core NLP engine.
  * @author Mus'ab Husaini
  */
-public class StanfordCoreNLPWrapper {
+public class StanfordCoreNLPWrapper
+	implements IController {
 	
 	private static List<String> basicAnnotators = ImmutableList.of(StanfordCoreNLP.STANFORD_TOKENIZE, StanfordCoreNLP.STANFORD_SSPLIT);
 	private static StanfordCoreNLPWrapper basic;

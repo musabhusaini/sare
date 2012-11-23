@@ -1,10 +1,14 @@
 package edu.sabanciuniv.sentilab.utils.text.nlp.factory;
 
+import edu.sabanciuniv.sentilab.core.models.factory.*;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
+
 /**
  * The options required by the {@link LinguisticProcessorFactory}.
  * @author Mus'ab Husaini
  */
-public class LinguisticProcessorFactoryOptions {
+public class LinguisticProcessorFactoryOptions
+	implements IFactoryOptions<ILinguisticProcessor> {
 	
 	private String name;
 	private boolean ignoreNameCase;

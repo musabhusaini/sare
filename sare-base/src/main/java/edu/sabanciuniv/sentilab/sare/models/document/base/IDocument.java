@@ -1,6 +1,6 @@
 package edu.sabanciuniv.sentilab.sare.models.document.base;
 
-import edu.sabanciuniv.sentilab.sare.models.base.IModel;
+import edu.sabanciuniv.sentilab.core.models.IModel;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.base.IDocumentStore;
 
 /**

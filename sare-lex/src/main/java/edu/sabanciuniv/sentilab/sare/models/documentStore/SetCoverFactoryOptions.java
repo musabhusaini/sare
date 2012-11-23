@@ -1,8 +1,8 @@
 package edu.sabanciuniv.sentilab.sare.models.documentStore;
 
+import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IFactoryOptions;
 
 /**
  * The default set of options that can be used to construct an {@link DocumentSetCover} object.

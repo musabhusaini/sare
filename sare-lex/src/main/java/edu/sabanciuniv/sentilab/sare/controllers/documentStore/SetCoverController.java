@@ -5,15 +5,15 @@ import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Iterables;
 
+import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
+import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.documentStore.base.DocumentStoreController;
-import edu.sabanciuniv.sentilab.sare.controllers.factory.base.IFactory;
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.document.base.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.document.SetCoverDocument;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.DocumentSetCover;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.SetCoverFactoryOptions;
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**

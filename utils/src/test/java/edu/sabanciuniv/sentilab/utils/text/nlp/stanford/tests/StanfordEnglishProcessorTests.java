@@ -1,25 +1,17 @@
 package edu.sabanciuniv.sentilab.utils.text.nlp.stanford.tests;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticSentence;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticText;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
-import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactory;
-import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactoryOptions;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
+import edu.sabanciuniv.sentilab.utils.text.nlp.factory.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.stanford.english.StanfordEnglishProcessor;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 public class StanfordEnglishProcessorTests {
 
@@ -55,7 +47,7 @@ public class StanfordEnglishProcessorTests {
 	@Test
 	public void testFactoryCreate() {
 		LinguisticProcessorFactoryOptions factoryOptions = new LinguisticProcessorFactoryOptions().setLanguage("en");
-		ILinguisticProcessor processor = new LinguisticProcessorFactory(factoryOptions).create();
+		ILinguisticProcessor processor = new LinguisticProcessorFactory().create(factoryOptions);
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), StanfordEnglishProcessor.class);
 	}

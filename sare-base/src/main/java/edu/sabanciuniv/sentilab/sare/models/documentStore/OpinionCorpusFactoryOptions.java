@@ -2,7 +2,7 @@ package edu.sabanciuniv.sentilab.sare.models.documentStore;
 
 import java.io.*;
 
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IFactoryOptions;
+import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
 
 /**
  * The default set of options that can be used to construct an {@link OpinionCorpus} object.

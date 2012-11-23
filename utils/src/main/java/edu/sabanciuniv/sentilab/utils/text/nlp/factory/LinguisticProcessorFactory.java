@@ -6,6 +6,8 @@ import java.util.Set;
 import org.apache.commons.lang3.Validate;
 import org.reflections.Reflections;
 
+import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
+import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
@@ -14,23 +16,19 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
  * The factory class for creating {@link ILinguisticProcessor} objects.
  * @author Mus'ab Husaini
  */
-public class LinguisticProcessorFactory {
+public class LinguisticProcessorFactory
+	implements IFactory<ILinguisticProcessor, LinguisticProcessorFactoryOptions> {
 	
-	private LinguisticProcessorFactoryOptions options;
-	
-	/**
-	 * Creates an instance of the {@link LinguisticProcessorFactory} class.
-	 * @param options the {@link LinguisticProcessorFactoryOptions} object indicating the properties of the desired linguistic processor.
-	 */
-	public LinguisticProcessorFactory(LinguisticProcessorFactoryOptions options) {
-		this.options = Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
-	}
-	
-	/**
-	 * Creates the desired linguistic processor, if available.
-	 * @return the {@link ILinguisticProcessor} object corresponding to the desired specifications if it exists. {@code null} otherwise.
-	 */
-	public ILinguisticProcessor create() {
+	@Override
+	public ILinguisticProcessor create(LinguisticProcessorFactoryOptions options)
+		throws IllegalFactoryOptionsException {
+		
+		try {
+			Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
+		} catch (NullPointerException e) {
+			throw new IllegalFactoryOptionsException(e);
+		}
+		
 		Class<? extends ILinguisticProcessor> processorClass = null;
 		Reflections reflections = new Reflections("edu.sabanciuniv.sentilab");
 		Set<Class<? extends ILinguisticProcessor>> subTypes = reflections.getSubTypesOf(ILinguisticProcessor.class);
@@ -46,21 +44,21 @@ public class LinguisticProcessorFactory {
 				continue;
 			}
 			
-			if (this.options.getName() == null || (this.options.isIgnoreNameCase() ?
-					info.name().equalsIgnoreCase(this.options.getName()) : info.name().equals(this.options.getName()))) {
+			if (options.getName() == null || (options.isIgnoreNameCase() ?
+					info.name().equalsIgnoreCase(options.getName()) : info.name().equals(options.getName()))) {
 				processorClass = c;
 			}
 			
 			if (processorClass != null &&
-				this.options.getLanguage() != null && !info.language().equalsIgnoreCase(this.options.getLanguage())) {
+				options.getLanguage() != null && !info.language().equalsIgnoreCase(options.getLanguage())) {
 				processorClass = null;
 			}
 			
-			if (processorClass != null && this.options.isMustTag() && !info.canTag()) {
+			if (processorClass != null && options.isMustTag() && !info.canTag()) {
 				processorClass = null;
 			}
 			
-			if (processorClass != null && this.options.isMustParse() && !info.canParse()) {
+			if (processorClass != null && options.isMustParse() && !info.canParse()) {
 				processorClass = null;
 			}
 			

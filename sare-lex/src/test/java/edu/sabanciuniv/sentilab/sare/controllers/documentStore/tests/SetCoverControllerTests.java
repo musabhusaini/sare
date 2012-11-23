@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Iterables;
 
+import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.documentStore.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.controllers.documentStore.SetCoverController;
 import edu.sabanciuniv.sentilab.sare.models.document.SetCoverDocument;
@@ -20,7 +21,6 @@ import edu.sabanciuniv.sentilab.sare.models.documentStore.DocumentSetCover;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpusFactoryOptions;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.SetCoverFactoryOptions;
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
 
 public class SetCoverControllerTests {
 

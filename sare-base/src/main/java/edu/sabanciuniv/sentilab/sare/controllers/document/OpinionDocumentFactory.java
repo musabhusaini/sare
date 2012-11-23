@@ -5,11 +5,11 @@ import javax.xml.xpath.*;
 import org.apache.commons.lang3.Validate;
 import org.w3c.dom.Node;
 
+import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
+import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.document.base.DocumentController;
-import edu.sabanciuniv.sentilab.sare.controllers.factory.base.IFactory;
 import edu.sabanciuniv.sentilab.sare.models.document.*;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**

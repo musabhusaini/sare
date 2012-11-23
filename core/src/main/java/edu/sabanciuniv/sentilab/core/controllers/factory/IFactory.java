@@ -1,8 +1,7 @@
-package edu.sabanciuniv.sentilab.sare.controllers.factory.base;
+package edu.sabanciuniv.sentilab.core.controllers.factory;
 
-import edu.sabanciuniv.sentilab.sare.controllers.base.IController;
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IFactoryOptions;
-import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
+import edu.sabanciuniv.sentilab.core.controllers.IController;
+import edu.sabanciuniv.sentilab.core.models.factory.*;
 
 /**
  * A class that extends this interface provides a method to create objects of a certain type.
