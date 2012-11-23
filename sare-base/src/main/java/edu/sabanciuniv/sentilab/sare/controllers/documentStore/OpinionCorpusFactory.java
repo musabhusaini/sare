@@ -1,30 +1,21 @@
 package edu.sabanciuniv.sentilab.sare.controllers.documentStore;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.parsers.*;
+import javax.xml.xpath.*;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.apache.commons.io.*;
+import org.apache.commons.lang3.*;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import edu.sabanciuniv.sentilab.sare.controllers.document.OpinionDocumentFactory;
 import edu.sabanciuniv.sentilab.sare.controllers.documentStore.base.DocumentStoreController;
-import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
+import edu.sabanciuniv.sentilab.sare.controllers.factory.base.IFactory;
+import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocumentFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.models.documentStore.*;
+import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**
@@ -32,7 +23,8 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * @author Mus'ab Husaini
  */
 public class OpinionCorpusFactory
-	extends DocumentStoreController {
+	extends DocumentStoreController
+	implements IFactory<OpinionCorpus, OpinionCorpusFactoryOptions> {
 
 	private OpinionCorpus addXmlPacket(OpinionCorpus corpus, InputStream input)
 		throws ParserConfigurationException, SAXException, IOException, XPathException {
@@ -76,7 +68,8 @@ public class OpinionCorpusFactory
 	    }
 	    
 	    for (int index=0; index<documentNodes.getLength(); index++) {
-	    	corpus.addDocument(opinionFactory.create(corpus, documentNodes.item(index)));
+	    	corpus.addDocument(opinionFactory.create(new OpinionDocumentFactoryOptions()
+	    		.setCorpus(corpus).setXmlNode(documentNodes.item(index))));
 	    }
 		
 		return corpus;
@@ -89,7 +82,7 @@ public class OpinionCorpusFactory
 	 * @return the newly-created {@link OpinionCorpus} object.
 	 * @throws IOException when there is an error reading the stream.
 	 */
-	public OpinionCorpus create(InputStream input, String format)
+	private OpinionCorpus create(InputStream input, String format)
 		throws IOException {
 		
 		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
@@ -101,7 +94,7 @@ public class OpinionCorpusFactory
 			try {
 				corpus = this.addXmlPacket(corpus, input);
 			} catch (ParserConfigurationException | SAXException | XPathException e) {
-				throw new IllegalArgumentException("Error reading input.", e);
+				throw new IOException("error reading input", e);
 			}
 			break;
 		}
@@ -115,14 +108,15 @@ public class OpinionCorpusFactory
 	 * @param format the format of the byte array.
 	 * @return the newly-created {@link OpinionCorpus} object.
 	 */
-	public OpinionCorpus create(byte[] input, String format) {
+	private OpinionCorpus create(byte[] input, String format)
+		throws IOException {
 		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
 		
 		try {
 			return this.create(new ByteArrayInputStream(input), format);
 		} catch (IOException e) {
 			// unlikely that this will ever happen since we're using a byte stream.
-			throw new IllegalArgumentException("Error reading input.", e);
+			throw new IOException("error reading input", e);
 		}
 	}
 	
@@ -133,7 +127,7 @@ public class OpinionCorpusFactory
 	 * @return the newly-created {@link OpinionCorpus} object.
 	 * @throws IOException when there is an error reading the stream.
 	 */
-	public OpinionCorpus create(File input, String format)
+	private OpinionCorpus create(File input, String format)
 		throws IOException {
 		
 		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
@@ -144,16 +138,53 @@ public class OpinionCorpusFactory
 		return corpus;
 	}
 	
-	/**
-	 * Creates a {@link OpinionCorpus} object from a given {@link File} in the default format of the file.
-	 * @param input the {@link File} containing the corpus.
-	 * @return the newly-created {@link OpinionCorpus} object.
-	 * @throws IOException when there is an error reading the stream.
-	 */
-	public OpinionCorpus create(File input)
-		throws IOException {
+	@Override
+	public OpinionCorpus create(OpinionCorpusFactoryOptions options)
+		throws IllegalFactoryOptionsException {
 		
-		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
-		return this.create(input, FilenameUtils.getExtension(input.getPath()));
+		OpinionCorpus corpus = null;
+		
+		try {
+			Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
+			
+			String format = StringUtils.isNotEmpty(options.getFormat()) ? options.getFormat() :
+				(options.getFile() != null ? FilenameUtils.getExtension(options.getFile().getPath()) : null);
+			
+			try {
+				if (options.getBytes() != null) {
+					Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
+					
+					corpus = this.create(options.getBytes(), format);
+				} else if (options.getInputStream() != null) {
+					Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
+					
+					corpus = this.create(options.getInputStream(), format);
+				} else if (options.getFile() != null) {
+					corpus = this.create(options.getFile(), format);
+				}
+			} catch (IOException e) {
+				//
+			}
+		} catch (NullPointerException e) {
+			throw new IllegalFactoryOptionsException(e);
+		}
+		
+		if (corpus == null) {
+			throw new IllegalFactoryOptionsException("options did not have enough or correct information to create this object");
+		}
+		
+		if (StringUtils.isNotEmpty(options.getTitle())) {
+			corpus.setTitle(options.getTitle());
+		}
+		
+		if (StringUtils.isNotEmpty(options.getDescription())) {
+			corpus.setDescription(options.getDescription());
+		}
+		
+		if (StringUtils.isNotEmpty(options.getLanguage())) {
+			corpus.setLanguage(options.getLanguage());
+		}
+		
+		return corpus;
 	}
 }

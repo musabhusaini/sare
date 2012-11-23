@@ -1,15 +1,19 @@
 package edu.sabanciuniv.sentilab.sare.controllers.documentStore;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.controllers.documentStore.base.DocumentStoreController;
+import edu.sabanciuniv.sentilab.sare.controllers.factory.base.IFactory;
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.document.base.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.document.SetCoverDocument;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.DocumentSetCover;
+import edu.sabanciuniv.sentilab.sare.models.documentStore.SetCoverFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**
@@ -17,9 +21,10 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * @author Mus'ab Husaini
  */
 public class SetCoverController
-	extends DocumentStoreController {
+	extends DocumentStoreController
+	implements IFactory<DocumentSetCover, SetCoverFactoryOptions>{
 
-	public DocumentSetCover create(DocumentStoreBase store, TokenizingOptions tokenizingOptions) {
+	private DocumentSetCover create(DocumentStoreBase store, TokenizingOptions tokenizingOptions) {
 		Validate.notNull(store, CannedMessages.NULL_ARGUMENT, "store");
 		
 		if (tokenizingOptions == null) {
@@ -74,5 +79,33 @@ public class SetCoverController
 	
 	public DocumentSetCover create(DocumentStoreBase store) {
 		return this.create(store);
+	}
+
+	@Override
+	public DocumentSetCover create(SetCoverFactoryOptions options)
+		throws IllegalFactoryOptionsException {
+		
+		try {
+			Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
+			Validate.notNull(options.getStore(), CannedMessages.NULL_ARGUMENT, "options.store");
+		} catch (NullPointerException e) {
+			throw new IllegalFactoryOptionsException(e);
+		}
+		
+		DocumentSetCover setCover = this.create(options.getStore(), options.getTokenizingOptions());
+		
+		if (StringUtils.isNotEmpty(options.getTitle())) {
+			setCover.setTitle(options.getTitle());
+		}
+		
+		if (StringUtils.isNotEmpty(options.getDescription())) {
+			setCover.setDescription(options.getDescription());
+		}
+		
+		if (StringUtils.isNotEmpty(options.getLanguage())) {
+			setCover.setLanguage(options.getLanguage());
+		}
+		
+		return setCover;
 	}
 }

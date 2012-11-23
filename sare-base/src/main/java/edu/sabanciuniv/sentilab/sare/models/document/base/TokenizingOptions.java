@@ -10,11 +10,14 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import edu.sabanciuniv.sentilab.sare.models.base.IModel;
+
 /**
  * An instance of this class represents tokenizing options for a {@link TokenizedDocument}.
  * @author Mus'ab Husaini
  */
-public class TokenizingOptions {
+public class TokenizingOptions
+	implements IModel {
 
 	/**
 	 * An {@code enum} of various tag-capture options.

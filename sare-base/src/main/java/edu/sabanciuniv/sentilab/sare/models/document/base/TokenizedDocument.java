@@ -10,14 +10,10 @@ import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
-import edu.sabanciuniv.sentilab.utils.extensions.IterablesExtensions;
-import edu.sabanciuniv.sentilab.utils.extensions.MapsExtensions;
+import edu.sabanciuniv.sentilab.utils.extensions.*;
 import edu.sabanciuniv.sentilab.utils.predicates.StringPredicates;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticText;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
-import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactory;
-import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactoryOptions;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
+import edu.sabanciuniv.sentilab.utils.text.nlp.factory.*;
 
 /**
  * The base class for documents that can be tokenized.
@@ -151,8 +147,11 @@ public abstract class TokenizedDocument
 		// create the map from tokens.
 		LinguisticText nlpText = nlp.tag(this.getContent());
 		for (LinguisticToken nlpToken : nlpText.getTokens()) {
-			// only include token if the pos tag is included in tokenizing options.
-			if (Iterables.any(this.getTokenizingOptions().getTags(), StringPredicates.patternContains(nlpToken.getPosTag()))) {
+			// only include token if the pos tag is included in tokenizing options (no tags in the options means we include everything).
+			if (this.getTokenizingOptions().getTags() == null ||
+				this.getTokenizingOptions().getTags().size() == 0 ||
+				Iterables.any(this.getTokenizingOptions().getTags(), StringPredicates.patternContains(nlpToken.getPosTag()))) {
+				
 				nlpToken.setLemmatized(this.getTokenizingOptions().isLemmatized());
 				MapsExtensions.increment(this.getTokenWeightMap(true, true), nlpToken);
 			}

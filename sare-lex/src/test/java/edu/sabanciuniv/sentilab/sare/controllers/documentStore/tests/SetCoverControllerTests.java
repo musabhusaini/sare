@@ -18,6 +18,9 @@ import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.document.base.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.DocumentSetCover;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
+import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpusFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.models.documentStore.SetCoverFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
 
 public class SetCoverControllerTests {
 
@@ -31,7 +34,8 @@ public class SetCoverControllerTests {
 		testXmlCorpusFilename = "/test-small-corpus.xml";
 		
 		OpinionCorpusFactory factory = new OpinionCorpusFactory();
-		testCorpus = factory.create(new File(getClass().getResource(testXmlCorpusFilename).getPath()));
+		testCorpus = factory.create(new OpinionCorpusFactoryOptions()
+			.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath())));
 		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
@@ -46,7 +50,15 @@ public class SetCoverControllerTests {
 
 	@Test
 	public void testCreateWithTokenizingOptions() {
-		DocumentSetCover setCover = testController.create(testCorpus, testTokenizingOptions);
+		DocumentSetCover setCover;
+		
+		try {
+			setCover = testController.create(new SetCoverFactoryOptions()
+				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not create set cover");
+			return;
+		}
 		
 		assertNotNull(setCover);
 		assertEquals(8, Iterables.size(setCover.getDocuments()));

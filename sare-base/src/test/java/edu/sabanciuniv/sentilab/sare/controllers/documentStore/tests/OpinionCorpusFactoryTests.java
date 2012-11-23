@@ -3,7 +3,6 @@ package edu.sabanciuniv.sentilab.sare.controllers.documentStore.tests;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +12,8 @@ import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.controllers.documentStore.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
-import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
+import edu.sabanciuniv.sentilab.sare.models.documentStore.*;
+import edu.sabanciuniv.sentilab.sare.models.factory.base.IllegalFactoryOptionsException;
 
 public class OpinionCorpusFactoryTests {
 	
@@ -42,8 +42,9 @@ public class OpinionCorpusFactoryTests {
 	public void testCreateFromXmlFile() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create(new File(getClass().getResource(testXmlCorpusFilename).getPath()));
-		} catch (IOException e) {
+			actualCorpus = testFactory.create(new OpinionCorpusFactoryOptions()
+				.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath())));
+		} catch (IllegalFactoryOptionsException e) {
 			fail("could not open file.");
 		}
 		

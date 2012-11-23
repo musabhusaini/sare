@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import edu.sabanciuniv.sentilab.sare.controllers.document.OpinionDocumentFactory;
 import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
+import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocumentFactoryOptions;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
 
 public class OpinionDocumentFactoryTests {
@@ -59,7 +60,8 @@ public class OpinionDocumentFactoryTests {
 		    XPath xpath = factory.newXPath();
 		    
 		    NodeList documentNodes = (NodeList)xpath.compile("/corpus/document").evaluate(doc, XPathConstants.NODESET);
-		    OpinionDocument opinionDoc = testFactory.create(testCorpus, documentNodes.item(0));
+		    OpinionDocument opinionDoc = testFactory.create(new OpinionDocumentFactoryOptions()
+		    	.setCorpus(testCorpus).setXmlNode(documentNodes.item(0)));
 			
 			assertNotNull(opinionDoc);
 			assertEquals(expectedXmlDocument.getContent(), opinionDoc.getContent());
