@@ -1,7 +1,7 @@
 package edu.sabanciuniv.sentilab.core.models.factory;
 
 /**
- * An exception that is thrown when the {@link IFactoryOptions} object provided to a {@code create} method are not correct.
+ * An exception that is thrown when the {@link IFactoryOptions} object provided to a {@code create} method contains options that are not correct or sufficient to create the desired object.
  * @author Mus'ab Husaini
  *
  */

@@ -46,6 +46,10 @@ public class DocumentSetCover
 	 * @return {@code true} if the document was replaced.
 	 */
 	public boolean replaceDocuments(SetCoverDocument original, SetCoverDocument replacement) {
+		if (this.documents == null) {
+			return false;
+		}
+		
 		return Collections.replaceAll(this.documents, original, replacement);
 	}
 	

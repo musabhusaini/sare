@@ -59,6 +59,11 @@ public abstract class PersistentDocument
 	 */
 	public PersistentDocument setBaseDocument(PersistentDocument baseDocument) {
 		this.baseDocument = baseDocument;
+		
+		if (this.baseDocument != null && !this.baseDocument.getDerivedDocuments().contains(this)) {
+			this.baseDocument.getDerivedDocuments().add(this);
+		}
+		
 		return this;
 	}
 
@@ -81,6 +86,13 @@ public abstract class PersistentDocument
 	 */
 	public PersistentDocument setDerivedDocuments(Collection<PersistentDocument> derivedDocuments) {
 		this.derivedDocuments = derivedDocuments;
+		
+		if (this.derivedDocuments != null) {
+			for (PersistentDocument derivedDocument : this.derivedDocuments) {
+				derivedDocument.setBaseDocument(this);
+			}
+		}
+		
 		return this;
 	}
 }

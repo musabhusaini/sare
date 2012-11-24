@@ -71,6 +71,11 @@ public abstract class DocumentStoreBase
 	 */
 	public DocumentStoreBase setBaseStore(DocumentStoreBase baseStore) {
 		this.baseStore = baseStore;
+		
+		if (baseStore != null && !baseStore.getDerivedStores().contains(this)) {
+			baseStore.getDerivedStores().add(this);
+		}
+		
 		return this;
 	}
 
@@ -93,6 +98,13 @@ public abstract class DocumentStoreBase
 	 */
 	public DocumentStoreBase setDerivedStores(Collection<DocumentStoreBase> derivedStores) {
 		this.derivedStores = derivedStores;
+		
+		if (this.derivedStores != null) {
+			for (DocumentStoreBase derivedStore : this.derivedStores) {
+				derivedStore.setBaseStore(this);
+			}
+		}
+		
 		return this;
 	}
 

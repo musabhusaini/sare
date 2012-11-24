@@ -25,7 +25,7 @@ public abstract class GenericDocumentStore<T extends PersistentDocument>
 	@Override
 	public Iterable<T> getDocuments()  {
 		if (this.documents == null) {
-			this.documents = Lists.newArrayList();
+			return null;
 		}
 		
 		return Iterables.filter(this.documents,
