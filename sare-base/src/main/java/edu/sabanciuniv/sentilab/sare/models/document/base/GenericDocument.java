@@ -9,7 +9,7 @@ import edu.sabanciuniv.sentilab.sare.models.documentStore.base.GenericDocumentSt
  * @param <T> a circular reference to this type of document; must derive from {@link GenericDocument}.
  */
 public abstract class GenericDocument<T extends GenericDocument<T>>
-	extends PersistentDocument {
+	extends TokenizedDocument {
 
 	/**
 	 * 
@@ -33,6 +33,7 @@ public abstract class GenericDocument<T extends GenericDocument<T>>
 	 */
 	public GenericDocument<T> setStore(GenericDocumentStore<T> store) {
 		this.store = store;
+		this.addReference(store);
 		return this;
 	}
 }

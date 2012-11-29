@@ -1,35 +1,22 @@
 package edu.sabanciuniv.sentilab.sare.models.documentStore.base;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.google.common.collect.Lists;
 
 import edu.sabanciuniv.sentilab.sare.models.document.base.PersistentDocument;
-import edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject;
+import edu.sabanciuniv.sentilab.sare.models.base.*;
 
 /**
  * The base class for all objects that can store documents.
  * @author Mus'ab Husaini
  */
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "store_type")
 @Entity
-@Table(name = "document_stores")
 public abstract class DocumentStoreBase
-	extends UniquelyIdentifiableObject
+	extends PersistentObject
 	implements IDocumentStore {
 
 	/**
@@ -41,7 +28,7 @@ public abstract class DocumentStoreBase
 	@JoinColumn(name = "base_store_id")
 	protected DocumentStoreBase baseStore;
 	
-	@OneToMany(mappedBy = "baseStore", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "baseStore")
 	protected Collection<DocumentStoreBase> derivedStores;
 	
 	@Column
@@ -53,7 +40,7 @@ public abstract class DocumentStoreBase
 	@Column
 	protected String description;
 	
-	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "store")
 	protected List<PersistentDocument> documents;
 
 	/**
@@ -71,6 +58,7 @@ public abstract class DocumentStoreBase
 	 */
 	public DocumentStoreBase setBaseStore(DocumentStoreBase baseStore) {
 		this.baseStore = baseStore;
+		this.addReference(baseStore);
 		
 		if (baseStore != null && !baseStore.getDerivedStores().contains(this)) {
 			baseStore.getDerivedStores().add(this);
@@ -101,7 +89,9 @@ public abstract class DocumentStoreBase
 		
 		if (this.derivedStores != null) {
 			for (DocumentStoreBase derivedStore : this.derivedStores) {
-				derivedStore.setBaseStore(this);
+				if (derivedStore.getBaseStore() != this) {
+					derivedStore.setBaseStore(this);
+				}
 			}
 		}
 		

@@ -25,6 +25,7 @@ public class OpinionDocumentTests
 		em = emFactory.createEntityManager();
 		
 		testContent = "this is a test";
+		testPolarity = 0.8796;
 		testCorpus = (OpinionCorpus)new OpinionCorpus()
 			.setTitle("test corpus")
 			.setLanguage("en");

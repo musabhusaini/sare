@@ -1,14 +1,11 @@
 package edu.sabanciuniv.sentilab.sare.models.document.base;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Iterables;
 
-import edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 import edu.sabanciuniv.sentilab.utils.extensions.*;
 import edu.sabanciuniv.sentilab.utils.predicates.StringPredicates;
@@ -20,8 +17,7 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.factory.*;
  * @author Mus'ab Husaini
  */
 public abstract class TokenizedDocument
-	extends UniquelyIdentifiableObject
-	implements IDocument {
+	extends PersistentDocument {
 
 	/**
 	 * 

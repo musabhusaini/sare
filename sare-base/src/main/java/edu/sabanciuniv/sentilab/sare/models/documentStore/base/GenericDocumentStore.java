@@ -38,7 +38,15 @@ public abstract class GenericDocumentStore<T extends PersistentDocument>
 	 * @return the {@code this} object.
 	 */
 	public GenericDocumentStore<T> setDocuments(Iterable<T> documents) {
-		this.documents = Lists.newArrayList(Iterables.filter(documents, PersistentDocument.class));
+		if (documents == null) {
+			this.documents = null;
+		} else {
+			this.documents = Lists.newArrayList(Iterables.filter(documents, PersistentDocument.class));
+			
+			for (T document : documents) {
+				this.addReferer(document);
+			}
+		}
 		return this;
 	}
 	
@@ -53,6 +61,7 @@ public abstract class GenericDocumentStore<T extends PersistentDocument>
 		}
 		
 		this.documents.add(document);
+		this.refererObjects.add(document);
 		return this;
 	}
 	
@@ -66,6 +75,7 @@ public abstract class GenericDocumentStore<T extends PersistentDocument>
 			return false;
 		}
 		
+		this.refererObjects.remove(document);
 		return this.documents.remove(document);
 	}
 }

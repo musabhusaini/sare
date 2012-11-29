@@ -1,20 +1,12 @@
 package edu.sabanciuniv.sentilab.sare.models.document.base;
 
-import java.util.Collection;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
+import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase;
 
 /**
@@ -22,11 +14,10 @@ import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase
  * @author Mus'ab Husaini
  */
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "document_type")
 @Entity
-@Table(name = "documents")
 public abstract class PersistentDocument
-	extends TokenizedDocument {
+	extends PersistentObject
+	implements IDocument {
 
 	/**
 	 * 
@@ -41,7 +32,7 @@ public abstract class PersistentDocument
 	@JoinColumn(name = "base_document_id")
 	protected PersistentDocument baseDocument;
 	
-	@OneToMany(mappedBy = "baseDocument", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "baseDocument")
 	protected Collection<PersistentDocument> derivedDocuments;
 	
 	/**
@@ -59,6 +50,7 @@ public abstract class PersistentDocument
 	 */
 	public PersistentDocument setBaseDocument(PersistentDocument baseDocument) {
 		this.baseDocument = baseDocument;
+		this.addReference(baseDocument);
 		
 		if (this.baseDocument != null && !this.baseDocument.getDerivedDocuments().contains(this)) {
 			this.baseDocument.getDerivedDocuments().add(this);
@@ -89,7 +81,9 @@ public abstract class PersistentDocument
 		
 		if (this.derivedDocuments != null) {
 			for (PersistentDocument derivedDocument : this.derivedDocuments) {
-				derivedDocument.setBaseDocument(this);
+				if (derivedDocument.getBaseDocument() != this) {
+					derivedDocument.setBaseDocument(this);
+				}
 			}
 		}
 		

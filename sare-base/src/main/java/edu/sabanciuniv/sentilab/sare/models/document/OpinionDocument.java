@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import edu.sabanciuniv.sentilab.sare.models.document.base.GenericDocument;
 
 @Entity
-@DiscriminatorValue("Opinion")
+@DiscriminatorValue("opinion-document")
 public class OpinionDocument
 	extends GenericDocument<OpinionDocument> {
 

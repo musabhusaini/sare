@@ -14,7 +14,7 @@ import edu.sabanciuniv.sentilab.sare.models.documentStore.base.DocumentStoreBase
  * @author Mus'ab Husaini
  */
 @Entity
-@DiscriminatorValue("SetCover")
+@DiscriminatorValue("setcover-corpus")
 public class DocumentSetCover
 	extends GenericDocumentStore<SetCoverDocument> {
 

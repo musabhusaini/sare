@@ -7,7 +7,7 @@ import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.base.GenericDocumentStore;
 
 @Entity
-@DiscriminatorValue("Opinion")
+@DiscriminatorValue("opinion-corpus")
 public class OpinionCorpus
 	extends GenericDocumentStore<OpinionDocument> {
 	
