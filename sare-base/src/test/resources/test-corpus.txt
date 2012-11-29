@@ -1,0 +1,2 @@
+nice hotel|0.7
+terrible hotel|-0.8
