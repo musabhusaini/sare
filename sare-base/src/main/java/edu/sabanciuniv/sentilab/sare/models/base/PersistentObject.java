@@ -4,12 +4,12 @@ import java.util.*;
 
 import javax.persistence.*;
 
-import org.apache.commons.lang3.Validate;
-
 import com.google.common.collect.Lists;
 
-import edu.sabanciuniv.sentilab.utils.CannedMessages;
-
+/**
+ * The base class for objects that are to be persisted.
+ * @author Mus'ab Husaini
+ */
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "object_type")
 @Entity
@@ -33,15 +33,21 @@ public abstract class PersistentObject
 	@ManyToMany(mappedBy="referencedObjects", cascade=CascadeType.ALL)
 	protected List<PersistentObject> refererObjects;
 	
+	/**
+	 * Creates an empty instance of {@link PersistentObject}. 
+	 */
 	protected PersistentObject() {
 		this.referencedObjects = Lists.newArrayList();
 		this.refererObjects = Lists.newArrayList();
 	}
 	
+	/**
+	 * Adds a reference to the provided object in the current object.
+	 * @param reference the {@link PersistentObject} whose reference is to be added.
+	 * @return the {@code this} object.
+	 */
 	protected PersistentObject addReference(PersistentObject reference) {
-		Validate.notNull(reference, CannedMessages.NULL_ARGUMENT, "reference");
-		
-		if (!this.referencedObjects.contains(reference)) {
+		if (reference != null && !this.referencedObjects.contains(reference)) {
 			this.referencedObjects.add(reference);
 			reference.addReferer(this);
 		}
@@ -49,10 +55,13 @@ public abstract class PersistentObject
 		return this;
 	}
 	
+	/**
+	 * Removes the reference to the provided object from the current object.
+	 * @param referer the {@link PersistentObject} whose reference is to be removed.
+	 * @return the {@code this} object.
+	 */
 	protected PersistentObject addReferer(PersistentObject referer) {
-		Validate.notNull(referer, CannedMessages.NULL_ARGUMENT, "referer");
-		
-		if (!this.refererObjects.contains(referer)) {
+		if (referer != null && !this.refererObjects.contains(referer)) {
 			this.refererObjects.add(referer);
 			referer.addReference(this);
 		}

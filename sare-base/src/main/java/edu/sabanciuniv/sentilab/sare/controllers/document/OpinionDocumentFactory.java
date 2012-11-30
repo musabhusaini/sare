@@ -22,8 +22,8 @@ public class OpinionDocumentFactory
 
 	private OpinionDocument create(OpinionCorpus corpus, String content, double polarity) {
 		return (OpinionDocument)new OpinionDocument()
-			.setContent(content)
 			.setPolarity(polarity)
+			.setContent(content)
 			.setStore(corpus);
 	}
 

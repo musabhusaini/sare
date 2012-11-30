@@ -19,6 +19,10 @@ public abstract class GenericDocument<T extends GenericDocument<T>>
 	@SuppressWarnings("unchecked")
 	@Override
 	public GenericDocumentStore<T> getStore() {
+		if (this.store == null) {
+			return null;
+		}
+		
 		try {
 			return (GenericDocumentStore<T>)this.store;
 		} catch(ClassCastException e) {

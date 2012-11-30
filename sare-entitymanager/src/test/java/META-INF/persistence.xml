@@ -40,6 +40,9 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.document.SetCoverDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.documentStore.DocumentSetCover</class>
 		
+		<class>edu.sabanciuniv.sentilab.sare.models.document.AspectExpression</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.documentStore.AspectLexicon</class>
+		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		
         <properties>

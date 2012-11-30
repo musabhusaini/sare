@@ -1,30 +1,18 @@
 package edu.sabanciuniv.sentilab.sare.controllers.document.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.parsers.*;
+import javax.xml.xpath.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
+import org.junit.*;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import edu.sabanciuniv.sentilab.sare.controllers.document.OpinionDocumentFactory;
-import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocument;
-import edu.sabanciuniv.sentilab.sare.models.document.OpinionDocumentFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.models.document.*;
 import edu.sabanciuniv.sentilab.sare.models.documentStore.OpinionCorpus;
 
 public class OpinionDocumentFactoryTests {
@@ -39,9 +27,9 @@ public class OpinionDocumentFactoryTests {
 		testFactory = new OpinionDocumentFactory();
 		testXmlCorpusFilename = "/test-corpus.xml";
 		testCorpus = new OpinionCorpus();
-		expectedXmlDocument = new OpinionDocument()
-			.setContent("nice hotel")
-			.setPolarity(0.7);
+		expectedXmlDocument = (OpinionDocument)new OpinionDocument()
+			.setPolarity(0.7)
+			.setContent("nice hotel");
 	}
 
 	@After
