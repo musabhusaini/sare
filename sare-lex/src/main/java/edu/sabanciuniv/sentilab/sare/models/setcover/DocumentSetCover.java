@@ -29,9 +29,9 @@ public class DocumentSetCover
 	
 	/**
 	 * Creates a new instance of the {@link DocumentSetCover} class.
-	 * @param baseStore the base {@link DocumentStoreBase} object.
+	 * @param baseStore the base {@link PersistentDocumentStore} object.
 	 */
-	public DocumentSetCover(DocumentStoreBase baseStore) {
+	public DocumentSetCover(PersistentDocumentStore baseStore) {
 		this();
 		this.setBaseStore(baseStore);
 	}

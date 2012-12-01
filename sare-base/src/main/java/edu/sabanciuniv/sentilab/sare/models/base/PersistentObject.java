@@ -47,9 +47,32 @@ public abstract class PersistentObject
 	 * @return the {@code this} object.
 	 */
 	protected PersistentObject addReference(PersistentObject reference) {
-		if (reference != null && !this.referencedObjects.contains(reference)) {
-			this.referencedObjects.add(reference);
-			reference.addReferer(this);
+		if (reference == this) {
+			return this;
+		}
+		
+		if (reference != null) {
+			if (!this.referencedObjects.contains(reference)) {
+				this.referencedObjects.add(reference);
+			}
+			
+			if (!reference.refererObjects.contains(this)) {
+				reference.addReferer(this);
+			}
+		}
+		
+		return this;
+	}
+	
+	protected PersistentObject removeReference(PersistentObject reference) {
+		if (reference != null) {
+			if (this.referencedObjects.contains(reference)) {
+				this.referencedObjects.remove(reference);
+			}
+			
+			if (reference.refererObjects.contains(this)) {
+				reference.removeReferer(this);
+			}
 		}
 		
 		return this;
@@ -61,9 +84,32 @@ public abstract class PersistentObject
 	 * @return the {@code this} object.
 	 */
 	protected PersistentObject addReferer(PersistentObject referer) {
-		if (referer != null && !this.refererObjects.contains(referer)) {
-			this.refererObjects.add(referer);
-			referer.addReference(this);
+		if (referer == this) {
+			return this;
+		}
+		
+		if (referer != null) {
+			if (!this.refererObjects.contains(referer)) {
+				this.refererObjects.add(referer);
+			}
+			
+			if (!referer.referencedObjects.contains(this)) {
+				referer.addReference(this);
+			}
+		}
+		
+		return this;
+	}
+	
+	protected PersistentObject removeReferer(PersistentObject referer) {
+		if (referer != null) {
+			if (this.refererObjects.contains(referer)) {
+				this.refererObjects.remove(referer);
+			}
+			
+			if (referer.referencedObjects.contains(this)) {
+				referer.removeReference(this);
+			}
 		}
 		
 		return this;

@@ -6,7 +6,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.GenericDocumentSt
  * The generic base class for documents.
  * @author Mus'ab Husaini
  *
- * @param <T> a circular reference to this type of document; must derive from {@link GenericDocument}.
+ * @param <T> a circular reference to this type of document; must be the same as this class.
  */
 public abstract class GenericDocument<T extends GenericDocument<T>>
 	extends TokenizedDocument {
@@ -35,9 +35,21 @@ public abstract class GenericDocument<T extends GenericDocument<T>>
 	 * @param stores the {@link GenericDocumentStore} to store this document under.
 	 * @return the {@code this} object.
 	 */
+	@SuppressWarnings("unchecked")
 	public GenericDocument<T> setStore(GenericDocumentStore<T> store) {
+		GenericDocumentStore<T> prevStore = this.getStore();
+		
 		this.store = store;
-		this.addReference(store);
+		
+		if (prevStore != null) {
+			prevStore.removeDocument((T)this);
+		}
+		
+		if (store != null) {
+			store.addDocument((T)this);
+			this.addReference(store);
+		}
+		
 		return this;
 	}
 }

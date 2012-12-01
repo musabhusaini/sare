@@ -2,7 +2,7 @@ package edu.sabanciuniv.sentilab.sare.models.setcover;
 
 import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentStoreBase;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 
 /**
  * The default set of options that can be used to construct an {@link DocumentSetCover} object.
@@ -13,7 +13,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentStoreBase
 public class SetCoverFactoryOptions
 	implements IFactoryOptions<DocumentSetCover> {
 
-	private DocumentStoreBase store;
+	private PersistentDocumentStore store;
 	private TokenizingOptions tokenizingOptions;
 	private String title;
 	private String description;
@@ -21,18 +21,18 @@ public class SetCoverFactoryOptions
 	
 	/**
 	 * Gets the store from which the set cover will be created.
-	 * @return the {@link DocumentStoreBase} object from which the set cover will be created.
+	 * @return the {@link PersistentDocumentStore} object from which the set cover will be created.
 	 */
-	public DocumentStoreBase getStore() {
+	public PersistentDocumentStore getStore() {
 		return this.store;
 	}
 	
 	/**
 	 * Sets the store from which the set cover is to be created.
-	 * @param store the {@link DocumentStoreBase} object from which the set cover is to be created.
+	 * @param store the {@link PersistentDocumentStore} object from which the set cover is to be created.
 	 * @return the {@code this} object.
 	 */
-	public SetCoverFactoryOptions setStore(DocumentStoreBase store) {
+	public SetCoverFactoryOptions setStore(PersistentDocumentStore store) {
 		this.store = store;
 		return this;
 	}

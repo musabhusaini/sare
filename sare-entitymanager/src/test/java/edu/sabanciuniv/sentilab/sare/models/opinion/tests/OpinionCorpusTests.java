@@ -7,7 +7,6 @@ import org.junit.*;
 import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentStoreBase;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 
 public class OpinionCorpusTests
@@ -87,7 +86,7 @@ public class OpinionCorpusTests
 		testBaseCorpus = new OpinionCorpus();
 		testCorpus.setBaseStore(testBaseCorpus);
 		
-		assertTrue(testBaseCorpus.getDerivedStores().contains(testCorpus));
+		assertTrue(testBaseCorpus.hasDerivedStore(testCorpus));
 		
 		em.getTransaction().begin();
 		em.persist(testBaseCorpus);
@@ -99,30 +98,6 @@ public class OpinionCorpusTests
 		assertNotNull(actualCorpus);
 		assertNotNull(actualCorpus.getBaseStore());
 		assertEquals(testCorpus.getBaseStore().getIdentifier(), actualCorpus.getBaseStore().getIdentifier());
-	}
-
-	@Test
-	public void testDerivedStores() {
-		testDerivedCorpus = (OpinionCorpus)new OpinionCorpus();
-		testCorpus.setDerivedStores(Lists.newArrayList((DocumentStoreBase)testDerivedCorpus));
-		
-		assertEquals(testCorpus, testDerivedCorpus.getBaseStore());
-		
-		em.getTransaction().begin();
-		em.persist(testCorpus);
-		em.persist(testDerivedCorpus);
-		em.getTransaction().commit();
-		
-		OpinionCorpus actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
-		
-		assertNotNull(actualCorpus);
-		assertNotNull(actualCorpus.getDerivedStores());
-		assertEquals(Iterables.size(testCorpus.getDerivedStores()), Iterables.size(actualCorpus.getDerivedStores()));
-		
-		DocumentStoreBase actualDerivedCorpus = Iterables.getFirst(actualCorpus.getDerivedStores(), null);
-		
-		assertNotNull(actualDerivedCorpus);
-		assertEquals(testDerivedCorpus.getIdentifier(), actualDerivedCorpus.getIdentifier());
 	}
 
 	@Test

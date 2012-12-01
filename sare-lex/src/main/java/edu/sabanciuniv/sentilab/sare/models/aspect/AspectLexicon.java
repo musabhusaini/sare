@@ -29,7 +29,7 @@ public class AspectLexicon
 	 * Creates an instance of the {@link AspectLexicon} class based on the provided store.
 	 * @param baseStore the {@link DocumentStoreBase} object to use as the base store for this instance.
 	 */
-	public AspectLexicon(DocumentStoreBase baseStore) {
+	public AspectLexicon(PersistentDocumentStore baseStore) {
 		this();
 		this.setBaseStore(baseStore);
 	}

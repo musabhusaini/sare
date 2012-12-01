@@ -8,7 +8,7 @@ import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.DocumentStoreController;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentStoreBase;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
@@ -20,7 +20,7 @@ public class SetCoverController
 	extends DocumentStoreController
 	implements IFactory<DocumentSetCover, SetCoverFactoryOptions>{
 
-	private DocumentSetCover create(DocumentStoreBase store, TokenizingOptions tokenizingOptions) {
+	private DocumentSetCover create(PersistentDocumentStore store, TokenizingOptions tokenizingOptions) {
 		Validate.notNull(store, CannedMessages.NULL_ARGUMENT, "store");
 		
 		if (tokenizingOptions == null) {
@@ -73,7 +73,7 @@ public class SetCoverController
 		return setCover;
 	}
 	
-	public DocumentSetCover create(DocumentStoreBase store) {
+	public DocumentSetCover create(PersistentDocumentStore store) {
 		return this.create(store);
 	}
 

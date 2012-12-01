@@ -2,9 +2,12 @@ package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 
 import java.lang.reflect.ParameterizedType;
 
+import org.apache.commons.lang3.Validate;
+
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
+import edu.sabanciuniv.sentilab.sare.models.base.document.*;
+import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**
  * The generic class that can store document of a specific type.
@@ -12,8 +15,8 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
  *
  * @param <T> the type of documents to be stored; must derive from {@link PersistentDocument}.
  */
-public abstract class GenericDocumentStore<T extends PersistentDocument>
-	extends DocumentStoreBase {
+public abstract class GenericDocumentStore<T extends GenericDocument<T>>
+	extends PersistentDocumentStore {
 
 	/**
 	 * 
@@ -40,13 +43,22 @@ public abstract class GenericDocumentStore<T extends PersistentDocument>
 		if (documents == null) {
 			this.documents = null;
 		} else {
-			this.documents = Lists.newArrayList(Iterables.filter(documents, PersistentDocument.class));
+			this.setDocuments(null);
 			
 			for (T document : documents) {
-				this.addReferer(document);
+				this.addDocument(document);
 			}
 		}
 		return this;
+	}
+	
+	/**
+	 * Gets a boolean flag indicating whether the provided document is in this store or not.
+	 * @param document the {@code T} object to look for.
+	 * @return {@code true} if the document is contained in this store, {@code false} otherwise.
+	 */
+	public boolean hasDocument(T document) {
+		return Iterables.contains(this.getDocuments(), document);
 	}
 	
 	/**
@@ -55,12 +67,21 @@ public abstract class GenericDocumentStore<T extends PersistentDocument>
 	 * @return the {@code this} object.
 	 */
 	public GenericDocumentStore<T> addDocument(T document) {
+		Validate.notNull(document, CannedMessages.NULL_ARGUMENT, "document");
+		
 		if (this.documents == null) {
 			this.documents = Lists.newArrayList();
 		}
 		
-		this.documents.add(document);
-		this.refererObjects.add(document);
+		if (document.getStore() != this) {
+			document.setStore(this);
+		}
+		
+		if (!this.documents.contains(document)) {
+			this.documents.add(document);
+		}
+		
+		this.addReferer(document);
 		return this;
 	}
 	
@@ -70,11 +91,19 @@ public abstract class GenericDocumentStore<T extends PersistentDocument>
 	 * @return {@code true} if an element was removed as a result of this call. 
 	 */
 	public boolean removeDocument(T document) {
+		if (document == null) {
+			return false;
+		}
+		
+		if (document.getStore() == this) {
+			document.setStore(null);
+		}
+		
 		if (this.documents == null) {
 			return false;
 		}
 		
-		this.refererObjects.remove(document);
+		this.removeReferer(document);
 		return this.documents.remove(document);
 	}
 }
