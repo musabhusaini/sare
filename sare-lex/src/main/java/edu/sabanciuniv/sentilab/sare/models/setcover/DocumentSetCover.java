@@ -54,6 +54,19 @@ public class DocumentSetCover
 		
 		return replaced;
 	}
+
+	/**
+	 * Gets the total weight of this set cover.
+	 * @return the weight of the set cover.
+	 */
+	public double totalWeight() {
+		double weight = 0;
+		for (SetCoverDocument document : this.getDocuments()) {
+			weight += document.getWeight();
+		}
+		
+		return weight;
+	}
 	
 	@Override
 	public String getTitle() {

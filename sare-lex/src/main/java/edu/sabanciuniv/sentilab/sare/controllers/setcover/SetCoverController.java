@@ -1,8 +1,13 @@
 package edu.sabanciuniv.sentilab.sare.controllers.setcover;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.commons.lang3.*;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
@@ -20,7 +25,7 @@ public class SetCoverController
 	extends DocumentStoreController
 	implements IFactory<DocumentSetCover, SetCoverFactoryOptions>{
 
-	private DocumentSetCover create(PersistentDocumentStore store, TokenizingOptions tokenizingOptions) {
+	private DocumentSetCover create(PersistentDocumentStore store, TokenizingOptions tokenizingOptions, double requiredWeightRatio) {
 		Validate.notNull(store, CannedMessages.NULL_ARGUMENT, "store");
 		
 		if (tokenizingOptions == null) {
@@ -81,13 +86,39 @@ public class SetCoverController
 		// get rid of the dummy.
 		dummySetCover.setBaseStore(null);
 		
+		// apply the weight ratio, if any.
+		if (requiredWeightRatio < 1.0) {
+			double totalWeight=setCover.totalWeight();
+			double accumulatedWeight=0;
+			
+			// sort set cover.
+			List<SetCoverDocument> setCoverDocuments = Lists.newArrayList(setCover.getDocuments());
+			Collections.sort(setCoverDocuments, new Comparator<SetCoverDocument>() {
+				@Override
+				public int compare(SetCoverDocument o1, SetCoverDocument o2) {
+					return (int)(o2.getWeight() - o1.getWeight()) * 100;
+				}
+			});
+			
+			// get all the useful ones.
+			int scIndex=0;
+			for (scIndex=0; scIndex<setCoverDocuments.size(); scIndex++) {
+				if (accumulatedWeight >= requiredWeightRatio * totalWeight) {
+					break;
+				}
+				
+				accumulatedWeight += setCoverDocuments.get(scIndex).getTotalTokenWeight();
+			}
+			
+			// eliminate the extras.
+			for (; scIndex<setCoverDocuments.size(); scIndex++) {
+				setCover.removeDocument(setCoverDocuments.get(scIndex));
+			}
+		}		
+		
 		return setCover;
 	}
 	
-	public DocumentSetCover create(PersistentDocumentStore store) {
-		return this.create(store);
-	}
-
 	@Override
 	public DocumentSetCover create(SetCoverFactoryOptions options)
 		throws IllegalFactoryOptionsException {
@@ -99,7 +130,7 @@ public class SetCoverController
 			throw new IllegalFactoryOptionsException(e);
 		}
 		
-		DocumentSetCover setCover = this.create(options.getStore(), options.getTokenizingOptions());
+		DocumentSetCover setCover = this.create(options.getStore(), options.getTokenizingOptions(), options.getRequiredWeightRatio());
 		
 		if (StringUtils.isNotEmpty(options.getTitle())) {
 			setCover.setTitle(options.getTitle());

@@ -15,9 +15,14 @@ public class SetCoverFactoryOptions
 
 	private PersistentDocumentStore store;
 	private TokenizingOptions tokenizingOptions;
+	private double requiredWeightRatio;
 	private String title;
 	private String description;
 	private String language;
+	
+	public SetCoverFactoryOptions() {
+		this.requiredWeightRatio = 1.0;
+	}
 	
 	/**
 	 * Gets the store from which the set cover will be created.
@@ -106,6 +111,24 @@ public class SetCoverFactoryOptions
 	 */
 	public SetCoverFactoryOptions setLanguage(String language) {
 		this.language = language;
+		return this;
+	}
+
+	/**
+	 * Gets the minimum ratio of total token weight to be retained in the final set cover.
+	 * @return the ratio of total token weight.
+	 */
+	public double getRequiredWeightRatio() {
+		return this.requiredWeightRatio;
+	}
+
+	/**
+	 * Sets the minimum ratio of total token weight required for the set cover.
+	 * @param requiredWeightRatio the ratio of total token weight to set.
+	 * @return the {@code this} object.
+	 */
+	public SetCoverFactoryOptions setRequiredWeightRatio(double requiredWeightRatio) {
+		this.requiredWeightRatio = requiredWeightRatio;
 		return this;
 	}
 }

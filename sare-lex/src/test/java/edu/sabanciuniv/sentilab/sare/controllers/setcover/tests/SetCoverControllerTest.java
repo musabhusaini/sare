@@ -67,4 +67,33 @@ public class SetCoverControllerTest {
 			assertFalse(doc.getContent().equals("This hotel was great; I loved the bathroom!"));
 		}
 	}
+	
+	@Test
+	public void testCreateWithWeightRatio() {
+		DocumentSetCover setCover;
+		
+		try {
+			setCover = testController.create(new SetCoverFactoryOptions()
+				.setStore(testCorpus)
+				.setTokenizingOptions(testTokenizingOptions)
+				.setRequiredWeightRatio(0.8));
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not create set cover");
+			return;
+		}
+		
+		assertNotNull(setCover);
+		assertEquals(5, Iterables.size(setCover.getDocuments()));
+		
+		int index=0;
+		SetCoverDocument firstDoc = Iterables.get(setCover.getDocuments(), index);
+		assertNotNull(firstDoc);
+		
+		double firstWeight = 94.0;
+		assertEquals(firstWeight, firstDoc.getWeight(), 0);
+		
+		for (SetCoverDocument doc : setCover.getDocuments()) {
+			assertFalse(doc.getContent().equals("This hotel was great; I loved the bathroom!"));
+		}
+	}
 }
