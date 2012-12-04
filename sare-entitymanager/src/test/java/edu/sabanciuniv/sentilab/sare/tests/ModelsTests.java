@@ -9,10 +9,10 @@ import edu.sabanciuniv.sentilab.sare.models.setcover.tests.*;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	OpinionDocumentTests.class,
-	OpinionCorpusTests.class,
-	SetCoverDocumentTests.class,
-	DocumentSetCoverTests.class
+	OpinionDocumentTest.class,
+	OpinionCorpusTest.class,
+	SetCoverDocumentTest.class,
+	DocumentSetCoverTest.class
 })
 public class ModelsTests {
 

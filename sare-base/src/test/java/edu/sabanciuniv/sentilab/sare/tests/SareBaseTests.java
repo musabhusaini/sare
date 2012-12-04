@@ -11,13 +11,13 @@ import edu.sabanciuniv.sentilab.sare.models.base.tests.*;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	PersistentObjectTests.class,
-	PersistentDocumentTests.class,
-	TokenizedDocumentTests.class,
-	GenericDocumentTests.class,
-	PersistentDocumentStoreTests.class,
-	OpinionDocumentFactoryTests.class,
-	OpinionCorpusFactoryTests.class
+	PersistentObjectTest.class,
+	PersistentDocumentTest.class,
+	TokenizedDocumentTest.class,
+	GenericDocumentTest.class,
+	PersistentDocumentStoreTest.class,
+	OpinionDocumentFactoryTest.class,
+	OpinionCorpusFactoryTest.class
 })
 public class SareBaseTests {
 }

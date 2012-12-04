@@ -4,13 +4,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import edu.sabanciuniv.sentilab.sare.controllers.setcover.tests.SetCoverControllerTests;
-import edu.sabanciuniv.sentilab.sare.models.base.document.tests.MergableDocumentTests;
+import edu.sabanciuniv.sentilab.sare.controllers.setcover.tests.SetCoverControllerTest;
+import edu.sabanciuniv.sentilab.sare.models.base.document.tests.MergableDocumentTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	MergableDocumentTests.class,
-	SetCoverControllerTests.class
+	MergableDocumentTest.class,
+	SetCoverControllerTest.class
 })
 public class SareLexTests {
 }
