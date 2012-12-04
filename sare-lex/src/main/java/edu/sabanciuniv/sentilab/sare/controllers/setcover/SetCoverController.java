@@ -30,11 +30,14 @@ public class SetCoverController
 		// create a set cover based on this store.
 		DocumentSetCover setCover = new DocumentSetCover(store);
 		
+		// create a dummy set cover to keep the refuse in.
+		DocumentSetCover dummySetCover = new DocumentSetCover(store);
+		
 		// for each store document.
 		for (PersistentDocument document : Iterables.filter(store.getDocuments(), PersistentDocument.class)) {
 			// create a copy of the current document as a set cover document.
 			SetCoverDocument workingDocument = (SetCoverDocument)new SetCoverDocument(document)
-				.setStore(setCover)
+				.setStore(dummySetCover)
 				.setTokenizingOptions(tokenizingOptions);
 			
 			// loop through all set cover documents.
@@ -66,9 +69,12 @@ public class SetCoverController
 			
 			// if the document was not completely consumed, we create another entry for it.
 			if (workingDocument.getTotalTokenWeight() > 0) {
-				setCover.addDocument(workingDocument);
+				workingDocument.setStore(setCover);
 			}
 		}
+		
+		// get rid of the dummy.
+		dummySetCover.setBaseStore(null);
 		
 		return setCover;
 	}

@@ -27,7 +27,7 @@ public abstract class GenericDocumentStore<T extends GenericDocument<T>>
 	@Override
 	public Iterable<T> getDocuments()  {
 		if (this.documents == null) {
-			return null;
+			return Lists.newArrayList();
 		}
 		
 		return Iterables.filter(this.documents,
@@ -41,6 +41,12 @@ public abstract class GenericDocumentStore<T extends GenericDocument<T>>
 	 */
 	public GenericDocumentStore<T> setDocuments(Iterable<T> documents) {
 		if (documents == null) {
+			if (this.documents != null) {
+				for (T document : Lists.newArrayList(this.getDocuments())) {
+					this.removeDocument(document);
+				}
+			}
+			
 			this.documents = null;
 		} else {
 			this.setDocuments(null);
