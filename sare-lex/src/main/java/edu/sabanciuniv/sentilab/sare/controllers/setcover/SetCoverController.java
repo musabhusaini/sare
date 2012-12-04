@@ -41,7 +41,10 @@ public class SetCoverController
 				.setTokenizingOptions(tokenizingOptions);
 			
 			// loop through all set cover documents.
-			for (SetCoverDocument setCoverDocument : setCover.getDocuments()) {
+			Iterable<SetCoverDocument> setCoverDocuments = setCover.getDocuments();
+			for (int scIndex=0; scIndex<Iterables.size(setCoverDocuments); scIndex++) {
+				SetCoverDocument setCoverDocument = Iterables.get(setCoverDocuments, scIndex);
+				
 				// create a working reference to the set cover document.
 				SetCoverDocument workingSCDocument = setCoverDocument;
 				
@@ -61,7 +64,7 @@ public class SetCoverController
 				// perform the merge.
 				workingSCDocument.merge(workingDocument);
 				
-				// if the entire document has been consumed, then we are done.
+				// if the entire document has been consumed, then we are done with it.
 				if (workingDocument.getTotalTokenWeight() == 0) {
 					break;
 				}
@@ -70,6 +73,8 @@ public class SetCoverController
 			// if the document was not completely consumed, we create another entry for it.
 			if (workingDocument.getTotalTokenWeight() > 0) {
 				workingDocument.setStore(setCover);
+			} else {
+				workingDocument.setStore(null);
 			}
 		}
 		

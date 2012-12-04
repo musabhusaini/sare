@@ -47,7 +47,12 @@ public class DocumentSetCover
 			return false;
 		}
 		
-		return Collections.replaceAll(this.documents, original, replacement);
+		boolean replaced = Collections.replaceAll(this.documents, original, replacement);
+		if (replaced) {
+			replacement.setStore(this);
+		}
+		
+		return replaced;
 	}
 	
 	@Override

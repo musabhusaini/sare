@@ -105,11 +105,16 @@ public abstract class GenericDocumentStore<T extends GenericDocument<T>>
 			document.setStore(null);
 		}
 		
+		this.removeReferer(document);
+		
 		if (this.documents == null) {
 			return false;
 		}
 		
-		this.removeReferer(document);
-		return this.documents.remove(document);
+		if (this.documents.contains(document)) {
+			return this.documents.remove(document);
+		} else {
+			return false;
+		}
 	}
 }
