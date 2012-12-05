@@ -1,5 +1,7 @@
 package edu.sabanciuniv.sentilab.sare.models.setcover;
 
+import org.apache.commons.lang3.Validate;
+
 import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
@@ -15,13 +17,13 @@ public class SetCoverFactoryOptions
 
 	private PersistentDocumentStore store;
 	private TokenizingOptions tokenizingOptions;
-	private double requiredWeightRatio;
+	private double weightCoverage;
 	private String title;
 	private String description;
 	private String language;
 	
 	public SetCoverFactoryOptions() {
-		this.requiredWeightRatio = 1.0;
+		this.weightCoverage = 1.0;
 	}
 	
 	/**
@@ -115,20 +117,22 @@ public class SetCoverFactoryOptions
 	}
 
 	/**
-	 * Gets the minimum ratio of total token weight to be retained in the final set cover.
-	 * @return the ratio of total token weight.
+	 * Gets the token weight coverage to be maintained in the final set cover.
+	 * @return the token weight coverage; must be in [0.0, 1.0].
 	 */
-	public double getRequiredWeightRatio() {
-		return this.requiredWeightRatio;
+	public double getWeightCoverage() {
+		return this.weightCoverage;
 	}
 
 	/**
-	 * Sets the minimum ratio of total token weight required for the set cover.
-	 * @param requiredWeightRatio the ratio of total token weight to set.
+	 * Sets the desired token weight coverage for the set cover.
+	 * @param weightCoverage the desired token weight coverage; must be in [0.0, 1.0].
 	 * @return the {@code this} object.
 	 */
-	public SetCoverFactoryOptions setRequiredWeightRatio(double requiredWeightRatio) {
-		this.requiredWeightRatio = requiredWeightRatio;
+	public SetCoverFactoryOptions setWeightCoverage(double weightCoverage) {
+		Validate.isTrue(weightCoverage >= 0.0 && weightCoverage <= 1.0, "weight coverage must be in the interval [0.0, 1.0].");
+		
+		this.weightCoverage = weightCoverage;
 		return this;
 	}
 }

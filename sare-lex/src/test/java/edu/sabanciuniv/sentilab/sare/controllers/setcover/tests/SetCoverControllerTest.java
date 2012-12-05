@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.EnumSet;
+import java.util.Map;
 
 import org.junit.*;
 
@@ -46,7 +47,6 @@ public class SetCoverControllerTest {
 	@Test
 	public void testCreateWithTokenizingOptions() {
 		DocumentSetCover setCover;
-		
 		try {
 			setCover = testController.create(new SetCoverFactoryOptions()
 				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
@@ -71,12 +71,11 @@ public class SetCoverControllerTest {
 	@Test
 	public void testCreateWithWeightRatio() {
 		DocumentSetCover setCover;
-		
 		try {
 			setCover = testController.create(new SetCoverFactoryOptions()
 				.setStore(testCorpus)
 				.setTokenizingOptions(testTokenizingOptions)
-				.setRequiredWeightRatio(0.8));
+				.setWeightCoverage(0.8));
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
@@ -95,5 +94,26 @@ public class SetCoverControllerTest {
 		for (SetCoverDocument doc : setCover.getDocuments()) {
 			assertFalse(doc.getContent().equals("This hotel was great; I loved the bathroom!"));
 		}
+	}
+	
+	@Test
+	public void testCalculateCoverageMatrix() {
+		DocumentSetCover setCover;
+		try {
+			setCover = testController.create(new SetCoverFactoryOptions()
+				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not create set cover");
+			return;
+		}
+		
+		assertNotNull(setCover);
+		
+		Map<Integer, Double> matrix = testController.calculateCoverageMatrix(setCover, 10);
+		
+		assertNotNull(matrix);
+		assertEquals(11, matrix.size());
+		assertNotNull(matrix.get(50));
+		assertEquals(0.2, matrix.get(50), 0.0005);
 	}
 }
