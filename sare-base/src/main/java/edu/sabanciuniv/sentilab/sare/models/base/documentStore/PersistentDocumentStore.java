@@ -64,18 +64,19 @@ public abstract class PersistentDocumentStore
 		return this;
 	}
 	
-	protected PersistentDocumentStore removeDerivedStore(PersistentDocumentStore derivedStore) {
+	protected boolean removeDerivedStore(PersistentDocumentStore derivedStore) {
 		Validate.notNull(derivedStore, CannedMessages.NULL_ARGUMENT, "derivedStore");
 		
+		boolean result = false;
 		if (this.hasDerivedStore(derivedStore)) {
-			this.derivedStores.remove(derivedStore);
+			result = this.derivedStores.remove(derivedStore);
 			
 			if (derivedStore.getBaseStore() == this) {
 				derivedStore.setBaseStore(null);
 			}
 		}
 		
-		return this;
+		return result;
 	}
 	
 	/**

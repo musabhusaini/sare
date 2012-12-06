@@ -39,8 +39,7 @@ public class PersistentDocumentStoreTest {
 		}
 
 		@Override
-		public PersistentDocumentStore removeDerivedStore(
-				PersistentDocumentStore derivedStore) {
+		public boolean removeDerivedStore(PersistentDocumentStore derivedStore) {
 			return super.removeDerivedStore(derivedStore);
 		}
 
