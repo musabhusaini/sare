@@ -120,4 +120,9 @@ public abstract class PersistentDocument
 	public boolean hasDerivedDocument(PersistentDocument derivedDocument) {
 		return Iterables.contains(this.getDerivedDocuments(), derivedDocument);
 	}
+	
+	@Override
+	public UUID getOwnerId() {
+		return this.store != null ? this.store.getOwnerId() : null;
+	}
 }

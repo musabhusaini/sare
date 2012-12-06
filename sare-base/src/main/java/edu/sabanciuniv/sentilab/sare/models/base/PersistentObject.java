@@ -114,4 +114,10 @@ public abstract class PersistentObject
 		
 		return this;
 	}
+	
+	/**
+	 * Gets the ID of the entity that owns this object.
+	 * @return the {@link UUID} objecting representing the identifier for the owner.
+	 */
+	public abstract UUID getOwnerId();
 }

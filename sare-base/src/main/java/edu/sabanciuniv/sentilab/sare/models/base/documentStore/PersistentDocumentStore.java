@@ -6,8 +6,7 @@ import javax.persistence.*;
 
 import org.apache.commons.lang3.Validate;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
@@ -34,6 +33,9 @@ public abstract class PersistentDocumentStore
 	
 	@OneToMany(mappedBy = "baseStore")
 	private Collection<PersistentDocumentStore> derivedStores;
+	
+	@Column(name="owner_id")
+	private String ownerId;
 	
 	@Column
 	protected String title;
@@ -174,5 +176,20 @@ public abstract class PersistentDocumentStore
 	public PersistentDocumentStore setDescription(String description) {
 		this.description = description;
 		return this;
+	}
+	
+	/**
+	 * Sets the ID of the entity that owns this store.
+	 * @param ownerId the {@link UUID} of the owner.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStore setOwnerId(UUID ownerId) {
+		this.ownerId = ownerId != null ? ownerId.toString() : null;
+		return this;
+	}
+	
+	@Override
+	public UUID getOwnerId() { 
+		return UUID.fromString(this.ownerId);
 	}
 }

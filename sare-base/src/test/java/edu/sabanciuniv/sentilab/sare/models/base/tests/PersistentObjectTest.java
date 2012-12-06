@@ -45,6 +45,12 @@ public class PersistentObjectTest {
 		public PersistentObject removeReferer(PersistentObject referer) {
 			return super.removeReferer(referer);
 		}
+
+		@Override
+		public UUID getOwnerId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	private PersistentObjectEx testObject1;
