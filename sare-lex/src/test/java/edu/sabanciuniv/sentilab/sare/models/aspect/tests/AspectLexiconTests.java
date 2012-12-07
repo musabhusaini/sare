@@ -2,15 +2,12 @@ package edu.sabanciuniv.sentilab.sare.models.aspect.tests;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression;
-import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
+import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 
 public class AspectLexiconTests {
 

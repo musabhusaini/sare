@@ -14,13 +14,10 @@ public class OpinionCorpusTest
 
 	private OpinionCorpus testCorpus;
 	private OpinionCorpus testBaseCorpus;
-	private OpinionCorpus testDerivedCorpus;
 	private OpinionDocument testDocument;
 	
 	@Before
 	public void setUp() throws Exception {
-		em = emFactory.createEntityManager();
-		
 		testCorpus = new OpinionCorpus();
 		testDocument = (OpinionDocument)new OpinionDocument()
 			.setStore(testCorpus);
@@ -28,24 +25,7 @@ public class OpinionCorpusTest
 
 	@After
 	public void tearDown() throws Exception {
-		if (em.getTransaction().isActive()) {
-			em.getTransaction().rollback();
-		}
-		
-		em.getTransaction().begin();
-		em.remove(testCorpus);
-		
-		if (testBaseCorpus != null && em.contains(testBaseCorpus)) {
-			em.remove(testBaseCorpus);
-		}
-		
-		if (testDerivedCorpus != null && em.contains(testDerivedCorpus)) {
-			em.remove(testDerivedCorpus);
-		}
-		
-		em.getTransaction().commit();
-		
-		em.close();
+		//
 	}
 
 	@Test
@@ -53,10 +33,11 @@ public class OpinionCorpusTest
 		testCorpus.setDocuments(Lists.newArrayList(testDocument));
 		
 		em.getTransaction().begin();
-		em.persist(testCorpus);
-		em.persist(testDocument);
+		persist(testCorpus);
+		persist(testDocument);
 		em.getTransaction().commit();
 		
+		em.clear();
 		OpinionCorpus actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
 		
 		assertNotNull(actualCorpus);
@@ -89,10 +70,11 @@ public class OpinionCorpusTest
 		assertTrue(testBaseCorpus.hasDerivedStore(testCorpus));
 		
 		em.getTransaction().begin();
-		em.persist(testBaseCorpus);
-		em.persist(testCorpus);
+		persist(testBaseCorpus);
+		persist(testCorpus);
 		em.getTransaction().commit();
 		
+		em.clear();
 		OpinionCorpus actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
 		
 		assertNotNull(actualCorpus);
@@ -105,9 +87,10 @@ public class OpinionCorpusTest
 		testCorpus.setTitle("test corpus");
 		
 		em.getTransaction().begin();
-		em.persist(testCorpus);
+		persist(testCorpus);
 		em.getTransaction().commit();
 		
+		em.clear();
 		OpinionCorpus actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
 		
 		assertNotNull(actualCorpus);
@@ -119,9 +102,10 @@ public class OpinionCorpusTest
 		testCorpus.setLanguage("en");
 		
 		em.getTransaction().begin();
-		em.persist(testCorpus);
+		persist(testCorpus);
 		em.getTransaction().commit();
 		
+		em.clear();
 		OpinionCorpus actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
 		
 		assertNotNull(actualCorpus);
@@ -133,9 +117,10 @@ public class OpinionCorpusTest
 		testCorpus.setDescription("this is a test corpus");
 		
 		em.getTransaction().begin();
-		em.persist(testCorpus);
+		persist(testCorpus);
 		em.getTransaction().commit();
 		
+		em.clear();
 		OpinionCorpus actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
 		
 		assertNotNull(actualCorpus);

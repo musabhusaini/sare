@@ -1,6 +1,6 @@
 package edu.sabanciuniv.sentilab.sare.models.base.document;
 
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.GenericDocumentStore;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 
 /**
  * The generic base class for documents.

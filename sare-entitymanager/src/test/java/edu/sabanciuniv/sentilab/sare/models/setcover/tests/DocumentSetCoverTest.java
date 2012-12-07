@@ -26,8 +26,6 @@ public class DocumentSetCoverTest extends ModelTestsBase {
 
 	@Before
 	public void setUp() throws Exception {
-		em = emFactory.createEntityManager();
-		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
 			.setTags(EnumSet.of(TagCaptureOptions.STARTS_WITH, TagCaptureOptions.IGNORE_CASE), "nn");
@@ -42,10 +40,10 @@ public class DocumentSetCoverTest extends ModelTestsBase {
 			.setTokenizingOptions(testTokenizingOptions);
 		testCorpus.addDocument(testDocument);
 		
-		em.getTransaction().begin();
-		em.persist(testCorpus);
-		em.persist(testDocument);
-		em.getTransaction().commit();
+//		em.getTransaction().begin();
+//		persist(testCorpus);
+//		persist(testDocument);
+//		em.getTransaction().commit();
 		
 		testSetCover = new DocumentSetCover(testCorpus);
 		testSetCoverDocument = (SetCoverDocument)new SetCoverDocument(testDocument)
@@ -57,23 +55,7 @@ public class DocumentSetCoverTest extends ModelTestsBase {
 
 	@After
 	public void tearDown() throws Exception {
-		if (em.getTransaction().isActive()) {
-			em.getTransaction().rollback();
-		}
-		
-		em.getTransaction().begin();
-		
-		if (em.contains(testCorpus)) {
-			em.remove(testCorpus);
-		}
-		
-		if (em.contains(testSetCover)) {
-			em.remove(testSetCover);
-		}
-		
-		em.getTransaction().commit();
-		
-		em.close();
+		//
 	}
 
 	@Test

@@ -30,11 +30,11 @@ public abstract class PersistentDocument
 	/**
 	 * The store this document is stored under. Derived classes are responsible for maintaining the relationship.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "store_id")
 	protected PersistentDocumentStore store;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "base_document_id")
 	private PersistentDocument baseDocument;
 	

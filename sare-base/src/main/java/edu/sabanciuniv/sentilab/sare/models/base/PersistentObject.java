@@ -22,7 +22,7 @@ public abstract class PersistentObject
 	 */
 	private static final long serialVersionUID = 1497804812766237628L;
 
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
 		name="jt_object_references",
 		joinColumns={@JoinColumn(name="referer_id", referencedColumnName="uuid")},

@@ -2,6 +2,8 @@ package edu.sabanciuniv.sentilab.sare.models.opinion.tests;
 
 import static org.junit.Assert.*;
 
+import java.util.UUID;
+
 import org.junit.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
@@ -18,8 +20,6 @@ public class OpinionDocumentTest
 	
 	@Before
 	public void setUp() throws Exception {
-		em = emFactory.createEntityManager();
-		
 		testContent = "this is a test";
 		testPolarity = 0.8796;
 		testCorpus = (OpinionCorpus)new OpinionCorpus()
@@ -27,28 +27,15 @@ public class OpinionDocumentTest
 			.setLanguage("en");
 		
 		em.getTransaction().begin();
-		em.persist(testCorpus);
+		persist(testCorpus);
 		em.getTransaction().commit();
 		
 		testDocument = (OpinionDocument)new OpinionDocument().setStore(testCorpus);
-		testCorpus.addDocument(testDocument);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		if (em.getTransaction().isActive()) {
-			em.getTransaction().rollback();
-		}
-		
-		em.getTransaction().begin();
-		
-		if (em.contains(testCorpus)) {
-			em.remove(testCorpus);
-		}
-		
-		em.getTransaction().commit();
-		
-		em.close();
+		//
 	}
 
 	@Test
@@ -56,9 +43,10 @@ public class OpinionDocumentTest
 		testDocument.setContent(testContent);
 		
 		em.getTransaction().begin();
-		em.persist(testDocument);
+		persist(testDocument);
 		em.getTransaction().commit();
 		
+		em.clear();
 		OpinionDocument actualDocument = em.find(OpinionDocument.class, testDocument.getId());
 		
 		assertNotNull(actualDocument);
@@ -70,9 +58,10 @@ public class OpinionDocumentTest
 		testDocument.setPolarity(testPolarity);
 		
 		em.getTransaction().begin();
-		em.persist(testDocument);
+		persist(testDocument);
 		em.getTransaction().commit();
 		
+		em.clear();
 		OpinionDocument actualDocument = em.find(OpinionDocument.class, testDocument.getId());
 		
 		assertNotNull(actualDocument);
@@ -82,13 +71,16 @@ public class OpinionDocumentTest
 	@Test
 	public void testStore() {
 		em.getTransaction().begin();
-		em.persist(testDocument);
+		persist(testDocument);
 		em.getTransaction().commit();
 		
+		UUID testStoreGuid = testDocument.getStore().getIdentifier();
+		
+		em.clear();
 		OpinionDocument actualDocument = em.find(OpinionDocument.class, testDocument.getId());
 		
 		assertNotNull(actualDocument);
-		assertEquals(testDocument.getStore(), actualDocument.getStore());
+		assertEquals(testStoreGuid, actualDocument.getStore().getIdentifier());
 	}
 
 	@Test
@@ -99,10 +91,11 @@ public class OpinionDocumentTest
 		testDocument.setBaseDocument(testBaseDocument);
 		
 		em.getTransaction().begin();
-		em.persist(testBaseDocument);
-		em.persist(testDocument);
+		persist(testBaseDocument);
+		persist(testDocument);
 		em.getTransaction().commit();
 		
+		em.clear();
 		OpinionDocument actualDocument = em.find(OpinionDocument.class, testDocument.getId());
 		
 		assertNotNull(actualDocument);

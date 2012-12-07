@@ -27,7 +27,7 @@ public abstract class PersistentDocumentStore
 	 */
 	private static final long serialVersionUID = 24809167105583854L;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "base_store_id")
 	private PersistentDocumentStore baseStore;
 	

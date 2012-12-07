@@ -25,8 +25,6 @@ public class SetCoverDocumentTest
 	
 	@Before
 	public void setUp() throws Exception {
-		em = emFactory.createEntityManager();
-		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
 			.setTags(EnumSet.of(TagCaptureOptions.STARTS_WITH, TagCaptureOptions.IGNORE_CASE), "nn");
@@ -41,8 +39,8 @@ public class SetCoverDocumentTest
 		testCorpus.addDocument(testDocument);
 		
 		em.getTransaction().begin();
-		em.persist(testCorpus);
-		em.persist(testDocument);
+		persist(testCorpus);
+		persist(testDocument);
 		em.getTransaction().commit();
 		
 		testSetCover = new DocumentSetCover(testCorpus);
@@ -53,23 +51,7 @@ public class SetCoverDocumentTest
 
 	@After
 	public void tearDown() throws Exception {
-		if (em.getTransaction().isActive()) {
-			em.getTransaction().rollback();
-		}
-		
-		em.getTransaction().begin();
-		
-		if (em.contains(testCorpus)) {
-			em.remove(testCorpus);
-		}
-		
-		if (em.contains(testSetCover)) {
-			em.remove(testSetCover);
-		}
-		
-		em.getTransaction().commit();
-		
-		em.close();
+		//
 	}
 
 	@Test
@@ -80,12 +62,13 @@ public class SetCoverDocumentTest
 	@Test
 	public void testWeight() {
 		em.getTransaction().begin();
-		em.persist(testSetCover);
-		em.persist(testSetCoverDocument);
+		persist(testSetCover);
+		persist(testSetCoverDocument);
 		em.getTransaction().commit();
 		
 		assertEquals(testSetCoverDocument.getTotalTokenWeight(), testSetCoverDocument.getWeight(), 0);
 		
+		em.clear();
 		SetCoverDocument actualSetCoverDocument = em.find(SetCoverDocument.class, testSetCoverDocument.getId());
 		
 		assertNotNull(actualSetCoverDocument);
@@ -104,17 +87,12 @@ public class SetCoverDocumentTest
 		assertFalse(testSetCoverDocument.getWeight() == testDocument.getTotalTokenWeight());
 		
 		em.getTransaction().begin();
-		em.persist(testSetCover);
-		em.persist(testSetCoverDocument);
+		persist(testSetCover);
+		persist(testSetCoverDocument);
 		em.getTransaction().commit();
 		
-		em.detach(testSetCoverDocument);
-		testSetCover.removeDocument(testSetCoverDocument);
-		
+		em.clear();
 		SetCoverDocument actualSetCoverDocument = em.find(SetCoverDocument.class, testSetCoverDocument.getId());
-		testSetCover.addDocument(actualSetCoverDocument);
-		em.refresh(testSetCover);
-		em.refresh(testCorpus);
 		
 		assertNotNull(actualSetCoverDocument);
 		
