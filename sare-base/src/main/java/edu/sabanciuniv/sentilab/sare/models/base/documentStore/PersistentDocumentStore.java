@@ -189,7 +189,7 @@ public abstract class PersistentDocumentStore
 	}
 	
 	@Override
-	public UUID getOwnerId() { 
-		return UUID.fromString(this.ownerId);
+	public String getOwnerId() { 
+		return this.ownerId;
 	}
 }

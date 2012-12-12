@@ -22,6 +22,14 @@ public abstract class PersistentObject
 	 */
 	private static final long serialVersionUID = 1497804812766237628L;
 
+	@Column
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date created;
+	
+	@Column
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date updated;
+	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
 		name="jt_object_references",
@@ -39,6 +47,16 @@ public abstract class PersistentObject
 	protected PersistentObject() {
 		this.referencedObjects = Lists.newArrayList();
 		this.refererObjects = Lists.newArrayList();
+	}
+	
+	@PrePersist
+	protected void preCreate() {
+		this.created = this.updated = new Date();
+	}
+	
+	@PreUpdate
+	protected void preUpdate() {
+		this.updated = new Date();
 	}
 	
 	/**
@@ -116,8 +134,24 @@ public abstract class PersistentObject
 	}
 	
 	/**
-	 * Gets the ID of the entity that owns this object.
-	 * @return the {@link UUID} objecting representing the identifier for the owner.
+	 * Gets the date this object was first created.
+	 * @return the {@link Date} object representing the date of creation.
 	 */
-	public abstract UUID getOwnerId();
+	public Date getFirstCreatedDate() {
+		return this.created;
+	}
+
+	/**
+	 * Gets the date this object was last updated.
+	 * @return the {@link Date} object representing the date of updation.
+	 */
+	public Date getLastUpdatedDate() {
+		return this.updated;
+	}
+
+	/**
+	 * Gets the ID of the entity that owns this object.
+	 * @return the {@link String} objecting representing the identifier for the owner.
+	 */
+	public abstract String getOwnerId();
 }

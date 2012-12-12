@@ -122,7 +122,7 @@ public abstract class PersistentDocument
 	}
 	
 	@Override
-	public UUID getOwnerId() {
+	public String getOwnerId() {
 		return this.store != null ? this.store.getOwnerId() : null;
 	}
 }

@@ -47,7 +47,7 @@ public class PersistentObjectTest {
 		}
 
 		@Override
-		public UUID getOwnerId() {
+		public String getOwnerId() {
 			// TODO Auto-generated method stub
 			return null;
 		}

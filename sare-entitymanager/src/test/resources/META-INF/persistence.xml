@@ -42,7 +42,7 @@
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
-		
+
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		
         <properties>

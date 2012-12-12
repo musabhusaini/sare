@@ -1,22 +1,18 @@
 package edu.sabanciuniv.sentilab.sare.models.base;
 
 import java.io.Serializable;
-import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
+import java.nio.*;
 import java.util.UUID;
 
 import javassist.bytecode.ByteArray;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.Validate;
 
-import edu.sabanciuniv.sentilab.core.models.IModel;
-import edu.sabanciuniv.sentilab.core.models.IUniquelyIdentifiable;
+import com.google.common.base.Predicate;
+
+import edu.sabanciuniv.sentilab.core.models.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**
@@ -32,6 +28,22 @@ public class UniquelyIdentifiableObject
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Gets a predicate for testing equality of {@link UniquelyIdentifiableObject} instances with a given identifier.
+	 * @param identifier the {@link UUID} to test against.
+	 * @return a {@link Predicate} that can be used for this test.
+	 */
+	public static Predicate<UniquelyIdentifiableObject> IdentifierEqualsPredicate(final UUID identifier) {
+		Validate.notNull(identifier, CannedMessages.NULL_ARGUMENT, "uuid");
+		
+		return new Predicate<UniquelyIdentifiableObject>() {
+			@Override
+			public boolean apply(UniquelyIdentifiableObject input) {
+				return identifier.equals(input.getIdentifier());
+			}
+		};
+	}
+	
 	/**
 	 * Create UUID from a byte array.
 	 * @param uuidBytes Byte representation of the UUID.
