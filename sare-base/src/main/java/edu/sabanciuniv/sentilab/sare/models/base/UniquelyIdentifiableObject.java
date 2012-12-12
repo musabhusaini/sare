@@ -3,6 +3,7 @@ package edu.sabanciuniv.sentilab.sare.models.base;
 import java.io.Serializable;
 import java.nio.*;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javassist.bytecode.ByteArray;
 
@@ -60,12 +61,40 @@ public class UniquelyIdentifiableObject
 		}
 	}
 	
+	/**
+	 * Checks to see if a given string is a valid UUID or not. Ignores the dashes.
+	 * @param uuidString the string containing the UUID.
+	 * @return {@code true} if the passed string is a valid UUID, {@code false} otherwise.
+	 */
+	public static boolean isUuid(String uuidString) {
+		if (uuidString == null) {
+			return false;
+		}
+		
+		uuidString = uuidString.replace("-", "").toLowerCase().trim();
+		Pattern uuidRegex = Pattern.compile("^[a-f0-9]{32}$");
+		if (!uuidRegex.matcher(uuidString).matches()) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Creates a {@link UUID} from any valid UUID string.
+	 * @param uuidString the string containing the UUID.
+	 * @return a {@link UUID} object if the provided string is a valid UUID.
+	 * @throws IllegalArgumentException when the provided string is not a valid UUID representation.
+	 */
 	public static UUID createUuid(String uuidString) {
 		Validate.notNull(uuidString, CannedMessages.EMPTY_ARGUMENT, "uuidString");
+		if (!isUuid(uuidString)) {
+			throw new IllegalArgumentException("Parameter 'uuidString' must be a valid UUID representation");
+		}
 		
-		UUID uuid = UUID.randomUUID();
-		
-		if (uuidString.length() == uuid.toString().length() - 4) {
+		// restructure the string.
+		uuidString = uuidString.replace("-", "").toLowerCase().trim();
+		{
 			StringBuilder sb = new StringBuilder();
 			sb.append(uuidString.substring(0, 8));
 			sb.append("-");
@@ -79,8 +108,7 @@ public class UniquelyIdentifiableObject
 			uuidString = sb.toString();
 		}
 		
-		uuid = UUID.fromString(uuidString);
-		return uuid;
+		return UUID.fromString(uuidString);
 	}
 	
 	/**

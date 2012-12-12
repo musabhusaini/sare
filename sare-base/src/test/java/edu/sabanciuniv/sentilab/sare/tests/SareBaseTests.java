@@ -11,6 +11,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.tests.*;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	UniquelyIdentifiableObjectTest.class,
 	PersistentObjectTest.class,
 	PersistentDocumentTest.class,
 	TokenizedDocumentTest.class,
