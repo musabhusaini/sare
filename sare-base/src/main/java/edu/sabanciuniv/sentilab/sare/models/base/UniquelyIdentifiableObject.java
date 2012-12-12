@@ -17,7 +17,7 @@ import edu.sabanciuniv.sentilab.core.models.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**
- * An object that can be persisted in the database.
+ * An object that has a unique identifier attached to it.
  * @author Mus'ab Husaini
  */
 @MappedSuperclass
