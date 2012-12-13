@@ -1,0 +1,24 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           			controllers.base.Application.index()
+
+# Authentication
+GET		/login									controllers.base.Application.login()
+POST	/api/login								controllers.base.Application.authenticate()
+GET		/logout									controllers.base.Application.logout()
+
+# Opinion corpus
+GET		/api/opinions/:id						controllers.OpinionCorpusController.list(id: String)
+DELETE	/api/opinions/:id						controllers.OpinionCorpusController.delete(id: String)
+POST	/api/opinions							controllers.OpinionCorpusController.add()
+
+# Opinion document
+GET		/api/opinions/:corpus/document/:id		controllers.OpinionDocumentController.get(corpus: String, id: String)
+DELETE	/api/opinions/:corpus/document/:id		controllers.OpinionDocumentController.delete(corpus: String, id: String)
+POST	/api/opinions/:corpus/document/:id		controllers.OpinionDocumentController.update(corpus: String, id: String)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               			controllers.Assets.at(path="/public", file)

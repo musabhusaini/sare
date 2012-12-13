@@ -1,0 +1,104 @@
+@(title: String = "Sare", scripts : Html = Html(""), styles : Html = Html(""), active : String = "Home",
+	leftbar: Html = Html(""), content: Html = Html(""), rightbar: Html = Html(""))
+
+@import scala.collection.mutable._
+
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<title>@title</title>
+		<link rel="stylesheet" media="screen" href="@routes.Assets.at("plugins/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.min.css")">
+		<link rel="stylesheet" media="screen" href="@routes.Assets.at("plugins/bootstrap/css/bootstrap.min.css")">
+		<link rel="stylesheet" media="screen" href="@routes.Assets.at("plugins/bootstrap/css/bootstrap-responsive.min.css")">
+		<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+		<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+		@styles
+		
+		<script src="@routes.Assets.at("javascripts/jquery-1.8.3.min.js")" type="text/javascript"></script>
+		<script src="@routes.Assets.at("plugins/jquery-ui/js/jquery-ui-1.9.2.min.js")" type="text/javascript"></script>
+		<script src="@routes.Assets.at("plugins/bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
+		@scripts
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar">
+						</span>
+						<span class="icon-bar">
+						</span>
+						<span class="icon-bar">
+						</span>
+					</a>
+					<a class="brand" href="#">Sare</a>
+					<div class="nav-collapse collapse">
+						<p class="navbar-text pull-right">
+							Logged in as <a href="#" class="navbar-link">Anonymous</a>
+						</p>
+						<ul class="nav">
+							@for((title, url) <- LinkedHashMap("Home" -> "#", "About" -> "#", "Contact" -> "#")) {
+								<li @if(title.equalsIgnoreCase(active)) { class="active" }>
+									<a href="@url">@title</a>
+								<li>
+							}
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span1 leftbar">
+					@leftbar
+				</div>
+				
+				<div class="span10 centerbody">
+					<div class="container-fluid">
+						<div class="row-fluid page-header">
+							<h1>Sare</h1>
+							<p class="lead">
+								A Sentiment Analysis Research Environment
+							</p>
+						</div>
+						
+						<div class="row-fluid content">
+							@content
+						</div>
+					</div>
+				</div>
+				
+				<div class="span1 rightbar">
+					@rightbar
+				</div>
+			</div>
+			
+			<footer class="row-fluid">
+				<p>
+					Copyright &copy; <a href="http://www.sabanciuniv.edu" target="_blank">Sabanc&#305; University</a> 2012.
+					All rights reserved.
+				</p>
+				<p>
+					A <a href="http://www.sentilab.sabanciuniv.edu" target="_blank">Sabanc&#305; Sentilab</a> project.
+				</p>
+				<p>
+					Source code is available under <a href="http://www.gnu.org/licenses/gpl-3.0.html.en" target="_blank">GPL v3.0</a>
+					from <a href="https://bitbucket.org/musabhusaini/sare" target="_blank">Bitbucket</a>.
+				</p>
+				<ul class="footer-links">
+					<li>
+						<a href="#">About</a>
+					</li>
+					<li>
+						<a href="#">Contact</a>
+					</li>
+				</ul>
+			</footer>
+		</div>
+	</body>
+</html>
