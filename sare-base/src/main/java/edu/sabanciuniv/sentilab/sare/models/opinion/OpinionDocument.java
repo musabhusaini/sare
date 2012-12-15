@@ -15,13 +15,13 @@ public class OpinionDocument
 	private static final long serialVersionUID = -2242899151250566895L;
 
 	@Column
-	private double polarity;
+	private Double polarity;
 	
 	/**
 	 * Gets the opinion polarity of this document.
 	 * @return the opinion polarity of this document.
 	 */
-	public double getPolarity() {
+	public Double getPolarity() {
 		return this.polarity;
 	}
 
@@ -30,7 +30,7 @@ public class OpinionDocument
 	 * @param polarity the opinion polarity to set.
 	 * @return the {@code this} object.
 	 */
-	public OpinionDocument setPolarity(double polarity) {
+	public OpinionDocument setPolarity(Double polarity) {
 		this.polarity = polarity;
 		return this;
 	}

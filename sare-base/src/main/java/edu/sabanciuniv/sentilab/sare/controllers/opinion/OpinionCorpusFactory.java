@@ -157,6 +157,7 @@ public class OpinionCorpusFactory
 			this.addZipPacket(corpus, input, options);
 			break;
 		case "text":
+		case "txt":
 		case "csv":
 		default:
 			this.addTextPacket(corpus, input, options.getTextDelimiter(), options);

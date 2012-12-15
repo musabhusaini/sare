@@ -19,7 +19,7 @@ public class OpinionDocumentFactory
 	extends DocumentController
 	implements IFactory<OpinionDocument, OpinionDocumentFactoryOptions> {
 
-	private OpinionDocument create(OpinionCorpus corpus, String content, double polarity) {
+	private OpinionDocument create(OpinionCorpus corpus, String content, Double polarity) {
 		return (OpinionDocument)new OpinionDocument()
 			.setPolarity(polarity)
 			.setContent(content)

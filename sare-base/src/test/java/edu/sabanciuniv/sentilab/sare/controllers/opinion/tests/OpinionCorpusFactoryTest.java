@@ -28,6 +28,9 @@ public class OpinionCorpusFactoryTest {
 	private String testContent;
 	private OpinionCorpus expectedContentCorpus;
 	
+	private String testNoPolarityContent;
+	private OpinionCorpus expectedNoPolarityCorpus;
+	
 	@Before
 	public void setUp() throws Exception {
 		testFactory = new OpinionCorpusFactory();
@@ -51,12 +54,16 @@ public class OpinionCorpusFactoryTest {
 		expectedTextCorpus = (OpinionCorpus)new OpinionCorpus()
 			.setDocuments(Lists.newArrayList(new OpinionDocument(), new OpinionDocument()));
 		
-		String content = "test";
+		String content = "this is a great test document";
 		double polarity = 0.9;
 		
 		testContent = String.format("%s|%f", content, polarity);
 		expectedContentCorpus = (OpinionCorpus)new OpinionCorpus()
 			.addDocument((OpinionDocument)new OpinionDocument().setPolarity(polarity).setContent(content));
+		
+		testNoPolarityContent = content;
+		expectedNoPolarityCorpus = (OpinionCorpus)new OpinionCorpus()
+			.addDocument((OpinionDocument)new OpinionDocument().setContent(content));
 	}
 
 	@After
@@ -133,6 +140,29 @@ public class OpinionCorpusFactoryTest {
 		
 		assertEquals(expectedDocument.getContent(), actualDocument.getContent());
 		assertEquals(expectedDocument.getPolarity(), actualDocument.getPolarity(), 0.005);
+	}
+	
+	@Test
+	public void testCreateFromNoPolarityContent() {
+		OpinionCorpus actualCorpus = null;
+		try {
+			actualCorpus = testFactory.create(new OpinionCorpusFactoryOptions()
+				.setContent(testNoPolarityContent)
+				.setFormat("txt")
+				.setTextDelimiter("|"));
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not create");
+		}
+		
+		assertNotNull(actualCorpus);
+		assertEquals(Iterables.size(expectedNoPolarityCorpus.getDocuments()), Iterables.size(actualCorpus.getDocuments()));
+		
+		OpinionDocument expectedDocument = Iterables.getFirst(expectedNoPolarityCorpus.getDocuments(), null);
+		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.getDocuments(), null);
+		assertNotNull(actualDocument);
+		
+		assertEquals(expectedDocument.getContent(), actualDocument.getContent());
+		assertNull(actualDocument.getPolarity());
 	}
 	
 	@Test
