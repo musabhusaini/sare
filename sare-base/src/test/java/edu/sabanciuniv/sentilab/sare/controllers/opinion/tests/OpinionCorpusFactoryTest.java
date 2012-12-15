@@ -25,6 +25,9 @@ public class OpinionCorpusFactoryTest {
 	private String testTextCorpusFilename;
 	private OpinionCorpus expectedTextCorpus;
 	
+	private String testContent;
+	private OpinionCorpus expectedContentCorpus;
+	
 	@Before
 	public void setUp() throws Exception {
 		testFactory = new OpinionCorpusFactory();
@@ -47,6 +50,13 @@ public class OpinionCorpusFactoryTest {
 		testTextCorpusFilename = "/test-corpus.txt";
 		expectedTextCorpus = (OpinionCorpus)new OpinionCorpus()
 			.setDocuments(Lists.newArrayList(new OpinionDocument(), new OpinionDocument()));
+		
+		String content = "test";
+		double polarity = 0.9;
+		
+		testContent = String.format("%s|%f", content, polarity);
+		expectedContentCorpus = (OpinionCorpus)new OpinionCorpus()
+			.addDocument((OpinionDocument)new OpinionDocument().setPolarity(polarity).setContent(content));
 	}
 
 	@After
@@ -100,5 +110,41 @@ public class OpinionCorpusFactoryTest {
 		
 		assertNotNull(actualCorpus);
 		assertEquals(Iterables.size(expectedTextCorpus.getDocuments()), Iterables.size(actualCorpus.getDocuments()));
+	}
+	
+	@Test
+	public void testCreateFromContent() {
+		OpinionCorpus actualCorpus = null;
+		try {
+			actualCorpus = testFactory.create(new OpinionCorpusFactoryOptions()
+				.setContent(testContent)
+				.setFormat("txt")
+				.setTextDelimiter("|"));
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not create");
+		}
+		
+		assertNotNull(actualCorpus);
+		assertEquals(Iterables.size(expectedContentCorpus.getDocuments()), Iterables.size(actualCorpus.getDocuments()));
+		
+		OpinionDocument expectedDocument = Iterables.getFirst(expectedContentCorpus.getDocuments(), null);
+		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.getDocuments(), null);
+		assertNotNull(actualDocument);
+		
+		assertEquals(expectedDocument.getContent(), actualDocument.getContent());
+		assertEquals(expectedDocument.getPolarity(), actualDocument.getPolarity(), 0.005);
+	}
+	
+	@Test
+	public void testCreateFromNothingFails() {
+		boolean thrown = false;
+		
+		try {
+			testFactory.create(new OpinionCorpusFactoryOptions());
+		} catch (IllegalFactoryOptionsException e) {
+			thrown = true;
+		}
+		
+		assertTrue(thrown);
 	}
 }

@@ -19,6 +19,7 @@ public class OpinionCorpusFactoryOptions implements
 	private String format;
 	private byte[] bytes;
 	private InputStream inputStream;
+	private String content;
 	private String textDelimiter;
 	
 	/**
@@ -147,6 +148,24 @@ public class OpinionCorpusFactoryOptions implements
 		return this;
 	}
 
+	/**
+	 * Gets the content where the corpus can be created from.
+	 * @return the content of the corpus.
+	 */
+	public String getContent() {
+		return this.content;
+	}
+	
+	/*
+	 * Sets the content of the corpus to be created.
+	 * @param content of the corpus to set.
+	 * @return the {@code this} object.
+	 */
+	public OpinionCorpusFactoryOptions setContent(String content) {
+		this.content = content;
+		return this;
+	}
+	
 	/**
 	 * Gets the delimiter used when reading text files.
 	 * @return the string representing the delimiter, if any.

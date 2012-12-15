@@ -186,7 +186,7 @@ public class OpinionCorpusFactory
 		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
 		
 		InputStream stream = FileUtils.openInputStream(input);
-		corpus = this.createSpecific(corpus, stream, format, options);
+		this.createSpecific(corpus, stream, format, options);
 		stream.close();
 		return corpus;
 	}
@@ -195,6 +195,7 @@ public class OpinionCorpusFactory
 	public OpinionCorpus create(OpinionCorpusFactoryOptions options)
 		throws IllegalFactoryOptionsException {
 		
+		boolean created = true;
 		OpinionCorpus corpus = new OpinionCorpus();
 		
 		try {
@@ -204,17 +205,24 @@ public class OpinionCorpusFactory
 				(options.getFile() != null ? FilenameUtils.getExtension(options.getFile().getPath()) : null);
 			
 			try {
-				if (options.getBytes() != null) {
+				if (options.getContent() != null) {
 					Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
 					
-					corpus = this.createSpecific(corpus, options.getBytes(), format, options);
+					this.createSpecific(corpus, IOUtils.toInputStream(options.getContent()), options.getFormat(), options);
+				} else if (options.getBytes() != null) {
+					Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
+					
+					this.createSpecific(corpus, options.getBytes(), format, options);
 				} else if (options.getInputStream() != null) {
 					Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
 					
 					this.createSpecific(corpus, options.getInputStream(), format, options);
 				} else if (options.getFile() != null) {
 					this.createSpecific(corpus, options.getFile(), format, options);
+				} else {
+					created = false;
 				}
+				
 			} catch (IOException e) {
 				throw new IllegalFactoryOptionsException("there was an error reading the input", e);
 			}
@@ -222,7 +230,7 @@ public class OpinionCorpusFactory
 			throw new IllegalFactoryOptionsException(e);
 		}
 		
-		if (corpus == null) {
+		if (created == false) {
 			throw new IllegalFactoryOptionsException("options did not have enough or correct information to create this object");
 		}
 		
