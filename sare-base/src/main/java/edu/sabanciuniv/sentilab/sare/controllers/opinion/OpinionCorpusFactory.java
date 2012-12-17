@@ -146,6 +146,7 @@ public class OpinionCorpusFactory
 		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
 		
 		switch(format) {
+		case "text/xml":
 		case "xml":
 			try {
 				this.addXmlPacket(corpus, input, options);
@@ -153,14 +154,19 @@ public class OpinionCorpusFactory
 				throw new IOException("error reading input", e);
 			}
 			break;
+		case "application/zip":
 		case "zip":
 			this.addZipPacket(corpus, input, options);
 			break;
+		case "text/plain":
 		case "text":
 		case "txt":
+		case "text/csv":
 		case "csv":
-		default:
 			this.addTextPacket(corpus, input, options.getTextDelimiter(), options);
+			break;
+		default:
+			throw new IllegalFactoryOptionsException("unsupported format " + format);
 		}
 		
 		return corpus;
