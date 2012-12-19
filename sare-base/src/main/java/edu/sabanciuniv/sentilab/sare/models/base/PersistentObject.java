@@ -4,7 +4,10 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.collect.Lists;
+import com.google.gson.*;
 
 /**
  * The base class for objects that are to be persisted.
@@ -41,6 +44,17 @@ public abstract class PersistentObject
 	@ManyToMany(mappedBy="referencedObjects", cascade=CascadeType.ALL)
 	protected List<PersistentObject> refererObjects;
 	
+	@Basic(fetch=FetchType.LAZY)
+	@Column(name="other_data", columnDefinition="TEXT")
+	protected String otherData;
+	
+	@Transient
+	protected JsonObject otherDataJson;
+	
+	protected void setOtherData() {
+		this.otherData = this.otherDataJson != null ? this.otherDataJson.toString() : null;
+	}
+	
 	/**
 	 * Creates an empty instance of {@link PersistentObject}. 
 	 */
@@ -52,11 +66,13 @@ public abstract class PersistentObject
 	@PrePersist
 	protected void preCreate() {
 		this.created = this.updated = new Date();
+		this.setOtherData();
 	}
 	
 	@PreUpdate
 	protected void preUpdate() {
 		this.updated = new Date();
+		this.setOtherData();
 	}
 	
 	/**
@@ -149,6 +165,49 @@ public abstract class PersistentObject
 		return this.updated;
 	}
 
+	/**
+	 * Gets any other data attached to this object.
+	 * @return the {@link JsonObject} representing other data.
+	 */
+	public JsonObject getOtherData() {
+		if (this.otherDataJson == null) {
+			this.setOtherData(this.otherData);
+		}
+		
+		return this.otherDataJson;
+	}
+	
+	/**
+	 * Sets any other data attached to this object.
+	 * @param otherData the {@link JsonObject} representing any other data.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObject setOtherData(JsonObject otherData) {
+		this.otherDataJson = otherData;
+		return this;
+	}
+	
+	/**
+	 * Sets any other data attached to this object.
+	 * @param otherData the {@link String} object containing other data (should be a valid stringified JSON object).
+	 * @return the {@code this} object.
+	 * @throws IllegalArgumentException when the passed string cannot be parsed to a valid JSON object.
+	 */
+	public PersistentObject setOtherData(String otherData) {
+		if (otherData != null) { 
+			JsonElement tmpJsonData = new JsonParser().parse(StringUtils.defaultString(otherData));
+			if (tmpJsonData.isJsonObject()) {
+				this.otherDataJson = tmpJsonData.getAsJsonObject();
+			} else {
+				throw new IllegalArgumentException("the argument 'otherData' must be a valid stringified JSON object");
+			}
+		} else {
+			this.otherDataJson = null;
+		}
+		
+		return this;
+	}
+	
 	/**
 	 * Gets the ID of the entity that owns this object.
 	 * @return the {@link String} objecting representing the identifier for the owner.

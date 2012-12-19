@@ -2,15 +2,15 @@ package edu.sabanciuniv.sentilab.sare.models.opinion;
 
 import java.io.*;
 
-import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStoreFactoryOptions;
 
 /**
  * The default set of options that can be used to construct an {@link OpinionCorpus} object.
  * The most specific combination of properties will be used.
  * @author Mus'ab Husaini
  */
-public class OpinionCorpusFactoryOptions implements
-		IFactoryOptions<OpinionCorpus> {
+public class OpinionCorpusFactoryOptions extends
+	PersistentDocumentStoreFactoryOptions<OpinionCorpus> {
 
 	private String title;
 	private String description;

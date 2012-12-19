@@ -2,9 +2,8 @@ package edu.sabanciuniv.sentilab.sare.models.setcover;
 
 import org.apache.commons.lang3.Validate;
 
-import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 
 /**
  * The default set of options that can be used to construct an {@link DocumentSetCover} object.
@@ -13,7 +12,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumen
  *
  */
 public class SetCoverFactoryOptions
-	implements IFactoryOptions<DocumentSetCover> {
+	extends PersistentDocumentStoreFactoryOptions<DocumentSetCover> {
 
 	private PersistentDocumentStore store;
 	private TokenizingOptions tokenizingOptions;

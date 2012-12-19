@@ -180,11 +180,11 @@ public abstract class PersistentDocumentStore
 	
 	/**
 	 * Sets the ID of the entity that owns this store.
-	 * @param ownerId the {@link UUID} of the owner.
+	 * @param ownerId the ID of the owner.
 	 * @return the {@code this} object.
 	 */
-	public PersistentDocumentStore setOwnerId(UUID ownerId) {
-		this.ownerId = ownerId != null ? ownerId.toString() : null;
+	public PersistentDocumentStore setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
 		return this;
 	}
 	

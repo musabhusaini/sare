@@ -1,23 +1,15 @@
 package edu.sabanciuniv.sentilab.sare.controllers.setcover;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.*;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.*;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.core.controllers.ProgressObservable;
-import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
-import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.DocumentStoreController;
+import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
@@ -28,8 +20,8 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * @author Mus'ab Husaini
  */
 public class SetCoverController
-	extends DocumentStoreController
-	implements IFactory<DocumentSetCover, SetCoverFactoryOptions>, ProgressObservable {
+	extends PersistentDocumentStoreFactory<DocumentSetCover, SetCoverFactoryOptions>
+	implements IDocumentStoreController, ProgressObservable {
 
 	private double progress;
 	
@@ -133,7 +125,7 @@ public class SetCoverController
 	}
 	
 	@Override
-	public DocumentSetCover create(SetCoverFactoryOptions options)
+	protected DocumentSetCover createPrivate(SetCoverFactoryOptions options)
 		throws IllegalFactoryOptionsException {
 		
 		try {

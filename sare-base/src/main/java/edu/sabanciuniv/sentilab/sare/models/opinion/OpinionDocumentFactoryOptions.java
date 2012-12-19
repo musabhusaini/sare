@@ -2,7 +2,7 @@ package edu.sabanciuniv.sentilab.sare.models.opinion;
 
 import org.w3c.dom.Node;
 
-import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.models.base.PersistentObjectFactoryOptions;
 
 /**
  * The default set of options that can be used to construct an {@link OpinionDocument} object.
@@ -10,7 +10,7 @@ import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
  * @author Mus'ab Husaini
  */
 public class OpinionDocumentFactoryOptions
-	implements IFactoryOptions<OpinionDocument> {
+	extends PersistentObjectFactoryOptions<OpinionDocument> {
 
 	private OpinionCorpus corpus;
 	private Node xmlNode;

@@ -5,9 +5,9 @@ import javax.xml.xpath.*;
 import org.apache.commons.lang3.Validate;
 import org.w3c.dom.Node;
 
-import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
-import edu.sabanciuniv.sentilab.sare.controllers.base.document.DocumentController;
+import edu.sabanciuniv.sentilab.sare.controllers.base.PersistentObjectFactory;
+import edu.sabanciuniv.sentilab.sare.controllers.base.document.IDocumentController;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
@@ -16,8 +16,8 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * @author Mus'ab Husaini
  */
 public class OpinionDocumentFactory
-	extends DocumentController
-	implements IFactory<OpinionDocument, OpinionDocumentFactoryOptions> {
+	extends PersistentObjectFactory<OpinionDocument, OpinionDocumentFactoryOptions>
+	implements IDocumentController {
 
 	private OpinionDocument create(OpinionCorpus corpus, String content, Double polarity) {
 		return (OpinionDocument)new OpinionDocument()
@@ -43,16 +43,11 @@ public class OpinionDocumentFactory
 	}
 
 	@Override
-	public OpinionDocument create(OpinionDocumentFactoryOptions options)
+	protected OpinionDocument createPrivate(OpinionDocumentFactoryOptions options)
 		throws IllegalFactoryOptionsException {
 		
-		try {
-			Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
-			//Validate.notNull(options.getCorpus(), CannedMessages.NULL_ARGUMENT, "options.corpus");
-		} catch (NullPointerException e) {
-			throw new IllegalFactoryOptionsException(e);
-		}
-			
+		Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
+		
 		if (options.getContent() != null) {
 			return this.create(options.getCorpus(), options.getContent(), options.getPolarity());
 		}

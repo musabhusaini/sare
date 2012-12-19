@@ -8,6 +8,7 @@ import java.util.*;
 import org.junit.*;
 
 import com.google.common.collect.Iterables;
+import com.google.gson.JsonObject;
 
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument;
@@ -95,16 +96,63 @@ public class PersistentObjectTest extends ModelTestsBase {
 	private OpinionDocument testObject1;
 	private PersistentObjectWrapper wrappedTestObject1;
 	private OpinionDocument testObject2;
+	private JsonObject testOtherData;
 	
 	@Before
 	public void setUp() throws Exception {
 		testObject1 = new OpinionDocument();
 		wrappedTestObject1 = new PersistentObjectWrapper(testObject1);
 		testObject2 = new OpinionDocument();
+		
+		testOtherData = new JsonObject();
+		testOtherData.addProperty("a", "x");
+		testOtherData.addProperty("b", "y");
 	}
 
 	@After
 	public void tearDown() throws Exception {
+	}
+	
+	@Test
+	public void testOtherDataGetsSetOnCreate() {
+		testObject1.setOtherData(testOtherData);
+		
+		em.getTransaction().begin();
+		persist(testObject1);
+		em.getTransaction().commit();
+		em.clear();
+		
+		OpinionDocument actualObject1 = em.find(OpinionDocument.class, testObject1.getId());
+		assertNotNull(actualObject1);
+		
+		JsonObject actualOtherData = actualObject1.getOtherData();
+		assertNotNull(actualOtherData);
+		assertEquals(testOtherData, actualOtherData);
+	}
+	
+	@Test
+	public void testOtherDataGetsSetOnUpdate() {
+		em.getTransaction().begin();
+		persist(testObject1);
+		em.getTransaction().commit();
+		em.clear();
+		
+		OpinionDocument actualObject1 = em.find(OpinionDocument.class, testObject1.getId());
+		assertNotNull(actualObject1);
+		
+		actualObject1.setOtherData(testOtherData);
+		
+		em.getTransaction().begin();
+		em.merge(testObject1);
+		em.getTransaction().commit();
+		em.clear();
+		
+		actualObject1 = em.find(OpinionDocument.class, testObject1.getId());
+		assertNotNull(actualObject1);
+		
+		JsonObject actualOtherData = actualObject1.getOtherData();
+		assertNotNull(actualOtherData);
+		assertEquals(testOtherData, actualOtherData);
 	}
 
 	@Test

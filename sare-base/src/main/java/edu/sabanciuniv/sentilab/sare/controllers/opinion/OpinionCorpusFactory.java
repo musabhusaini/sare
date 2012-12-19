@@ -15,9 +15,8 @@ import org.xml.sax.SAXException;
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
-import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.DocumentStoreController;
+import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
@@ -25,9 +24,9 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * A factory for creating {@link OpinionCorpus} objects.
  * @author Mus'ab Husaini
  */
-public class OpinionCorpusFactory
-	extends DocumentStoreController
-	implements IFactory<OpinionCorpus, OpinionCorpusFactoryOptions> {
+public final class OpinionCorpusFactory
+	extends PersistentDocumentStoreFactory<OpinionCorpus, OpinionCorpusFactoryOptions>
+	implements IDocumentStoreController {
 
 	private OpinionCorpusFactory addXmlPacket(OpinionCorpus corpus, InputStream input, OpinionCorpusFactoryOptions options)
 		throws ParserConfigurationException, SAXException, IOException, XPathException {
@@ -199,42 +198,35 @@ public class OpinionCorpusFactory
 	}
 	
 	@Override
-	public OpinionCorpus create(OpinionCorpusFactoryOptions options)
+	protected OpinionCorpus createPrivate(OpinionCorpusFactoryOptions options)
 		throws IllegalFactoryOptionsException {
 		
 		boolean created = true;
 		OpinionCorpus corpus = new OpinionCorpus();
 		
+		String format = StringUtils.isNotEmpty(options.getFormat()) ? options.getFormat() :
+			(options.getFile() != null ? FilenameUtils.getExtension(options.getFile().getPath()) : null);
+		
 		try {
-			Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
-			
-			String format = StringUtils.isNotEmpty(options.getFormat()) ? options.getFormat() :
-				(options.getFile() != null ? FilenameUtils.getExtension(options.getFile().getPath()) : null);
-			
-			try {
-				if (options.getContent() != null) {
-					Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
-					
-					this.createSpecific(corpus, IOUtils.toInputStream(options.getContent()), options.getFormat(), options);
-				} else if (options.getBytes() != null) {
-					Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
-					
-					this.createSpecific(corpus, options.getBytes(), format, options);
-				} else if (options.getInputStream() != null) {
-					Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
-					
-					this.createSpecific(corpus, options.getInputStream(), format, options);
-				} else if (options.getFile() != null) {
-					this.createSpecific(corpus, options.getFile(), format, options);
-				} else {
-					created = false;
-				}
+			if (options.getContent() != null) {
+				Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
 				
-			} catch (IOException e) {
-				throw new IllegalFactoryOptionsException("there was an error reading the input", e);
+				this.createSpecific(corpus, IOUtils.toInputStream(options.getContent()), options.getFormat(), options);
+			} else if (options.getBytes() != null) {
+				Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
+				
+				this.createSpecific(corpus, options.getBytes(), format, options);
+			} else if (options.getInputStream() != null) {
+				Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
+				
+				this.createSpecific(corpus, options.getInputStream(), format, options);
+			} else if (options.getFile() != null) {
+				this.createSpecific(corpus, options.getFile(), format, options);
+			} else {
+				created = false;
 			}
-		} catch (NullPointerException e) {
-			throw new IllegalFactoryOptionsException(e);
+		} catch (IOException e) {
+			throw new IllegalFactoryOptionsException("there was an error reading the input", e);
 		}
 		
 		if (created == false) {

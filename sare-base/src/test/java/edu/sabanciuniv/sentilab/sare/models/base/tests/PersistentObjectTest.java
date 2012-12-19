@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.junit.*;
 
+import com.google.gson.JsonObject;
+
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 
 public class PersistentObjectTest {
@@ -55,17 +57,53 @@ public class PersistentObjectTest {
 	
 	private PersistentObjectEx testObject1;
 	private PersistentObjectEx testObject2;
+	private JsonObject testOtherData;
 	
 	@Before
 	public void setUp() throws Exception {
 		testObject1 = new PersistentObjectEx();
 		testObject2 = new PersistentObjectEx();
+		
+		testOtherData = new JsonObject();
+		testOtherData.addProperty("a", "x");
+		testOtherData.addProperty("b", "y");
 	}
 
 	@After
 	public void tearDown() throws Exception {
 	}
 
+	@Test
+	public void testSetOtherDataValidString() {
+		testObject1.setOtherData(testOtherData.toString());
+		
+		JsonObject actualOtherData = testObject1.getOtherData();
+		assertNotNull(actualOtherData);
+		assertEquals(testOtherData, actualOtherData);
+	}
+	
+	@Test
+	public void testSetOtherDataInvalidString() {
+		boolean thrown = false;
+		
+		try {
+			testObject1.setOtherData("xyz");
+		} catch (Throwable e) {
+			thrown = true;
+		}
+		
+		assertTrue(thrown);
+	}
+	
+	@Test
+	public void testSetOtherDataJson() {
+		testObject1.setOtherData(testOtherData);
+		
+		JsonObject actualOtherData = testObject1.getOtherData();
+		assertNotNull(actualOtherData);
+		assertEquals(testOtherData, actualOtherData);
+	}
+	
 	@Test
 	public void testAddReference() {
 		testObject1.addReference(testObject2);
