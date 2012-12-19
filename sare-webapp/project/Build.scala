@@ -5,11 +5,11 @@ import PlayProject._
 object ApplicationBuild extends Build {
 
     val appName         = "sare-webapp"
-    val appVersion      = "1.0-SNAPSHOT"
+    val appVersion      = "2.0.0-SNAPSHOT"
 
     val appDependencies = Seq(
       // Add your project dependencies here,
-      "edu.sabanciuniv.sentilab" % "sare-entitymanager" % "0.0.1-SNAPSHOT"
+      "edu.sabanciuniv.sentilab" % "sare-entitymanager" % "2.0.0-SNAPSHOT"
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
