@@ -1,15 +1,12 @@
 package edu.sabanciuniv.sentilab.utils.text.nlp.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface LinguisticProcessorInfo {
-	String language() default "";
-	String name() default "";
-	boolean canTag() default true;
-	boolean canParse() default false;
+	public String language() default "";
+	public String name() default "";
+	public boolean canTag() default true;
+	public boolean canParse() default false;
 }
