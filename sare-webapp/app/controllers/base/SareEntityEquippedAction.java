@@ -8,7 +8,7 @@ import models.ResourceFetchError;
 
 import org.apache.commons.lang3.*;
 
-import edu.sabanciuniv.sentilab.sare.entitymanager.SareEntityManagerFactory;
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.SareEntityManagerFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 
 import play.*;

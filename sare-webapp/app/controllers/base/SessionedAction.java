@@ -57,7 +57,7 @@ public class SessionedAction extends Action.Simple {
 	public Result call(Context ctx) throws Throwable {
 		// get the session id, create one if it doesn't exist.
 		if (StringUtils.isEmpty(getSessionKey(ctx))) {
-			ctx.session().put(SESSION_ID_KEY, UUID.randomUUID().toString().replace("-", "").toLowerCase());
+			ctx.session().put(SESSION_ID_KEY, UniquelyIdentifiableObject.normalizeUuidString(UUID.randomUUID()));
 			Logger.info(LoggedAction.getLogEntry(ctx, "starting new session"));
 		} else {
 			Logger.info(LoggedAction.getLogEntry(ctx, "session found"));

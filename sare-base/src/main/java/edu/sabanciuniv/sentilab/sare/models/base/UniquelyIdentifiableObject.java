@@ -9,6 +9,7 @@ import javassist.bytecode.ByteArray;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Predicate;
@@ -71,7 +72,7 @@ public class UniquelyIdentifiableObject
 			return false;
 		}
 		
-		uuidString = uuidString.replace("-", "").toLowerCase().trim();
+		uuidString = normalizeUuidString(uuidString);
 		Pattern uuidRegex = Pattern.compile("^[a-f0-9]{32}$");
 		if (!uuidRegex.matcher(uuidString).matches()) {
 			return false;
@@ -87,13 +88,12 @@ public class UniquelyIdentifiableObject
 	 * @throws IllegalArgumentException when the provided string is not a valid UUID representation.
 	 */
 	public static UUID createUuid(String uuidString) {
-		Validate.notNull(uuidString, CannedMessages.EMPTY_ARGUMENT, "uuidString");
+		uuidString = normalizeUuidString(uuidString);
 		if (!isUuid(uuidString)) {
 			throw new IllegalArgumentException("Parameter 'uuidString' must be a valid UUID representation");
 		}
 		
 		// restructure the string.
-		uuidString = uuidString.replace("-", "").toLowerCase().trim();
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.append(uuidString.substring(0, 8));
@@ -113,8 +113,8 @@ public class UniquelyIdentifiableObject
 	
 	/**
 	 * Gets the UUID in a byte array format.
-	 * @param uuid The UUID to convert bytes.
-	 * @return The byte array of the UUID.
+	 * @param uuid The {@link UUID} to convert to bytes.
+	 * @return The byte array representing the UUID.
 	 */
 	public static byte[] getUuidBytes(UUID uuid) {
 		Validate.notNull(uuid, CannedMessages.NULL_ARGUMENT, "uuid");
@@ -124,6 +124,34 @@ public class UniquelyIdentifiableObject
 		bb.putLong(uuid.getMostSignificantBits());
 		bb.putLong(uuid.getLeastSignificantBits());
 		return uuidBytes;
+	}
+	
+	/**
+	 * Gets the UUID in a byte array format.
+	 * @param uuidString the {@link String} representation of the UUID.
+	 * @return the byte array representing the UUID.
+	 */
+	public static byte[] getUuidBytes(String uuidString) {
+		return getUuidBytes(createUuid(uuidString));
+	}
+	
+	/**
+	 * Normalizes the UUID string, removing dashes and converting to lower case.
+	 * @param uuidString the UUID {@link String} to normalize.
+	 * @return the normalized UUID string.
+	 */
+	public static String normalizeUuidString(String uuidString) {
+		return StringUtils.defaultString(uuidString).replace("-", "").toLowerCase().trim();
+	}
+	
+	/**
+	 * Normalizes the UUID string, removing dashes and converting to lower case.
+	 * @param uuid the {@link UUID} to normalize.
+	 * @return the normalized UUID string.
+	 */
+	public static String normalizeUuidString(UUID uuid) {
+		Validate.notNull(uuid, CannedMessages.NULL_ARGUMENT, "uuid");
+		return normalizeUuidString(uuid.toString());
 	}
 
 	@Id

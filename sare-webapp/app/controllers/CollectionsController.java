@@ -1,6 +1,7 @@
 package controllers;
 
 import static controllers.base.SareEntityEquippedAction.*;
+import static controllers.base.SessionedAction.*;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -15,6 +16,7 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 
 import controllers.base.*;
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistenceDocumentStoreController;
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
@@ -23,7 +25,7 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 public class CollectionsController extends Application {
 
 	public static Result list() {
-		return TODO;
+		return ok(play.libs.Json.toJson(new PersistenceDocumentStoreController().getAllUuids(em(), getUsername())));
 	}
 	
 	public static Result create() {
