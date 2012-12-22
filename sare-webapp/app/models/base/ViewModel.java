@@ -1,10 +1,12 @@
 package models.base;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import play.db.ebean.Model;
 import play.libs.Json;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ViewModel extends Model {
 
 	/**

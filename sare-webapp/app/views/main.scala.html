@@ -1,5 +1,5 @@
 @(title: String = "Sare", scripts : Html = Html(""), styles : Html = Html(""), active : String = "Home",
-	leftbar: Html = Html(""), content: Html = Html(""), rightbar: Html = Html(""))
+	leftbar: Html = Html(""), content: Html = Html(""), rightbar: Html = Html(""), contentWidth: Int = 10)
 
 @import scala.collection.mutable._
 
@@ -27,38 +27,48 @@
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container-fluid">
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar">
-						</span>
-						<span class="icon-bar">
-						</span>
-						<span class="icon-bar">
-						</span>
-					</a>
-					<a class="brand" href="#">Sare</a>
-					<div class="nav-collapse collapse">
-						<p class="navbar-text pull-right">
-							Logged in as <a href="#" class="navbar-link">Anonymous</a>
-						</p>
-						<ul class="nav">
-							@for((title, url) <- LinkedHashMap("Home" -> "#", "About" -> "#", "Contact" -> "#")) {
-								<li @if(title.equalsIgnoreCase(active)) { class="active" }>
-									<a href="@url">@title</a>
-								<li>
-							}
-						</ul>
-					</div><!--/.nav-collapse -->
+					<div class="row-fluid">
+						<div class="span@((12-contentWidth)/2)">
+						</div>
+						
+						<div class="span@contentWidth">
+							<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+								<span class="icon-bar">
+								</span>
+								<span class="icon-bar">
+								</span>
+								<span class="icon-bar">
+								</span>
+							</a>
+							<a class="brand" href="#">Sare</a>
+							<div class="nav-collapse collapse">
+								<p class="navbar-text pull-right">
+									Logged in as <a href="#" class="navbar-link">Anonymous</a>
+								</p>
+								<ul class="nav">
+									@for((title, url) <- LinkedHashMap("Home" -> "#", "About" -> "#", "Contact" -> "#")) {
+										<li @if(title.equalsIgnoreCase(active)) { class="active" }>
+											<a href="@url">@title</a>
+										<li>
+									}
+								</ul>
+							</div><!--/.nav-collapse -->
+						</div>
+						
+						<div class="span@((12-contentWidth)/2)">
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
 		<div class="container-fluid">
 			<div class="row-fluid">
-				<div class="span1 leftbar">
+				<div class="span@((12-contentWidth)/2) leftbar">
 					@leftbar
 				</div>
 				
-				<div class="span10 centerbody">
+				<div class="span@contentWidth centerbody">
 					<div class="container-fluid">
 						<div class="row-fluid page-header">
 							<h1>Sare</h1>
@@ -73,7 +83,7 @@
 					</div>
 				</div>
 				
-				<div class="span1 rightbar">
+				<div class="span@((12-contentWidth)/2) rightbar">
 					@rightbar
 				</div>
 			</div>

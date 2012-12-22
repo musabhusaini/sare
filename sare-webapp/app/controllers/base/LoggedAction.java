@@ -9,10 +9,18 @@ import play.mvc.Http.Context;
 public class LoggedAction extends Action.Simple {
 
 	public static String getLogEntry(Context ctx, String message) {
-		Validate.notNull(ctx);
+		if (ctx == null) {
+			ctx = Context.current();
+			Validate.notNull(ctx);
+		}
 		
-		return String.format("%s - { request-uri: %s, username: %s, remote-address: %s }",
-			message, ctx.request().uri(), StringUtils.defaultIfEmpty(ctx.request().username(), "anonymous"), ctx.request().remoteAddress());
+		return String.format("%s - { request-uri: %s, username: %s, remote-address: %s, session: %s }",
+			message, ctx.request().uri(), StringUtils.defaultIfEmpty(SessionedAction.getUsername(ctx), "anonymous"),
+			ctx.request().remoteAddress(), SessionedAction.getSessionKey(ctx));
+	}
+	
+	public static String getLogEntry(String message) {
+		return getLogEntry(null, message);
 	}
 	
 	@Override
@@ -22,7 +30,6 @@ public class LoggedAction extends Action.Simple {
 		try {
 			Result result = delegate.call(ctx);
 			Logger.info(getLogEntry(ctx, "finished"));
-			
 			return result;
 		} catch (Throwable e) {
 			Logger.error(getLogEntry(ctx, "error in action"), e);

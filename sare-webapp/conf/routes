@@ -6,19 +6,25 @@
 GET     /                           			controllers.base.Application.index()
 
 # Authentication
-GET		/login									controllers.base.Application.login()
-POST	/api/login								controllers.base.Application.authenticate()
-GET		/logout									controllers.base.Application.logout()
+POST	/api/session				controllers.base.Application.keepAlive()
+POST	/api/session/login			controllers.base.Application.authenticate()
 
-# Opinion corpus
-GET		/api/opinions/:id						controllers.OpinionCorpusController.list(id: String)
-DELETE	/api/opinions/:id						controllers.OpinionCorpusController.delete(id: String)
-POST	/api/opinions							controllers.OpinionCorpusController.add()
+GET		/session/login				controllers.base.Application.login()
+GET		/session/logout				controllers.base.Application.logout()
 
-# Opinion document
-GET		/api/opinions/:corpus/document/:id		controllers.OpinionDocumentController.get(corpus: String, id: String)
-DELETE	/api/opinions/:corpus/document/:id		controllers.OpinionDocumentController.delete(corpus: String, id: String)
-POST	/api/opinions/:corpus/document/:id		controllers.OpinionDocumentController.update(corpus: String, id: String)
+# Collections
+GET		/api/collections						controllers.CollectionsController.list()
+POST	/api/collections						controllers.CollectionsController.create()
+GET		/api/collections/:collection			controllers.CollectionsController.get(collection: String)
+POST	/api/collections/:collection			controllers.CollectionsController.update(collection: String)
+DELETE	/api/collections/:collection			controllers.CollectionsController.delete(collection: String)
+
+# Documents
+GET		/api/collections/:collection/documents			controllers.DocumentsController.list(collection: String)
+POST	/api/collections/:collection/documents			controllers.DocumentsController.add(collection: String)
+GET		/api/collections/:collection/documents/:doc		controllers.DocumentsController.get(collection: String, doc: String)
+POST	/api/collections/:collection/documents/:doc		controllers.DocumentsController.update(collection: String, doc: String)
+DELETE	/api/collections/:collection/documents/:doc		controllers.DocumentsController.delete(collection: String, doc: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)
