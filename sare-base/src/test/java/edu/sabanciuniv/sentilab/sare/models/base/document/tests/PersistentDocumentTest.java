@@ -8,7 +8,6 @@ import org.junit.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDocumentStore;
 
 public class PersistentDocumentTest {
 
@@ -45,11 +44,6 @@ public class PersistentDocumentTest {
 		
 		@Override
 		public String getContent() {
-			return null;
-		}
-
-		@Override
-		public IDocumentStore getStore() {
 			return null;
 		}
 	}

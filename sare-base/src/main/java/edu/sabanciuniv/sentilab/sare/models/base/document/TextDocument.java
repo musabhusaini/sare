@@ -2,6 +2,8 @@ package edu.sabanciuniv.sentilab.sare.models.base.document;
 
 import javax.persistence.*;
 
+import com.google.gson.JsonElement;
+
 /**
  * A class that has its own textual content.
  * @author Mus'ab Husaini
@@ -17,12 +19,10 @@ public abstract class TextDocument<T extends TextDocument<T>>
 	 */
 	private static final long serialVersionUID = 5392373511223975393L;
 
-	@Column(columnDefinition = "MEDIUMTEXT")
-	protected String content;
-	
 	@Override
 	public String getContent() {
-		return this.content;
+		JsonElement content = this.getOtherData().get("content");
+		return content != null ? content.getAsString() : null;
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public abstract class TextDocument<T extends TextDocument<T>>
 	 * @return the {@code this} object.
 	 */
 	public TextDocument<T> setContent(String content) {
-		this.content = content;
+		this.getOtherData().addProperty("content", content);
 		return this;
 	}
 }

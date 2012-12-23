@@ -25,6 +25,8 @@ public abstract class PersistentObject
 	 */
 	private static final long serialVersionUID = 1497804812766237628L;
 
+	private static final String DIRTY_FLAG_STRING = "dirty";
+	
 	@Column
 	@Temporal(TemporalType.TIMESTAMP)
 	protected Date created;
@@ -52,6 +54,9 @@ public abstract class PersistentObject
 	protected JsonObject otherDataJson;
 	
 	protected void setOtherData() {
+		if (this.otherDataJson != null && this.otherDataJson.entrySet().size() == 0) {
+			this.otherDataJson = null;
+		}
 		this.otherData = this.otherDataJson != null ? this.otherDataJson.toString() : null;
 	}
 	
@@ -171,9 +176,14 @@ public abstract class PersistentObject
 	 */
 	public JsonObject getOtherData() {
 		if (this.otherDataJson == null) {
-			this.setOtherData(this.otherData);
+			if (this.otherData == null) {
+				this.setOtherData(new JsonObject());
+			} else {
+				this.setOtherData(this.otherData);
+			}
 		}
 		
+		this.otherData = DIRTY_FLAG_STRING;
 		return this.otherDataJson;
 	}
 	
@@ -184,6 +194,7 @@ public abstract class PersistentObject
 	 */
 	public PersistentObject setOtherData(JsonObject otherData) {
 		this.otherDataJson = otherData;
+		this.otherData = DIRTY_FLAG_STRING;
 		return this;
 	}
 	
@@ -197,12 +208,12 @@ public abstract class PersistentObject
 		if (otherData != null) { 
 			JsonElement tmpJsonData = new JsonParser().parse(StringUtils.defaultString(otherData));
 			if (tmpJsonData.isJsonObject()) {
-				this.otherDataJson = tmpJsonData.getAsJsonObject();
+				this.setOtherData(tmpJsonData.getAsJsonObject());
 			} else {
 				throw new IllegalArgumentException("the argument 'otherData' must be a valid stringified JSON object");
 			}
 		} else {
-			this.otherDataJson = null;
+			this.setOtherData((JsonObject)null);
 		}
 		
 		return this;

@@ -69,6 +69,11 @@ public abstract class PersistentDocument
 		return this;
 	}
 	
+	@Override
+	public PersistentDocumentStore getStore() {
+		return this.store;
+	}
+	
 	/**
 	 * Gets this document's base document.
 	 * @return the {@link PersistentDocument} object which is the base document of this document.
