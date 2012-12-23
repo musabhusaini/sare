@@ -40,15 +40,17 @@ public class SareEntityEquippedAction extends Action.Simple {
 				byte[] uuid = UniquelyIdentifiableObject.getUuidBytes(UniquelyIdentifiableObject.createUuid(id));
 				object = em(ctx).find(clazz, uuid);
 				
-				if (!SessionedAction.isOwnerOf(object)) {
+				if (object != null && !SessionedAction.isOwnerOf(object)) {
 					throw new AccessControlException(id);
 				}
 			} catch (EntityNotFoundException e) {
-				// reformat it to add the id as the message.
-				throw new EntityNotFoundException(id);
+				object = null;
 			}
 		}
 		
+		if (object == null) {
+			throw new EntityNotFoundException(id);
+		}
 		return object;
 	}
 	
