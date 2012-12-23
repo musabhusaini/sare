@@ -12,6 +12,7 @@ import javax.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 import edu.sabanciuniv.sentilab.core.models.*;
@@ -31,11 +32,51 @@ public class UniquelyIdentifiableObject
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * Gets a function for converting UUID bytes to strings.
+	 * @return the {@link Function} for such conversion.
+	 */
+	public static Function<byte[], String> uuidBytesToStringFunction() {
+		return new Function<byte[], String>() {
+			@Override
+			public String apply(byte[] input) {
+				return normalizeUuidString(UniquelyIdentifiableObject.createUuid(input));
+			}
+		};
+	}
+	
+	/**
+	 * Gets a function for converting {@link UniquelyIdentifiableObject} instances to their {@link UUID} identifiers.
+	 * @return the {@link Function} for such conversion.
+	 */
+	public static Function<UniquelyIdentifiableObject, UUID> toUuidFunction() {
+		return new Function<UniquelyIdentifiableObject, UUID>() {
+			@Override
+			public UUID apply(UniquelyIdentifiableObject input) {
+				return input.getIdentifier();
+			}
+		};
+	}
+	
+	/**
+	 * Gets a function for converting {@link UniquelyIdentifiableObject} instances to normalized {@link String}
+	 * representations of their {@link UUID} identifiers.
+	 * @return the {@link Function} for such conversion.
+	 */
+	public static Function<UniquelyIdentifiableObject, String> toUuidStringFunction() {
+		return new Function<UniquelyIdentifiableObject, String>() {
+			@Override
+			public String apply(UniquelyIdentifiableObject input) {
+				return normalizeUuidString(input.getIdentifier());
+			}
+		};
+	} 
+	
+	/**
 	 * Gets a predicate for testing equality of {@link UniquelyIdentifiableObject} instances with a given identifier.
 	 * @param identifier the {@link UUID} to test against.
 	 * @return a {@link Predicate} that can be used for this test.
 	 */
-	public static Predicate<UniquelyIdentifiableObject> IdentifierEqualsPredicate(final UUID identifier) {
+	public static Predicate<UniquelyIdentifiableObject> identifierEqualsPredicate(final UUID identifier) {
 		Validate.notNull(identifier, CannedMessages.NULL_ARGUMENT, "uuid");
 		
 		return new Predicate<UniquelyIdentifiableObject>() {

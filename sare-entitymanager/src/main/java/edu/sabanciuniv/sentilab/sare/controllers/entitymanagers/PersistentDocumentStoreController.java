@@ -7,7 +7,6 @@ import javax.persistence.criteria.*;
 
 import org.apache.commons.lang3.Validate;
 
-import com.google.common.base.Function;
 import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.controllers.base.ControllerBase;
@@ -20,7 +19,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * An entity controller for {@link PersistentDocumentStore} entities.
  * @author Mus'ab Husaini
  */
-public class PersistenceDocumentStoreController
+public class PersistentDocumentStoreController
 	extends ControllerBase {
 	
 	/**
@@ -39,12 +38,7 @@ public class PersistenceDocumentStoreController
 		cq.multiselect(store.get("id")).where(cb.equal(store.get("ownerId"), cb.parameter(String.class, "ownerId")));
 		TypedQuery<byte[]> tq = em.createQuery(cq);
 		tq.setParameter("ownerId", ownerId);
-		return Lists.newArrayList(Iterables.transform(tq.getResultList(), new Function<byte[], String>() {
-			@Override
-			public String apply(byte[] input) {
-				return UniquelyIdentifiableObject.normalizeUuidString(UniquelyIdentifiableObject.createUuid(input));
-			}
-		}));
+		return Lists.newArrayList(Iterables.transform(tq.getResultList(), UniquelyIdentifiableObject.uuidBytesToStringFunction()));
 	}
 	
 	/**

@@ -2,46 +2,46 @@ package edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.tests;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
-import java.util.UUID;
+import static com.google.common.collect.Iterables.*;
+import static com.google.common.collect.Lists.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject.*;
 
-import com.google.common.collect.Iterables;
+import java.util.*;
 
-import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistenceDocumentStoreController;
-import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
-import edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject;
-import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus;
-import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument;
+import org.junit.*;
+
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
+import edu.sabanciuniv.sentilab.sare.models.base.*;
+import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 
 public class PersistentDocumentStoreControllerTest extends ModelTestsBase {
 
-	private PersistenceDocumentStoreController testController;
-	private OpinionCorpus testCorpus1;
-	private OpinionCorpus testCorpus2;
+	private PersistentDocumentStoreController testController;
+	private List<OpinionCorpus> testCorpora;
 	private String testOwner;
 	
 	@Before
 	public void setUp() throws Exception {
-		testController = new PersistenceDocumentStoreController();
+		testController = new PersistentDocumentStoreController();
 		
-		testOwner = UniquelyIdentifiableObject.normalizeUuidString(UUID.randomUUID());
+		testOwner = normalizeUuidString(UUID.randomUUID());
 		
-		testCorpus1 = (OpinionCorpus)new OpinionCorpus()
+		testCorpora = newArrayList();
+		testCorpora.add((OpinionCorpus)new OpinionCorpus()
 			.addDocument(new OpinionDocument())
 			.addDocument(new OpinionDocument())
-			.setOwnerId(testOwner);
+			.setOwnerId(testOwner));
 		
-		testCorpus2 = (OpinionCorpus)new OpinionCorpus()
-			.setOwnerId(testOwner);
+		testCorpora.add((OpinionCorpus)new OpinionCorpus()
+			.setOwnerId(testOwner));
 		
 		em.getTransaction().begin();
-		persist(testCorpus1);
-		persist(testCorpus2);
+		for (OpinionCorpus testCorpus : testCorpora) {
+			persist(testCorpus);
+		}
 		em.getTransaction().commit();
+		em.clear();
 	}
 
 	@After
@@ -50,17 +50,21 @@ public class PersistentDocumentStoreControllerTest extends ModelTestsBase {
 
 	@Test
 	public void testGetAllUuids() {
+		Iterable<String> expectedUuids = transform(testCorpora, toUuidStringFunction());
 		List<String> actualUuids = testController.getAllUuids(em, testOwner);
 		
 		assertNotNull(actualUuids);
-		assertEquals(2, actualUuids.size());
-		assertEquals(UniquelyIdentifiableObject.normalizeUuidString(testCorpus1.getIdentifier()), actualUuids.get(0));
+		assertEquals(testCorpora.size(), actualUuids.size());
+		for (String uuid : actualUuids) {
+			assertTrue(contains(expectedUuids, uuid));
+		}
 	}
 
 	@Test
 	public void testGetSize() {
-		long actualSize = testController.getSize(em, testCorpus1.getIdentifier().toString());
-		assertEquals(Iterables.size(testCorpus1.getDocuments()), actualSize);
+		for (OpinionCorpus testCorpus : testCorpora) {
+			long actualSize = testController.getSize(em, testCorpus.getIdentifier().toString());
+			assertEquals(size(testCorpus.getDocuments()), actualSize);
+		}
 	}
-
 }

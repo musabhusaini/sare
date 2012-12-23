@@ -170,7 +170,7 @@ public class PersistentObjectTest extends ModelTestsBase {
 		
 		PersistentObjectWrapper wrappedActualObject1 = new PersistentObjectWrapper(actualObject1);
 		assertTrue(Iterables.find(wrappedActualObject1.getReferences(),
-			OpinionDocument.IdentifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
+			OpinionDocument.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public class PersistentObjectTest extends ModelTestsBase {
 		
 		PersistentObjectWrapper wrappedActualObject1 = new PersistentObjectWrapper(actualObject1);
 		assertFalse(Iterables.find(wrappedActualObject1.getReferences(),
-			OpinionDocument.IdentifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
+			OpinionDocument.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
 	}
 
 	@Test
@@ -218,7 +218,7 @@ public class PersistentObjectTest extends ModelTestsBase {
 		
 		PersistentObjectWrapper wrappedActualObject1 = new PersistentObjectWrapper(actualObject1);
 		assertTrue(Iterables.find(wrappedActualObject1.getReferers(),
-			OpinionDocument.IdentifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
+			OpinionDocument.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
 	}
 
 	@Test
@@ -248,7 +248,7 @@ public class PersistentObjectTest extends ModelTestsBase {
 		
 		PersistentObjectWrapper wrappedActualObject1 = new PersistentObjectWrapper(actualObject1);
 		assertFalse(Iterables.find(wrappedActualObject1.getReferers(),
-			OpinionDocument.IdentifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
+			OpinionDocument.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
 	}
 
 	@Test
