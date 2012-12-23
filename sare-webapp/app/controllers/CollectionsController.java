@@ -16,7 +16,7 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 
 import controllers.base.*;
-import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistenceDocumentStoreController;
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.*;
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
@@ -25,7 +25,7 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 public class CollectionsController extends Application {
 
 	public static Result list() {
-		return ok(play.libs.Json.toJson(new PersistenceDocumentStoreController().getAllUuids(em(), getUsername())));
+		return ok(play.libs.Json.toJson(new PersistentDocumentStoreController().getAllUuids(em(), getUsername())));
 	}
 	
 	public static Result create() {
