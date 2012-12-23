@@ -1,6 +1,6 @@
 package models.documentStore;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.*;
 
 import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpusFactoryOptions;
 import models.base.ViewModel;
@@ -18,7 +18,7 @@ public class OpinionCorpusFactoryOptionsView extends ViewModel {
 	public PersistentDocumentStoreView details;
 	
 	public OpinionCorpusFactoryOptionsView(OpinionCorpusFactoryOptions options) {
-		this.type = "opinion-corpus-factory-options";
+		super(options);
 		
 		if (options != null) {
 			this.content = options.getContent();

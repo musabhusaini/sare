@@ -16,6 +16,7 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 
 import controllers.base.*;
+
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.*;
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
@@ -83,27 +84,24 @@ public class CollectionsController extends Application {
 	public static Result update(String collection) {
 		PersistentDocumentStore collectionObj = fetchResource(collection, PersistentDocumentStore.class);
 		PersistentDocumentStoreView collectionView = play.libs.Json.fromJson(request().body().asJson(), PersistentDocumentStoreView.class);
-		
 		if (collectionView.title != null) {
 			collectionObj.setTitle(collectionView.title);
 		}
-		
 		if (collectionView.description != null) {
 			collectionObj.setDescription(collectionView.description);
 		}
-		
 		if (collectionView.language != null) {
 			collectionObj.setLanguage(collectionView.language);
 		}
-		
 		em().merge(collectionObj);
-		
+
 		return ok(createViewModelQuietly(collectionObj).asJson());
 	}
 	
 	public static Result delete(String collection) {
 		PersistentDocumentStore collectionObj = fetchResource(collection, PersistentDocumentStore.class);
 		em().remove(collectionObj);
+		
 		return ok(createViewModelQuietly(collectionObj).asJson());
 	}
 }

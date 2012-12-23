@@ -20,11 +20,11 @@ POST	/api/collections/:collection			controllers.CollectionsController.update(col
 DELETE	/api/collections/:collection			controllers.CollectionsController.delete(collection: String)
 
 # Documents
-GET		/api/collections/:collection/documents			controllers.DocumentsController.list(collection: String)
-POST	/api/collections/:collection/documents			controllers.DocumentsController.add(collection: String)
-GET		/api/collections/:collection/documents/:doc		controllers.DocumentsController.get(collection: String, doc: String)
-POST	/api/collections/:collection/documents/:doc		controllers.DocumentsController.update(collection: String, doc: String)
-DELETE	/api/collections/:collection/documents/:doc		controllers.DocumentsController.delete(collection: String, doc: String)
+GET		/api/collections/:collection/documents				controllers.DocumentsController.list(collection: String)
+POST	/api/collections/:collection/documents				controllers.DocumentsController.add(collection: String)
+GET		/api/collections/:collection/documents/:document	controllers.DocumentsController.get(collection: String, document: String)
+POST	/api/collections/:collection/documents/:document	controllers.DocumentsController.update(collection: String, document: String)
+DELETE	/api/collections/:collection/documents/:document	controllers.DocumentsController.delete(collection: String, document: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)

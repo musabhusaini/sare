@@ -1,7 +1,5 @@
 package models.documentStore;
 
-import org.springframework.util.ClassUtils;
-
 import models.base.ViewModel;
 
 import com.google.common.collect.Iterables;
@@ -22,12 +20,8 @@ public class PersistentDocumentStoreView
 	public String language;
 	public int size;
 	
-	public PersistentDocumentStoreView() {
-		this(null);
-	}
-	
 	public PersistentDocumentStoreView(PersistentDocumentStore documentStore) {
-		this.type = ClassUtils.getShortName(documentStore.getClass());
+		super(documentStore);
 		
 		if (documentStore != null) {
 			this.id = documentStore.getIdentifier().toString();
@@ -36,5 +30,9 @@ public class PersistentDocumentStoreView
 			this.language = documentStore.getLanguage();
 			this.size = Iterables.size(documentStore.getDocuments());
 		}
+	}
+	
+	public PersistentDocumentStoreView() {
+		this(null);
 	}
 }
