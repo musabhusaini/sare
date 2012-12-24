@@ -55,24 +55,52 @@ public class SessionedAction extends Action.Simple {
 		return getUsername(null);
 	}
 	
+	public static boolean isAuthenticated(WebSession session) {
+		if (session == null) {
+			return false;
+		}
+		
+		return !normalizeUuidString(session.id).equals(session.ownerId);
+	}
+	
+	public static boolean isAuthenticated(Context ctx) {
+		if (ctx == null) {
+			ctx = Context.current();
+			Validate.notNull(ctx);
+		}
+		
+		WebSession session = new WebSession();
+		session.id = getUuidBytes(getSessionKey(ctx));
+		session.ownerId = getUsername(ctx);
+		return isAuthenticated(session);
+	}
+	
+	public static boolean isAuthenticated() {
+		return isAuthenticated((Context)null);
+	}
+	
 	@Override
 	public Result call(Context ctx) throws Throwable {
+		WebSession session = null;
+		
 		// get the session, or create one if it doesn't exist.
 		if (!StringUtils.isEmpty(getSessionKey(ctx))) {
-			WebSession session = WebSession.find.byId(getUuidBytes(getSessionKey(ctx)));
+			session = WebSession.find.byId(getUuidBytes(getSessionKey(ctx)));
 			
 			if (session != null) {
 				Logger.info(LoggedAction.getLogEntry(ctx, "session found"));
 				session.touch().update();
 			} else {
-				Logger.error(LoggedAction.getLogEntry(ctx, "session not found"));
-				return badRequest("session not found");
+				ctx.session().remove(SESSION_ID_KEY);
+				ctx.request().setUsername(null);
 			}
-		} else {
+		}
+		
+		if (session == null) {
 			Logger.info(LoggedAction.getLogEntry(ctx, "starting new session"));
 			
-			WebSession session = new WebSession();
-			ctx.session().put(SESSION_ID_KEY, normalizeUuidString(createUuid(session.id)));
+			session = new WebSession();
+			ctx.session().put(SESSION_ID_KEY, normalizeUuidString(session.id));
 			session.ownerId = getUsername(ctx);
 			session.remoteAddress = ctx.request().remoteAddress();
 			session.save();

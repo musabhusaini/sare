@@ -192,6 +192,16 @@ public class UniquelyIdentifiableObject
 		Validate.notNull(uuid, CannedMessages.NULL_ARGUMENT, "uuid");
 		return normalizeUuidString(uuid.toString());
 	}
+	
+	/**
+	 * Normalizes the UUID string, removing dashes and converting to lower case.
+	 * @param uuid the {@link Byte} array UUID to normalize.
+	 * @return the normalized UUID string.
+	 */
+	public static String normalizeUuidString(byte[] uuid) {
+		Validate.notNull(uuid, CannedMessages.NULL_ARGUMENT, "uuid");
+		return normalizeUuidString(createUuid(uuid));
+	}
 
 	@Id
 	@Lob
