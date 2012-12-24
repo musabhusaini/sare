@@ -13,11 +13,11 @@ public class ErrorHandledAction extends Action.Simple {
 		try {
 			return delegate.call(ctx);
 		} catch (AccessControlException e) {
-			return SareEntityEquippedAction.forbiddenEntity(ctx, e.getMessage(), e);
+			return SareTransactionalAction.forbiddenEntity(ctx, e.getMessage(), e);
 		} catch (IllegalArgumentException e) {
 			return badRequest();
 		} catch (EntityNotFoundException e) {
-			return SareEntityEquippedAction.notFoundEntity(ctx, e.getMessage(), e);
+			return SareTransactionalAction.notFoundEntity(ctx, e.getMessage(), e);
 		} catch (Throwable e) {
 			return internalServerError();
 		}

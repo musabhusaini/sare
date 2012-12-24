@@ -1,7 +1,7 @@
 package controllers;
 
 import static edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject.*;
-import static controllers.base.SareEntityEquippedAction.*;
+import static controllers.base.SareTransactionalAction.*;
 import models.document.OpinionDocumentView;
 
 import play.mvc.*;
@@ -15,7 +15,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 
-@With(SareEntityEquippedAction.class)
+@With(SareTransactionalAction.class)
 public class DocumentsController extends Application {
 
 	private static PersistentDocument fetchDocument(String collection, String document) {

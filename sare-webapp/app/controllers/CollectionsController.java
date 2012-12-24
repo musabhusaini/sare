@@ -1,6 +1,6 @@
 package controllers;
 
-import static controllers.base.SareEntityEquippedAction.*;
+import static controllers.base.SareTransactionalAction.*;
 import static controllers.base.SessionedAction.*;
 
 import org.apache.commons.io.FilenameUtils;
@@ -22,7 +22,7 @@ import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 
-@With(SareEntityEquippedAction.class)
+@With(SareTransactionalAction.class)
 public class CollectionsController extends Application {
 
 	public static Result list() {
