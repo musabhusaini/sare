@@ -16,29 +16,27 @@ import play.libs.Json;
 import play.mvc.*;
 import play.mvc.Http.Context;
 
-public class SareEntityEquippedAction extends Action.Simple {
+public class SareTransactionalAction extends Action.Simple {
 
-	public static EntityManager em(Context ctx) {
-		if (ctx == null) {
-			ctx = Context.current();
-			Validate.notNull(ctx);
-		}
-		
-		return (EntityManager)ctx.args.get("em");
-	}
+	private static ThreadLocal<EntityManager> currentEntityManager = new ThreadLocal<>();
 	
 	public static EntityManager em() {
-		return em(null);
+		EntityManager em = currentEntityManager.get();
+		if (em == null) {
+			throw new RuntimeException("No EntityManager bound to this thread. " +
+				"Try annotating your action method with @controllers.base.SareTransactionalAction");
+		}
+		return em;
 	}
 	
 	public static <T extends PersistentObject> T fetchResource(Context ctx, String id, Class<T> clazz) {
 		Validate.notNull(clazz);
 		
 		T object = null;
-		if (UniquelyIdentifiableObject.isUuid(id) && em(ctx) != null) {
+		if (UniquelyIdentifiableObject.isUuid(id) && em() != null) {
 			try {
 				byte[] uuid = UniquelyIdentifiableObject.getUuidBytes(UniquelyIdentifiableObject.createUuid(id));
-				object = em(ctx).find(clazz, uuid);
+				object = em().find(clazz, uuid);
 				
 				if (object != null && !SessionedAction.isOwnerOf(object)) {
 					throw new AccessControlException(id);
@@ -110,11 +108,10 @@ public class SareEntityEquippedAction extends Action.Simple {
 		EntityManager em = null;
 		
 		try {
-			Logger.info(LoggedAction.getLogEntry(ctx, "creating entity manager"));
-			
 			// create entity manager, add it to args, and begin transaction before the call.
+			Logger.info(LoggedAction.getLogEntry(ctx, "creating entity manager"));
 			em = SareEntityManagerFactory.createEntityManager();
-			ctx.args.put("em", em);
+			currentEntityManager.set(em);
 			em.getTransaction().begin();
 
 			// call the actual action.
