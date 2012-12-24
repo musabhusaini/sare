@@ -1,6 +1,8 @@
 package controllers.base;
 
-import java.util.*;
+import static edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject.*;
+
+import models.WebSession;
 
 import org.apache.commons.lang3.*;
 
@@ -33,7 +35,7 @@ public class SessionedAction extends Action.Simple {
 		}
 		
 		String sessionId = StringUtils.defaultString(ctx.session().get(SESSION_ID_KEY));
-		return UniquelyIdentifiableObject.isUuid(sessionId) ? sessionId : null;
+		return isUuid(sessionId) ? sessionId : null;
 	}
 	
 	public static String getSessionKey() {
@@ -55,15 +57,26 @@ public class SessionedAction extends Action.Simple {
 	
 	@Override
 	public Result call(Context ctx) throws Throwable {
-		// get the session id, create one if it doesn't exist.
-		if (StringUtils.isEmpty(getSessionKey(ctx))) {
-			ctx.session().put(SESSION_ID_KEY, UniquelyIdentifiableObject.normalizeUuidString(UUID.randomUUID()));
-			Logger.info(LoggedAction.getLogEntry(ctx, "starting new session"));
+		// get the session, or create one if it doesn't exist.
+		if (!StringUtils.isEmpty(getSessionKey(ctx))) {
+			WebSession session = WebSession.find.byId(getUuidBytes(getSessionKey(ctx)));
+			
+			if (session != null) {
+				Logger.info(LoggedAction.getLogEntry(ctx, "session found"));
+				session.touch().update();
+			} else {
+				Logger.error(LoggedAction.getLogEntry(ctx, "session not found"));
+				return badRequest("session not found");
+			}
 		} else {
-			Logger.info(LoggedAction.getLogEntry(ctx, "session found"));
+			Logger.info(LoggedAction.getLogEntry(ctx, "starting new session"));
+			
+			WebSession session = new WebSession();
+			ctx.session().put(SESSION_ID_KEY, normalizeUuidString(createUuid(session.id)));
+			session.ownerId = getUsername(ctx);
+			session.remoteAddress = ctx.request().remoteAddress();
+			session.save();
 		}
-		
-		// TODO: refresh session state here.
 		
 		return delegate.call(ctx);
 	}

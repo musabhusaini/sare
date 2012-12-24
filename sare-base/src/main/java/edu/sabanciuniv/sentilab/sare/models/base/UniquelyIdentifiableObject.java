@@ -9,11 +9,9 @@ import javassist.bytecode.ByteArray;
 
 import javax.persistence.*;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.*;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+import com.google.common.base.*;
 
 import edu.sabanciuniv.sentilab.core.models.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;

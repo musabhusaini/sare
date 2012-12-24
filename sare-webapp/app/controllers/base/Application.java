@@ -3,10 +3,12 @@ package controllers.base;
 import models.base.*;
 import controllers.factories.ViewModelFactory;
 import play.*;
+import play.db.ebean.Transactional;
 import play.mvc.*;
 
 import views.html.*;
 
+@Transactional
 @With({ SessionedAction.class, ErrorHandledAction.class, LoggedAction.class })
 public class Application extends Controller {
 	
