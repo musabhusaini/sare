@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-import edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 public class UniquelyIdentifiableObjectTest {
 
@@ -20,36 +20,36 @@ public class UniquelyIdentifiableObjectTest {
 
 	@Test
 	public void testIsUuidPositiveWithCorrectStringWithDashes() {
-		assertTrue(UniquelyIdentifiableObject.isUuid(testString));
+		assertTrue(UuidUtils.isUuid(testString));
 	}
 	
 	@Test
 	public void testIsUuidPositiveWithCorrectStringWithoutDashes() {
 		testString = testString.replace("-", "");
-		assertTrue(UniquelyIdentifiableObject.isUuid(testString));
+		assertTrue(UuidUtils.isUuid(testString));
 	}
 	
 	@Test
 	public void testIsUuidNegativeWithWrongCharacterWithDashes() {
 		testString = testString.replaceFirst("0", "x");
-		assertFalse(UniquelyIdentifiableObject.isUuid(testString));
+		assertFalse(UuidUtils.isUuid(testString));
 	}
 	
 	@Test
 	public void testIsUuidNegativeWithWrongCharacterWithoutDashes() {
 		testString = testString.replace("-", "").replaceFirst("0", "x");
-		assertFalse(UniquelyIdentifiableObject.isUuid(testString));
+		assertFalse(UuidUtils.isUuid(testString));
 	}
 	
 	@Test
 	public void testIsUuidNegativeWithExtraCharactersWithDashes() {
 		testString = testString + "a";
-		assertFalse(UniquelyIdentifiableObject.isUuid(testString));
+		assertFalse(UuidUtils.isUuid(testString));
 	}
 	
 	@Test
 	public void testIsUuidNegativeWithExtraCharactersWithoutDashes() {
 		testString = testString.replace("-", "") + "a";
-		assertFalse(UniquelyIdentifiableObject.isUuid(testString));
+		assertFalse(UuidUtils.isUuid(testString));
 	}
 }

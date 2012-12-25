@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import static com.google.common.collect.Iterables.*;
 import static com.google.common.collect.Lists.*;
 
-import static edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject.*;
+import static edu.sabanciuniv.sentilab.utils.UuidUtils.*;
 
 import java.util.*;
 
@@ -25,7 +25,7 @@ public class PersistentDocumentStoreControllerTest extends ModelTestsBase {
 	public void setUp() throws Exception {
 		testController = new PersistentDocumentStoreController();
 		
-		testOwner = normalizeUuidString(UUID.randomUUID());
+		testOwner = normalize(UUID.randomUUID());
 		
 		testCorpora = newArrayList();
 		testCorpora.add((OpinionCorpus)new OpinionCorpus()

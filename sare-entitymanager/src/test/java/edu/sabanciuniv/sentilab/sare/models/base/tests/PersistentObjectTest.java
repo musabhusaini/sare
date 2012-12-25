@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 public class PersistentObjectTest extends ModelTestsBase {
 
@@ -170,7 +171,7 @@ public class PersistentObjectTest extends ModelTestsBase {
 		
 		PersistentObjectWrapper wrappedActualObject1 = new PersistentObjectWrapper(actualObject1);
 		assertTrue(Iterables.find(wrappedActualObject1.getReferences(),
-			OpinionDocument.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
+			UuidUtils.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
 	}
 
 	@Test
@@ -200,7 +201,7 @@ public class PersistentObjectTest extends ModelTestsBase {
 		
 		PersistentObjectWrapper wrappedActualObject1 = new PersistentObjectWrapper(actualObject1);
 		assertFalse(Iterables.find(wrappedActualObject1.getReferences(),
-			OpinionDocument.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
+			UuidUtils.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
 	}
 
 	@Test
@@ -218,7 +219,7 @@ public class PersistentObjectTest extends ModelTestsBase {
 		
 		PersistentObjectWrapper wrappedActualObject1 = new PersistentObjectWrapper(actualObject1);
 		assertTrue(Iterables.find(wrappedActualObject1.getReferers(),
-			OpinionDocument.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
+			UuidUtils.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
 	}
 
 	@Test
@@ -248,7 +249,7 @@ public class PersistentObjectTest extends ModelTestsBase {
 		
 		PersistentObjectWrapper wrappedActualObject1 = new PersistentObjectWrapper(actualObject1);
 		assertFalse(Iterables.find(wrappedActualObject1.getReferers(),
-			OpinionDocument.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
+			UuidUtils.identifierEqualsPredicate(testObject2.getIdentifier()), null) != null);
 	}
 
 	@Test

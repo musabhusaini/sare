@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import static com.google.common.collect.Iterables.*;
 
-import static edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject.*;
+import static edu.sabanciuniv.sentilab.utils.UuidUtils.*;
 
 import java.util.*;
 

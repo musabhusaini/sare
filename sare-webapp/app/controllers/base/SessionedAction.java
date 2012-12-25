@@ -1,12 +1,11 @@
 package controllers.base;
 
-import static edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject.*;
-
 import models.WebSession;
 
 import org.apache.commons.lang3.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.*;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 import play.Logger;
 import play.mvc.*;
 import play.mvc.Http.Context;
@@ -35,7 +34,7 @@ public class SessionedAction extends Action.Simple {
 		}
 		
 		String sessionId = StringUtils.defaultString(ctx.session().get(SESSION_ID_KEY));
-		return isUuid(sessionId) ? sessionId : null;
+		return UuidUtils.isUuid(sessionId) ? sessionId : null;
 	}
 	
 	public static String getSessionKey() {
@@ -60,7 +59,7 @@ public class SessionedAction extends Action.Simple {
 			return false;
 		}
 		
-		return !normalizeUuidString(session.id).equals(session.ownerId);
+		return !UuidUtils.normalize(session.id).equals(session.ownerId);
 	}
 	
 	public static boolean isAuthenticated(Context ctx) {
@@ -70,7 +69,7 @@ public class SessionedAction extends Action.Simple {
 		}
 		
 		WebSession session = new WebSession();
-		session.id = getUuidBytes(getSessionKey(ctx));
+		session.id = UuidUtils.toBytes(getSessionKey(ctx));
 		session.ownerId = getUsername(ctx);
 		return isAuthenticated(session);
 	}
@@ -85,7 +84,7 @@ public class SessionedAction extends Action.Simple {
 		
 		// get the session, or create one if it doesn't exist.
 		if (!StringUtils.isEmpty(getSessionKey(ctx))) {
-			session = WebSession.find.byId(getUuidBytes(getSessionKey(ctx)));
+			session = WebSession.find.byId(UuidUtils.toBytes(getSessionKey(ctx)));
 			
 			if (session != null) {
 				Logger.info(LoggedAction.getLogEntry(ctx, "session found"));
@@ -100,7 +99,7 @@ public class SessionedAction extends Action.Simple {
 			Logger.info(LoggedAction.getLogEntry(ctx, "starting new session"));
 			
 			session = new WebSession();
-			ctx.session().put(SESSION_ID_KEY, normalizeUuidString(session.id));
+			ctx.session().put(SESSION_ID_KEY, UuidUtils.normalize(session.id));
 			session.ownerId = getUsername(ctx);
 			session.remoteAddress = ctx.request().remoteAddress();
 			session.save();

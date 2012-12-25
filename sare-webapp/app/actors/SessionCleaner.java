@@ -1,7 +1,5 @@
 package actors;
 
-import static edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject.*;
-
 import java.util.*;
 
 import javax.persistence.*;
@@ -18,6 +16,7 @@ import controllers.base.SessionedAction;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 import akka.actor.*;
 
@@ -37,7 +36,7 @@ public class SessionCleaner extends UntypedActor {
 				
 				// delete each.
 				for (WebSession session : oldSessions) {
-					Logger.info("deleting session " + normalizeUuidString(session.id));
+					Logger.info("deleting session " + UuidUtils.normalize(session.id));
 					session.delete();
 					
 					// if the owner id and session id are the same, it's a standalone session, so delete all stores owned.
@@ -49,7 +48,7 @@ public class SessionCleaner extends UntypedActor {
 						List<String> uuids = new PersistentDocumentStoreController().getAllUuids(em, session.ownerId);
 						for (String uuid : uuids) {
 							Logger.info("deleting store " + uuid + " owned by " + session.ownerId);
-							PersistentDocumentStore store = em.find(PersistentDocumentStore.class, getUuidBytes(uuid));
+							PersistentDocumentStore store = em.find(PersistentDocumentStore.class, UuidUtils.toBytes(uuid));
 							em.remove(store);
 						}
 						

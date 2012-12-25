@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import javax.persistence.*;
 
-import edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 import play.db.ebean.*;
 import play.data.format.*;
@@ -40,7 +40,7 @@ public class WebSession extends Model {
 	public Date updated;
 	
 	public WebSession() {
-		this.id = UniquelyIdentifiableObject.getUuidBytes(UUID.randomUUID());
+		this.id = UuidUtils.toBytes(UUID.randomUUID());
 	}
 	
 	@Override

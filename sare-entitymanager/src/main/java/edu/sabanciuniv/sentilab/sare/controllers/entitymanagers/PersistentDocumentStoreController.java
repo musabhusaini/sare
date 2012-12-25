@@ -10,10 +10,9 @@ import org.apache.commons.lang3.Validate;
 import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.controllers.base.ControllerBase;
-import edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
-import edu.sabanciuniv.sentilab.utils.CannedMessages;
+import edu.sabanciuniv.sentilab.utils.*;
 
 /**
  * An entity controller for {@link PersistentDocumentStore} entities.
@@ -38,7 +37,7 @@ public class PersistentDocumentStoreController
 		cq.multiselect(store.get("id")).where(cb.equal(store.get("ownerId"), cb.parameter(String.class, "ownerId")));
 		TypedQuery<byte[]> tq = em.createQuery(cq);
 		tq.setParameter("ownerId", ownerId);
-		return Lists.newArrayList(Iterables.transform(tq.getResultList(), UniquelyIdentifiableObject.uuidBytesToStringFunction()));
+		return Lists.newArrayList(Iterables.transform(tq.getResultList(), UuidUtils.uuidBytesToStringFunction()));
 	}
 	
 	/**
@@ -51,7 +50,7 @@ public class PersistentDocumentStoreController
 		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
 		Validate.notNull(storeId, CannedMessages.NULL_ARGUMENT, "id");
 		
-		byte[] uuidBytes = UniquelyIdentifiableObject.getUuidBytes(storeId);
+		byte[] uuidBytes = UuidUtils.toBytes(storeId);
 		PersistentDocumentStore store = em.find(PersistentDocumentStore.class, uuidBytes);
 		
 		CriteriaBuilder cb = em.getCriteriaBuilder();

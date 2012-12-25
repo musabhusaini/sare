@@ -10,6 +10,7 @@ import org.apache.commons.lang3.*;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.SareEntityManagerFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.*;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 import play.*;
 import play.libs.Json;
@@ -33,9 +34,9 @@ public class SareTransactionalAction extends Action.Simple {
 		Validate.notNull(clazz);
 		
 		T object = null;
-		if (UniquelyIdentifiableObject.isUuid(id) && em() != null) {
+		if (UuidUtils.isUuid(id) && em() != null) {
 			try {
-				byte[] uuid = UniquelyIdentifiableObject.getUuidBytes(UniquelyIdentifiableObject.createUuid(id));
+				byte[] uuid = UuidUtils.toBytes(UuidUtils.create(id));
 				object = em().find(clazz, uuid);
 				
 				if (object != null && !SessionedAction.isOwnerOf(object)) {

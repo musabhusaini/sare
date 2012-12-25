@@ -8,6 +8,8 @@ import org.junit.*;
 
 import com.google.common.collect.Lists;
 
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
+
 public class ModelTestsBase {
 
 	protected EntityManager em;
@@ -42,7 +44,7 @@ public class ModelTestsBase {
 			PersistentObject obj;
 			
 			try {
-				obj = em.find(PersistentObject.class, UniquelyIdentifiableObject.getUuidBytes(uuid));
+				obj = em.find(PersistentObject.class, UuidUtils.toBytes(uuid));
 			} catch (EntityNotFoundException e) {
 				continue;
 			}

@@ -1,7 +1,7 @@
 package controllers;
 
-import static edu.sabanciuniv.sentilab.sare.models.base.UniquelyIdentifiableObject.*;
 import static controllers.base.SareTransactionalAction.*;
+
 import models.document.OpinionDocumentView;
 
 import play.mvc.*;
@@ -14,13 +14,14 @@ import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionDocumentFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 @With(SareTransactionalAction.class)
 public class DocumentsController extends Application {
 
 	private static PersistentDocument fetchDocument(String collection, String document) {
 		PersistentDocument documentObj = fetchResource(document, PersistentDocument.class);
-		if (!normalizeUuidString(collection).equals(normalizeUuidString(documentObj.getStore().getIdentifier()))) {
+		if (!UuidUtils.normalize(collection).equals(UuidUtils.normalize(documentObj.getStore().getIdentifier()))) {
 			throw new IllegalArgumentException();
 		}
 		return documentObj;
