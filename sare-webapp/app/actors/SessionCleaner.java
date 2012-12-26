@@ -21,6 +21,35 @@ import edu.sabanciuniv.sentilab.utils.UuidUtils;
 import akka.actor.*;
 
 public class SessionCleaner extends UntypedActor {
+	
+	public static boolean clean(WebSession session) {
+		if (session == null) {
+			return false;
+		}
+		
+		Logger.info("deleting session " + UuidUtils.normalize(session.id));
+		session.delete();
+		
+		// if the owner id and session id are the same, it's a standalone session, so delete all stores owned.
+		if (!SessionedAction.isAuthenticated(session)) {
+			EntityManager em = SareEntityManagerFactory.createEntityManager();
+			em.getTransaction().begin();
+			
+			// delete all owned stores.
+			List<String> uuids = new PersistentDocumentStoreController().getAllUuids(em, session.ownerId);
+			for (String uuid : uuids) {
+				Logger.info("deleting store " + uuid + " owned by " + session.ownerId);
+				PersistentDocumentStore store = em.find(PersistentDocumentStore.class, UuidUtils.toBytes(uuid));
+				em.remove(store);
+			}
+			
+			em.getTransaction().commit();
+			em.close();
+		}
+		
+		return true;
+	}
+	
 	@Override
 	public void onReceive(Object message) throws Exception {
 		Ebean.execute(new TxRunnable() {
@@ -36,25 +65,7 @@ public class SessionCleaner extends UntypedActor {
 				
 				// delete each.
 				for (WebSession session : oldSessions) {
-					Logger.info("deleting session " + UuidUtils.normalize(session.id));
-					session.delete();
-					
-					// if the owner id and session id are the same, it's a standalone session, so delete all stores owned.
-					if (!SessionedAction.isAuthenticated(session)) {
-						EntityManager em = SareEntityManagerFactory.createEntityManager();
-						em.getTransaction().begin();
-						
-						// delete all owned stores.
-						List<String> uuids = new PersistentDocumentStoreController().getAllUuids(em, session.ownerId);
-						for (String uuid : uuids) {
-							Logger.info("deleting store " + uuid + " owned by " + session.ownerId);
-							PersistentDocumentStore store = em.find(PersistentDocumentStore.class, UuidUtils.toBytes(uuid));
-							em.remove(store);
-						}
-						
-						em.getTransaction().commit();
-						em.close();
-					}
+					clean(session);
 				}
 			}
 		});

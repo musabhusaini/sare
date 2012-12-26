@@ -2,9 +2,9 @@ import java.util.concurrent.TimeUnit;
 
 import actors.*;
 import akka.actor.*;
-import akka.util.*;
 import play.*;
 import play.libs.*;
+import scala.concurrent.duration.Duration;
 
 public class Global extends GlobalSettings {
 
@@ -18,6 +18,6 @@ public class Global extends GlobalSettings {
 			Duration.create(0, TimeUnit.MILLISECONDS),
 			Duration.create(10, TimeUnit.MINUTES),
 			sessionCleaner,
-			null);
+			"", Akka.system().dispatcher());
 	}
 }

@@ -12,7 +12,8 @@ import play.mvc.Http.Context;
 
 public class SessionedAction extends Action.Simple {
 	
-	private  static final String SESSION_ID_KEY = "session_id";
+	public static final String SESSION_ID_KEY = "session_id";
+	public static final String SARE_SESSION_HEADER = "x-sare-session";
 	
 	public static boolean isOwnerOf(Context ctx, PersistentObject object) {
 		if (ctx == null) {
@@ -33,7 +34,9 @@ public class SessionedAction extends Action.Simple {
 			Validate.notNull(ctx);
 		}
 		
-		String sessionId = StringUtils.defaultString(ctx.session().get(SESSION_ID_KEY));
+		String sessionId = StringUtils.defaultString(
+			StringUtils.defaultString(ctx.request().getHeader(SARE_SESSION_HEADER),
+			ctx.session().get(SESSION_ID_KEY)));
 		return UuidUtils.isUuid(sessionId) ? sessionId : null;
 	}
 	
@@ -78,18 +81,31 @@ public class SessionedAction extends Action.Simple {
 		return isAuthenticated((Context)null);
 	}
 	
+	public static WebSession getWebSession(Context ctx) {
+		if (ctx == null) {
+			ctx = Context.current();
+		}
+		
+		return WebSession.find.byId(UuidUtils.toBytes(getSessionKey(ctx)));
+	}
+	
+	public static WebSession getWebSession() {
+		return getWebSession(null);
+	}
+	
 	@Override
 	public Result call(Context ctx) throws Throwable {
 		WebSession session = null;
 		
 		// get the session, or create one if it doesn't exist.
 		if (!StringUtils.isEmpty(getSessionKey(ctx))) {
-			session = WebSession.find.byId(UuidUtils.toBytes(getSessionKey(ctx)));
+			session = getWebSession(ctx);
 			
 			if (session != null) {
 				Logger.info(LoggedAction.getLogEntry(ctx, "session found"));
 				session.touch().update();
 			} else {
+				Logger.info(LoggedAction.getLogEntry(ctx, "session expired"));
 				ctx.session().remove(SESSION_ID_KEY);
 				ctx.request().setUsername(null);
 			}
@@ -97,7 +113,6 @@ public class SessionedAction extends Action.Simple {
 		
 		if (session == null) {
 			Logger.info(LoggedAction.getLogEntry(ctx, "starting new session"));
-			
 			session = new WebSession();
 			ctx.session().put(SESSION_ID_KEY, UuidUtils.normalize(session.id));
 			session.ownerId = getUsername(ctx);
