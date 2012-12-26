@@ -7,6 +7,7 @@ import org.apache.commons.lang3.*;
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 import play.Logger;
+import play.libs.*;
 import play.mvc.*;
 import play.mvc.Http.Context;
 
@@ -34,9 +35,17 @@ public class SessionedAction extends Action.Simple {
 			Validate.notNull(ctx);
 		}
 		
+		// get the session id and decrypt it.
 		String sessionId = StringUtils.defaultString(
-			StringUtils.defaultString(ctx.request().getHeader(SARE_SESSION_HEADER),
-			ctx.session().get(SESSION_ID_KEY)));
+			StringUtils.defaultString(ctx.request().getHeader(SARE_SESSION_HEADER), ctx.session().get(SESSION_ID_KEY)));
+		if (StringUtils.isNotEmpty(sessionId)) {
+			try {
+				sessionId = Crypto.decryptAES(sessionId);
+			} catch (Throwable e) {
+				sessionId = null;
+			}
+		}
+		
 		return UuidUtils.isUuid(sessionId) ? sessionId : null;
 	}
 	
@@ -97,7 +106,7 @@ public class SessionedAction extends Action.Simple {
 	public Result call(Context ctx) throws Throwable {
 		WebSession session = null;
 		
-		// get the session, or create one if it doesn't exist.
+		// get the session.
 		if (!StringUtils.isEmpty(getSessionKey(ctx))) {
 			session = getWebSession(ctx);
 			
@@ -111,10 +120,13 @@ public class SessionedAction extends Action.Simple {
 			}
 		}
 		
+		// create one if it doesn't exist.
 		if (session == null) {
 			Logger.info(LoggedAction.getLogEntry(ctx, "starting new session"));
 			session = new WebSession();
-			ctx.session().put(SESSION_ID_KEY, UuidUtils.normalize(session.id));
+			
+			String sessionId = Crypto.encryptAES(UuidUtils.normalize(session.id));
+			ctx.session().put(SESSION_ID_KEY, sessionId);
 			session.ownerId = getUsername(ctx);
 			session.remoteAddress = ctx.request().remoteAddress();
 			session.save();

@@ -1,10 +1,21 @@
-@(message: String)
+@()
 
 @contentHtml = {
-	<!-- @play20.welcome(message, style = "Java") -->
-	
-	<div>
-		@message
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span5">
+			</div>
+			<div class="span2">
+				<p>
+					<a id="btnSigon" href="#" class="btn btn-primary btn-block btn-large disabled">Sign in</a>
+				</p>
+				<p>
+					<a id="btnGuest" href="#" class="btn btn-primary btn-block btn-large">Start as guest</a>
+				</p>
+			</div>
+			<div class="span5">
+			</div>
+		</div>
 	</div>
 }
 

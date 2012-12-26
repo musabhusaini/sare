@@ -1,5 +1,7 @@
 package controllers.base;
 
+import actors.*;
+import models.*;
 import models.base.*;
 import controllers.factories.ViewModelFactory;
 import play.*;
@@ -30,7 +32,7 @@ public class Application extends Controller {
 	}
 	
 	public static Result index() {
-		return ok(index.render("Your new application is ready."));
+		return ok(index.render());
 	}
 
 	public static Result keepAlive() {
@@ -47,6 +49,12 @@ public class Application extends Controller {
 	}
 
 	public static Result logout() {
-		return TODO;
+		WebSession session = SessionedAction.getWebSession();
+		if (session == null) {
+			return badRequest();
+		}
+		
+		SessionCleaner.clean(session);
+		return ok();
 	}
 }

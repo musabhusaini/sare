@@ -1,6 +1,8 @@
 @(title: String = "Sare", scripts : Html = Html(""), styles : Html = Html(""), active : String = "Home",
-	leftbar: Html = Html(""), content: Html = Html(""), rightbar: Html = Html(""), contentWidth: Int = 10)
+	leftbar: Html = Html(""), content: Html = Html(""), rightbar: Html = Html(""), contentWidth: Int = 10,
+	showPageHeader: Boolean = true)
 
+@import play.mvc.Http._
 @import scala.collection.mutable._
 
 <!DOCTYPE html>
@@ -43,7 +45,13 @@
 							<a class="brand" href="#">Sare</a>
 							<div class="nav-collapse collapse">
 								<p class="navbar-text pull-right">
-									Logged in as <a href="#" class="navbar-link">Anonymous</a>
+									Logged in as <a href="#" class="navbar-link">
+										@if(Context.current().request().username() != null) {
+											Context.current().request().username()
+										} else {
+											anonymous
+										}
+									</a>
 								</p>
 								<ul class="nav">
 									@for((title, url) <- LinkedHashMap("Home" -> "#", "About" -> "#", "Contact" -> "#")) {
@@ -70,13 +78,14 @@
 				
 				<div class="span@contentWidth centerbody">
 					<div class="container-fluid">
-						<div class="row-fluid page-header">
-							<h1>Sare</h1>
-							<p class="lead">
-								A Sentiment Analysis Research Environment
-							</p>
-						</div>
-						
+						@if(showPageHeader) {
+							<div class="row-fluid page-header">
+								<h1>Sare</h1>
+								<p class="lead">
+									A Sentiment Analysis Research Environment
+								</p>
+							</div>
+						}
 						<div class="row-fluid content">
 							@content
 						</div>
