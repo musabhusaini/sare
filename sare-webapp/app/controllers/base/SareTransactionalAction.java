@@ -111,7 +111,8 @@ public class SareTransactionalAction extends Action.Simple {
 		try {
 			// create entity manager, add it to args, and begin transaction before the call.
 			Logger.info(LoggedAction.getLogEntry(ctx, "creating entity manager"));
-			em = SareEntityManagerFactory.createEntityManager();
+			em = SareEntityManagerFactory
+				.createEntityManager(Play.application().getWrappedApplication().mode().toString());
 			currentEntityManager.set(em);
 			em.getTransaction().begin();
 

@@ -8,27 +8,18 @@ import org.junit.*;
 
 import com.google.common.collect.Lists;
 
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.SareEntityManagerFactory;
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.SareEntityManagerFactory.DataMode;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 public class ModelTestsBase {
 
 	protected EntityManager em;
-	protected static EntityManagerFactory emFactory;
 	protected List<UUID> persistedUuids;
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		emFactory = Persistence.createEntityManagerFactory("edu.sabanciuniv.sentilab.sare.tests.data");
-	}
-	
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		emFactory.close();
-	}
 	
 	@Before
 	public void superSetUp() throws Exception {
-		em = emFactory.createEntityManager();
+		em = SareEntityManagerFactory.createEntityManager(DataMode.TEST);
 		persistedUuids = Lists.newArrayList();
 	}
 	
