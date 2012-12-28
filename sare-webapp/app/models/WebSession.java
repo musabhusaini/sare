@@ -1,7 +1,6 @@
 package models;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -41,6 +40,14 @@ public class WebSession extends Model {
 	
 	public WebSession() {
 		this.id = UuidUtils.toBytes(UUID.randomUUID());
+	}
+	
+	public byte[] getId() {
+		return this.id;
+	}
+	
+	public void setId(byte[] id) {
+		this.id = id;
 	}
 	
 	@Override

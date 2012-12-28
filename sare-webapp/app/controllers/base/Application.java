@@ -1,5 +1,7 @@
 package controllers.base;
 
+import org.codehaus.jackson.JsonNode;
+
 import actors.*;
 import models.*;
 import models.base.*;
@@ -23,9 +25,26 @@ public class Application extends Controller {
 		return viewModel;
 	}
 	
+	protected static ViewModel createViewModel(JsonNode json) {
+		ViewModel viewModel = new ViewModelFactory().create(new ViewModelFactoryOptions().setJson(json));
+		if (viewModel == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		return viewModel;
+	}
+	
 	protected static <T> ViewModel createViewModelQuietly(T model) {
 		try {
 			return createViewModel(model);
+		} catch (IllegalArgumentException e) {
+			return new ViewModel();
+		}
+	}
+	
+	protected static ViewModel createViewModelQuietly(JsonNode json) {
+		try {
+			return createViewModel(json);
 		} catch (IllegalArgumentException e) {
 			return new ViewModel();
 		}

@@ -1,7 +1,9 @@
 package models.base;
 
+import javax.persistence.Id;
+
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.*;
 import org.springframework.util.ClassUtils;
 
 import play.db.ebean.Model;
@@ -15,6 +17,10 @@ public class ViewModel extends Model {
 	 */
 	private static final long serialVersionUID = 4408751749925885183L;
 
+	@JsonIgnore
+	@Id
+	private byte[] id;
+	
 	public String type;
 	
 	public ViewModel(Object obj) {
@@ -25,6 +31,10 @@ public class ViewModel extends Model {
 	
 	public ViewModel() {
 		this(null);
+	}
+	
+	public byte[] getId() {
+		return this.id;
 	}
 	
 	public JsonNode asJson() {
