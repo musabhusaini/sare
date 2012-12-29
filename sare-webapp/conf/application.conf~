@@ -35,7 +35,6 @@ db.default.password=java_user_pwd
 # ~~~~~
 # You can disable evolutions if needed
 # evolutionplugin=disabled
-applyEvolutions.default=true
 
 # Ebean configuration
 # ~~~~~
