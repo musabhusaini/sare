@@ -1,0 +1,12 @@
+@(content: Html, styles: Html = Html(""), scripts: Html = Html(""))
+
+@contentHtml = {
+	<div class="container-fluid">
+		<div class="row-fluid">
+			@content
+		</div>
+		<a id="btn-next" href="#" class="pull-right btn btn-primary">Next</a>
+	</div>
+}
+
+@main(content = contentHtml, styles = styles, scripts = scripts)

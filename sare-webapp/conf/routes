@@ -28,8 +28,10 @@ POST	/api/collections/:collection/documents/:document	controllers.DocumentsContr
 DELETE	/api/collections/:collection/documents/:document	controllers.DocumentsController.delete(collection: String, document: String)
 
 # Modules
-GET		/api/modules/:input			controllers.ModuleController.options(input: String)
-GET		/view/modules/:input/next	controllers.ModuleController.next(input: String)
+GET		/api/modules/options/:input			controllers.ModuleController.options(input: String)
+GET		/view/modules/options/:input		controllers.ModuleController.next(input: String)
+
+GET		/view/modules/corpus-selection		controllers.modules.CorpusModule.selection()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)
