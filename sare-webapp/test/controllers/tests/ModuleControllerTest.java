@@ -17,8 +17,7 @@ public class ModuleControllerTest extends TestBase {
 
 	@Test
 	public void testModuleControllerWithEmpty() {
-		Result result = callAction(controllers.routes.ref.ModuleController.options(),
-			fakeRequest().withJsonBody(Json.parse("{}")));
+		Result result = callAction(controllers.routes.ref.ModuleController.options("{}"));
 
 		assertThat(result).isNotNull();
 		assertThat(status(result)).isEqualTo(OK);

@@ -10,8 +10,8 @@ POST	/api/session				controllers.base.Application.keepAlive()
 DELETE	/api/session				controllers.base.Application.logout()
 POST	/api/session/login			controllers.base.Application.authenticate()
 
-GET		/session/login				controllers.base.Application.login()
-#GET		/session/logout				controllers.base.Application.logout()
+GET		/view/session/login				controllers.base.Application.login()
+#GET		/view/session/logout				controllers.base.Application.logout()
 
 # Collections
 GET		/api/collections						controllers.CollectionsController.list()
@@ -28,7 +28,8 @@ POST	/api/collections/:collection/documents/:document	controllers.DocumentsContr
 DELETE	/api/collections/:collection/documents/:document	controllers.DocumentsController.delete(collection: String, document: String)
 
 # Modules
-POST	/api/modules		controllers.ModuleController.options()
+GET		/api/modules/:input			controllers.ModuleController.options(input: String)
+GET		/view/modules/:input/next	controllers.ModuleController.next(input: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)

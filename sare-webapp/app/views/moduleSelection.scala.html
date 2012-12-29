@@ -1,0 +1,19 @@
+@(modules: Set[ModuleView])
+
+@contentHtml = {
+	<div class="container-fluid">
+		@for(module <- modules) {
+			<div class="row-fluid">
+				<div class="offset4 span4">
+					<p>
+						<a href="@module.getRoute()" class="module-btn btn btn-block btn-large">
+							@module.getName()
+						</a>
+					</p>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+@main(content = contentHtml)

@@ -5,11 +5,6 @@ import models.base.ViewModel;
 
 public class PersistentDocumentView extends ViewModel {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4107151672582395851L;
-
 	public String content;
 	
 	public PersistentDocumentView(PersistentDocument document) {

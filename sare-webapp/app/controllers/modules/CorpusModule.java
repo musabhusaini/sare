@@ -8,8 +8,7 @@ public class CorpusModule extends Module {
 
 	@Override
 	public String getDisplayName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Corpus selection";
 	}
 
 	@Override
@@ -17,5 +16,4 @@ public class CorpusModule extends Module {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

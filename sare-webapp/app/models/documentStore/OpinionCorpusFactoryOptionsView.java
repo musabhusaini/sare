@@ -7,11 +7,6 @@ import models.base.ViewModel;
 
 public class OpinionCorpusFactoryOptionsView extends ViewModel {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3966138627393301220L;
-
 	public String content;
 	public String format;
 	public String delimiter;

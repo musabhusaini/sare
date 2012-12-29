@@ -34,20 +34,28 @@ public class Application extends Controller {
 		return viewModel;
 	}
 	
-	protected static <T> ViewModel createViewModelQuietly(T model) {
+	protected static <T> ViewModel createViewModelQuietly(T model, ViewModel defaultViewModel) {
 		try {
 			return createViewModel(model);
 		} catch (IllegalArgumentException e) {
-			return new ViewModel();
+			return defaultViewModel;
+		}
+	}
+	
+	protected static <T> ViewModel createViewModelQuietly(T model) {
+		return createViewModelQuietly(model, new ViewModel());
+	}
+	
+	protected static ViewModel createViewModelQuietly(JsonNode json, ViewModel defaultViewModel) {
+		try {
+			return createViewModel(json);
+		} catch (IllegalArgumentException e) {
+			return defaultViewModel;
 		}
 	}
 	
 	protected static ViewModel createViewModelQuietly(JsonNode json) {
-		try {
-			return createViewModel(json);
-		} catch (IllegalArgumentException e) {
-			return new ViewModel();
-		}
+		return createViewModelQuietly(json, new ViewModel());
 	}
 	
 	public static Result index() {

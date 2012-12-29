@@ -8,8 +8,8 @@ import models.base.*;
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.*;
 import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
 
+import play.Play;
 import play.libs.Json;
 
 import com.google.common.base.Predicate;
@@ -22,7 +22,7 @@ public class ViewModelFactory
 	implements IFactory<ViewModel, ViewModelFactoryOptions> {
 
 	private ViewModel createSpecific(Object model) {
-		Reflections reflections = new Reflections("models", ClasspathHelper.contextClassLoader());
+		Reflections reflections = new Reflections("models", Play.application().getWrappedApplication().classloader());
 		Set<Class<? extends ViewModel>> viewModelClasses = reflections.getSubTypesOf(ViewModel.class);
 		
 		List<Class<?>> modelCandidateClasses = ClassUtils.getAllSuperclasses(model.getClass());
@@ -71,7 +71,7 @@ public class ViewModelFactory
 		}
 		
 		final String typeName = type;
-		Reflections reflections = new Reflections("models", ClasspathHelper.contextClassLoader());
+		Reflections reflections = new Reflections("models", Play.application().classloader());
 		Class<? extends ViewModel> availableViewModelClass = Iterables.find(reflections.getSubTypesOf(ViewModel.class),
 			new Predicate<Class<? extends ViewModel>>() {
 				@Override
