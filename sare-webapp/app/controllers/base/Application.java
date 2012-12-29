@@ -67,10 +67,6 @@ public class Application extends Controller {
 		return ok();
 	}
 	
-	public static Result authenticate() {
-		return TODO;
-	}
-
 	public static Result login() {
 		return TODO;
 	}
@@ -83,5 +79,13 @@ public class Application extends Controller {
 		
 		SessionCleaner.clean(session);
 		return ok();
+	}
+	
+	public static Result signin() {
+		return TODO;
+	}
+
+	public static Result signout() {
+		return TODO;
 	}
 }

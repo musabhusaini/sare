@@ -8,10 +8,10 @@ GET     /                           			controllers.base.Application.index()
 # Authentication
 POST	/api/session				controllers.base.Application.keepAlive()
 DELETE	/api/session				controllers.base.Application.logout()
-POST	/api/session/login			controllers.base.Application.authenticate()
+POST	/api/session/login			controllers.base.Application.login()
 
-GET		/view/session/login				controllers.base.Application.login()
-#GET		/view/session/logout				controllers.base.Application.logout()
+GET		/view/session/login				controllers.base.Application.signin()
+GET		/view/session/logout			controllers.base.Application.signout()
 
 # Collections
 GET		/api/collections						controllers.CollectionsController.list()
