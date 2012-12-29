@@ -76,7 +76,7 @@
 		
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/sare_main_db" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/sare_dev_db" />
             <property name="javax.persistence.jdbc.user" value="java_user" />
             <property name="javax.persistence.jdbc.password" value="java_user_pwd" />
 

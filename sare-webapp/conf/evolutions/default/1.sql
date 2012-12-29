@@ -7,23 +7,19 @@ create table web_session (
   uuid                      VARBINARY(16) not null,
   owner_id                  varchar(255),
   remote_address            varchar(255),
-  created                   timestamp,
-  updated                   timestamp,
+  created                   datetime,
+  updated                   datetime,
   constraint pk_web_session primary key (uuid))
 ;
-
-create sequence web_session_seq;
 
 
 
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+SET FOREIGN_KEY_CHECKS=0;
 
-drop table if exists web_session;
+drop table web_session;
 
-SET REFERENTIAL_INTEGRITY TRUE;
-
-drop sequence if exists web_session_seq;
+SET FOREIGN_KEY_CHECKS=1;
 
