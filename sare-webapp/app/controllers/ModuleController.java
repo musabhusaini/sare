@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import models.ModuleView;
 import models.base.*;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.reflections.Reflections;
@@ -64,7 +65,19 @@ public class ModuleController extends Application {
 				new Predicate<ViewModel>() {
 					@Override
 					public boolean apply(@Nullable ViewModel input) {
-						return requiredViewModelClasses.contains(input.getClass());
+						// if this class is required, then return true.
+						if (requiredViewModelClasses.contains(input.getClass())) {
+							return true;
+						}
+						
+						// if any of its super classes are required, that also works.
+						for (Class<?> superClass : ClassUtils.getAllSuperclasses(input.getClass())) {
+							if (requiredViewModelClasses.contains(superClass)) {
+								return true;
+							}
+						}
+						
+						return false;
 					}
 				}));
 			

@@ -1,12 +1,18 @@
 @(content: Html, styles: Html = Html(""), scripts: Html = Html(""))
 
+@moreScripts = {
+	<script src="@routes.Assets.at("javascripts/moduleView.html.js")" type="text/javascript"></script>
+	@scripts
+}
+
 @contentHtml = {
 	<div class="container-fluid">
 		<div class="row-fluid">
 			@content
 		</div>
-		<a id="btn-next" href="#" class="pull-right btn btn-primary">Next</a>
+		<input id="module-output" type="hidden" value="[]" />
+		<button id="btn-next" class="pull-right btn btn-primary">Next</button>
 	</div>
 }
 
-@main(content = contentHtml, styles = styles, scripts = scripts)
+@main(content = contentHtml, styles = styles, scripts = moreScripts)

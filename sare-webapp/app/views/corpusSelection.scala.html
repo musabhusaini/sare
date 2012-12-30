@@ -1,14 +1,30 @@
-@()
+@(stores: List[documentStore.PersistentDocumentStoreView])
+
+@import models.documentStore._
+@import play.libs._
 
 @contentHtml = {
 	<div class="container-fluid">
-		<div class="row-fluid">
-			<div class="span4">
-				<select id="lst-corpora" multiple="multiple">
+		<div class="span4">
+			<div class="row-fluid">
+				<select id="lst-corpora" size=10 autofocus="autofocus">
+					@for(store <- stores) {
+						<option value="@store.id" data-store="@Json.toJson(store)">
+							@store.title
+						</option>
+					}
 				</select>
+			</div>
+			<div class="row-fluid">
+				<button id="btn-add" class="btn">Add</button>
+				<button id="btn-delete" class="btn btn-warning">Delete</button>
 			</div>
 		</div>
 	</div>
 }
 
-@moduleView(content = contentHtml)
+@moreScripts = {
+	<script src="@routes.Assets.at("javascripts/corpusSelection.html.js")" type="text/javascript"></script>
+}
+
+@moduleView(content = contentHtml, scripts = moreScripts)

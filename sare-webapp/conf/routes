@@ -34,4 +34,5 @@ GET		/view/modules/options/:input		controllers.ModuleController.next(input: Stri
 GET		/view/modules/corpus-selection		controllers.modules.CorpusModule.selection()
 
 # Map static resources from the /public folder to the /assets URL path
+GET    /assets/javascripts/routes      			controllers.base.Application.javascriptRoutes()
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)

@@ -88,4 +88,25 @@ public class Application extends Controller {
 	public static Result signout() {
 		return TODO;
 	}
+	
+	public static Result javascriptRoutes() {
+		response().setContentType("text/javascript");
+		return ok(Routes.javascriptRouter("jsRoutes",
+			controllers.base.routes.javascript.Application.keepAlive(),
+			controllers.base.routes.javascript.Application.login(),
+			controllers.base.routes.javascript.Application.logout(),
+			controllers.routes.javascript.CollectionsController.list(),
+			controllers.routes.javascript.CollectionsController.create(),
+			controllers.routes.javascript.CollectionsController.get(),
+			controllers.routes.javascript.CollectionsController.update(),
+			controllers.routes.javascript.CollectionsController.delete(),
+			controllers.routes.javascript.DocumentsController.list(),
+			controllers.routes.javascript.DocumentsController.add(),
+			controllers.routes.javascript.DocumentsController.get(),
+			controllers.routes.javascript.DocumentsController.update(),
+			controllers.routes.javascript.DocumentsController.delete(),
+			controllers.routes.javascript.ModuleController.options(),
+			controllers.routes.javascript.ModuleController.next()
+		));
+	}
 }
