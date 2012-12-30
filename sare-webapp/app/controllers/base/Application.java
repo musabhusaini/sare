@@ -79,7 +79,7 @@ public class Application extends Controller {
 		return createViewModelQuietly(json, new ViewModel());
 	}
 	
-	public static Result index() {
+	public static Result homePage() {
 		return ok(index.render());
 	}
 
@@ -102,17 +102,18 @@ public class Application extends Controller {
 		return ok();
 	}
 	
-	public static Result signin() {
+	public static Result loginPage() {
 		return TODO;
 	}
 
-	public static Result signout() {
+	public static Result logoutPage() {
 		return TODO;
 	}
 	
 	public static Result javascriptRoutes() {
 		response().setContentType("text/javascript");
 		return ok(Routes.javascriptRouter("jsRoutes",
+			controllers.base.routes.javascript.Application.homePage(),
 			controllers.base.routes.javascript.Application.keepAlive(),
 			controllers.base.routes.javascript.Application.login(),
 			controllers.base.routes.javascript.Application.logout(),
@@ -127,7 +128,7 @@ public class Application extends Controller {
 			controllers.routes.javascript.DocumentsController.update(),
 			controllers.routes.javascript.DocumentsController.delete(),
 			controllers.routes.javascript.ModuleController.options(),
-			controllers.routes.javascript.ModuleController.next()
+			controllers.routes.javascript.ModuleController.nextPage()
 		));
 	}
 }

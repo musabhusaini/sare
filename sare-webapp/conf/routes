@@ -24,15 +24,15 @@
 # ~~~~
 
 # Home page
-GET     /                           			controllers.base.Application.index()
+GET     /                           			controllers.base.Application.homePage()
 
 # Authentication
 POST	/api/session				controllers.base.Application.keepAlive()
 DELETE	/api/session				controllers.base.Application.logout()
 POST	/api/session/login			controllers.base.Application.login()
 
-GET		/view/session/login				controllers.base.Application.signin()
-GET		/view/session/logout			controllers.base.Application.signout()
+GET		/view/session/login				controllers.base.Application.loginPage()
+GET		/view/session/logout			controllers.base.Application.logoutPage()
 
 # Collections
 GET		/api/collections						controllers.CollectionsController.list()
@@ -50,9 +50,9 @@ DELETE	/api/collections/:collection/documents/:document	controllers.DocumentsCon
 
 # Modules
 GET		/api/modules/options/:input			controllers.ModuleController.options(input: String)
-GET		/view/modules/options/:input		controllers.ModuleController.next(input: String)
+GET		/view/modules/options/:input		controllers.ModuleController.nextPage(input: String)
 
-GET		/view/modules/corpus-selection		controllers.modules.CorpusModule.selection()
+GET		/view/modules/corpus-selection		controllers.modules.CorpusModule.landingPage()
 
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/javascripts/routes      			controllers.base.Application.javascriptRoutes()

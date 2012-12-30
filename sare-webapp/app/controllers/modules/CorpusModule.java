@@ -51,10 +51,10 @@ public class CorpusModule extends Module {
 
 	@Override
 	public String getRoute(Iterable<ViewModel> viewModels) {
-		return controllers.modules.routes.CorpusModule.selection().url();
+		return controllers.modules.routes.CorpusModule.landingPage().url();
 	}
 	
-	public static Result selection() {
+	public static Result landingPage() {
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
 		List<String> uuids = docStoreController.getAllUuids(em(), getUsername());
 		List<PersistentDocumentStoreView> stores = Lists.transform(uuids,

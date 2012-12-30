@@ -135,7 +135,7 @@ public class ModuleController extends Application {
 		return ok(play.libs.Json.toJson(getNextModules(input)));
 	}
 	
-	public static Result next(String input) {
+	public static Result nextPage(String input) {
 		Set<ModuleView> modules = getNextModules(input);
 		if (modules == null || modules.size() == 0) {
 			throw new IllegalArgumentException();
