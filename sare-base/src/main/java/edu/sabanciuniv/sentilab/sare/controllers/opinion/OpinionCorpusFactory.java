@@ -223,7 +223,19 @@ public final class OpinionCorpusFactory
 		throws IllegalFactoryOptionsException {
 		
 		boolean created = true;
-		OpinionCorpus corpus = new OpinionCorpus();
+		OpinionCorpus corpus = null;
+		if (options.getExistingId() != null && options.getEm() != null) {
+			// if not found, we simply fall-back to the default behavior.
+			try {
+				corpus = options.getEm().find(OpinionCorpus.class, options.getExistingId());
+			} catch (IllegalArgumentException e) {
+				corpus = null;
+			}
+		}
+		
+		if (corpus == null) {
+			corpus = new OpinionCorpus();
+		}
 		
 		String format = StringUtils.isNotEmpty(options.getFormat()) ? options.getFormat() :
 			(options.getFile() != null ? FilenameUtils.getExtension(options.getFile().getPath()) : null);

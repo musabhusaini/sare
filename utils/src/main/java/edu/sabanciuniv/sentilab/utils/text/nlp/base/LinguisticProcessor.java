@@ -47,7 +47,12 @@ public abstract class LinguisticProcessor
 		}
 		
 		@Override
-		public String language() {
+		public String languageCode() {
+			return "";
+		}
+		
+		@Override
+		public String languageName() {
 			return "";
 		}
 		
@@ -82,11 +87,19 @@ public abstract class LinguisticProcessor
 	}
 	
 	/**
-	 * Gets the language that this processor can process.
-	 * @return the language.
+	 * Gets the code of the language that this processor can process.
+	 * @return the language code.
 	 */
-	public String getLanguage() {
-		return this.infoAnnotation.language();
+	public String getLanguageCode() {
+		return this.infoAnnotation.languageCode();
+	}
+	
+	/**
+	 * Gets the name of the language that this processor can process. 
+	 * @return the language name.
+	 */
+	public String getLanguageDisplayName() {
+		return this.infoAnnotation.languageName();
 	}
 	
 	/**

@@ -31,7 +31,8 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.stanford.StanfordText;
  */
 @LinguisticProcessorInfo(
 	name = "Stanford Core NLP",
-	language = "en",
+	languageCode = "en",
+	languageName = "English",
 	canTag = true,
 	canParse = true
 )

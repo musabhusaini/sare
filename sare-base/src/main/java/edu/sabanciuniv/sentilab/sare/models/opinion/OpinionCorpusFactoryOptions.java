@@ -22,8 +22,12 @@
 package edu.sabanciuniv.sentilab.sare.models.opinion;
 
 import java.io.*;
+import java.util.UUID;
+
+import javax.persistence.EntityManager;
 
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStoreFactoryOptions;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 /**
  * The default set of options that can be used to construct an {@link OpinionCorpus} object.
@@ -33,6 +37,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumen
 public class OpinionCorpusFactoryOptions extends
 	PersistentDocumentStoreFactoryOptions<OpinionCorpus> {
 
+	private byte[] existingId;
 	private String title;
 	private String description;
 	private String language;
@@ -42,6 +47,46 @@ public class OpinionCorpusFactoryOptions extends
 	private InputStream inputStream;
 	private String content;
 	private String textDelimiter;
+	private EntityManager em;
+	
+	/**
+	 * Gets the ID of an existing corpus to be modified.
+	 * @return the ID to fetch the corpus with.
+	 */
+	public byte[] getExistingId() {
+		return this.existingId;
+	}
+
+	/**
+	 * Sets the ID of an existing corpus to be modified. Must also provide a non-{@code null} value for {@code em}
+	 * if this is {@code null}
+	 * @param id the ID to fetch the corpus with.
+	 * @return the {@code this} object.
+	 */
+	public OpinionCorpusFactoryOptions setExistingId(byte[] id) {
+		this.existingId = id;
+		return this;
+	}
+	
+	/**
+	 * Sets the ID of an existing corpus to be modified. Must also provide a non-{@code null} value for {@code em}
+	 * if this is {@code null}
+	 * @param id the ID to fetch the corpus with.
+	 * @return the {@code this} object.
+	 */
+	public OpinionCorpusFactoryOptions setExistingId(String id) {
+		return this.setExistingId(UuidUtils.toBytes(id));
+	}
+
+	/**
+	 * Sets the ID of an existing corpus to be modified. Must also provide a non-{@code null} value for {@code em}
+	 * if this is {@code null}
+	 * @param id the ID to fetch the corpus with.
+	 * @return the {@code this} object.
+	 */
+	public OpinionCorpusFactoryOptions setExistingId(UUID id) {
+		return this.setExistingId(UuidUtils.toBytes(id));
+	}
 	
 	/**
 	 * Gets the title of the corpus to be created.
@@ -202,6 +247,24 @@ public class OpinionCorpusFactoryOptions extends
 	 */
 	public OpinionCorpusFactoryOptions setTextDelimiter(String textDelimiter) {
 		this.textDelimiter = textDelimiter;
+		return this;
+	}
+
+	/**
+	 * Gets an entity manager that will be used in case an ID was provided.
+	 * @return the {@link EntityManager} that will be used.
+	 */
+	public EntityManager getEm() {
+		return this.em;
+	}
+
+	/**
+	 * Sets the entity manager to use in case an ID was provided. Only needed if an existing ID was provided.
+	 * @param em the {@link EntityManager} to be set.
+	 * @return the {@code this} object.
+	 */
+	public OpinionCorpusFactoryOptions setEm(EntityManager em) {
+		this.em = em;
 		return this;
 	}
 }

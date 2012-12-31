@@ -26,7 +26,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface LinguisticProcessorInfo {
-	public String language() default "";
+	public String languageCode() default "";
+	public String languageName() default "";
 	public String name() default "";
 	public boolean canTag() default true;
 	public boolean canParse() default false;

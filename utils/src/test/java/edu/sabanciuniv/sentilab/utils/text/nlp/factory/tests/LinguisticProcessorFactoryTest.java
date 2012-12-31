@@ -33,7 +33,7 @@ public class LinguisticProcessorFactoryTest {
 
 	@LinguisticProcessorInfo(
 		name = "test",
-		language = "xx"
+		languageCode = "xx"
 	)
 	public static class TestLinguisticProcessor
 		extends LinguisticProcessor {

@@ -22,10 +22,12 @@
 package edu.sabanciuniv.sentilab.utils.text.nlp.factory;
 
 import java.lang.reflect.Modifier;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.Validate;
 import org.reflections.Reflections;
+
+import com.google.common.collect.Lists;
 
 import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
@@ -39,6 +41,27 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
  */
 public class LinguisticProcessorFactory
 	implements IFactory<ILinguisticProcessor, LinguisticProcessorFactoryOptions> {
+	
+	/**
+	 * Gets a list of all supported linguistic processors.
+	 * @return an {@link Iterable} of {@link LinguisticProcessorInfo} objects, one for each available linguistic processor.
+	 */
+	public static Iterable<LinguisticProcessorInfo> getSupportedProcessors() {
+		List<LinguisticProcessorInfo> languages = Lists.newArrayList();
+		
+		Reflections reflections = new Reflections("edu.sabanciuniv.sentilab");
+		Set<Class<? extends ILinguisticProcessor>> subTypes = reflections.getSubTypesOf(ILinguisticProcessor.class);
+		for (Class<? extends ILinguisticProcessor> c : subTypes) {
+			LinguisticProcessorInfo info = c.getAnnotation(LinguisticProcessorInfo.class);
+			if (info == null || Modifier.isAbstract(c.getModifiers())) {
+				continue;
+			}
+			
+			languages.add(info);
+		}
+		
+		return languages;
+	}
 	
 	@Override
 	public ILinguisticProcessor create(LinguisticProcessorFactoryOptions options)
@@ -71,7 +94,7 @@ public class LinguisticProcessorFactory
 			}
 			
 			if (processorClass != null &&
-				options.getLanguage() != null && !info.language().equalsIgnoreCase(options.getLanguage())) {
+				options.getLanguage() != null && !info.languageCode().equalsIgnoreCase(options.getLanguage())) {
 				processorClass = null;
 			}
 			
