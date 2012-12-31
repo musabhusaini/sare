@@ -56,8 +56,11 @@ public class WebSession extends Model {
 	@Formats.DateTime(pattern="yyyy/MM/dd HH:mm:ss.SSS")
 	public Date created;
 	
+	@Version
 	@Formats.DateTime(pattern="yyyy/MM/dd HH:mm:ss.SSS")
 	public Date updated;
+	
+	public String refreshToken;
 	
 	public WebSession() {
 		this.id = UuidUtils.toBytes(UUID.randomUUID());
@@ -73,18 +76,12 @@ public class WebSession extends Model {
 	
 	@Override
 	public void save() {
-		this.created = this.updated = new Date();
+		this.created = new Date();
 		super.save();
 	}
 	
-	@Override
-	public void update() {
-		this.updated = new Date();
-		super.update();
-	}
-	
 	public WebSession touch() {
-		this.updated = null;
+		this.refreshToken = UuidUtils.normalize(UUID.randomUUID());
 		return this;
 	}
 }

@@ -26,6 +26,8 @@ import java.util.UUID;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStoreFactoryOptions;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
@@ -75,6 +77,10 @@ public class OpinionCorpusFactoryOptions extends
 	 * @return the {@code this} object.
 	 */
 	public OpinionCorpusFactoryOptions setExistingId(String id) {
+		if (StringUtils.isEmpty(id)) {
+			return this;
+		}
+		
 		return this.setExistingId(UuidUtils.toBytes(id));
 	}
 
@@ -85,6 +91,10 @@ public class OpinionCorpusFactoryOptions extends
 	 * @return the {@code this} object.
 	 */
 	public OpinionCorpusFactoryOptions setExistingId(UUID id) {
+		if (id == null) {
+			return this;
+		}
+		
 		return this.setExistingId(UuidUtils.toBytes(id));
 	}
 	

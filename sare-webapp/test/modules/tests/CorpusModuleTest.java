@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package controllers.tests;
+package modules.tests;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
@@ -30,15 +30,16 @@ import base.TestBase;
 import play.mvc.*;
 import play.libs.Json;
 
+import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
 
-public class ModuleControllerTest extends TestBase {
+public class CorpusModuleTest extends TestBase {
 
 	@Test
-	public void testModuleControllerWithEmpty() {
-		Result result = callAction(controllers.routes.ref.ModuleController.options("{}"));
-
+	public void testSupportedLanguages() {
+		Result result = callAction(controllers.modules.routes.ref.CorpusModule.supportedLanguages());
+		
 		assertThat(result).isNotNull();
 		assertThat(status(result)).isEqualTo(OK);
 		assertThat(contentType(result)).isEqualTo("application/json");

@@ -21,6 +21,8 @@
 
 package controllers.base;
 
+import javax.persistence.OptimisticLockException;
+
 import models.WebSession;
 
 import org.apache.commons.lang3.*;
@@ -133,7 +135,13 @@ public class SessionedAction extends Action.Simple {
 			
 			if (session != null) {
 				Logger.info(LoggedAction.getLogEntry(ctx, "session found"));
-				session.touch().update();
+				
+				// if we hit the optimistic concurrency checking problem, then we don't need to update again.
+				try {
+					session.touch().update();
+				} catch (OptimisticLockException e) {
+					session.refresh();
+				}
 			} else {
 				Logger.info(LoggedAction.getLogEntry(ctx, "session expired"));
 				ctx.session().remove(SESSION_ID_KEY);

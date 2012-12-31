@@ -8,7 +8,8 @@ create table web_session (
   owner_id                  varchar(255),
   remote_address            varchar(255),
   created                   datetime,
-  updated                   datetime,
+  refresh_token             varchar(255),
+  updated                   datetime not null,
   constraint pk_web_session primary key (uuid))
 ;
 

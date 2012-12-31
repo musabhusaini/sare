@@ -28,17 +28,22 @@ import java.util.*;
 
 import javax.annotation.Nullable;
 
+import org.codehaus.jackson.node.*;
+
 import com.google.common.base.Function;
 import com.google.common.collect.*;
 
+import play.libs.Json;
 import play.mvc.*;
-import views.html.corpusSelection;
+import views.html.*;
 import models.base.*;
 import models.documentStore.PersistentDocumentStoreView;
 import controllers.base.SareTransactionalAction;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
+import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
+import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactory;
 
 @With(SareTransactionalAction.class)
 @Module.Requires
@@ -54,6 +59,22 @@ public class CorpusModule extends Module {
 		return controllers.modules.routes.CorpusModule.landingPage().url();
 	}
 	
+	public static List<LinguisticProcessorInfo> getSupportedLanguages() {
+		return Lists.newArrayList(LinguisticProcessorFactory.getSupportedProcessors());
+	}
+	
+	public static Result supportedLanguages() {
+		ArrayNode jsonArray = Json.newObject().arrayNode();
+		for (LinguisticProcessorInfo lpi : getSupportedLanguages()) {
+			ObjectNode json = Json.newObject();
+			json.put("code", lpi.languageCode());
+			json.put("name", lpi.languageName());
+			jsonArray.add(json);
+		}
+		
+		return ok(jsonArray);
+	}
+	
 	public static Result landingPage() {
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
 		List<String> uuids = docStoreController.getAllUuids(em(), getUsername());
@@ -66,6 +87,6 @@ public class CorpusModule extends Module {
 				}
 			});
 		
-		return ok(corpusSelection.render(stores));
+		return ok(corpusLanding.render(stores));
 	}
 }

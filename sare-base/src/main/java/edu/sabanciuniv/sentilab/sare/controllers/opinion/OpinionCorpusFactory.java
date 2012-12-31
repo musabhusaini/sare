@@ -223,6 +223,7 @@ public final class OpinionCorpusFactory
 		throws IllegalFactoryOptionsException {
 		
 		boolean created = true;
+		boolean existing = true;
 		OpinionCorpus corpus = null;
 		if (options.getExistingId() != null && options.getEm() != null) {
 			// if not found, we simply fall-back to the default behavior.
@@ -235,6 +236,7 @@ public final class OpinionCorpusFactory
 		
 		if (corpus == null) {
 			corpus = new OpinionCorpus();
+			existing = false;
 		}
 		
 		String format = StringUtils.isNotEmpty(options.getFormat()) ? options.getFormat() :
@@ -262,7 +264,7 @@ public final class OpinionCorpusFactory
 			throw new IllegalFactoryOptionsException("there was an error reading the input", e);
 		}
 		
-		if (created == false) {
+		if (!created && !existing) {
 			throw new IllegalFactoryOptionsException("options did not have enough or correct information to create this object");
 		}
 		

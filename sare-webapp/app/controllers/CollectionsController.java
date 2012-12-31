@@ -32,7 +32,6 @@ import com.google.common.collect.Iterables;
 
 import models.documentStore.*;
 import play.mvc.*;
-import play.mvc.BodyParser.Json;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 
@@ -51,6 +50,10 @@ public class CollectionsController extends Application {
 	}
 	
 	public static Result create() {
+		return update(null);
+	}
+	
+	public static Result update(String collection) {
 		OpinionCorpusFactoryOptions options = null;
 		
 		MultipartFormData formData = request().body().asMultipartFormData();
@@ -58,7 +61,8 @@ public class CollectionsController extends Application {
 			// if we have a multi-part form with a file.
 			if (formData.getFiles() != null) {
 				// get either the file named "corpus" or the first one.
-				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("corpus"), Iterables.getFirst(formData.getFiles(), null));
+				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("corpus"),
+					Iterables.getFirst(formData.getFiles(), null));
 				if (filePart != null) {
 					options = new OpinionCorpusFactoryOptions()
 						.setFile(filePart.getFile())
@@ -88,10 +92,18 @@ public class CollectionsController extends Application {
 			throw new IllegalArgumentException();
 		}
 		
+		options
+			.setExistingId(collection)
+			.setEm(em());
+		
 		OpinionCorpusFactory corpusFactory = new OpinionCorpusFactory();
 		options.setOwnerId(SessionedAction.getUsername(ctx()));
 		OpinionCorpus corpus = corpusFactory.create(options);
-		em().persist(corpus);
+		if (em().contains(corpus)) {
+			em().merge(corpus);
+		} else {
+			em().persist(corpus);
+		}
 		
 		return created(createViewModel(corpus).asJson());
 	}
@@ -101,23 +113,23 @@ public class CollectionsController extends Application {
 		return ok(createViewModel(store).asJson());
 	}
 	
-	@BodyParser.Of(Json.class)
-	public static Result update(String collection) {
-		PersistentDocumentStore collectionObj = fetchResource(collection, PersistentDocumentStore.class);
-		PersistentDocumentStoreView collectionView = play.libs.Json.fromJson(request().body().asJson(), PersistentDocumentStoreView.class);
-		if (collectionView.title != null) {
-			collectionObj.setTitle(collectionView.title);
-		}
-		if (collectionView.description != null) {
-			collectionObj.setDescription(collectionView.description);
-		}
-		if (collectionView.language != null) {
-			collectionObj.setLanguage(collectionView.language);
-		}
-		em().merge(collectionObj);
-
-		return ok(createViewModelQuietly(collectionObj).asJson());
-	}
+//	@BodyParser.Of(Json.class)
+//	public static Result update(String collection) {
+//		PersistentDocumentStore collectionObj = fetchResource(collection, PersistentDocumentStore.class);
+//		PersistentDocumentStoreView collectionView = play.libs.Json.fromJson(request().body().asJson(), PersistentDocumentStoreView.class);
+//		if (collectionView.title != null) {
+//			collectionObj.setTitle(collectionView.title);
+//		}
+//		if (collectionView.description != null) {
+//			collectionObj.setDescription(collectionView.description);
+//		}
+//		if (collectionView.language != null) {
+//			collectionObj.setLanguage(collectionView.language);
+//		}
+//		em().merge(collectionObj);
+//
+//		return ok(createViewModelQuietly(collectionObj).asJson());
+//	}
 	
 	public static Result delete(String collection) {
 		PersistentDocumentStore collectionObj = fetchResource(collection, PersistentDocumentStore.class);

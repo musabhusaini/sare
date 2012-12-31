@@ -19,20 +19,29 @@ You should have received a copy of the GNU General Public License
 along with SARE. If not, see <http://www.gnu.org/licenses/>.
 ###
 
+# define reusables
 Sare = window.Sare =
   Options:
     pingEnbabled: true
     pingInterval: 5
+  Page:
+    Options: {}
+    Strings: {}
+    Objects: {}
+    Methods: {}
+    Selectors: {}
+  Helpers:
+    MimeTypes:
+      json: "application/json"
 
 $ = window.jQuery
 jsRoutes = window.jsRoutes
 
 # function that pings the server repeatedly.
 ping = ->
-  jsRoutes.controllers.base.Application.keepAlive().ajax(
+  jsRoutes.controllers.base.Application.keepAlive().ajax
     success: ->
       delayedPing()
-  )
 
 # function to generate delayed pings.
 delayedPing = ->

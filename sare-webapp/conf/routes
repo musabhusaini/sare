@@ -54,6 +54,9 @@ GET		/view/modules/options/:input		controllers.ModuleController.nextPage(input: 
 
 GET		/view/modules/corpus-selection		controllers.modules.CorpusModule.landingPage()
 
+# Support queries
+GET		/api/support/languages		controllers.modules.CorpusModule.supportedLanguages()
+
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/javascripts/routes      			controllers.base.Application.javascriptRoutes()
 GET     /assets/*file               			controllers.Assets.at(path="/public", file)

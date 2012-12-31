@@ -66,6 +66,8 @@ public class SessionCleaner extends UntypedActor {
 			
 			em.getTransaction().commit();
 			em.close();
+		} else {
+			// TODO: add logic to handle user sign out.
 		}
 		
 		return true;

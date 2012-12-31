@@ -107,7 +107,8 @@ public class Application extends Controller {
 	}
 
 	public static Result logoutPage() {
-		return TODO;
+		logout();
+		return redirect(controllers.base.routes.Application.homePage());
 	}
 	
 	public static Result javascriptRoutes() {
@@ -128,7 +129,8 @@ public class Application extends Controller {
 			controllers.routes.javascript.DocumentsController.update(),
 			controllers.routes.javascript.DocumentsController.delete(),
 			controllers.routes.javascript.ModuleController.options(),
-			controllers.routes.javascript.ModuleController.nextPage()
+			controllers.routes.javascript.ModuleController.nextPage(),
+			controllers.modules.routes.javascript.CorpusModule.supportedLanguages()
 		));
 	}
 }
