@@ -52,23 +52,30 @@
 		<form>
 			<fieldset>
 				<label>Title</label>
-				<input id="inp-corpus-title" type="text" placeholder="Give this corpus a title" />
+				<input id="inp-corpus-title" type="text" class="input-block-level" placeholder="Give this corpus a title" />
 				<label>Description</label>
-				<input id="inp-corpus-desc" type="text" placeholder="Describe it" />
-				<label>Language</label>
-				<select id="lst-corpus-language" class="input-medium">
-					@for(language <- CorpusModule.getSupportedLanguages()) {
-						<option value="@language.languageCode()">@language.languageName()</option>
-					}
-				</select>
+				<input id="inp-corpus-desc" type="text" class="input-block-level" placeholder="Describe it" />
+				<div class="row-fluid">
+					<label>Corpus language</label>
+					<select id="lst-corpus-language" class="input-small">
+						@for(language <- CorpusModule.getSupportedLanguages()) {
+							<option value="@language.languageCode()">@language.languageName()</option>
+						}
+					</select>
+				</div>
 				<div id="ctr-corpus-upload">
 					<div class="row-fluid">
-						<div id="ctr-corpus-dropfile" class="uneditable-input textbox-like">
+						<div id="ctr-corpus-dropfile" class="span8 well well-small">
+							Upload file
+						</div>
+						<div class="span4">
+							<button id="btn-corpus-browse" class="btn btn-block pull-right">Browse</button>
 						</div>
 					</div>
 					<div class="row-fluid">
-						<button id="btn-corpus-browse" class="btn">Browse</button>
-						<button id="btn-corpus-update" class="btn" disabled="disabled">Update</button>
+						<p>
+							<button id="btn-corpus-update" class="btn">Update</button>
+						</p>
 					</div>
 				</div>
 			</fieldset>

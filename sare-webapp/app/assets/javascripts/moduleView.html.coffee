@@ -37,16 +37,11 @@ Selectors.nextModuleButton = "#btn-next-module"
 
 # function to show the progress bar
 Methods.showProgress = ->
-  $(Selectors.dropCorpusFileContainer).hide()
-  $(Selectors.progressContainer)
-    .removeClass("hide")
-    .show()
+  $(Selectors.progressContainer).show()
 
 # function to hide the progress bar
 Methods.hideProgress = ->
-  $(Selectors.dropCorpusFileContainer).show()
-  $(Selectors.progressContainer)
-    .hide()
+  $(Selectors.progressContainer).hide()
 
 # function to set progress on the progress bar
 Methods.setProgress = (percent) ->
@@ -54,8 +49,34 @@ Methods.setProgress = (percent) ->
     .children(".bar").first()
       .css("width", percent + "%")
 
+progressSimData =
+  progress: 0
+  handler: null
+
+# function to simulate progress on the progress bar
+Methods.simulateProgress = (timeStep, progressStep) ->
+  timeStep = timeStep ? 100
+  progressStep = progressStep ? 10
+  Methods.showProgress()
+  progressSimData.progress = 0
+  simulator = ->
+    Methods.setProgress progressSimData.progress
+    if progressSimData.progress > 100
+      progressSimData.progress = 100
+    else if progressSimData.progress is 100
+      progressSimData.progress = 0
+    else progressSimData.progress += progressStep
+    progressSimData.handler = window.setTimeout simulator, timeStep
+  simulator()
+
+# function to stop progress simulation
+Methods.stopSimulatedProgress = ->
+  window.clearTimeout(progressSimData.handler) if progressSimData.handler?
+  Methods.setProgress 0
+  Methods.hideProgress()
+
 $ ->
-  $(Selectors.nextButton).click(=>
+  Methods.hideProgress()
+  $(Selectors.nextButton).click =>
     output = $(Selectors.moduleOutputField).val()
     location.href = jsRoutes.controllers.ModuleController.next(output).url
-  )

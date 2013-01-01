@@ -37,9 +37,11 @@ PageObjects = Page.Objects
 PageOptions.uploadFileCount = 1
 Strings.corpusItemDataKey = "store"
 Strings.corpusFilenameKey = "corpus"
-Strings.dropFileMessage = "Drop a file here or click browse"
+Strings.uploadFileMessage = "Upload file"
+Strings.dropFileMessage = "Drop file or browse"
 Strings.dragFileMessage = "Almost there, just let go now!"
 Strings.uploadFailedMessage = "Something's amiss! Please try again"
+Strings.acceptingFilesClass = "accepting-files"
 Selectors.corpusList = "#lst-corpora"
 Selectors.addCorpusButton = "#btn-add-corpus"
 Selectors.deleteCorpusButton = "#btn-delete-corpus"
@@ -50,13 +52,14 @@ Selectors.uploadCorpusContainer = "#ctr-corpus-upload"
 Selectors.dropCorpusFileContainer = "#ctr-corpus-dropfile"
 Selectors.uploadCorpusBrowseButton = "#btn-corpus-browse"
 Selectors.updateCorpusButton = "#btn-corpus-update"
+Selectors.acceptingFilesClass = "." + Strings.acceptingFilesClass
 
 # function to disable the corpus update form
 disableCorpusForm = ->
   $(Selectors.corpusTitleInput).attr "disabled", true
   $(Selectors.corpusDescriptionInput).attr "disabled", true
   $(Selectors.corpusLanguageList).attr "disabled", true
-  $(Selectors.dropCorpusFileContainer).text("")
+  $(Selectors.dropCorpusFileContainer).text Strings.uploadFileMessage
   $(Selectors.uploadCorpusBrowseButton).attr "disabled", true
   $(Selectors.updateCorpusButton).attr "disabled", true
   disableUploader()
@@ -66,7 +69,7 @@ enableCorpusForm = ->
   $(Selectors.corpusTitleInput).removeAttr "disabled"
   $(Selectors.corpusDescriptionInput).removeAttr "disabled"
   $(Selectors.corpusLanguageList).removeAttr "disabled"
-  $(Selectors.dropCorpusFileContainer).text(Strings.dropFileMessage)
+  $(Selectors.dropCorpusFileContainer).text Strings.dropFileMessage
   $(Selectors.uploadCorpusBrowseButton).removeAttr "disabled"
   $(Selectors.updateCorpusButton).removeAttr "disabled"
   enableUploader()
@@ -119,11 +122,22 @@ enableUploader = ->
     ]
     ###
 
+  defaults =
+    text: Strings.dropFileMessage
+  dragenter = ->
+    defaults.text = $(Selectors.dropCorpusFileContainer).text()
+    $(Selectors.dropCorpusFileContainer).text Strings.dragFileMessage
+    $(Selectors.dropCorpusFileContainer).addClass Strings.acceptingFilesClass
+  dragleave = ->
+    $(Selectors.dropCorpusFileContainer).text defaults.text
+    $(Selectors.dropCorpusFileContainer).removeClass Strings.acceptingFilesClass
+
   # start the uploader
   uploader.init()
   
   # bind various events to the uploader
   uploader.bind "FilesAdded", (up, files) =>
+    dragleave()
     if files.length
       # enforce the file limit so that last files take precedence
       up.removeFile file for file in up.files[...(up.files.length - PageOptions.uploadFileCount)]
@@ -139,6 +153,7 @@ enableUploader = ->
     Methods.hideProgress()
 
   uploader.bind "FileUploaded", (up, file, response) =>
+    Methods.setProgress 0
     Methods.hideProgress()
     $(Selectors.dropCorpusFileContainer).text Strings.dropFileMessage
     [corpus, selected] = getSelectedCorpus()
@@ -146,16 +161,6 @@ enableUploader = ->
     updateCorpusListOption selected, corpus
   
   if uploader.runtime is "html5"
-    defaults =
-      text: Strings.dropFileMessage
-    dragenter = ->
-      defaults.text = $(this).text()
-      $(this).text(Strings.dragFileMessage)
-      $(this).css "border", "1px solid #000000"
-    dragleave = ->
-      $(this).text(defaults.text)
-      $(this).css "border", ""
-    
     $(Selectors.dropCorpusFileContainer).on "dragenter", dragenter
     $(Selectors.dropCorpusFileContainer).on "dragleave", dragleave
     
@@ -188,6 +193,7 @@ $ ->
   # handle delete corpus button click
   $(Selectors.deleteCorpusButton).click (e) =>
     [corpus, selected] = getSelectedCorpus()
+    Methods.simulateProgress()
     jsRoutes.controllers.CollectionsController.delete(corpus.id).ajax(
       success: (response) =>
         next = $(selected).next()
@@ -197,9 +203,11 @@ $ ->
         $(Selectors.corpusList)
           .change()
         $(selected).remove()
+      complete: =>
+        Methods.stopSimulatedProgress()
     ) if selected?
   
-  # set up the corpus list
+  # handle corpus list selection change
   $(Selectors.corpusList).change (e) =>
     [corpus, selected] = getSelectedCorpus()
     if selected?.length
@@ -215,7 +223,7 @@ $ ->
       populateCorpusForm(null)
       disableCorpusForm()
 
-  # set up the update button
+  # handle update button click
   $(Selectors.updateCorpusButton).click (e) =>
     [corpus, selected] = getSelectedCorpus()
     

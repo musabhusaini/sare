@@ -25,9 +25,9 @@
 	<div class="row-fluid">
 		@content
 	</div>
-	<div class="row-fluid">
+	<div class="row-fluid page-footer">
 		<div class="span11">
-			<div id="ctr-progress" class="progress progress-striped active hide">
+			<div id="ctr-progress" class="progress progress-striped active">
 				<div class="bar" style="width: 0%">
 				</div>
 			</div>
@@ -40,9 +40,14 @@
 	</div>
 }
 
+@moreStyles = {
+	<link rel="stylesheet" media="screen" href="@controllers.routes.Assets.at("stylesheets/moduleView.css")">
+	@styles
+}
+
 @moreScripts = {
 	<script src="@routes.Assets.at("javascripts/moduleView.html.js")" type="text/javascript"></script>
 	@scripts
 }
 
-@main(content = contentHtml, styles = styles, scripts = moreScripts)
+@main(content = contentHtml, styles = moreStyles, scripts = moreScripts)
