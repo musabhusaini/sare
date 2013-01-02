@@ -43,8 +43,8 @@
 			</select>
 		</div>
 		<div class="row-fluid">
-			<button id="btn-add-corpus" class="btn">Add</button>
-			<button id="btn-delete-corpus" class="btn btn-warning" disabled="disabled">Delete</button>
+			<button id="btn-add-corpus" class="btn" data-loading-text="Adding...">Add</button>
+			<button id="btn-delete-corpus" class="btn btn-warning" data-loading-text="Deleting...">Delete</button>
 		</div>
 	</div>
 	
@@ -74,7 +74,7 @@
 					</div>
 					<div class="row-fluid">
 						<p>
-							<button id="btn-corpus-update" class="btn">Update</button>
+							<button id="btn-corpus-update" class="btn" data-loading-text="Updating...">Update</button>
 						</p>
 					</div>
 				</div>
@@ -84,7 +84,7 @@
 }
 
 @moreStyles = {
-	<link rel="stylesheet" media="screen" href="@controllers.routes.Assets.at("stylesheets/corpusLanding.css")">
+	<link rel="stylesheet" href="@controllers.routes.Assets.at("stylesheets/corpusLanding.css")">
 }
 
 @moreScripts = {

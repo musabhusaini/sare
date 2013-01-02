@@ -153,6 +153,7 @@ enableUploader = ->
     Methods.hideProgress()
 
   uploader.bind "FileUploaded", (up, file, response) =>
+    up.removeFile file
     Methods.setProgress 0
     Methods.hideProgress()
     $(Selectors.dropCorpusFileContainer).text Strings.dropFileMessage
@@ -177,6 +178,7 @@ disableUploader = ->
 $ ->
   # handle add corpus button click
   $(Selectors.addCorpusButton).click (e) =>
+    $(Selectors.addCorpusButton).button "loading"
     jsRoutes.controllers.CollectionsController.create().ajax
       contentType: Helpers.MimeTypes.json
       data: JSON.stringify
@@ -189,11 +191,14 @@ $ ->
           .val(response.id)
           .change()
         $(Selectors.corpusTitleInput).focus()
+      complete: =>
+        $(Selectors.addCorpusButton).button "reset"
   
   # handle delete corpus button click
   $(Selectors.deleteCorpusButton).click (e) =>
     [corpus, selected] = getSelectedCorpus()
-    Methods.simulateProgress()
+    #Methods.simulateProgress()
+    $(Selectors.deleteCorpusButton).button "loading"
     jsRoutes.controllers.CollectionsController.delete(corpus.id).ajax(
       success: (response) =>
         next = $(selected).next()
@@ -204,7 +209,8 @@ $ ->
           .change()
         $(selected).remove()
       complete: =>
-        Methods.stopSimulatedProgress()
+        #Methods.stopSimulatedProgress()
+        $(Selectors.deleteCorpusButton).button "reset"
     ) if selected?
   
   # handle corpus list selection change
@@ -249,10 +255,14 @@ $ ->
           data: JSON.stringify updateOptions
           success: (updatedCorpus) =>
             updateCorpusListOption selected, updatedCorpus
+          complete: =>
+            $(Selectors.updateCorpusButton).button "reset"
       else
         updateCorpusListOption selected, updatedCorpus
         populateCorpusForm updatedCorpus
+        $(Selectors.updateCorpusButton).button "reset"
     
+    $(Selectors.updateCorpusButton).button "loading"
     if PageObjects.uploader?.files.length
       PageObjects.uploader.settings.url = jsRoutes.controllers.CollectionsController.update(corpus.id).url
       uploadComplete = (up, file, response) =>
@@ -267,6 +277,7 @@ $ ->
     e.preventDefault()
 
   # do the one-offs
+  $(Selectors.deleteCorpusButton).attr "disabled", true
   $(Selectors.nextModuleButton).attr "disabled", true
   disableCorpusForm()
   

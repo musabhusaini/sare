@@ -35,15 +35,15 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		
 		<title>@title</title>
-		<link rel="stylesheet" media="screen" href="@routes.Assets.at("plugins/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.min.css")">
-		<link rel="stylesheet" media="screen" href="@routes.Assets.at("plugins/bootstrap/css/bootstrap.min.css")">
-		<link rel="stylesheet" media="screen" href="@routes.Assets.at("plugins/bootstrap/css/bootstrap-responsive.min.css")">
-		<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+		<!-- link rel="stylesheet" href="@routes.Assets.at("plugins/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.min.css")" -->
+		<link rel="stylesheet" href="@routes.Assets.at("plugins/bootstrap/css/bootstrap.min.css")">
+		<link rel="stylesheet" href="@routes.Assets.at("plugins/bootstrap/css/bootstrap-responsive.min.css")">
+		<link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
 		<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
 		@styles
 		
 		<script src="@routes.Assets.at("javascripts/jquery-1.8.3.min.js")" type="text/javascript"></script>
-		<script src="@routes.Assets.at("plugins/jquery-ui/js/jquery-ui-1.9.2.min.js")" type="text/javascript"></script>
+		<!-- script src="@routes.Assets.at("plugins/jquery-ui/js/jquery-ui-1.9.2.min.js")" type="text/javascript"></script -->
 		<script src="@routes.Assets.at("plugins/bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
 		<script src="@base.routes.Application.javascriptRoutes()" type="text/javascript"></script>
 		<script src="@routes.Assets.at("javascripts/main.html.js")" type="text/javascript"></script>
@@ -95,6 +95,19 @@
 			</div>
 		</div>
 
+		@if(showPageHeader) {
+			<div class="container-fluid page-header-container">
+				<div class="row-fluid page-header">
+					<div class="offset@((12-contentWidth)/2) span@contentWidth">
+						<h1>Sentilab Sare</h1>
+						<p class="lead">
+							A Sentiment Analysis Research Environment
+						</p>
+					</div>
+				</div>
+			</div>
+		}
+
 		<div class="container-fluid">
 			<div class="row-fluid">
 				<div class="span@((12-contentWidth)/2) leftbar">
@@ -102,45 +115,39 @@
 				</div>
 				
 				<div class="span@contentWidth centerbody">
-					@if(showPageHeader) {
-						<div class="row-fluid page-header">
-							<h1>Sentilab Sare</h1>
-							<p class="lead">
-								A Sentiment Analysis Research Environment
-							</p>
-						</div>
-					}
-					<div class="row-fluid content">
-						@content
-					</div>
+					@content
 				</div>
 				
 				<div class="span@((12-contentWidth)/2) rightbar">
 					@rightbar
 				</div>
 			</div>
-			
-			<footer class="row-fluid">
-				<p>
-					Copyright &copy; <a href="http://www.sabanciuniv.edu" target="_blank">Sabanc&#305; University</a> 2013.
-					All rights reserved.
-				</p>
-				<p>
-					A <a href="http://www.sentilab.sabanciuniv.edu" target="_blank">Sabanc&#305; Sentilab</a> project.
-				</p>
-				<p>
-					Source code is available under <a href="http://www.gnu.org/licenses/gpl-3.0.html.en" target="_blank">GNU GPL v3.0</a>
-					from <a href="https://bitbucket.org/musabhusaini/sare" target="_blank">Bitbucket</a>.
-				</p>
-				<ul class="footer-links">
-					<li>
-						<a href="#">About</a>
-					</li>
-					<li>
-						<a href="#">Contact</a>
-					</li>
-				</ul>
-			</footer>
 		</div>
+		
+		<footer class="container-fluid">
+			<div class="row-fluid">
+				<div class="offset@((12-contentWidth)/2) span@contentWidth">
+					<p>
+						Copyright &copy; <a href="http://www.sabanciuniv.edu" target="_blank">Sabanc&#305; University</a> 2013.
+						All rights reserved.
+					</p>
+					<p>
+						A <a href="http://www.sentilab.sabanciuniv.edu" target="_blank">Sabanc&#305; Sentilab</a> project.
+					</p>
+					<p>
+						Source code is available under <a href="http://www.gnu.org/licenses/gpl-3.0.html.en" target="_blank">GNU GPL v3.0</a>
+						from <a href="https://bitbucket.org/musabhusaini/sare" target="_blank">Bitbucket</a>.
+					</p>
+					<ul class="footer-links">
+						<li>
+							<a href="#">About</a>
+						</li>
+						<li>
+							<a href="#">Contact</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</footer>
 	</body>
 </html>

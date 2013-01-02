@@ -22,17 +22,13 @@
 @()
 
 @contentHtml = {
-	<div class="container-fluid">
-		<div class="row-fluid">
-			<div class="offset5 span2">
-				<p>
-					<a id="btn-sigon" href="#" class="btn btn-primary btn-block btn-large disabled">Sign in</a>
-				</p>
-				<p>
-					<a id="btn-guest" href="@controllers.routes.ModuleController.nextPage("[]")" class="btn btn-primary btn-block btn-large">Start as guest</a>
-				</p>
-			</div>
-		</div>
+	<div class="offset5 span2">
+		<p>
+			<a id="btn-sigon" href="#" class="btn btn-primary btn-block btn-large disabled">Sign in</a>
+		</p>
+		<p>
+			<a id="btn-guest" href="@controllers.routes.ModuleController.nextPage("[]")" class="btn btn-primary btn-block btn-large">Start as guest</a>
+		</p>
 	</div>
 }
 
