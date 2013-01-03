@@ -28,7 +28,8 @@ import javax.persistence.Entity;
  * @author Mus'ab Husaini
  */
 @Entity
-public abstract class DocumentCorpus extends PersistentDocumentStore {
+public abstract class DocumentCorpus
+	extends PersistentDocumentStore {
 
 	/**
 	 * 
