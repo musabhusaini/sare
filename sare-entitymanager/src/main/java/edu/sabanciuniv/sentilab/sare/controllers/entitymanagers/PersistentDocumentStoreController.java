@@ -43,22 +43,34 @@ public class PersistentDocumentStoreController
 	extends ControllerBase {
 	
 	/**
+	 * Gets all UUIDs for {@code T} type objects owned by the given owner.
+	 * @param em the {@link EntityManager} to use.
+	 * @param ownerId the ID of the owner.
+	 * @param entityClass the specific type of document stores to be retrieved; must be annotated with the {@link Entity} annotation.
+	 * @return a {@link List} containing {@link String} representations of the UUIDs.
+	 */
+	public <T extends PersistentDocumentStore> List<String> getAllUuids(EntityManager em, String ownerId, Class<T> entityClass) {
+		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
+		Validate.notNull(ownerId, CannedMessages.NULL_ARGUMENT, "ownerId");
+		Validate.notNull(entityClass, CannedMessages.NULL_ARGUMENT, "entityClass");
+		
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<byte[]> cq = cb.createQuery(byte[].class);
+		Root<T> store = cq.from(entityClass);
+		cq.multiselect(store.get("id")).where(cb.equal(store.get("ownerId"), cb.parameter(String.class, "ownerId")));
+		TypedQuery<byte[]> tq = em.createQuery(cq);
+		tq.setParameter("ownerId", ownerId);
+		return Lists.newArrayList(Iterables.transform(tq.getResultList(), UuidUtils.uuidBytesToStringFunction()));
+	}
+	
+	/**
 	 * Gets all UUIDs for {@link PersistentDocumentStore} objects owned by the given owner.
 	 * @param em the {@link EntityManager} to use.
 	 * @param ownerId the ID of the owner.
 	 * @return a {@link List} containing {@link String} representations of the UUIDs.
 	 */
 	public List<String> getAllUuids(EntityManager em, String ownerId) {
-		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
-		Validate.notNull(ownerId, CannedMessages.NULL_ARGUMENT, "ownerId");
-		
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<byte[]> cq = cb.createQuery(byte[].class);
-		Root<PersistentDocumentStore> store = cq.from(PersistentDocumentStore.class);
-		cq.multiselect(store.get("id")).where(cb.equal(store.get("ownerId"), cb.parameter(String.class, "ownerId")));
-		TypedQuery<byte[]> tq = em.createQuery(cq);
-		tq.setParameter("ownerId", ownerId);
-		return Lists.newArrayList(Iterables.transform(tq.getResultList(), UuidUtils.uuidBytesToStringFunction()));
+		return getAllUuids(em, ownerId, PersistentDocumentStore.class);
 	}
 	
 	/**
