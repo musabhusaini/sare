@@ -35,7 +35,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagC
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
 
-public class TokenizedDocumentTest {
+public class FullTextDocumentTest {
 
 	private String testContent;
 	private TokenizingOptions testTokenizingOptions;
