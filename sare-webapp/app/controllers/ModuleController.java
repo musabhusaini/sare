@@ -25,11 +25,10 @@ import java.util.*;
 
 import javax.annotation.Nullable;
 
-import models.ModuleView;
+import models.ModuleModel;
 import models.base.*;
 
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
 import org.reflections.Reflections;
 
@@ -37,6 +36,8 @@ import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import play.Play;
+import play.api.libs.ws.*;
+import play.api.templates.Html;
 import play.libs.Json;
 import play.mvc.*;
 import views.html.*;
@@ -45,7 +46,7 @@ import controllers.modules.base.Module;
 
 public class ModuleController extends Application {
 
-	private static Set<ModuleView> getNextModules(String input) {
+	private static Set<ModuleModel> getNextModules(String input) {
 		// get all the supplied view models.
 		List<ViewModel> suppliedViewModels = Lists.newArrayList();
 		JsonNode inputJson = Json.parse(input);
@@ -67,7 +68,7 @@ public class ModuleController extends Application {
 		suppliedViewModels = Lists.newArrayList(Iterables.filter(suppliedViewModels, Predicates.notNull()));
 		
 		// get all the modules that can use these inputs.
-		Set<ModuleView> modules = Sets.newHashSet();
+		Set<ModuleModel> modules = Sets.newHashSet();
 		Reflections reflections = new Reflections("controllers.modules", Play.application().classloader());
 		for (Class<? extends Module> moduleClass : reflections.getSubTypesOf(Module.class)) {
 			// get the Module.Requires annotation for each module class.
@@ -118,12 +119,16 @@ public class ModuleController extends Application {
 				}
 				
 				// set the module view model properties and add.
-				ModuleView moduleViewModel = new ModuleView(module);
+				ModuleModel moduleViewModel = new ModuleModel(module);
 				moduleViewModel.route = module.getRoute(usefulViewModels);
 				// let's not divide by zero!
 				moduleViewModel.relevancyScore = suppliedViewModels.size() != 0 ?
 					usefulViewModels.size() / (double)suppliedViewModels.size() : 1.0;
 
+				if (module.isPartiallyRendered()) {
+					moduleViewModel.route = routes.ModuleController.renderInPlace(
+						Json.stringify(moduleViewModel.asJson())).url();
+				}
 				modules.add(moduleViewModel);
 			}
 		}
@@ -136,7 +141,7 @@ public class ModuleController extends Application {
 	}
 	
 	public static Result nextPage(String input) {
-		Set<ModuleView> modules = getNextModules(input);
+		Set<ModuleModel> modules = getNextModules(input);
 		if (modules == null || modules.size() == 0) {
 			throw new IllegalArgumentException();
 		} else if (modules.size() == 1 && StringUtils.isNotEmpty(Iterables.getFirst(modules, null).getRoute())) {
@@ -144,5 +149,16 @@ public class ModuleController extends Application {
 		}
 		
 		return ok(moduleSelection.render(getNextModules(input)));
+	}
+	
+	public static Result renderInPlace(String module) {
+		JsonNode moduleJson = Json.parse(module);
+		ModuleModel moduleViewModel = Json.fromJson(moduleJson, ModuleModel.class);
+		if (moduleViewModel == null || StringUtils.isEmpty(moduleViewModel.route)) {
+			throw new IllegalArgumentException();
+		}
+		
+		Response response = WS.url(moduleViewModel.route).get().value().get().get();
+		return ok(moduleView.render(new Html(response.body()), moduleViewModel, null, null));
 	}
 }

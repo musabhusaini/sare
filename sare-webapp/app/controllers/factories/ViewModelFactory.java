@@ -55,7 +55,7 @@ public class ViewModelFactory
 			availableViewModelClass = Iterables.find(viewModelClasses, new Predicate<Class<? extends ViewModel>>() {
 				@Override
 				public boolean apply(Class<? extends ViewModel> viewModelClass) {
-					return ClassUtils.getShortClassName(viewModelClass).equals(ClassUtils.getShortClassName(modelSuperclass) + "View");
+					return ClassUtils.getShortClassName(viewModelClass).equals(ClassUtils.getShortClassName(modelSuperclass) + "Model");
 				}
 			}, null);
 			
@@ -87,8 +87,8 @@ public class ViewModelFactory
 			return null;
 		}
 		
-		if (!type.endsWith("View")) {
-			type += "View";
+		if (!type.endsWith("Model")) {
+			type += "Model";
 		}
 		
 		final String typeName = type;

@@ -23,7 +23,7 @@ package controllers;
 
 import static controllers.base.SareTransactionalAction.*;
 
-import models.document.OpinionDocumentView;
+import models.document.OpinionDocumentModel;
 
 import play.mvc.*;
 import play.mvc.BodyParser.Json;
@@ -57,7 +57,7 @@ public class DocumentsController extends Application {
 		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
 		
 		if (store instanceof OpinionCorpus) {
-			OpinionDocumentView viewModel = play.libs.Json.fromJson(request().body().asJson(), OpinionDocumentView.class);
+			OpinionDocumentModel viewModel = play.libs.Json.fromJson(request().body().asJson(), OpinionDocumentModel.class);
 			OpinionDocumentFactoryOptions options = new OpinionDocumentFactoryOptions()
 				.setContent(viewModel.content)
 				.setPolarity(viewModel.polarity)
@@ -87,7 +87,7 @@ public class DocumentsController extends Application {
 		
 		if (documentObj instanceof OpinionDocument) {
 			OpinionDocument opinionDocument = (OpinionDocument)documentObj;
-			OpinionDocumentView viewModel = play.libs.Json.fromJson(request().body().asJson(), OpinionDocumentView.class);
+			OpinionDocumentModel viewModel = play.libs.Json.fromJson(request().body().asJson(), OpinionDocumentModel.class);
 			if (viewModel.content != null) {
 				opinionDocument.setContent(viewModel.content);
 			}

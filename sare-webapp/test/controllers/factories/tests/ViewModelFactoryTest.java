@@ -65,9 +65,9 @@ public class ViewModelFactoryTest extends TestBase {
 		ViewModel viewModel = factory.create(options);
 		
 		assertThat(viewModel).isNotNull();
-		assertThat(viewModel).isInstanceOf(OpinionDocumentView.class);
+		assertThat(viewModel).isInstanceOf(OpinionDocumentModel.class);
 		
-		OpinionDocumentView typedViewModel = (OpinionDocumentView)viewModel;
+		OpinionDocumentModel typedViewModel = (OpinionDocumentModel)viewModel;
 		assertThat(typedViewModel.type).isEqualTo(ClassUtils.getShortClassName(model.getClass()));
 		assertThat(typedViewModel.content).isEqualTo(model.getContent());
 		assertThat(typedViewModel.polarity).isEqualTo(model.getPolarity());
@@ -83,9 +83,9 @@ public class ViewModelFactoryTest extends TestBase {
 		ViewModel viewModel = factory.create(options);
 		
 		assertThat(viewModel).isNotNull();
-		assertThat(viewModel).isInstanceOf(PersistentDocumentView.class);
+		assertThat(viewModel).isInstanceOf(PersistentDocumentModel.class);
 		
-		PersistentDocumentView typedViewModel = (PersistentDocumentView)viewModel;
+		PersistentDocumentModel typedViewModel = (PersistentDocumentModel)viewModel;
 		assertThat(typedViewModel.type).isEqualTo(ClassUtils.getShortClassName(model.getClass()));
 		assertThat(typedViewModel.content).isEqualTo(model.getContent());
 	}
@@ -113,9 +113,9 @@ public class ViewModelFactoryTest extends TestBase {
 		ViewModel viewModel = factory.create(options);
 		
 		assertThat(viewModel).isNotNull();
-		assertThat(viewModel).isInstanceOf(OpinionDocumentView.class);
+		assertThat(viewModel).isInstanceOf(OpinionDocumentModel.class);
 		
-		PersistentDocumentView typedViewModel = (PersistentDocumentView)viewModel;
+		PersistentDocumentModel typedViewModel = (PersistentDocumentModel)viewModel;
 		assertThat(typedViewModel.type).isEqualTo(ClassUtils.getShortClassName(OpinionDocument.class));
 		assertThat(typedViewModel.content).isEqualTo(json.get("content").asText());
 	}

@@ -24,11 +24,11 @@ package models.document;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import models.base.ViewModel;
 
-public class PersistentDocumentView extends ViewModel {
+public class PersistentDocumentModel extends ViewModel {
 
 	public String content;
 	
-	public PersistentDocumentView(PersistentDocument document) {
+	public PersistentDocumentModel(PersistentDocument document) {
 		super(document);
 		
 		if (document != null) { 
@@ -36,7 +36,7 @@ public class PersistentDocumentView extends ViewModel {
 		}
 	}
 	
-	public PersistentDocumentView() {
+	public PersistentDocumentModel() {
 		this(null);
 	}
 }

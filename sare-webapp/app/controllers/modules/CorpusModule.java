@@ -37,7 +37,7 @@ import play.libs.Json;
 import play.mvc.*;
 import views.html.*;
 import models.base.*;
-import models.documentStore.PersistentDocumentStoreView;
+import models.documentStore.PersistentDocumentStoreModel;
 import controllers.base.SareTransactionalAction;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
@@ -78,12 +78,12 @@ public class CorpusModule extends Module {
 	public static Result landingPage() {
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
 		List<String> uuids = docStoreController.getAllUuids(em(), getUsername());
-		List<PersistentDocumentStoreView> stores = Lists.transform(uuids,
-			new Function<String, PersistentDocumentStoreView>() {
+		List<PersistentDocumentStoreModel> stores = Lists.transform(uuids,
+			new Function<String, PersistentDocumentStoreModel>() {
 				@Override
 				@Nullable
-				public PersistentDocumentStoreView apply(@Nullable String input) {
-					return new PersistentDocumentStoreView(fetchResource(input, PersistentDocumentStore.class));
+				public PersistentDocumentStoreModel apply(@Nullable String input) {
+					return new PersistentDocumentStoreModel(fetchResource(input, PersistentDocumentStore.class));
 				}
 			});
 		

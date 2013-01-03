@@ -32,7 +32,7 @@ import controllers.base.SareTransactionalAction;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 
-public class PersistentDocumentStoreView
+public class PersistentDocumentStoreModel
 	extends ViewModel {
 	
 	public String id;
@@ -41,7 +41,7 @@ public class PersistentDocumentStoreView
 	public String language;
 	public long size;
 	
-	public PersistentDocumentStoreView(PersistentDocumentStore documentStore) {
+	public PersistentDocumentStoreModel(PersistentDocumentStore documentStore) {
 		super(documentStore);
 		
 		if (documentStore != null) {
@@ -59,7 +59,7 @@ public class PersistentDocumentStoreView
 		}
 	}
 	
-	public PersistentDocumentStoreView() {
+	public PersistentDocumentStoreModel() {
 		this(null);
 	}
 }

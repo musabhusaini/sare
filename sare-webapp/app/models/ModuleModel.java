@@ -19,24 +19,53 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package models.document;
+package models;
 
-import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument;
+import controllers.modules.base.Module;
+import models.base.ViewModel;
 
-public class OpinionDocumentView
-	extends PersistentDocumentView {
+public class ModuleModel extends ViewModel {
 
-	public Double polarity;
+	public String name;
+	public String route;
+	public double relevancyScore;
 	
-	public OpinionDocumentView(OpinionDocument document) {
-		super(document);
+	public ModuleModel(Module module) {
+		super(module);
 		
-		if (document != null) {
-			this.polarity = document.getPolarity();
+		if (module != null) {
+			this.name = module.getDisplayName();
 		}
 	}
 	
-	public OpinionDocumentView() {
+	public ModuleModel() {
 		this(null);
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public ModuleModel setName(String name) {
+		this.name = name;
+		return this;
+	}
+
+	public String getRoute() {
+		return route;
+	}
+
+	public ModuleModel setRoute(String route) {
+		this.route = route;
+		return this;
+	}
+
+	public double getRelevancyScore() {
+		return relevancyScore;
+	}
+
+	public ModuleModel setRelevancyScore(double relevancyScore) {
+		this.relevancyScore = relevancyScore;
+		return this;
 	}
 }

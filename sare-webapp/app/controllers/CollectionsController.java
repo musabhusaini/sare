@@ -73,8 +73,8 @@ public class CollectionsController extends Application {
 			// otherwise try as a json body.
 			JsonNode json = request().body().asJson();
 			if (json != null) {
-				OpinionCorpusFactoryOptionsView viewModel = play.libs.Json.fromJson(json,
-					OpinionCorpusFactoryOptionsView.class);
+				OpinionCorpusFactoryOptionsModel viewModel = play.libs.Json.fromJson(json,
+					OpinionCorpusFactoryOptionsModel.class);
 				if (viewModel != null) {
 					options = viewModel.toFactoryOptions();
 				} else {
@@ -112,24 +112,6 @@ public class CollectionsController extends Application {
 		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
 		return ok(createViewModel(store).asJson());
 	}
-	
-//	@BodyParser.Of(Json.class)
-//	public static Result update(String collection) {
-//		PersistentDocumentStore collectionObj = fetchResource(collection, PersistentDocumentStore.class);
-//		PersistentDocumentStoreView collectionView = play.libs.Json.fromJson(request().body().asJson(), PersistentDocumentStoreView.class);
-//		if (collectionView.title != null) {
-//			collectionObj.setTitle(collectionView.title);
-//		}
-//		if (collectionView.description != null) {
-//			collectionObj.setDescription(collectionView.description);
-//		}
-//		if (collectionView.language != null) {
-//			collectionObj.setLanguage(collectionView.language);
-//		}
-//		em().merge(collectionObj);
-//
-//		return ok(createViewModelQuietly(collectionObj).asJson());
-//	}
 	
 	public static Result delete(String collection) {
 		PersistentDocumentStore collectionObj = fetchResource(collection, PersistentDocumentStore.class);

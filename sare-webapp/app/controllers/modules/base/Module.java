@@ -37,7 +37,7 @@ public abstract class Module extends Application {
 	
 	public abstract String getDisplayName();
 	
-	public boolean renderInPlace() {
+	public boolean isPartiallyRendered() {
 		return false;
 	}
 	

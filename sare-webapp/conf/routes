@@ -54,6 +54,8 @@ GET		/view/modules/options/:input		controllers.ModuleController.nextPage(input: 
 
 GET		/view/modules/corpus-selection		controllers.modules.CorpusModule.landingPage()
 
+GET		/view/modules/*module				controllers.ModuleController.renderInPlace(module)
+
 # Support queries
 GET		/api/support/languages		controllers.modules.CorpusModule.supportedLanguages()
 
