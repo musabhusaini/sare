@@ -35,7 +35,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 @Entity
 @DiscriminatorValue("aspect-lexicon")
 public class AspectLexicon
-	extends GenericDocumentStore<AspectExpression> {
+	extends Lexicon {
 
 	/**
 	 * 
@@ -63,7 +63,7 @@ public class AspectLexicon
 	 * @return an {@link Iterable} of {@link AspectExpression} objects contained in this aspect.
 	 */
 	public Iterable<AspectExpression> getExpressions() {
-		return this.getDocuments();
+		return this.wrapGeneric(AspectExpression.class).getDocuments();
 	}
 	
 	/**

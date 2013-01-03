@@ -19,23 +19,37 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinion;
+package edu.sabanciuniv.sentilab.sare.models.base.document;
 
-import javax.persistence.*;
-
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
+import com.google.gson.JsonElement;
 
 /**
- * Represents an opinion corpus.
+ * A class for documents containing editable textual content.
  * @author Mus'ab Husaini
  */
-@Entity
-@DiscriminatorValue("opinion-corpus")
-public class OpinionCorpus
-	extends DocumentCorpus {
-	
+public abstract class EditableTextDocument
+	extends FullTextDocument
+	implements EditableDocument {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1879400925531543833L;
+	private static final long serialVersionUID = 5392373511223975393L;
+
+	@Override
+	public String getContent() {
+		JsonElement content = this.getOtherData().get("content");
+		return content != null ? content.getAsString() : null;
+	}
+	
+	/**
+	 * Sets the content of this document.
+	 * @param content the content to set.
+	 * @return the {@code this} object.
+	 */
+	@Override
+	public EditableTextDocument setContent(String content) {
+		this.getOtherData().addProperty("content", content);
+		return this;
+	}
 }

@@ -32,7 +32,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 @Entity
 @DiscriminatorValue("aspect-expression")
 public class AspectExpression
-	extends TextDocument<AspectExpression> {
+	extends EditablePartialDocument {
 
 	/**
 	 * 

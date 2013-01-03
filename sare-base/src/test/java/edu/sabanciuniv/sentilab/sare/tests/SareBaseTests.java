@@ -36,7 +36,6 @@ import edu.sabanciuniv.sentilab.sare.models.base.tests.*;
 	PersistentObjectTest.class,
 	PersistentDocumentTest.class,
 	TokenizedDocumentTest.class,
-	GenericDocumentTest.class,
 	PersistentDocumentStoreTest.class,
 	OpinionDocumentFactoryTest.class,
 	OpinionCorpusFactoryTest.class

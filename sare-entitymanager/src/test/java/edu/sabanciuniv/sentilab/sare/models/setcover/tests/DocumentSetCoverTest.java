@@ -57,8 +57,7 @@ public class DocumentSetCoverTest extends ModelTestsBase {
 			.setDescription("this is a test corpus");
 		testDocument = (OpinionDocument)new OpinionDocument()
 			.setContent("this is a test document")
-			.setStore(testCorpus)
-			.setTokenizingOptions(testTokenizingOptions);
+			.setStore(testCorpus);
 		testCorpus.addDocument(testDocument);
 		
 //		em.getTransaction().begin();
@@ -68,8 +67,8 @@ public class DocumentSetCoverTest extends ModelTestsBase {
 		
 		testSetCover = new DocumentSetCover(testCorpus);
 		testSetCoverDocument = (SetCoverDocument)new SetCoverDocument(testDocument)
-			.setStore(testSetCover)
-			.setTokenizingOptions(testTokenizingOptions);
+			.setTokenizingOptions(testTokenizingOptions)
+			.setStore(testSetCover);
 		testSetCover.addDocument(testSetCoverDocument);
 
 	}

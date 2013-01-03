@@ -62,10 +62,10 @@ public class OpinionCorpusTest
 		OpinionCorpus actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
 		
 		assertNotNull(actualCorpus);
-		assertNotNull(actualCorpus.getDocuments());
 		assertEquals(Iterables.size(testCorpus.getDocuments()), Iterables.size(actualCorpus.getDocuments()));
 		
-		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.getDocuments(), null);
+		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments(),
+			null);
 		assertNotNull(actualDocument);
 		assertEquals(testDocument.getIdentifier(), actualDocument.getIdentifier());
 	}

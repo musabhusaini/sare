@@ -27,8 +27,11 @@ import java.util.List;
 
 import org.junit.*;
 
+import com.google.common.collect.Iterables;
+
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 
 public class PersistentDocumentTest {
 
@@ -68,16 +71,34 @@ public class PersistentDocumentTest {
 			return null;
 		}
 	}
+
+	private class PersistentDocumentStoreEx
+		extends PersistentDocumentStore {
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -1926552522367328642L;
 	
+		public List<PersistentObject> getReferers() {
+			return this.refererObjects;
+		}
+	}
+
 	private PersistentDocumentEx testDocument1;
 	private PersistentDocumentEx testDocument2;
 	private PersistentDocumentEx testDocument3;
-	
+	private PersistentDocumentStoreEx testStore1;
+	private PersistentDocumentStoreEx testStore2;
+
 	@Before
 	public void setUp() throws Exception {
 		testDocument1 = new PersistentDocumentEx();
 		testDocument2 = new PersistentDocumentEx();
 		testDocument3 = new PersistentDocumentEx();
+		
+		testStore1 = new PersistentDocumentStoreEx();
+		testStore2 = new PersistentDocumentStoreEx();
 	}
 
 	@After
@@ -127,5 +148,29 @@ public class PersistentDocumentTest {
 		assertFalse(testDocument1.getReferers().contains(testDocument2));
 		assertFalse(testDocument2.getBaseDocument() == testDocument1);
 		assertFalse(testDocument2.getReferences().contains(testDocument1));
+	}
+	
+	@Test
+	public void testSetStorePropagates() {
+		testDocument1.setStore(testStore1);
+		
+		assertTrue(testDocument1.getStore() == testStore1);
+		assertTrue(Iterables.contains(testStore1.getDocuments(), testDocument1));
+		assertTrue(testDocument1.getReferences().contains(testStore1));
+		assertTrue(testStore1.getReferers().contains(testDocument1));
+	}
+	
+	@Test
+	public void testSetStoreRemovesOldStore() {
+		testDocument1.setStore(testStore1);
+		testDocument1.setStore(testStore2);
+		
+		assertTrue(testDocument1.getStore() == testStore2);
+		assertFalse(Iterables.contains(testStore1.getDocuments(), testDocument1));
+		assertTrue(Iterables.contains(testStore2.getDocuments(), testDocument1));
+		assertFalse(testDocument1.getReferences().contains(testStore1));
+		assertTrue(testDocument1.getReferences().contains(testStore2));
+		assertFalse(testStore1.getReferers().contains(testDocument1));
+		assertTrue(testStore2.getReferers().contains(testDocument1));
 	}
 }

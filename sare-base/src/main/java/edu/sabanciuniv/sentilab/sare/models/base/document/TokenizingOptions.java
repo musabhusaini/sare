@@ -31,7 +31,7 @@ import com.google.common.collect.*;
 import edu.sabanciuniv.sentilab.core.models.IModel;
 
 /**
- * An instance of this class represents tokenizing options for a {@link TokenizedDocument}.
+ * An instance of this class represents tokenizing options for a {@link FullTextDocument}.
  * @author Mus'ab Husaini
  */
 public class TokenizingOptions

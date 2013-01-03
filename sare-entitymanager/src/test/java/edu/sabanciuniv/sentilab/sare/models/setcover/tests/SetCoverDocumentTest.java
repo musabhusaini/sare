@@ -55,8 +55,8 @@ public class SetCoverDocumentTest
 			.setTitle("test corpus");
 		testDocument = (OpinionDocument)new OpinionDocument()
 			.setContent("this is a test document")
-			.setStore(testCorpus)
-			.setTokenizingOptions(testTokenizingOptions);
+			.setTokenizingOptions(testTokenizingOptions)
+			.setStore(testCorpus);
 		testCorpus.addDocument(testDocument);
 		
 		em.getTransaction().begin();
@@ -66,8 +66,8 @@ public class SetCoverDocumentTest
 		
 		testSetCover = new DocumentSetCover(testCorpus);
 		testSetCoverDocument = (SetCoverDocument)new SetCoverDocument(testDocument)
-			.setStore(testSetCover)
-			.setTokenizingOptions(testTokenizingOptions);
+			.setTokenizingOptions(testTokenizingOptions)
+			.setStore(testSetCover);
 	}
 
 	@After
@@ -100,8 +100,8 @@ public class SetCoverDocumentTest
 	public void testResetWeight() {
 		OpinionDocument anotherDocument = (OpinionDocument)new OpinionDocument()
 			.setContent("this is another test document")
-			.setStore(testCorpus)
-			.setTokenizingOptions(testTokenizingOptions);
+			.setTokenizingOptions(testTokenizingOptions)
+			.setStore(testCorpus);
 		
 		testSetCoverDocument.merge(anotherDocument);
 		

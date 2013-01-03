@@ -63,11 +63,11 @@ public class SetCoverController
 		for (PersistentDocument document : Iterables.filter(store.getDocuments(), PersistentDocument.class)) {
 			// create a copy of the current document as a set cover document.
 			SetCoverDocument workingDocument = (SetCoverDocument)new SetCoverDocument(document)
-				.setStore(dummySetCover)
-				.setTokenizingOptions(tokenizingOptions);
+				.setTokenizingOptions(tokenizingOptions)
+				.setStore(dummySetCover);
 			
 			// loop through all set cover documents.
-			Iterable<SetCoverDocument> setCoverDocuments = setCover.getDocuments();
+			Iterable<SetCoverDocument> setCoverDocuments = setCover.wrapGeneric(SetCoverDocument.class).getDocuments();
 			for (int scIndex=0; scIndex<Iterables.size(setCoverDocuments); scIndex++) {
 				SetCoverDocument setCoverDocument = Iterables.get(setCoverDocuments, scIndex);
 				
@@ -118,7 +118,7 @@ public class SetCoverController
 		double accumulatedWeight=0;
 		
 		// sort set cover.
-		List<SetCoverDocument> setCoverDocuments = Lists.newArrayList(setCover.getDocuments());
+		List<SetCoverDocument> setCoverDocuments = Lists.newArrayList(setCover.wrapGeneric(SetCoverDocument.class).getDocuments());
 		Collections.sort(setCoverDocuments, new Comparator<SetCoverDocument>() {
 			@Override
 			public int compare(SetCoverDocument o1, SetCoverDocument o2) {

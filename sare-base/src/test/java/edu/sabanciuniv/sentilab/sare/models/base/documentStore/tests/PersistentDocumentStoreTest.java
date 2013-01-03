@@ -27,11 +27,32 @@ import java.util.List;
 
 import org.junit.*;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
-import edu.sabanciuniv.sentilab.sare.models.base.document.IDocument;
+import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 
 public class PersistentDocumentStoreTest {
+
+	private class PersistentDocumentEx
+		extends PersistentDocument {
+	
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 6250829637687712614L;
+	
+		public List<PersistentObject> getReferences() {
+			return this.referencedObjects;
+		}
+		
+		@Override
+		public String getContent() {
+			return null;
+		}
+	}
 
 	private class PersistentDocumentStoreEx extends PersistentDocumentStore {
 
@@ -63,28 +84,31 @@ public class PersistentDocumentStoreTest {
 		public boolean removeDerivedStore(PersistentDocumentStore derivedStore) {
 			return super.removeDerivedStore(derivedStore);
 		}
-
-		@Override
-		public Iterable<? extends IDocument> getDocuments() {
-			return null;
-		}
 	}
 
+	private PersistentDocumentEx testDocument1;
+	private PersistentDocumentEx testDocument2;
+	private PersistentDocumentEx testDocument3;
 	private PersistentDocumentStoreEx testStore1;
 	private PersistentDocumentStoreEx testStore2;
 	private PersistentDocumentStoreEx testStore3;
 
 	@Before
 	public void setUp() throws Exception {
+		testDocument1 = new PersistentDocumentEx();
+		testDocument2 = new PersistentDocumentEx();
+		testDocument3 = new PersistentDocumentEx();
+		
 		testStore1 = new PersistentDocumentStoreEx();
 		testStore2 = new PersistentDocumentStoreEx();
 		testStore3 = new PersistentDocumentStoreEx();
 	}
-
-	@After
-	public void tearDown() throws Exception {
+	
+	public void testEmptyStoreDoesNotReturnNullDocuments() {
+		assertNotNull(testStore1.getDocuments());
+		assertEquals(0, Iterables.size(testStore1.getDocuments()));
 	}
-
+	
 	@Test
 	public void testSetBaseStorePropagates() {
 		testStore1.setBaseStore(testStore2);
@@ -128,5 +152,53 @@ public class PersistentDocumentStoreTest {
 		assertFalse(testStore1.getReferers().contains(testStore2));
 		assertFalse(testStore2.getBaseStore() == testStore1);
 		assertFalse(testStore2.getReferences().contains(testStore1));
+	}
+	
+	@Test
+	public void testAddDocumentPropagates() {
+		testStore1.addDocument(testDocument1);
+		
+		assertTrue(testStore1.hasDocument(testDocument1));
+		assertTrue(testStore1.getReferers().contains(testDocument1));
+		assertTrue(testDocument1.getStore() == testStore1);
+		assertTrue(testDocument1.getReferences().contains(testStore1));
+	}
+
+	@Test
+	public void testRemoveDocumentPropagates() {
+		testStore1.addDocument(testDocument1);
+		testStore1.removeDocument(testDocument1);
+		
+		assertFalse(testStore1.hasDocument(testDocument1));
+		assertFalse(testStore1.getReferers().contains(testDocument1));
+		assertFalse(testDocument1.getStore() == testStore1);
+		assertFalse(testDocument1.getReferences().contains(testStore1));
+	}
+	
+	@Test
+	public void testSetDocumentsPropagates() {
+		Iterable<PersistentDocumentEx> documents = Lists.newArrayList(testDocument1, testDocument2);
+		testStore1.setDocuments(documents);
+		
+		for (PersistentDocumentEx document : documents) {
+			assertTrue(testStore1.hasDocument(document));
+			assertTrue(testStore1.getReferers().contains(document));
+			assertTrue(document.getStore() == testStore1);
+			assertTrue(document.getReferences().contains(testStore1));
+		}
+	}
+	
+	@Test
+	public void testSetDocumentsRemovesOldDocuments() {
+		Iterable<PersistentDocumentEx> documents = Lists.newArrayList(testDocument1, testDocument2);
+		testStore1.setDocuments(documents);
+		testStore1.setDocuments(Lists.newArrayList(testDocument3));
+		
+		for (PersistentDocumentEx document : documents) {
+			assertFalse(testStore1.hasDocument(document));
+			assertFalse(testStore1.getReferers().contains(document));
+			assertFalse(document.getStore() == testStore1);
+			assertFalse(document.getReferences().contains(testStore1));
+		}
 	}
 }

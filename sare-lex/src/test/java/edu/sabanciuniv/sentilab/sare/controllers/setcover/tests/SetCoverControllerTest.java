@@ -80,11 +80,11 @@ public class SetCoverControllerTest {
 		assertEquals(8, Iterables.size(setCover.getDocuments()));
 		
 		int index=0;
-		SetCoverDocument firstDoc = Iterables.get(setCover.getDocuments(), index);
+		SetCoverDocument firstDoc = Iterables.get(setCover.wrapGeneric(SetCoverDocument.class).getDocuments(), index);
 		assertNotNull(firstDoc);
 		assertEquals(94.0, firstDoc.getWeight(), 0);
 		
-		for (SetCoverDocument doc : setCover.getDocuments()) {
+		for (SetCoverDocument doc : setCover.wrapGeneric(SetCoverDocument.class).getDocuments()) {
 			assertFalse(doc.getContent().equals("This hotel was great; I loved the bathroom!"));
 		}
 	}
@@ -106,13 +106,13 @@ public class SetCoverControllerTest {
 		assertEquals(5, Iterables.size(setCover.getDocuments()));
 		
 		int index=0;
-		SetCoverDocument firstDoc = Iterables.get(setCover.getDocuments(), index);
+		SetCoverDocument firstDoc = Iterables.get(setCover.wrapGeneric(SetCoverDocument.class).getDocuments(), index);
 		assertNotNull(firstDoc);
 		
 		double firstWeight = 94.0;
 		assertEquals(firstWeight, firstDoc.getWeight(), 0);
 		
-		for (SetCoverDocument doc : setCover.getDocuments()) {
+		for (SetCoverDocument doc : setCover.wrapGeneric(SetCoverDocument.class).getDocuments()) {
 			assertFalse(doc.getContent().equals("This hotel was great; I loved the bathroom!"));
 		}
 	}

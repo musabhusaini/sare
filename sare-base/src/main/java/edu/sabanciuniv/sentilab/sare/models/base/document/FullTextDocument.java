@@ -23,6 +23,8 @@ package edu.sabanciuniv.sentilab.sare.models.base.document;
 
 import java.util.*;
 
+import javax.persistence.*;
+
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Iterables;
@@ -34,10 +36,11 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.factory.*;
 
 /**
- * The base class for documents that can be tokenized.
+ * The base class for full text documents.
  * @author Mus'ab Husaini
  */
-public abstract class TokenizedDocument
+@Entity
+public abstract class FullTextDocument
 	extends PersistentDocument {
 
 	/**
@@ -45,11 +48,16 @@ public abstract class TokenizedDocument
 	 */
 	private static final long serialVersionUID = -3501504745659773659L;
 	
+	@Transient
 	private TokenizingOptions tokenizingOptions;
+	
+	@Transient
 	private String tokenizedContent;
+	
+	@Transient
 	private Map<LinguisticToken, Double> tokenWeightMap;
 
-	private TokenizedDocument setTokenWeightMap(Map<LinguisticToken, Double> map) {
+	private FullTextDocument setTokenWeightMap(Map<LinguisticToken, Double> map) {
 		this.tokenWeightMap = map;
 		return this;
 	}
@@ -122,7 +130,7 @@ public abstract class TokenizedDocument
 	 * @param tokenizingOptions the {@link TokenizingOptions} object to set.
 	 * @return the {@code this} object.
 	 */
-	public TokenizedDocument setTokenizingOptions(TokenizingOptions tokenizingOptions) {
+	public FullTextDocument setTokenizingOptions(TokenizingOptions tokenizingOptions) {
 		this.tokenizingOptions = tokenizingOptions.clone();
 		this.tokenizedContent = null;
 		return this;
@@ -148,7 +156,7 @@ public abstract class TokenizedDocument
 	 * Recalculates the tokens and their weights for this document. 
 	 * @return the {@code this} object.
 	 */
-	public TokenizedDocument retokenize() {
+	public FullTextDocument retokenize() {
 		Validate.notNull(this.getContent(), CannedMessages.NULL_ARGUMENT, "this.content");
 		Validate.notNull(this.getStore(), CannedMessages.NULL_ARGUMENT, "this.store");
 		

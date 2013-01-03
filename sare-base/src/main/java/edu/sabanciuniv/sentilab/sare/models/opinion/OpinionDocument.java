@@ -27,10 +27,14 @@ import com.google.gson.JsonElement;
 
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 
+/**
+ * Represents an opinion document (review).
+ * @author Mus'ab Husaini
+ */
 @Entity
 @DiscriminatorValue("opinion-document")
 public class OpinionDocument
-	extends TextDocument<OpinionDocument> {
+	extends EditableTextDocument {
 
 	/**
 	 * 

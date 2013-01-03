@@ -32,7 +32,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 @Entity
 @DiscriminatorValue("setcover-document")
 public class SetCoverDocument
-	extends MergableDocument<SetCoverDocument> {
+	extends MergableDocument {
 
 	/**
 	 * 

@@ -19,23 +19,19 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinion;
-
-import javax.persistence.*;
-
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
+package edu.sabanciuniv.sentilab.sare.models.base.document;
 
 /**
- * Represents an opinion corpus.
+ * A class that implemnts this interface has editable content.
  * @author Mus'ab Husaini
  */
-@Entity
-@DiscriminatorValue("opinion-corpus")
-public class OpinionCorpus
-	extends DocumentCorpus {
+public interface EditableDocument
+	extends IDocument {
 	
 	/**
-	 * 
+	 * Sets the content of this document.
+	 * @param content the content to set.
+	 * @return the {@code this} object.
 	 */
-	private static final long serialVersionUID = -1879400925531543833L;
+	public EditableDocument setContent(String content);
 }

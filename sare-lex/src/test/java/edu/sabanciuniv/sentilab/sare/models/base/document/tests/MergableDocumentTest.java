@@ -53,8 +53,8 @@ public class MergableDocumentTest {
 	private OpinionDocument testDocument1;
 	private OpinionDocument testDocument2;
 	
-	private MergableDocument<?> testMergableDocument1;
-	private MergableDocument<?> testMergableDocument2;
+	private MergableDocument testMergableDocument1;
+	private MergableDocument testMergableDocument2;
 	
 	private Map<String, Double> testMergeMap1;
 	private Map<String, Double> testMergeMap2;
@@ -71,11 +71,11 @@ public class MergableDocumentTest {
 		
 		DocumentSetCover setCover = new DocumentSetCover(testDocument1.getStore());
 		testMergableDocument1 = (SetCoverDocument)new SetCoverDocument(testDocument1)
-			.setStore(setCover)
-			.setTokenizingOptions(testTokenizingOptions);
+			.setTokenizingOptions(testTokenizingOptions)
+			.setStore(setCover);
 		testMergableDocument2 = (SetCoverDocument)new SetCoverDocument(testDocument2)
-			.setStore(setCover)
-			.setTokenizingOptions(testTokenizingOptions);
+			.setTokenizingOptions(testTokenizingOptions)
+			.setStore(setCover);
 	}
 
 	@Before
@@ -89,8 +89,8 @@ public class MergableDocumentTest {
 		
 		testContent1 = "The quick brown fox jumps over lazy dogs. Why would a lazy dog take this humiliation?";
 		testDocument1 = (OpinionDocument)new OpinionDocument()
-			.setStore(store)
-			.setTokenizingOptions(testTokenizingOptions);
+			.setTokenizingOptions(testTokenizingOptions)
+			.setStore(store);
 		
 		testMergeMap1 = Maps.newHashMap();
 		testMergeMap1.put("dog/NN", 3.0);
@@ -105,8 +105,8 @@ public class MergableDocumentTest {
 		
 		testContent2 = "Why must the fox humiliate the lazy dog in this way?";
 		testDocument2 = (OpinionDocument)new OpinionDocument()
-			.setStore(store)
-			.setTokenizingOptions(testTokenizingOptions);
+			.setTokenizingOptions(testTokenizingOptions)
+			.setStore(store);
 		
 		testMergeMap2.put("way/NN", 1.0);
 		

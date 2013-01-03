@@ -19,23 +19,19 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinion;
+package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 
-import javax.persistence.*;
-
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
+import javax.persistence.Entity;
 
 /**
- * Represents an opinion corpus.
+ * The base class for all document corpora.
  * @author Mus'ab Husaini
  */
 @Entity
-@DiscriminatorValue("opinion-corpus")
-public class OpinionCorpus
-	extends DocumentCorpus {
-	
+public abstract class DocumentCorpus extends PersistentDocumentStore {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1879400925531543833L;
+	private static final long serialVersionUID = -6392601190047482976L;
 }

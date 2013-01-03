@@ -19,23 +19,20 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinion;
+package edu.sabanciuniv.sentilab.sare.models.base.document;
 
-import javax.persistence.*;
-
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
+import javax.persistence.Entity;
 
 /**
- * Represents an opinion corpus.
+ * A class that holds partial text documents.
  * @author Mus'ab Husaini
  */
 @Entity
-@DiscriminatorValue("opinion-corpus")
-public class OpinionCorpus
-	extends DocumentCorpus {
-	
+public abstract class PartialTextDocument
+	extends PersistentDocument {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1879400925531543833L;
+	private static final long serialVersionUID = -7988392404417624579L;
 }

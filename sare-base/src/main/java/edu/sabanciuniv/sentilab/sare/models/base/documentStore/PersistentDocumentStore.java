@@ -213,4 +213,108 @@ public abstract class PersistentDocumentStore
 	public String getOwnerId() { 
 		return this.ownerId;
 	}
+	
+	@Override
+	public Iterable<PersistentDocument> getDocuments()  {
+		// must not return null.
+		if (this.documents == null) {
+			return Lists.newArrayList();
+		}
+		
+		return Collections.unmodifiableList(this.documents);
+	}
+
+	/**
+	 * Sets the documents in this store.
+	 * @param documents the {@link Iterable} of documents to set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStore setDocuments(Iterable<? extends PersistentDocument> documents) {
+		if (documents == null) {
+			if (Iterables.size(this.getDocuments()) != 0) {
+				List<PersistentDocument> tmpDocuments = Lists.newArrayList(this.getDocuments());
+				for (PersistentDocument document : tmpDocuments) {
+					this.removeDocument(document);
+				}
+			}
+			
+			this.documents = null;
+		} else {
+			this.setDocuments(null);
+			
+			for (PersistentDocument document : documents) {
+				this.addDocument(document);
+			}
+		}
+		return this;
+	}
+	
+	/**
+	 * Gets a boolean flag indicating whether the provided document is in this store or not.
+	 * @param document the {@code PersistentDocument} object to look for.
+	 * @return {@code true} if the document is contained in this store, {@code false} otherwise.
+	 */
+	public boolean hasDocument(PersistentDocument document) {
+		return this.getDocuments() != null ? Iterables.contains(this.getDocuments(), document) : false;
+	}
+	
+	/**
+	 * Adds a document to this store.
+	 * @param document the {@code PersistentDocument} object to add.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStore addDocument(PersistentDocument document) {
+		Validate.notNull(document, CannedMessages.NULL_ARGUMENT, "document");
+		
+		if (this.documents == null) {
+			this.documents = Lists.newArrayList();
+		}
+		
+		if (document.getStore() != this) {
+			document.setStore(this);
+		}
+		
+		if (!this.documents.contains(document)) {
+			this.documents.add(document);
+		}
+		
+		this.addReferer(document);
+		return this;
+	}
+	
+	/**
+	 * Removes a document from this store.
+	 * @param document the {@code PersistentDocument} object to remove.
+	 * @return {@code true} if an element was removed as a result of this call. 
+	 */
+	public boolean removeDocument(PersistentDocument document) {
+		if (document == null) {
+			return false;
+		}
+		
+		if (document.getStore() == this) {
+			document.setStore(null);
+		}
+		
+		this.removeReferer(document);
+		
+		if (this.documents == null) {
+			return false;
+		}
+		
+		if (this.documents.contains(document)) {
+			return this.documents.remove(document);
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Wraps a {@link GenericizedDocumentStore} around this store for easier access.
+	 * @param clazz the type of documents to assume.
+	 * @return the {@link GenericizedDocumentStore} version of this store.
+	 */
+	public <T extends PersistentDocument> GenericizedDocumentStore<T> wrapGeneric(Class<T> clazz) {
+		return GenericizedDocumentStore.create(this, clazz);
+	}
 }

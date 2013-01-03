@@ -36,8 +36,8 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
  * The base class for documents that can be merged into each other.
  * @author Mus'ab Husaini
  */
-public abstract class MergableDocument<T extends MergableDocument<T>>
-	extends GenericDocument<T> {
+public abstract class MergableDocument
+	extends FullTextDocument {
 
 	/**
 	 * 
@@ -46,10 +46,10 @@ public abstract class MergableDocument<T extends MergableDocument<T>>
 
 	/**
 	 * Gets a token weight map obtained if the given document were to be merged into this document without modifying either of the actual maps.
-	 * @param other the {@link TokenizedDocument} object to merge.
+	 * @param other the {@link FullTextDocument} object to merge.
 	 * @return the {@link Map} object with the tokens and their respective weights after the merge.
 	 */
-	protected Map<LinguisticToken, Double> getMergedMap(TokenizedDocument other) {
+	protected Map<LinguisticToken, Double> getMergedMap(FullTextDocument other) {
 		Validate.notNull(other, CannedMessages.NULL_ARGUMENT, "other");
 		
 		Map<LinguisticToken, Double> newMap = Maps.newHashMap(this.getTokenWeightMap(true));
@@ -62,25 +62,25 @@ public abstract class MergableDocument<T extends MergableDocument<T>>
 
 	/**
 	 * Gets the total token weight if a given document was merged into this document.
-	 * @param other the {@link TokenizedDocument} object to merge.
+	 * @param other the {@link FullTextDocument} object to merge.
 	 * @return the total token weight resulting from the merge.
 	 */
-	public double getMergedWeight(TokenizedDocument other) {
+	public double getMergedWeight(FullTextDocument other) {
 		return IterablesExtensions.sum(this.getMergedMap(other).values());
 	}
 	
 	/**
 	 * Merge the tokens of a given document into this document.
-	 * @param other the {@link TokenizedDocument} object to merge.
+	 * @param other the {@link FullTextDocument} object to merge.
 	 * @return the {@code this} object.
 	 */
-	public MergableDocument<T> merge(TokenizedDocument other) {
+	public MergableDocument merge(FullTextDocument other) {
 		Map<LinguisticToken, Double> mergedMap = this.getMergedMap(other);
 		for (Entry<LinguisticToken, Double> mergedEntry : mergedMap.entrySet()) {
 			this.setTokenWeight(mergedEntry.getKey(), mergedEntry.getValue());
 			
 			if (other instanceof MergableDocument) {
-				((MergableDocument<?>)other).setTokenWeight(mergedEntry.getKey(), 0);
+				((MergableDocument)other).setTokenWeight(mergedEntry.getKey(), 0);
 			}
 		}
 		

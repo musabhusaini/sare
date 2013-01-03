@@ -155,8 +155,10 @@ public class OpinionCorpusFactoryTest {
 		assertNotNull(actualCorpus);
 		assertEquals(Iterables.size(expectedContentCorpus.getDocuments()), Iterables.size(actualCorpus.getDocuments()));
 		
-		OpinionDocument expectedDocument = Iterables.getFirst(expectedContentCorpus.getDocuments(), null);
-		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.getDocuments(), null);
+		OpinionDocument expectedDocument = Iterables.getFirst(expectedContentCorpus.wrapGeneric(OpinionDocument.class).getDocuments(),
+			null);
+		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments(),
+			null);
 		assertNotNull(actualDocument);
 		
 		assertEquals(expectedDocument.getContent(), actualDocument.getContent());
@@ -178,8 +180,10 @@ public class OpinionCorpusFactoryTest {
 		assertNotNull(actualCorpus);
 		assertEquals(Iterables.size(expectedNoPolarityCorpus.getDocuments()), Iterables.size(actualCorpus.getDocuments()));
 		
-		OpinionDocument expectedDocument = Iterables.getFirst(expectedNoPolarityCorpus.getDocuments(), null);
-		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.getDocuments(), null);
+		OpinionDocument expectedDocument = Iterables.getFirst(expectedNoPolarityCorpus.wrapGeneric(OpinionDocument.class).getDocuments(),
+			null);
+		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments(),
+			null);
 		assertNotNull(actualDocument);
 		
 		assertEquals(expectedDocument.getContent(), actualDocument.getContent());

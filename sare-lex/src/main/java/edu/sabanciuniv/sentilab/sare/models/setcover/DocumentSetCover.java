@@ -34,7 +34,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 @Entity
 @DiscriminatorValue("setcover-corpus")
 public class DocumentSetCover
-	extends GenericDocumentStore<SetCoverDocument> {
+	extends DocumentCorpus {
 
 	/**
 	 * 
@@ -82,7 +82,7 @@ public class DocumentSetCover
 	 */
 	public double totalWeight() {
 		double weight = 0;
-		for (SetCoverDocument document : this.getDocuments()) {
+		for (SetCoverDocument document : this.wrapGeneric(SetCoverDocument.class).getDocuments()) {
 			weight += document.getWeight();
 		}
 		

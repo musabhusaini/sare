@@ -96,6 +96,28 @@ public abstract class PersistentDocument
 	}
 	
 	/**
+	 * Sets the store this document is stored under.
+	 * @param store the {@link PersistentDocumentStore} to store this document under.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocument setStore(PersistentDocumentStore store) {
+        PersistentDocumentStore prevStore = this.getStore();
+        
+        this.store = store;
+        
+        if (prevStore != null) {
+            prevStore.removeDocument(this);
+        }
+        
+        if (store != null) {
+            store.addDocument(this);
+            this.addReference(store);
+        }
+        
+        return this;
+	}
+	
+	/**
 	 * Gets this document's base document.
 	 * @return the {@link PersistentDocument} object which is the base document of this document.
 	 */
