@@ -22,9 +22,10 @@
 package models.document;
 
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
-import models.base.ViewModel;
+import models.PersistentObjectModel;
 
-public class PersistentDocumentModel extends ViewModel {
+public class PersistentDocumentModel
+	extends PersistentObjectModel {
 
 	public String content;
 	

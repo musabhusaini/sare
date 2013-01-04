@@ -19,6 +19,26 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-.accepting-files {
-  border: 1px dashed lighten(black, 70%);
+package models;
+
+import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
+import models.base.ViewModel;
+
+public class PersistentObjectModel
+	extends ViewModel {
+
+	public String id;
+	
+	public PersistentObjectModel(PersistentObject object) {
+		super(object);
+		
+		if (object != null) {
+			this.id = UuidUtils.normalize(object.getIdentifier());
+		}
+	}
+	
+	public PersistentObjectModel() {
+		this(null);
+	}
 }

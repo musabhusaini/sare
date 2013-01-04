@@ -25,61 +25,23 @@
 
 @import controllers.modules._
 @import models.documentStore._
+@import tags._
 
 @contentHtml = {
-	<div class="span3">
-		<div class="row-fluid">
-			<label>Corpora</label>
-			<select id="lst-corpora" size=10 autofocus="autofocus">
-				@for(store <- stores) {
-					<option value="@store.id" data-store="@Json.toJson(store)">
-						@if(store.title != null) {
-							@store.title
-						} else {
-							@store.id
-						}
-					</option>
-				}
-			</select>
-		</div>
-		<div class="row-fluid">
-			<button id="btn-add-corpus" class="btn" data-loading-text="Adding...">Add</button>
-			<button id="btn-delete-corpus" class="btn btn-warning" data-loading-text="Deleting...">Delete</button>
-		</div>
+	<div id="ctr-corpus-list" class="span6">
+		@storeList(stores)
 	</div>
 	
 	<div class="span3">
-		<form>
-			<fieldset>
-				<label>Title</label>
-				<input id="inp-corpus-title" type="text" class="input-block-level" placeholder="Give this corpus a title" />
-				<label>Description</label>
-				<input id="inp-corpus-desc" type="text" class="input-block-level" placeholder="Describe it" />
-				<div class="row-fluid">
-					<label>Corpus language</label>
-					<select id="lst-corpus-language" class="input-small">
-						@for(language <- CorpusModule.getSupportedLanguages()) {
-							<option value="@language.languageCode()">@language.languageName()</option>
-						}
-					</select>
-				</div>
-				<div id="ctr-corpus-upload">
-					<div class="row-fluid">
-						<div id="ctr-corpus-dropfile" class="span8 well well-small">
-							Upload file
-						</div>
-						<div class="span4">
-							<button id="btn-corpus-browse" class="btn btn-block pull-right">Browse</button>
-						</div>
-					</div>
-					<div class="row-fluid">
-						<p>
-							<button id="btn-corpus-update" class="btn" data-loading-text="Updating...">Update</button>
-						</p>
-					</div>
-				</div>
-			</fieldset>
-		</form>
+		<div class="row-fluid">
+			<label>Documents</label>
+			<select id="lst-documents" class="long-list" size=10>
+			</select>
+		</div>
+		<div class="row-fluid">
+			<button id="btn-add-doc" class="btn" data-loading-text="Adding...">Add</button>
+			<button id="btn-delete-doc" class="btn btn-warning" data-loading-text="Deleting...">Delete</button>
+		</div>
 	</div>
 }
 
@@ -89,6 +51,7 @@
 
 @moreScripts = {
 	<script src="@controllers.routes.Assets.at("plugins/plupload/js/plupload.full.js")" type="text/javascript"></script>
+	<script src="@controllers.routes.Assets.at("javascripts/widgets.storeList.js")" type="text/javascript"></script>
 	<script src="@controllers.routes.Assets.at("javascripts/corpusLanding.html.js")" type="text/javascript"></script>
 }
 

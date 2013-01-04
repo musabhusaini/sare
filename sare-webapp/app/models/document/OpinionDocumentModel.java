@@ -24,7 +24,7 @@ package models.document;
 import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument;
 
 public class OpinionDocumentModel
-	extends PersistentDocumentModel {
+	extends FullTextDocumentModel {
 
 	public Double polarity;
 	

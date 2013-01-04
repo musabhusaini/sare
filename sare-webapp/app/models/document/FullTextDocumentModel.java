@@ -19,6 +19,26 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-.accepting-files {
-  border: 1px dashed lighten(black, 70%);
+package models.document;
+
+import org.apache.commons.lang3.StringUtils;
+
+import edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument;
+
+public class FullTextDocumentModel
+	extends PersistentDocumentModel {
+	
+	public String summarizedContent;
+	
+	public FullTextDocumentModel(FullTextDocument document) {
+		super(document);
+		
+		if (document != null) {
+			this.summarizedContent = StringUtils.abbreviateMiddle(document.getContent(), "...", 20);
+		}
+	}
+
+	public FullTextDocumentModel() {
+		this(null);
+	}
 }

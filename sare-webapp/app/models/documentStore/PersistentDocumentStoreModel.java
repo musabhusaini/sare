@@ -23,6 +23,7 @@ package models.documentStore;
 
 import javax.persistence.EntityManager;
 
+import models.PersistentObjectModel;
 import models.base.ViewModel;
 
 import com.google.common.collect.Iterables;
@@ -33,9 +34,8 @@ import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocume
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 
 public class PersistentDocumentStoreModel
-	extends ViewModel {
+	extends PersistentObjectModel {
 	
-	public String id;
 	public String title;
 	public String description;
 	public String language;
@@ -45,7 +45,6 @@ public class PersistentDocumentStoreModel
 		super(documentStore);
 		
 		if (documentStore != null) {
-			this.id = documentStore.getIdentifier().toString();
 			this.title = documentStore.getTitle();
 			this.description = documentStore.getDescription();
 			this.language = documentStore.getLanguage();
