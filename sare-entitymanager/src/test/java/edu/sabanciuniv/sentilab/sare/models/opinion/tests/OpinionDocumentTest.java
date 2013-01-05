@@ -27,11 +27,11 @@ import java.util.UUID;
 
 import org.junit.*;
 
-import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
+import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 
 public class OpinionDocumentTest
-	extends ModelTestsBase {
+	extends PersistenceTestsBase {
 	
 	private String testContent1;
 	private String testContent2;

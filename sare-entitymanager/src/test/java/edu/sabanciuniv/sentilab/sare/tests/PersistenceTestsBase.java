@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base;
+package edu.sabanciuniv.sentilab.sare.tests;
 
 import java.util.*;
 
@@ -31,9 +31,10 @@ import com.google.common.collect.Lists;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.SareEntityManagerFactory;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.SareEntityManagerFactory.DataMode;
+import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
-public class ModelTestsBase {
+public class PersistenceTestsBase {
 
 	protected EntityManager em;
 	protected List<UUID> persistedUuids;

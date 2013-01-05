@@ -32,11 +32,11 @@ import java.util.*;
 import org.junit.*;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.*;
-import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
+import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 
 public class PersistentDocumentControllerTest
-	extends ModelTestsBase {
+	extends PersistenceTestsBase {
 
 	private PersistentDocumentController testController;
 	private OpinionCorpus testCorpus;

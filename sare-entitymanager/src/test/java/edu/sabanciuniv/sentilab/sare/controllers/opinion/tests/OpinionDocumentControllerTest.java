@@ -23,13 +23,15 @@ package edu.sabanciuniv.sentilab.sare.controllers.opinion.tests;
 
 import static org.junit.Assert.*;
 
+import java.util.UUID;
+
 import org.junit.*;
 
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionDocumentFactory;
-import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
+import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 
-public class OpinionDocumentControllerTest extends ModelTestsBase {
+public class OpinionDocumentControllerTest extends PersistenceTestsBase {
 
 	private OpinionCorpus testCorpus;
 	private OpinionDocument testDocument;
@@ -40,16 +42,20 @@ public class OpinionDocumentControllerTest extends ModelTestsBase {
 	public void setUp() throws Exception {
 		testCorpus = new OpinionCorpus();
 		testFactory = new OpinionDocumentFactory();
-		testOptions = new OpinionDocumentFactoryOptions()
-			.setPolarity(0.8)
-			.setContent("some content")
-			.setCorpus(testCorpus);
 		
-		testDocument = testFactory.create(testOptions);
+		testDocument = new OpinionDocument();
+		testCorpus.addDocument(testDocument);
 	}
 
 	@Test
 	public void testFactoryCreatedDataIsPersisted() {
+		testOptions = new OpinionDocumentFactoryOptions()
+			.setPolarity(0.8)
+			.setContent("some content")
+			.setCorpus(testCorpus);
+	
+		testDocument = testFactory.create(testOptions);
+		
 		em.getTransaction().begin();
 		persist(testCorpus);
 		em.getTransaction().commit();
@@ -59,5 +65,52 @@ public class OpinionDocumentControllerTest extends ModelTestsBase {
 		assertNotNull(actualDocument);
 		assertEquals(testDocument.getPolarity(), actualDocument.getPolarity(), 0);
 		assertEquals(testDocument.getContent(), actualDocument.getContent());
+	}
+	
+	@Test
+	public void testCreateWithExistingIdGetsExistingObject() {
+		em.getTransaction().begin();
+		persist(testCorpus);
+		em.getTransaction().commit();
+		em.clear();
+		
+		testOptions = new OpinionDocumentFactoryOptions()
+			.setExistingId(testDocument.getIdentifier())
+			.setEm(em)
+			.setCorpus(testCorpus);
+		OpinionDocument actualDocument = testFactory.create(testOptions);
+		assertNotNull(actualDocument);
+		assertEquals(testDocument.getIdentifier(), actualDocument.getIdentifier());
+	}
+	
+	@Test
+	public void testCreateWithNonExistingIdCreatesNewObject() {
+		UUID id = UUID.randomUUID();
+		testOptions = new OpinionDocumentFactoryOptions()
+			.setExistingId(id)
+			.setEm(em)
+			.setContent("some content");
+		
+		OpinionDocument actualDocument = testFactory.create(testOptions);
+		assertNotNull(actualDocument);
+		assertNotEquals(id, actualDocument.getIdentifier());
+	}
+	
+	@Test
+	public void testCreateWithExistingIdUpdatesObject() {
+		em.getTransaction().begin();
+		persist(testCorpus);
+		em.getTransaction().commit();
+		em.clear();
+
+		testOptions = new OpinionDocumentFactoryOptions()
+			.setExistingId(testDocument.getId())
+			.setEm(em)
+			.setContent("some content");
+		
+		OpinionDocument actualDocument = testFactory.create(testOptions);
+		assertNotNull(actualDocument);
+		assertEquals(testDocument.getIdentifier(), actualDocument.getIdentifier());
+		assertEquals(testOptions.getContent(), actualDocument.getContent());
 	}
 }

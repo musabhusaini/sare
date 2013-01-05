@@ -40,14 +40,23 @@ public class OpinionDocumentFactory
 	extends PersistentObjectFactory<OpinionDocument, OpinionDocumentFactoryOptions>
 	implements IDocumentController {
 
-	private OpinionDocument create(OpinionCorpus corpus, String content, Double polarity) {
-		return (OpinionDocument)new OpinionDocument()
-			.setPolarity(polarity)
-			.setContent(content)
-			.setStore(corpus);
+	private OpinionDocument create(OpinionDocument document, OpinionCorpus corpus, String content, Double polarity) {
+		if (corpus != null) {
+			document.setStore(corpus);
+		}
+		
+		if (content != null) {
+			document.setContent(content);
+		}
+		
+		if (polarity != null) {
+			document.setPolarity(polarity);
+		}
+		
+		return document;
 	}
 
-	private OpinionDocument create(OpinionCorpus corpus, Node node)
+	private OpinionDocument create(OpinionDocument document, OpinionCorpus corpus, Node node)
 		throws XPathException {
 
 		try {
@@ -60,7 +69,7 @@ public class OpinionDocumentFactory
 	    XPath xpath = factory.newXPath();
 	    Double polarity = (Double)xpath.compile("./@polarity").evaluate(node, XPathConstants.NUMBER);
 	    
-	    return this.create(corpus, node.getTextContent().trim(), polarity);
+	    return this.create(document, corpus, node.getTextContent().trim(), polarity);
 	}
 
 	@Override
@@ -69,18 +78,37 @@ public class OpinionDocumentFactory
 		
 		Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
 		
-		if (options.getContent() != null) {
-			return this.create(options.getCorpus(), options.getContent(), options.getPolarity());
+		boolean existing = true;
+		OpinionDocument document = null;
+		if (options.getExistingId() != null && options.getEm() != null) {
+			// if not found, we simply fall-back to the default behavior.
+			try {
+				document = options.getEm().find(OpinionDocument.class, options.getExistingId());
+			} catch (IllegalArgumentException e) {
+				document = null;
+			}
 		}
 		
+		if (document == null) {
+			document = new OpinionDocument();
+			existing = false;
+		}
+		
+		if (options.getContent() != null) {
+			return this.create(document, options.getCorpus(), options.getContent(), options.getPolarity());
+		}
 		if (options.getXmlNode() != null) {
 			try {
-				return this.create(options.getCorpus(), options.getXmlNode());
+				return this.create(document, options.getCorpus(), options.getXmlNode());
 			} catch (XPathException e) {
 				throw new IllegalFactoryOptionsException("options.xmlNode is not a valid input", e);
 			}
 		}
 		
-		throw new IllegalFactoryOptionsException("options did not have enough information to create this object");
+		if (!existing) {
+			throw new IllegalFactoryOptionsException("options did not have enough information to create this object");
+		}
+		
+		return document;
 	}
 }

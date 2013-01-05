@@ -33,9 +33,10 @@ import com.google.gson.JsonObject;
 
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument;
+import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
-public class PersistentObjectTest extends ModelTestsBase {
+public class PersistentObjectTest extends PersistenceTestsBase {
 
 	private class PersistentObjectWrapper {
 		PersistentObject obj;

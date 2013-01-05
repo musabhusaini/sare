@@ -27,11 +27,11 @@ import org.junit.*;
 
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
+import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 
 public class OpinionCorpusTest
-	extends ModelTestsBase {
+	extends PersistenceTestsBase {
 
 	private OpinionCorpus testCorpus;
 	private OpinionCorpus testBaseCorpus;

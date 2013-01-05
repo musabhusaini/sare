@@ -40,6 +40,6 @@ import edu.sabanciuniv.sentilab.sare.models.setcover.tests.*;
 	PersistentDocumentControllerTest.class,
 	PersistentDocumentStoreControllerTest.class
 })
-public class ModelsTests {
+public class PersistenceTests {
 
 }

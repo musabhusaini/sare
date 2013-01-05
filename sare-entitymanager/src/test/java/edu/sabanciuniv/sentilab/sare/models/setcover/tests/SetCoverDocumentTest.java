@@ -27,14 +27,14 @@ import java.util.EnumSet;
 
 import org.junit.*;
 
-import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
+import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 
 public class SetCoverDocumentTest
-	extends ModelTestsBase {
+	extends PersistenceTestsBase {
 
 	private OpinionCorpus testCorpus;
 	private OpinionDocument testDocument;

@@ -31,10 +31,10 @@ import org.junit.*;
 import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
-import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
+import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 
-public class OpinionCorpusControllerTest extends ModelTestsBase {
+public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 
 	private String testXmlCorpusFilename;
 	private OpinionCorpus testCorpus;
@@ -65,12 +65,15 @@ public class OpinionCorpusControllerTest extends ModelTestsBase {
 	
 	@Test
 	public void testCreateWithNonExistingIdCreatesNewObject() {
+		UUID id = UUID.randomUUID();
 		testOptions
-			.setExistingId(UUID.randomUUID())
+			.setExistingId(id)
+			.setEm(em)
 			.setContent("some content")
 			.setFormat("txt");
 		OpinionCorpus actualCorpus = testFactory.create(testOptions);
 		assertNotNull(actualCorpus);
+		assertNotEquals(id, actualCorpus.getIdentifier());
 	}
 	
 	@Test
