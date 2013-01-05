@@ -20,12 +20,12 @@ along with SARE. If not, see <http://www.gnu.org/licenses/>.
 ###
 
 # define reusables
-Sare = window.Sare =
-  Options:
-    pingEnbabled: true
-    pingInterval: 5
+$ = window.jQuery
+jsRoutes = window.jsRoutes
+
+Sare = window.Sare = $.extend window.Sare,
   Page:
-    Options: {}
+    Configuration: {}
     Strings: {}
     Objects: {}
     Methods: {}
@@ -33,9 +33,6 @@ Sare = window.Sare =
   Helpers:
     MimeTypes:
       json: "application/json"
-
-$ = window.jQuery
-jsRoutes = window.jsRoutes
 
 # function that pings the server repeatedly.
 ping = ->
@@ -45,8 +42,8 @@ ping = ->
 
 # function to generate delayed pings.
 delayedPing = ->
-  window.setTimeout ping, 1000*60*Sare.Options.pingInterval
+  window.setTimeout ping, 1000*60*Sare.Configuration.pingTimeout
 
 # start pinging
-if Sare.Options.pingEnabled
+if Sare.Configuration.pingTimeout isnt 0
   delayedPing()

@@ -80,15 +80,22 @@ public class SessionCleaner extends UntypedActor {
 			public void run() {
 				Logger.info("cleaning sessions");
 				
-				// get all old sessions.
-				List<WebSession> oldSessions =
-					WebSession.find.where()
-						.lt("updated", new Date(DateUtils.addHours(new Date(), -1).getTime()))
-						.findList();
+				Integer timeout = Play.application().configuration().getInt("application.session.timeout");
+				if (timeout == null) {
+					timeout = 60;
+				}
 				
-				// delete each.
-				for (WebSession session : oldSessions) {
-					clean(session);
+				if (timeout != 0) {
+					// get all old sessions.
+					List<WebSession> oldSessions =
+						WebSession.find.where()
+							.lt("updated", new Date(DateUtils.addMinutes(new Date(), -timeout).getTime()))
+							.findList();
+					
+					// delete each.
+					for (WebSession session : oldSessions) {
+						clean(session);
+					}
 				}
 			}
 		});

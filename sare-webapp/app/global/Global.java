@@ -35,12 +35,21 @@ public class Global extends GlobalSettings {
 	public void onStart(Application app) {
 		super.onStart(app);
 		
-		// run session cleaner.
-		ActorRef sessionCleaner = Akka.system().actorOf(new Props(SessionCleaner.class));
-		Akka.system().scheduler().schedule(
-			Duration.create(0, TimeUnit.MILLISECONDS),
-			Duration.create(10, TimeUnit.MINUTES),
-			sessionCleaner,
-			"", Akka.system().dispatcher());
+		Integer timeout = Play.application().configuration().getInt("application.session.cleanerTimeout");
+		if (timeout == null) {
+			timeout = 10;
+		}
+		
+		if (timeout != 0) {
+			Logger.info("session cleaner is active");
+			
+			// run session cleaner.
+			ActorRef sessionCleaner = Akka.system().actorOf(new Props(SessionCleaner.class));
+			Akka.system().scheduler().schedule(
+				Duration.create(0, TimeUnit.MILLISECONDS),
+				Duration.create(timeout, TimeUnit.MINUTES),
+				sessionCleaner,
+				"", Akka.system().dispatcher());
+		}
 	}
 }
