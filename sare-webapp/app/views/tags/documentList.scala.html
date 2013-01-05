@@ -21,45 +21,55 @@
 
 @(documents: List[document.PersistentDocumentModel], listSize: Int = 10, editable: Boolean = true, showForm: Boolean = true)
 
+@import scala.util._
+
 @import play.libs._
 
 @import controllers.modules._
 @import models.document._
 
-<div class="span6">
-	<div class="row-fluid">
-		<label>Documents</label>
-		<select class="lst-documents long-list" size=10>
-			@for(document <- documents) {
-				<option value="@document.id" data-store="@Json.toJson(document)">
-					@document match {
-						case ft: FullTextDocumentModel => { ft.summarizedContent }
-						case d if d.content != Nil => { d.content }
-						case d => { d.id }
-					}
-				</option>
-			}
-		</select>
-	</div>
-	@if(editable) {
+@defining(Random.nextInt(1000)) { uid =>
+	<div class="span6">
 		<div class="row-fluid">
-			<button class="btn-add-doc btn" data-loading-text="Adding...">Add</button>
-			<button class="btn-delete-doc btn btn-warning" data-loading-text="Deleting...">Delete</button>
+			<label for="lst-documents-@uid">Documents</label>
+			<select id="lst-documents-@uid" class="lst-documents long-list" size=10 title="List of documents">
+				@for(document <- documents) {
+					<option value="@document.id" data-store="@Json.toJson(document)">
+						@document match {
+							case ft: FullTextDocumentModel => { ft.summarizedContent }
+							case d if d.content != Nil => { d.content }
+							case d => { d.id }
+						}
+					</option>
+				}
+			</select>
+		</div>
+		@if(editable) {
+			<div class="row-fluid">
+				<button id="btn-add-doc-@uid" class="btn-add-doc btn" data-loading-text="Adding..." title="Add a document" data-placement="bottom">
+					Add
+				</button>
+				<button id="btn-delete-doc-@uid" class="btn-delete-doc btn btn-warning" data-loading-text="Deleting..." title="Delete this document" data-placement="bottom">
+					Delete
+				</button>
+			</div>
+		}
+	</div>
+	
+	@if(showForm) {
+		<div class="span6">
+			<form>
+				<fieldset>
+					<label for="input-doc-content-@uid">Content</label>
+					<textarea id="input-doc-content-@uid" class="input-doc-content input-block-level" rows=8 title="Content of the document" data-placement="right">
+					</textarea>
+					<p>
+						<button id="input-doc-content-@uid" class="btn-update-doc btn" data-loading-text="Updating..." title="Update document content"  data-placement="bottom">
+							Update
+						</button>
+					</p>
+				</fieldset>
+			</form>
 		</div>
 	}
-</div>
-
-@if(showForm) {
-	<div class="span6">
-		<form>
-			<fieldset>
-				<label>Content</label>
-				<textarea class="input-doc-content input-block-level" rows=8>
-				</textarea>
-				<p>
-					<button class="btn-update-doc btn" data-loading-text="Updating...">Update</button>
-				</p>
-			</fieldset>
-		</form>
-	</div>
 }

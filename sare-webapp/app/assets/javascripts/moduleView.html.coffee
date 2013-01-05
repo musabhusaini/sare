@@ -76,6 +76,8 @@ Methods.stopSimulatedProgress = ->
 
 $ ->
   Methods.hideProgress()
-  $(Selectors.nextButton).click =>
-    output = $(Selectors.nextButton).data(Strings.moduleOutputDataKey) ? "[]"
-    location.href = jsRoutes.controllers.ModuleController.next(output).url
+  $(Selectors.nextModuleButton)
+    .tooltip()
+    .click =>
+      output = $(Selectors.nextModuleButton).data(Strings.moduleOutputDataKey) ? "[]"
+      location.href = jsRoutes.controllers.ModuleController.next(output).url

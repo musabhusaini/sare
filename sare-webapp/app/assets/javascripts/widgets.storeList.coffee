@@ -54,12 +54,17 @@ widget =
     switch option
       when "disabled"
         @_$(input).attr("disabled", true) for input in @_form "inputs"
-        @_$(@options.dropFileContainer).text @options.uploadFileMessage
+        @_$(@options.dropFileContainer)
+          .text(@options.uploadFileMessage)
+          .tooltip "destroy"
         @_destroyUploader()
       when "enabled"
         if @options.editable
           @_$(input).removeAttr("disabled") for input in @_form "inputs"
-          @_$(@options.dropFileContainer).text @options.dropFileMessage
+          @_$(@options.dropFileContainer)
+            .text(@options.dropFileMessage)
+            .tooltip
+              title: @options.dropFileTip
           @_createUploader()
       when "inputs"
         [ @options.titleInput, @options.descriptionInput, @options.languageList, @options.browseButton, @options.updateButton ]
@@ -74,15 +79,6 @@ widget =
   # function to set up the uploader and start it
   _createUploader: ->
     return null if @_uploader?
-    
-    Math = window.Math
-    rand = Math.round(Math.random() * 1000)
-    if not @_$(@options.uploadContainer).attr("id")?
-      @_$(@options.uploadContainer).attr "id", "ctr-upload-" + rand
-    if not @_$(@options.browseButton).attr("id")?
-      @_$(@options.browseButton).attr "id", "btn-browse-" + rand
-    if not @_$(@options.dropFileContainer).attr("id")?
-      @_$(@options.dropFileContainer).attr "id", "ctr-dropfile-" + rand
     
     # initialize the uploader
     uploader = @_uploader = new plupload.Uploader
@@ -117,7 +113,11 @@ widget =
       if files.length
         # enforce the file limit so that last files take precedence
         up.removeFile file for file in up.files[...(up.files.length - @options.uploadFileCount)]
-        @_$(@options.dropFileContainer).text files[0].name
+        @_$(@options.dropFileContainer)
+          .text(files[0].name)
+          .tooltip("destroy")
+          .tooltip
+            title: @options.filenameTip
         @_$(@options.updateButton).removeAttr "disabled"
     
     uploader.bind "UploadProgress", (up, file) =>
@@ -125,12 +125,20 @@ widget =
         @_trigger "uploadProgress", up, file
   
     uploader.bind "Error", (up, error) =>
-      @_$(@options.dropFileContainer).text @options.uploadFailedMessage
+      @_$(@options.dropFileContainer)
+        .text(@options.uploadFailedMessage)
+        .tooltip("destroy")
+        .tooltip
+          title: @options.dropFileTip
       @_trigger "uploadError", up, error
   
     uploader.bind "FileUploaded", (up, file, response) =>
       up.removeFile file
-      @_$(@options.dropFileContainer).text @options.dropFileMessage
+      @_$(@options.dropFileContainer)
+        .text(@options.dropFileMessage)
+        .tooltip("destroy")
+        .tooltip
+          title: @options.dropFileTip
       selected = @selected()
       store = JSON.parse response.response
       @_updateListItem selected.item, store
@@ -288,15 +296,15 @@ widget =
         .change()
   
   _destroy: ->
-    @_$(@options.list).tooltip("destroy")
-    @_$(@options.addButton).tooltip("destroy")
-    @_$(@options.deleteButton).tooltip("destroy")
-    @_$(@options.titleInput).tooltip("destroy")
-    @_$(@options.descriptionInput).tooltip("destroy")
-    @_$(@options.languageList).tooltip("destroy")
-    @_$(@options.dropFileContainer).tooltip("destroy")
-    @_$(@options.browseButton).tooltip("destroy")
-    @_$(@options.updateButton).tooltip("destroy")
+    @_$(@options.list).tooltip "destroy"
+    @_$(@options.addButton).tooltip "destroy"
+    @_$(@options.deleteButton).tooltip "destroy"
+    @_$(@options.titleInput).tooltip "destroy"
+    @_$(@options.descriptionInput).tooltip "destroy"
+    @_$(@options.languageList).tooltip "destroy"
+    @_$(@options.dropFileContainer).tooltip "destroy"
+    @_$(@options.browseButton).tooltip "destroy"
+    @_$(@options.updateButton).tooltip "destroy"
     
   _getCreateOptions: ->
       list: ".lst-store"

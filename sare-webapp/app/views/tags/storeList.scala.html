@@ -76,13 +76,13 @@
 						</select>
 					</div>
 					@if(editable) {
-						<div class="ctr-store-upload">
+						<div id="ctr-store-upload-@uid" class="ctr-store-upload">
 							<div class="row-fluid">
-								<div class="ctr-store-dropfile span8 well well-small">
+								<div id="ctr-store-dropfile-@uid" class="ctr-store-dropfile span8 well well-small">
 								</div>
 								<div class="span4">
-									<button class="btn-store-browse btn btn-block pull-right" title="Browse for a file to upload"
-										data-placement="bottom">
+									<button id="btn-store-browse-@uid" class="btn-store-browse btn btn-block pull-right"
+										title="Look for a file to upload" data-placement="bottom">
 										Browse
 									</button>
 								</div>
@@ -90,8 +90,8 @@
 						</div>
 						<div class="row-fluid">
 							<p>
-								<button class="btn-store-update btn" data-loading-text="Updating..." title="Update corpus"
-									data-placement="bottom">
+								<button id="btn-store-update-@uid" class="btn-store-update btn" data-loading-text="Updating..."
+									title="Update corpus" data-placement="bottom">
 									Update
 								</button>
 							</p>

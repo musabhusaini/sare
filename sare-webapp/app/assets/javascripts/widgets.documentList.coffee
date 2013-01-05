@@ -179,6 +179,12 @@ widget =
     for control in [@options.addButton, @options.deleteButton]
       @_$(control).attr "disabled", true
     
+    @_$(@options.list).tooltip()
+    @_$(@options.addButton).tooltip()
+    @_$(@options.deleteButton).tooltip()
+    @_$(@options.contentInput).tooltip()
+    @_$(@options.updateButton).tooltip()
+    
     # select the first store, if any
     firstItem = @_$(@options.list).children("option:first")
     if firstItem.length
@@ -186,6 +192,13 @@ widget =
         .val($(firstItem).data(@options.dataKey)?.id)
         .change()
       
+  _destroy: ->
+    @_$(@options.list).tooltip "destroy"
+    @_$(@options.addButton).tooltip "destroy"
+    @_$(@options.deleteButton).tooltip "destroy"
+    @_$(@options.contentInput).tooltip "destroy"
+    @_$(@options.updateButton).tooltip "destroy"
+  
   _getCreateOptions: ->
       list: ".lst-documents"
       addButton: ".btn-add-doc"
