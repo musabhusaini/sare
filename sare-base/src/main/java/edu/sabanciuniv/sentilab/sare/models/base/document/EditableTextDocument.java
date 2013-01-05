@@ -21,12 +21,13 @@
 
 package edu.sabanciuniv.sentilab.sare.models.base.document;
 
-import com.google.gson.JsonElement;
+import javax.persistence.*;
 
 /**
  * A class for documents containing editable textual content.
  * @author Mus'ab Husaini
  */
+@Entity
 public abstract class EditableTextDocument
 	extends FullTextDocument
 	implements EditableDocument {
@@ -36,10 +37,12 @@ public abstract class EditableTextDocument
 	 */
 	private static final long serialVersionUID = 5392373511223975393L;
 
+	@Column(name="title")
+	private String content;
+	
 	@Override
 	public String getContent() {
-		JsonElement content = this.getOtherData().get("content");
-		return content != null ? content.getAsString() : null;
+		return this.content;
 	}
 	
 	/**
@@ -49,7 +52,7 @@ public abstract class EditableTextDocument
 	 */
 	@Override
 	public EditableTextDocument setContent(String content) {
-		this.getOtherData().addProperty("content", content);
+		this.content = content;
 		return this;
 	}
 }

@@ -132,9 +132,49 @@ public class OpinionCorpusTest
 		assertNotNull(actualCorpus);
 		assertEquals(testCorpus.getLanguage(), actualCorpus.getLanguage());
 	}
+	
+	@Test
+	public void testLanguageUpdate() {
+		testCorpus.setLanguage("en");
+		
+		em.getTransaction().begin();
+		persist(testCorpus);
+		em.getTransaction().commit();
+		
+		testCorpus.setLanguage("tr");
+		em.getTransaction().begin();
+		em.merge(testCorpus);
+		em.getTransaction().commit();
+		
+		em.clear();
+		OpinionCorpus actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
+		
+		assertNotNull(actualCorpus);
+		assertEquals(testCorpus.getLanguage(), actualCorpus.getLanguage());
+	}
 
 	@Test
 	public void testDescription() {
+		testCorpus.setDescription("this is a test corpus");
+		
+		em.getTransaction().begin();
+		persist(testCorpus);
+		em.getTransaction().commit();
+		
+		testCorpus.setDescription("this is also test corpus");
+		em.getTransaction().begin();
+		em.merge(testCorpus);
+		em.getTransaction().commit();
+		
+		em.clear();
+		OpinionCorpus actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
+		
+		assertNotNull(actualCorpus);
+		assertEquals(testCorpus.getDescription(), actualCorpus.getDescription());
+	}
+	
+	@Test
+	public void testDescriptionUpdate() {
 		testCorpus.setDescription("this is a test corpus");
 		
 		em.getTransaction().begin();

@@ -28,6 +28,7 @@ import javax.persistence.*;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.*;
+import com.google.gson.JsonElement;
 
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
@@ -58,14 +59,8 @@ public abstract class PersistentDocumentStore
 	@Column(name="owner_id")
 	private String ownerId;
 	
-	@Column
+	@Column(columnDefinition="TEXT")
 	protected String title;
-	
-	@Column
-	protected String language;
-	
-	@Column
-	protected String description;
 	
 	/**
 	 * The documents stored under this store. Derived classes are responsible for maintaining this relationship.
@@ -171,7 +166,8 @@ public abstract class PersistentDocumentStore
 	
 	@Override
 	public String getLanguage() {
-		return this.language == null ? "en"	: this.language;
+		JsonElement language = this.getOtherData().get("language");
+		return language != null ? language.getAsString() : null;
 	}
 
 	/**
@@ -180,13 +176,14 @@ public abstract class PersistentDocumentStore
 	 * @return the {@code this} object.
 	 */
 	public PersistentDocumentStore setLanguage(String language) {
-		this.language = language;
+		this.getOtherData().addProperty("language", language);
 		return this;
 	}
 
 	@Override
 	public String getDescription() {
-		return this.description;
+		JsonElement description = this.getOtherData().get("description");
+		return description != null ? description.getAsString() : null;
 	}
 	
 	/**
@@ -195,7 +192,7 @@ public abstract class PersistentDocumentStore
 	 * @return the {@code this} object.
 	 */
 	public PersistentDocumentStore setDescription(String description) {
-		this.description = description;
+		this.getOtherData().addProperty("description", description);
 		return this;
 	}
 	

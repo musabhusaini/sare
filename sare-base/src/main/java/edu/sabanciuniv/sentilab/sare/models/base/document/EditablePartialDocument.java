@@ -21,12 +21,14 @@
 
 package edu.sabanciuniv.sentilab.sare.models.base.document;
 
-import com.google.gson.JsonElement;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 /**
  * A class that represents editable partial documents.
  * @author Mus'ab Husaini
  */
+@Entity
 public abstract class EditablePartialDocument
 	extends PartialTextDocument
 	implements EditableDocument {
@@ -36,10 +38,12 @@ public abstract class EditablePartialDocument
 	 */
 	private static final long serialVersionUID = 1135997891869496330L;
 
+	@Column(name="title")
+	private String content;
+
 	@Override
 	public String getContent() {
-		JsonElement content = this.getOtherData().get("content");
-		return content != null ? content.getAsString() : null;
+		return this.content;
 	}
 	
 	/**
@@ -49,7 +53,7 @@ public abstract class EditablePartialDocument
 	 */
 	@Override
 	public EditablePartialDocument setContent(String content) {
-		this.getOtherData().addProperty("content", content);
+		this.content = content;
 		return this;
 	}
 }

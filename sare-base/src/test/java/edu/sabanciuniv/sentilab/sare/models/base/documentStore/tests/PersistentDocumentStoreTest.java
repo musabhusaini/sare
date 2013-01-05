@@ -201,4 +201,22 @@ public class PersistentDocumentStoreTest {
 			assertFalse(document.getReferences().contains(testStore1));
 		}
 	}
+	
+	@Test
+	public void testSetDescriptionSets() {
+		String testDescription = "some description";
+		testStore1.setDescription(testDescription);
+		
+		String actualDescription = testStore1.getDescription();
+		assertEquals(testDescription, actualDescription);
+	}
+	
+	@Test
+	public void testSetLanguageSets() {
+		String testLanguage = "some language";
+		testStore1.setLanguage(testLanguage);
+		
+		String actualLanguage = testStore1.getLanguage();
+		assertEquals(testLanguage, actualLanguage);
+	}
 }
