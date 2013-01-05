@@ -23,9 +23,12 @@ package edu.sabanciuniv.sentilab.sare.controllers.opinion.tests;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.UUID;
 
 import org.junit.*;
+
+import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.ModelTestsBase;
@@ -33,12 +36,14 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 
 public class OpinionCorpusControllerTest extends ModelTestsBase {
 
+	private String testXmlCorpusFilename;
 	private OpinionCorpus testCorpus;
 	private OpinionCorpusFactory testFactory;
 	private OpinionCorpusFactoryOptions testOptions;
 	
 	@Before
 	public void setUp() throws Exception {
+		testXmlCorpusFilename = "/test-corpus.xml";
 		testFactory = new OpinionCorpusFactory();
 		testCorpus = new OpinionCorpus();
 		testOptions = new OpinionCorpusFactoryOptions()
@@ -66,5 +71,42 @@ public class OpinionCorpusControllerTest extends ModelTestsBase {
 			.setFormat("txt");
 		OpinionCorpus actualCorpus = testFactory.create(testOptions);
 		assertNotNull(actualCorpus);
+	}
+	
+	@Test
+	public void testCreateWithExistingIdUpdatesObject() {
+		em.getTransaction().begin();
+		persist(testCorpus);
+		em.getTransaction().commit();
+		em.clear();
+		
+		testOptions.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath()));
+		OpinionCorpus actualCorpus = testFactory.create(testOptions);
+		assertNotNull(actualCorpus);
+		assertEquals(testCorpus.getIdentifier(), actualCorpus.getIdentifier());
+		assertEquals(2, Iterables.size(actualCorpus.getDocuments()));
+		
+		OpinionDocument document = Iterables.getFirst(actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments(), null);
+		assertNotNull(document);
+		assertNotNull(document.getContent());
+		assertNotNull(document.getPolarity());
+		
+		em.getTransaction().begin();
+		for (OpinionDocument doc : actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments()) {
+			persist(doc);
+		}
+		em.merge(actualCorpus);
+		em.getTransaction().commit();
+		em.clear();
+		
+		actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
+		assertNotNull(actualCorpus);
+		assertEquals(testCorpus.getIdentifier(), actualCorpus.getIdentifier());
+		assertEquals(2, Iterables.size(actualCorpus.getDocuments()));
+
+		document = Iterables.getFirst(actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments(), null);
+		assertNotNull(document);
+		assertNotNull(document.getContent());
+		assertNotNull(document.getPolarity());
 	}
 }

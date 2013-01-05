@@ -33,16 +33,20 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 public class OpinionDocumentTest
 	extends ModelTestsBase {
 	
-	private String testContent;
-	private double testPolarity;
+	private String testContent1;
+	private String testContent2;
+	private double testPolarity1;
+	private double testPolarity2;
 	
 	private OpinionCorpus testCorpus;
 	private OpinionDocument testDocument;
 	
 	@Before
 	public void setUp() throws Exception {
-		testContent = "this is a test";
-		testPolarity = 0.8796;
+		testContent1 = "this is a test";
+		testContent2 = "this is another test";
+		testPolarity1 = 0.8796;
+		testPolarity2 = 0.6978;
 		testCorpus = (OpinionCorpus)new OpinionCorpus()
 			.setTitle("test corpus")
 			.setLanguage("en");
@@ -61,7 +65,7 @@ public class OpinionDocumentTest
 
 	@Test
 	public void testContent() {
-		testDocument.setContent(testContent);
+		testDocument.setContent(testContent1);
 		
 		em.getTransaction().begin();
 		persist(testDocument);
@@ -73,10 +77,56 @@ public class OpinionDocumentTest
 		assertNotNull(actualDocument);
 		assertEquals(testDocument.getContent(), actualDocument.getContent());
 	}
+	
+	@Test
+	public void testContentUpdate() {
+		testDocument.setContent(testContent1);
+		
+		em.getTransaction().begin();
+		persist(testDocument);
+		em.getTransaction().commit();
+		
+		em.clear();
+		OpinionDocument actualDocument = em.find(OpinionDocument.class, testDocument.getId());
+		actualDocument.setContent(testContent2);
+		
+		em.getTransaction().begin();
+		em.merge(actualDocument);
+		em.getTransaction().commit();
+		
+		em.clear();
+		actualDocument = em.find(OpinionDocument.class, testDocument.getId());
+		
+		assertNotNull(actualDocument);
+		assertEquals(testContent2, actualDocument.getContent());
+	}
 
 	@Test
+	public void testPolarityUpdate() {
+		testDocument.setPolarity(testPolarity1);
+		
+		em.getTransaction().begin();
+		persist(testDocument);
+		em.getTransaction().commit();
+		
+		em.clear();
+		OpinionDocument actualDocument = em.find(OpinionDocument.class, testDocument.getId());
+		actualDocument.setPolarity(testPolarity2);
+		
+		em.getTransaction().begin();
+		em.merge(actualDocument);
+		em.getTransaction().commit();
+		
+		em.clear();
+		actualDocument = em.find(OpinionDocument.class, testDocument.getId());
+		
+		assertNotNull(actualDocument);
+		assertEquals(testPolarity2, actualDocument.getPolarity(), 0);
+	}
+	
+	@Test
 	public void testPolarity() {
-		testDocument.setPolarity(testPolarity);
+		testDocument.setPolarity(testPolarity1);
 		
 		em.getTransaction().begin();
 		persist(testDocument);
