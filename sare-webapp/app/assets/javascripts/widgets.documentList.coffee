@@ -38,24 +38,25 @@ widget =
               @_$(@options.addButton).removeAttr "disabled"
             @options.store = store
             uuids = [] if uuids not instanceof window.Array
-            @_add(uuid) for uuid in uuids
+            for uuid in uuids
+              @options.getRoute(store.id, uuid).ajax
+                success: (document) =>
+                  @_add document
             @_trigger "listPopulate", store, uuids
       else
         @_$(@options.addButton).attr "disabled", true
       
-  _add: (uuid, e) ->
-    if @options.store? then @options.getRoute(@options.store.id, uuid).ajax
-      success: (document) =>
-        @_updateListItem(option = $("<option>"), document)
-        @_$(@options.list)
-          .append option
-        @_trigger "itemAdd", e,
-          item: option
-          data: document
-        if @_$(@options.list).children("option").length == 1
-          @_$(@options.list)
-            .val(document.id)
-            .change()
+  _add: (document, e) ->
+    @_updateListItem(option = $("<option>"), document)
+    @_$(@options.list)
+      .append option
+    @_trigger "itemAdd", e,
+      item: option
+      data: document
+    if @_$(@options.list).children("option").length == 1
+      @_$(@options.list)
+        .val(document.id)
+        .change()
   
   _remove: ->
     if @options.store? then @options.deleteRoute(@options.store.id, $(item).data(@options.dataKey)).ajax
@@ -77,9 +78,11 @@ widget =
     }
 
   _updateListItem: (item, document) ->
+    content = document.summarizedContent ? document.content
+    text = if content? and content isnt "" then content else document.id
     $(item)
       .val(document.id)
-      .text(document.summarizedContent ? document.id)
+      .text(text)
       .data @options.dataKey, document
 
   _form: (option, data) ->
@@ -88,6 +91,19 @@ widget =
     @options.editable ?= not not @_$(@options.addButton).length
     if @options.editable then @_on @_$(@options.addButton),
       click: (e) =>
+        @_$(@options.addButton).button "loading"
+        @options.addRoute(@options.store.id).ajax
+          contentType: Helpers.MimeTypes.json
+          data: JSON.stringify
+            content: ""
+          success: (document) =>
+            @_add document, e
+            @_$(@options.list)
+              .val(document.id)
+              .change()
+            # TODO: focus form input
+          complete: =>
+            @_$(@options.addButton).button "reset"
     
     if @options.editable then @_on @_$(@options.deleteButton),
       click: (e) =>

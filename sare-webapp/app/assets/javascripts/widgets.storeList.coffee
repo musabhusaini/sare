@@ -172,7 +172,7 @@ widget =
               .append(option)
               .val(store.id)
               .change()
-            @_$(@options.titleInput).focus()
+            @_$(@options.titleInput).focus() if @options.editable
             @_trigger "itemAdd", e,
               item: option
               data: store

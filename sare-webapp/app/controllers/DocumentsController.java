@@ -25,8 +25,8 @@ import static controllers.base.SareTransactionalAction.*;
 
 import models.document.OpinionDocumentModel;
 
+import play.libs.Json;
 import play.mvc.*;
-import play.mvc.BodyParser.Json;
 
 import controllers.base.*;
 
@@ -52,21 +52,32 @@ public class DocumentsController extends Application {
 		return ok(play.libs.Json.toJson(new PersistentDocumentController().getAllUuids(em(), collection)));
 	}
 	
-	@BodyParser.Of(Json.class)
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
 	public static Result add(String collection) {
+		return update(collection, null);
+	}
+	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	public static Result update(String collection, String document) {
 		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
 		
 		if (store instanceof OpinionCorpus) {
-			OpinionDocumentModel viewModel = play.libs.Json.fromJson(request().body().asJson(), OpinionDocumentModel.class);
+			OpinionDocumentModel viewModel = Json.fromJson(request().body().asJson(), OpinionDocumentModel.class);
 			OpinionDocumentFactoryOptions options = new OpinionDocumentFactoryOptions()
+				.setEm(em())
+				.setExistingId(document)
 				.setContent(viewModel.content)
 				.setPolarity(viewModel.polarity)
 				.setCorpus((OpinionCorpus)store);
 			
-			OpinionDocument document = new OpinionDocumentFactory().create(options);
-			em().persist(document);
+			OpinionDocument documentObj = new OpinionDocumentFactory().create(options);
+			if (em().contains(documentObj)) {
+				em().merge(documentObj);
+			} else {
+				em().persist(documentObj);
+			}
 			
-			return created(createViewModel(document).asJson());
+			return created(createViewModel(documentObj).asJson());
 		}
 		
 		return badRequest();
@@ -80,25 +91,5 @@ public class DocumentsController extends Application {
 		PersistentDocument documentObj = fetchDocument(collection, document);
 		em().remove(documentObj);
 		return ok(createViewModel(documentObj).asJson());
-	}
-	
-	public static Result update(String collection, String document) {
-		PersistentDocument documentObj = fetchDocument(collection, document);
-		
-		if (documentObj instanceof OpinionDocument) {
-			OpinionDocument opinionDocument = (OpinionDocument)documentObj;
-			OpinionDocumentModel viewModel = play.libs.Json.fromJson(request().body().asJson(), OpinionDocumentModel.class);
-			if (viewModel.content != null) {
-				opinionDocument.setContent(viewModel.content);
-			}
-			if (viewModel.polarity != null) {
-				opinionDocument.setPolarity(viewModel.polarity);
-			}
-			em().merge(opinionDocument);
-			
-			return ok(createViewModel(opinionDocument).asJson());
-		}
-		
-		return badRequest();
 	}
 }
