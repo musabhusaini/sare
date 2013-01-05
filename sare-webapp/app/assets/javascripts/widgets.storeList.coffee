@@ -272,12 +272,31 @@ widget =
     if not @options.editable then @_$(@options.addButton).attr "disabled", true
     @_form "disabled"
     
+    @_$(@options.list).tooltip()
+    @_$(@options.addButton).tooltip()
+    @_$(@options.deleteButton).tooltip()
+    @_$(@options.titleInput).tooltip()
+    @_$(@options.descriptionInput).tooltip()
+    @_$(@options.languageList).tooltip()
+    @_$(@options.browseButton).tooltip()
+    
     # select the first store, if any
     firstItem = @_$(@options.list).children("option:first")
     if firstItem.length
       @_$(@options.list)
         .val($(firstItem).data(@options.dataKey)?.id)
         .change()
+  
+  _destroy: ->
+    @_$(@options.list).tooltip("destroy")
+    @_$(@options.addButton).tooltip("destroy")
+    @_$(@options.deleteButton).tooltip("destroy")
+    @_$(@options.titleInput).tooltip("destroy")
+    @_$(@options.descriptionInput).tooltip("destroy")
+    @_$(@options.languageList).tooltip("destroy")
+    @_$(@options.dropFileContainer).tooltip("destroy")
+    @_$(@options.browseButton).tooltip("destroy")
+    @_$(@options.updateButton).tooltip("destroy")
     
   _getCreateOptions: ->
       list: ".lst-store"
@@ -298,6 +317,8 @@ widget =
       filenameKey: "corpus"
       uploadFileMessage: "Upload file"
       dropFileMessage: "Drop file or browse"
+      dropFileTip: "A file can be drag and dropped here"
+      filenameTip: "Name of the file to be uploaded"
       dragFileMessage: "Almost there, just let go now!"
       uploadFailedMessage: "Something's amiss! Please try again"
       acceptingFilesClass: "accepting-files"

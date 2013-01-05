@@ -21,70 +21,84 @@
 
 @(stores: List[documentStore.PersistentDocumentStoreModel], listSize: Int = 10, editable: Boolean = true, showForm: Boolean = true)
 
+@import scala.util._
+
 @import play.libs._
 
 @import controllers.modules._
 @import models.documentStore._
 
-<div class="span6">
-	<div class="row-fluid">
-		<label>Corpora</label>
-		<select class="lst-store long-list" size=@listSize autofocus="autofocus">
-			@for(store <- stores) {
-				<option value="@store.id" data-store="@Json.toJson(store)">
-					@if(store.title != null) {
-						@store.title
-					} else {
-						@store.id
-					}
-				</option>
-			}
-		</select>
-	</div>
-	@if(editable) {
-		<div class="row-fluid">
-			<button class="btn-add-store btn" data-loading-text="Adding...">Add</button>
-			<button class="btn-delete-store btn btn-warning" data-loading-text="Deleting...">Delete</button>
-		</div>
-	}
-</div>
-
-@if(showForm) {
+@defining(Random.nextInt(1000)) { uid =>
 	<div class="span6">
-		<form>
-			<fieldset>
-				<label>Title</label>
-				<input type="text" class="input-store-title input-block-level" @if(!editable) { disabled="disabled" }
-					placeholder="Give this corpus a title" />
-				<label>Description</label>
-				<input type="text" class="input-store-desc input-block-level" @if(!editable) { disabled="disabled" }
-					placeholder="Describe it" />
-				<div class="row-fluid">
-					<label>Corpus language</label>
-					<select class="lst-store-language input-small" @if(!editable) { disabled="disabled" }>
-						@for(language <- CorpusModule.getSupportedLanguages()) {
-							<option value="@language.languageCode()">@language.languageName()</option>
+		<div class="row-fluid">
+			<label for="lst-store-@uid">Corpora</label>
+			<select id="lst-store-@uid" class="lst-store long-list" size=@listSize autofocus="autofocus" title="List of existing corpora" data-placement="left">
+				@for(store <- stores) {
+					<option value="@store.id" data-store="@Json.toJson(store)">
+						@if(store.title != null) {
+							@store.title
+						} else {
+							@store.id
 						}
-					</select>
-				</div>
-				@if(editable) {
-					<div class="ctr-store-upload">
-						<div class="row-fluid">
-							<div class="ctr-store-dropfile span8 well well-small">
-								Upload file
-							</div>
-							<div class="span4">
-								<button class="btn-store-browse btn btn-block pull-right">Browse</button>
+					</option>
+				}
+			</select>
+		</div>
+		@if(editable) {
+			<div class="row-fluid">
+				<button id="btn-add-store-@uid" class="btn-add-store btn" title="Add a new corpus" data-placement="bottom" data-loading-text="Adding...">
+					Add
+				</button>
+				<button id="btn-add-store-@uid" class="btn-delete-store btn btn-warning" title="Delete this corpus" data-placement="bottom" data-loading-text="Deleting...">
+					Delete
+				</button>
+			</div>
+		}
+	</div>
+	
+	@if(showForm) {
+		<div class="span6">
+			<form>
+				<fieldset>
+					<label for="input-store-title-@uid">Title</label>
+					<input id="input-store-title-@uid" type="text" class="input-store-title input-block-level" @if(!editable) { disabled="disabled" }
+						placeholder="Give this corpus a title" title="Title of the corpus" />
+					<label for="input-store-desc-@uid">Description</label>
+					<input id="input-store-desc-@uid" type="text" class="input-store-desc input-block-level" @if(!editable) { disabled="disabled" }
+						placeholder="Describe it" title="Brief description of the corpus" />
+					<div class="row-fluid">
+						<label for="lst-store-language-@uid">Corpus language</label>
+						<select id="lst-store-language-@uid" class="lst-store-language input-small" @if(!editable) { disabled="disabled" }
+							title="Language of the corpus">
+							@for(language <- CorpusModule.getSupportedLanguages()) {
+								<option value="@language.languageCode()">@language.languageName()</option>
+							}
+						</select>
+					</div>
+					@if(editable) {
+						<div class="ctr-store-upload">
+							<div class="row-fluid">
+								<div class="ctr-store-dropfile span8 well well-small">
+								</div>
+								<div class="span4">
+									<button class="btn-store-browse btn btn-block pull-right" title="Browse for a file to upload"
+										data-placement="bottom">
+										Browse
+									</button>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row-fluid">
-						<p>
-							<button class="btn-store-update btn" data-loading-text="Updating...">Update</button>
-						</p>
-					</div>
-				}
-			</fieldset>
-		</form>
-	</div>
+						<div class="row-fluid">
+							<p>
+								<button class="btn-store-update btn" data-loading-text="Updating..." title="Update corpus"
+									data-placement="bottom">
+									Update
+								</button>
+							</p>
+						</div>
+					}
+				</fieldset>
+			</form>
+		</div>
+	}
 }
