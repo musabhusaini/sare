@@ -28,55 +28,46 @@ Sare = window.Sare
 Helpers = Sare.Helpers
 
 widget =
-  _$: (s) ->
-    $(@element).find s
+  _setOption: (key, value) ->
 
-  _setOptions: (key, value) ->
-    switch key
-      when "selected"
-        if typeof(value) is "string"
-          @_$(@options.list).val(value).change()
-        else if value instanceof $ and $(value).is("option") and $(value).is @_$(@options.list).children()
-          @_$(@options.list).val($(value).val()).change()
-        else if typeof(value) is "object" and value.id?
-          @_$(@options.list).val(value.id).change()
+  selected: (value) ->
+    if typeof value is "string"
+      @_$(@options.list).val(value).change()
+    else if value instanceof $ and $(value).is("option") and $(value).is @_$(@options.list).children()
+      @_$(@options.list).val($(value).val()).change()
+    else if typeof(value) is "object" and value.id?
+      @_$(@options.list).val(value.id).change()
 
-  selected: ->
     selected = @_$(@options.list).children "option:selected"
-    [$(selected).data(@options.dataKey), selected]
+    return {
+      item: selected
+      data: $(selected).data @options.dataKey
+    }
     
-  _updateListItem: (item, store) ->
+  _updateListItem: (item, data) ->
     $(item)
-      .val(store.id)
-      .text(store.title ? store.id)
-      .data @options.dataKey, store
+      .val(data.id)
+      .text(data.title ? data.id)
+      .data @options.dataKey, data
 
-  _disableForm: ->
-    @_$(@options.titleInput).attr "disabled", true
-    @_$(@options.descriptionInput).attr "disabled", true
-    @_$(@options.languageList).attr "disabled", true
-    @_$(@options.dropFileContainer).text @options.uploadFileMessage
-    @_$(@options.browseButton).attr "disabled", true
-    @_$(@options.updateButton).attr "disabled", true
-    @_destroyUploader()
-
-  _enableForm: (force) ->
-    if not @options.editable and not force
-      return null
-    @_$(@options.titleInput).removeAttr "disabled"
-    @_$(@options.descriptionInput).removeAttr "disabled"
-    @_$(@options.languageList).removeAttr "disabled"
-    @_$(@options.dropFileContainer).text @options.dropFileMessage
-    @_$(@options.browseButton).removeAttr "disabled"
-    @_$(@options.updateButton).removeAttr "disabled"
-    @_createUploader()
-  
-  _populateForm: (store) ->
-    @_$(@options.titleInput).val store?.title
-    @_$(@options.descriptionInput).val store?.description
-    if store?.language
-      @_$(@options.languageList).val store.language
-    #Document.Controls.display store
+  _form: (option, data) ->
+    switch option
+      when "disabled"
+        @_$(input).attr("disabled", true) for input in @_form "inputs"
+        @_$(@options.dropFileContainer).text @options.uploadFileMessage
+        @_destroyUploader()
+      when "enabled"
+        if @options.editable
+          @_$(input).removeAttr("disabled") for input in @_form "inputs"
+          @_$(@options.dropFileContainer).text @options.dropFileMessage
+          @_createUploader()
+      when "inputs"
+        [ @options.titleInput, @options.descriptionInput, @options.languageList, @options.browseButton, @options.updateButton ]
+      when "populate"
+        @_$(@options.titleInput).val data?.title
+        @_$(@options.descriptionInput).val data?.description
+        if data?.language
+          @_$(@options.languageList).val data.language
 
   _uploader: null
   
@@ -140,9 +131,9 @@ widget =
     uploader.bind "FileUploaded", (up, file, response) =>
       up.removeFile file
       @_$(@options.dropFileContainer).text @options.dropFileMessage
-      [store, selected] = @selected()
+      selected = @selected()
       store = JSON.parse response.response
-      @_updateListItem selected, store
+      @_updateListItem selected.item, store
       @_trigger "uploadSuccess", up,
         file: file
         response: response
@@ -167,44 +158,44 @@ widget =
     @options.editable ?= not not @_$(@options.addButton).length
     
     # handle add button click
-    @_on @_$(@options.addButton),
+    if @options.editable then @_on @_$(@options.addButton),
       click: (e) =>
         @_$(@options.addButton).button "loading"
-        jsRoutes.controllers.CollectionsController.create().ajax
+        @options.addRoute().ajax
           contentType: Helpers.MimeTypes.json
           data: JSON.stringify
             content: ""
             format: "text"
-          success: (response) =>
-            @_updateListItem(option = $("<option>"), response)
+          success: (store) =>
+            @_updateListItem(option = $("<option>"), store)
             @_$(@options.list)
               .append(option)
-              .val(response.id)
+              .val(store.id)
               .change()
             @_$(@options.titleInput).focus()
-            @_trigger "storeAdd", e,
+            @_trigger "itemAdd", e,
               item: option
-              store: response
+              data: store
           complete: =>
             @_$(@options.addButton).button "reset"
     
     # handle delete store button click
-    @_on @_$(@options.deleteButton),
+    if @options.editable then @_on @_$(@options.deleteButton),
       click: (e) =>
-        [store, selected] = @selected()
+        selected = @selected()
         @_$(@options.deleteButton).button "loading"
-        if selected? then jsRoutes.controllers.CollectionsController.delete(store.id).ajax
-          success: (response) =>
-            next = $(selected).next()
-            next = $(selected).prev() if not next.length
+        if selected.data? then @options.deleteRoute(selected.data.id).ajax
+          success: (store) =>
+            next = $(selected.item).next()
+            next = $(selected.item).prev() if not next.length
             @_$(@options.list)
               .val $(next).data(@options.dataKey)?.id
             @_$(@options.list)
               .change()
-            $(selected).remove()
-            @_trigger "storeRemove", e,
-              item: selected
-              store: response
+            $(selected.item).remove()
+            @_trigger "itemRemove", e,
+              item: selected.item
+              store: store
           complete: =>
             @_$(@options.deleteButton).button "reset"
             # button reset sets a timeout to enables the button, so this makes sure it's disabled, if necessary
@@ -215,31 +206,22 @@ widget =
     # handle store list selection change
     @_on @_$(@options.list),
       change: (e) =>
-        [store, selected] = @selected()
-        if selected?.length
-          $(@options.resultField).val JSON.stringify store if @options.resultField?
+        selected = @selected()
+        @_form "populate", selected.data
+        @_form if selected.data? then "enabled" else "disabled"
+        if selected.data?
           @_$(@options.deleteButton).removeAttr "disabled"
-          # TODO: logic to enable next button
-          @_populateForm store
-          @_enableForm()
-        else
-          $(@options.resultField).val @options.defaultModuleInput if @options.resultField?
+        else if @options.editable
           @_$(@options.deleteButton).attr "disabled", true
-          # TODO: logic to disable next button
-          @_populateForm null
-          @_disableForm()
-        @_trigger "selectionChange", e,
-          item: selected
-          store: store
+        @_trigger "selectionChange", e, selected
     
     # handle update button click
-    @_on @_$(@options.updateButton),
+    if @options.editable then @_on @_$(@options.updateButton),
       click: (e) =>
-        [store, selected] = @selected()
-        
+        selected = @selected()
         updateStore = (store, updatedStore) =>
           triggerEvent = =>
-            @_trigger "storeUpdate", e,
+            @_trigger "itemUpdate", e,
               store: store
               updatedStore: updatedStore
 
@@ -259,35 +241,36 @@ widget =
             details: updateOptions
           
           if updated
-            jsRoutes.controllers.CollectionsController.update(updatedStore.id).ajax
+            @options.updateRoute(updatedStore.id).ajax
               contentType: Helpers.MimeTypes.json
               data: JSON.stringify updateOptions
               success: (updatedStore) =>
-                @_updateListItem selected, updatedStore
+                @_updateListItem selected.item, updatedStore
                 triggerEvent()
               complete: =>
                 @_$(@options.updateButton).button "reset"
           else
-            @_updateListItem selected, updatedStore
-            @_populateForm updatedStore
+            @_updateListItem selected.item, updatedStore
+            @_form "populate", updatedStore
             @_$(@options.updateButton).button "reset"
             triggerEvent()
         
         @_$(@options.updateButton).button "loading"
         if @_uploader?.files.length
-          @_uploader.settings.url = jsRoutes.controllers.CollectionsController.update(store.id).url
+          @_uploader.settings.url = jsRoutes.controllers.CollectionsController.update(selected.data?.id).url
           uploadComplete = (up, file, response) =>
             updatedStore = JSON.parse response.response
             @_uploader.unbind "FileUploaded", uploadComplete
-            updateStore store, updatedStore
+            updateStore selected.data, updatedStore
           @_uploader.bind "FileUploaded", uploadComplete
           @_uploader.start()
-        else updateStore store
+        else updateStore selected.data
         
         e.preventDefault()
 
     @_$(@options.deleteButton).attr "disabled", true
-    @_disableForm()
+    if not @options.editable then @_$(@options.addButton).attr "disabled", true
+    @_form "disabled"
     
     # select the first store, if any
     firstStore = @_$(@options.list).children("option:first")
@@ -297,8 +280,6 @@ widget =
         .change()
     
   _getCreateOptions: ->
-      defaultModuleInput: "[]"
-      resultField: null
       list: ".lst-store"
       addButton: ".btn-add-store"
       deleteButton: ".btn-delete-store"
@@ -309,6 +290,9 @@ widget =
       dropFileContainer: ".ctr-store-dropfile"
       browseButton: ".btn-store-browse"
       updateButton: ".btn-store-update"
+      addRoute: jsRoutes.controllers.CollectionsController.create
+      deleteRoute: jsRoutes.controllers.CollectionsController.delete
+      updateRoute: jsRoutes.controllers.CollectionsController.update
       uploadFileCount: 1
       dataKey: "store"
       filenameKey: "corpus"
@@ -318,4 +302,4 @@ widget =
       uploadFailedMessage: "Something's amiss! Please try again"
       acceptingFilesClass: "accepting-files"
 
-$.widget "widgets.storeList", widget
+$.widget "widgets.storeList", Sare.Widget, widget

@@ -1,0 +1,56 @@
+@*
+ * Sentilab SARE: a Sentiment Analysis Research Environment
+ * Copyright (C) 2013 Sabanci University Sentilab
+ * http://sentilab.sabanciuniv.edu
+ * 
+ * This file is part of SARE.
+ * 
+ * SARE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *  
+ * SARE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with SARE. If not, see <http://www.gnu.org/licenses/>.
+ *@
+
+@(documents: List[document.PersistentDocumentModel], listSize: Int = 10, editable: Boolean = true, showForm: Boolean = true)
+
+@import play.libs._
+
+@import controllers.modules._
+@import models.document._
+
+<div class="span6">
+	<div class="row-fluid">
+		<label>Documents</label>
+		<select class="lst-documents long-list" size=10>
+			@for(document <- documents) {
+				<option value="@document.id" data-store="@Json.toJson(document)">
+					@document match {
+						case ft: FullTextDocumentModel => { ft.summarizedContent }
+						case d if d.content != Nil => { d.content }
+						case d => { d.id }
+					}
+				</option>
+			}
+		</select>
+	</div>
+	@if(editable) {
+		<div class="row-fluid">
+			<button class="btn-add-doc btn" data-loading-text="Adding...">Add</button>
+			<button class="btn-delete-doc btn btn-warning" data-loading-text="Deleting...">Delete</button>
+		</div>
+	}
+</div>
+
+@if(showForm) {
+	<div class="span6">
+		<!-- TODO: add form here -->
+	</div>
+}

@@ -35,6 +35,7 @@ PageObjects = Page.Objects
 
 #define page constants
 Selectors.corpusListContainer = "#ctr-corpus-list"
+Selectors.documentListContainer = "#ctr-document-list"
 Selectors.documentList = "#lst-documents"
 Selectors.addDocumentButton = "#btn-add-doc"
 Selectors.deleteDocumentButton = "#btn-delete-doc"
@@ -59,8 +60,9 @@ Document =
             $(Selectors.documentList).val(uuid).change() if $(Selectors.documentList).children("option").length == 1
 
 $ ->
+  $(Selectors.documentListContainer).documentList()
+  
   $(Selectors.corpusListContainer).storeList
-    resultField: Selectors.moduleOutputField
     uploadStart: ->
       Methods.showProgress()
     uploadProgress: (up, file) ->
@@ -70,10 +72,14 @@ $ ->
     uploadComplete: ->
       Methods.setProgress 0
       Methods.hideProgress()
-    selectionChange: (e, data) ->
-      if data?.store? then $(Selectors.nextModuleButton).removeAttr "disabled"
+      $(Selectors.documentListContainer).documentList "list", selected?.data
+    selectionChange: (e, selected) ->
+      if selected?.data? then $(Selectors.nextModuleButton).removeAttr "disabled"
       else $(Selectors.nextModuleButton).attr "disabled", true
-
+      $(Selectors.documentListContainer).documentList "option", "store", selected?.data
+      $(Selectors.nextModuleButton).data Strings.moduleOutputDataKey,
+        if selected?.data? then JSON.stringify(selected.data) else null
+  
   # disable stuff
 #  Document.Controls.display null
   

@@ -30,8 +30,7 @@ Strings = Page.Strings
 Methods = Page.Methods
 
 #define page constants
-Strings.defaultModuleInput = "[]"
-Selectors.moduleOutputField = "#fld-module-output"
+Strings.moduleOutputDataKey = "output"
 Selectors.progressContainer = "#ctr-progress"
 Selectors.nextModuleButton = "#btn-next-module"
 
@@ -78,5 +77,5 @@ Methods.stopSimulatedProgress = ->
 $ ->
   Methods.hideProgress()
   $(Selectors.nextButton).click =>
-    output = $(Selectors.moduleOutputField).val()
+    output = $(Selectors.nextButton).data(Strings.moduleOutputDataKey) ? "[]"
     location.href = jsRoutes.controllers.ModuleController.next(output).url

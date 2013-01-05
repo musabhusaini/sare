@@ -25,23 +25,15 @@
 
 @import controllers.modules._
 @import models.documentStore._
+@import models.document._
 @import tags._
 
 @contentHtml = {
 	<div id="ctr-corpus-list" class="span6">
 		@storeList(stores)
 	</div>
-	
-	<div class="span3">
-		<div class="row-fluid">
-			<label>Documents</label>
-			<select id="lst-documents" class="long-list" size=10>
-			</select>
-		</div>
-		<div class="row-fluid">
-			<button id="btn-add-doc" class="btn" data-loading-text="Adding...">Add</button>
-			<button id="btn-delete-doc" class="btn btn-warning" data-loading-text="Deleting...">Delete</button>
-		</div>
+	<div id="ctr-document-list" class="span6">
+		@documentList(Nil)
 	</div>
 }
 
@@ -51,7 +43,9 @@
 
 @moreScripts = {
 	<script src="@controllers.routes.Assets.at("plugins/plupload/js/plupload.full.js")" type="text/javascript"></script>
+	<script src="@controllers.routes.Assets.at("javascripts/Sare.Widget.js")" type="text/javascript"></script>
 	<script src="@controllers.routes.Assets.at("javascripts/widgets.storeList.js")" type="text/javascript"></script>
+	<script src="@controllers.routes.Assets.at("javascripts/widgets.documentList.js")" type="text/javascript"></script>
 	<script src="@controllers.routes.Assets.at("javascripts/corpusLanding.html.js")" type="text/javascript"></script>
 }
 

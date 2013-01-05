@@ -24,7 +24,6 @@ package models.documentStore;
 import javax.persistence.EntityManager;
 
 import models.PersistentObjectModel;
-import models.base.ViewModel;
 
 import com.google.common.collect.Iterables;
 

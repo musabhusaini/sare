@@ -21,6 +21,7 @@
 
 package models.document;
 
+import edu.sabanciuniv.sentilab.sare.models.base.document.EditableDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import models.PersistentObjectModel;
 
@@ -28,12 +29,14 @@ public class PersistentDocumentModel
 	extends PersistentObjectModel {
 
 	public String content;
+	public boolean isEditable;
 	
 	public PersistentDocumentModel(PersistentDocument document) {
 		super(document);
 		
 		if (document != null) { 
 			this.content = document.getContent();
+			this.isEditable = document instanceof EditableDocument;
 		}
 	}
 	
