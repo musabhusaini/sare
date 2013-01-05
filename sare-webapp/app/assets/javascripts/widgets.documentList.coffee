@@ -93,10 +93,9 @@ widget =
         if @options.editable
           @_$(input).removeAttr "disabled" for input in @_form "inputs"
       when "inputs"
-        [ @options.contentInput, @options.polarityInput, @options.updateButton ]
+        [ @options.contentInput, @options.updateButton ]
       when "populate"
         @_$(@options.contentInput).val data?.content
-        @_$(@options.polarityInput).val data?.polarity
   
   _create: ->
     @options.editable ?= not not @_$(@options.addButton).length
@@ -143,7 +142,7 @@ widget =
       change: (e) =>
         selected = @selected()
         @_form "populate", selected.data
-        @_form if selected.data? then "enabled" else "disabled"
+        @_form if selected.data? and selected.data.isEditable then "enabled" else "disabled"
         if selected.data?
           @_$(@options.deleteButton).removeAttr "disabled"
         else if @options.editable
@@ -154,15 +153,11 @@ widget =
       click: (e) =>
         selected = @selected()
         
-        [ content, polarity ] = [
-          @_$(@options.contentInput).val()
-          Number(@_$(@options.polarityInput).val())
-        ]
+        content = @_$(@options.contentInput).val()
         
         updated = no
         updatedDoc = selected.data
         updatedDoc.content = (updated = yes; content) if content and content isnt selected.data.content
-        updatedDoc.polarity = (updated = yes; polarity) if polarity? and polarity isnt selected.data.polarity
         
         if updated
           @_$(@options.updateButton).button "loading"
@@ -196,7 +191,6 @@ widget =
       addButton: ".btn-add-doc"
       deleteButton: ".btn-delete-doc"
       contentInput: ".input-doc-content"
-      polarityInput: ".input-doc-polarity"
       updateButton: ".btn-update-doc"
       listRoute: jsRoutes.controllers.DocumentsController.list
       getRoute: jsRoutes.controllers.DocumentsController.get
