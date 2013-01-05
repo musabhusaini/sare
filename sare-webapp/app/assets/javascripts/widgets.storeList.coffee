@@ -35,7 +35,7 @@ widget =
       @_$(@options.list).val(value).change()
     else if value instanceof $ and $(value).is("option") and $(value).is @_$(@options.list).children()
       @_$(@options.list).val($(value).val()).change()
-    else if typeof(value) is "object" and value.id?
+    else if typeof(value) is "object" and value?.id?
       @_$(@options.list).val(value.id).change()
 
     selected = @_$(@options.list).children "option:selected"
@@ -134,9 +134,9 @@ widget =
       selected = @selected()
       store = JSON.parse response.response
       @_updateListItem selected.item, store
-      @_trigger "uploadSuccess", up,
+      @_trigger "fileUpload", up,
         file: file
-        response: response
+        data: store
     
     uploader.bind "UploadComplete", (up, files) =>
       @_trigger "uploadComplete", up, files
@@ -195,7 +195,7 @@ widget =
             $(selected.item).remove()
             @_trigger "itemRemove", e,
               item: selected.item
-              store: store
+              data: store
           complete: =>
             @_$(@options.deleteButton).button "reset"
             # button reset sets a timeout to enables the button, so this makes sure it's disabled, if necessary
@@ -273,10 +273,10 @@ widget =
     @_form "disabled"
     
     # select the first store, if any
-    firstStore = @_$(@options.list).children("option:first")
-    if firstStore.length
+    firstItem = @_$(@options.list).children("option:first")
+    if firstItem.length
       @_$(@options.list)
-        .val($(firstStore).data(@options.dataKey)?.id)
+        .val($(firstItem).data(@options.dataKey)?.id)
         .change()
     
   _getCreateOptions: ->

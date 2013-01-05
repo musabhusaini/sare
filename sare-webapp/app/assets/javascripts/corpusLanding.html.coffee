@@ -69,14 +69,15 @@ $ ->
       Methods.setProgress file.percent
     uploadError: ->
       Methods.hideProgress()
+    fileUpload: (up, e) ->
+      $(Selectors.documentListContainer).documentList "option", "store", e?.data
     uploadComplete: ->
       Methods.setProgress 0
       Methods.hideProgress()
-      $(Selectors.documentListContainer).documentList "list", selected?.data
     selectionChange: (e, selected) ->
       if selected?.data? then $(Selectors.nextModuleButton).removeAttr "disabled"
       else $(Selectors.nextModuleButton).attr "disabled", true
-      $(Selectors.documentListContainer).documentList "option", "store", selected?.data
+      $(Selectors.documentListContainer).documentList("option", "store", (selected?.data ? null))
       $(Selectors.nextModuleButton).data Strings.moduleOutputDataKey,
         if selected?.data? then JSON.stringify(selected.data) else null
   

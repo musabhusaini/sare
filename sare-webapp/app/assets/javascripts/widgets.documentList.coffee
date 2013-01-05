@@ -30,7 +30,8 @@ widget =
   _setOption: (key, value) ->
     if key is "store"
       store = value
-      if typeof store is "object" and store.id?
+      @_$(@options.list).empty().change()
+      if typeof store is "object" and store?.id?
         @options.listRoute(store.id).ajax
           success: (uuids) =>
             if @options.editable
@@ -53,7 +54,7 @@ widget =
           data: document
         if @_$(@options.list).children("option").length == 1
           @_$(@options.list)
-            .val(data.id)
+            .val(document.id)
             .change()
   
   _remove: ->
@@ -90,6 +91,26 @@ widget =
     
     if @options.editable then @_on @_$(@options.deleteButton),
       click: (e) =>
+        selected = @selected()
+        @_$(@options.deleteButton).button "loading"
+        if selected.data? then @options.deleteRoute(@options.store.id, selected.data.id).ajax
+          success: (document) =>
+            next = $(selected.item).next()
+            next = $(selected.item).prev() if not next.length
+            @_$(@options.list)
+              .val $(next).data(@options.dataKey)?.id
+            @_$(@options.list)
+              .change()
+            $(selected.item).remove()
+            @_trigger "itemRemove", e,
+              item: selected.item
+              data: document
+          complete: =>
+            @_$(@options.deleteButton).button "reset"
+            # button reset sets a timeout to enables the button, so this makes sure it's disabled, if necessary
+            window.setTimeout(=>
+              @_$(@options.list).change()
+            , 0)
     
     @_on @_$(@options.list),
       change: (e) =>
@@ -104,6 +125,13 @@ widget =
     
     for control in [@options.addButton, @options.deleteButton]
       @_$(control).attr "disabled", true
+    
+    # select the first store, if any
+    firstItem = @_$(@options.list).children("option:first")
+    if firstItem.length
+      @_$(@options.list)
+        .val($(firstItem).data(@options.dataKey)?.id)
+        .change()
       
   _getCreateOptions: ->
       list: ".lst-documents"
