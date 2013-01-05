@@ -86,7 +86,18 @@ widget =
       .data @options.dataKey, document
 
   _form: (option, data) ->
-      
+    switch option
+      when "disabled"
+        @_$(input).attr "disabled", true for input in @_form "inputs"
+      when "enabled"
+        if @options.editable
+          @_$(input).removeAttr "disabled" for input in @_form "inputs"
+      when "inputs"
+        [ @options.contentInput, @options.polarityInput, @options.updateButton ]
+      when "populate"
+        @_$(@options.contentInput).val data?.content
+        @_$(@options.polarityInput).val data?.polarity
+  
   _create: ->
     @options.editable ?= not not @_$(@options.addButton).length
     if @options.editable then @_on @_$(@options.addButton),
@@ -138,7 +149,38 @@ widget =
         else if @options.editable
           @_$(@options.deleteButton).attr "disabled", true
         @_trigger "selectionChange", e, selected
+        
+    if @options.editable then @_on @_$(@options.updateButton),
+      click: (e) =>
+        selected = @selected()
+        
+        [ content, polarity ] = [
+          @_$(@options.contentInput).val()
+          Number(@_$(@options.polarityInput).val())
+        ]
+        
+        updated = no
+        updatedDoc = selected.data
+        updatedDoc.content = (updated = yes; content) if content and content isnt selected.data.content
+        updatedDoc.polarity = (updated = yes; polarity) if polarity? and polarity isnt selected.data.polarity
+        
+        if updated
+          @_$(@options.updateButton).button "loading"
+          @options.updateRoute(@options.store.id, updatedDoc.id).ajax
+              contentType: Helpers.MimeTypes.json
+              data: JSON.stringify updatedDoc
+              success: (updatedDoc) =>
+                @_updateListItem selected.item, updatedDoc
+                @_trigger "itemUpdate", e,
+                  data: selected.data
+                  updatedData: updatedDoc
+              complete: =>
+                @_$(@options.updateButton).button "reset"
+        
+        e.preventDefault()
+
     
+    @_form "disabled"
     for control in [@options.addButton, @options.deleteButton]
       @_$(control).attr "disabled", true
     
@@ -153,6 +195,9 @@ widget =
       list: ".lst-documents"
       addButton: ".btn-add-doc"
       deleteButton: ".btn-delete-doc"
+      contentInput: ".input-doc-content"
+      polarityInput: ".input-doc-polarity"
+      updateButton: ".btn-update-doc"
       listRoute: jsRoutes.controllers.DocumentsController.list
       getRoute: jsRoutes.controllers.DocumentsController.get
       addRoute: jsRoutes.controllers.DocumentsController.add

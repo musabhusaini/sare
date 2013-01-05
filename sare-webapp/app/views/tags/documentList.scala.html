@@ -51,6 +51,17 @@
 
 @if(showForm) {
 	<div class="span6">
-		<!-- TODO: add form here -->
+		<form>
+			<fieldset>
+				<label>Content</label>
+				<textarea class="input-doc-content" rows="7">
+				</textarea>
+				<label>Polarity</label>
+				<input type="text" class="input-doc-polarity input-small" />
+				<p>
+					<button class="btn-update-doc btn" data-loading-text="Updating...">Update</button>
+				</p>
+			</fieldset>
+		</form>
 	</div>
 }

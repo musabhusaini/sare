@@ -222,10 +222,10 @@ widget =
         updateStore = (store, updatedStore) =>
           triggerEvent = =>
             @_trigger "itemUpdate", e,
-              store: store
-              updatedStore: updatedStore
+              data: store
+              updatedData: updatedStore
 
-          [title, description, language] = [
+          [ title, description, language ] = [
             @_$(@options.titleInput).val()
             @_$(@options.descriptionInput).val()
             @_$(@options.languageList).val()
