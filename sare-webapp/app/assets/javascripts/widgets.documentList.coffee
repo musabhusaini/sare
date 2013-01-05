@@ -112,7 +112,7 @@ widget =
             @_$(@options.list)
               .val(document.id)
               .change()
-            # TODO: focus form input
+            @_$(@options.contentInput).focus() if @options.editable
           complete: =>
             @_$(@options.addButton).button "reset"
     
