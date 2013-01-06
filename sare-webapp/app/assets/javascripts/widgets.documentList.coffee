@@ -28,6 +28,9 @@ Helpers = Sare.Helpers
 
 widget =
   _setOption: (key, value) ->
+    changeState = (state) =>
+      @_changeInputState @_$(input), state for input in [ @options.list, @options.addButton ]
+      
     if key is "store"
       store = value
       @_$(@options.list).empty().change()
@@ -35,7 +38,7 @@ widget =
         @options.listRoute(store.id).ajax
           success: (uuids) =>
             if @options.editable
-              @_$(@options.addButton).removeAttr "disabled"
+              changeState "enabled"
             @options.store = store
             uuids = [] if uuids not instanceof window.Array
             for uuid in uuids
@@ -43,8 +46,10 @@ widget =
                 success: (document) =>
                   @_add document
             @_trigger "listPopulate", store, uuids
+          error: ->
+            changeState "disabled"
       else
-        @_$(@options.addButton).attr "disabled", true
+        changeState "disabled"
       
   _add: (document, e) ->
     @_updateListItem(option = $("<option>"), document)
@@ -88,10 +93,10 @@ widget =
   _form: (option, data) ->
     switch option
       when "disabled"
-        @_$(input).attr "disabled", true for input in @_form "inputs"
+        @_changeInputState @_$(input), "disabled" for input in @_form "inputs"
       when "enabled"
         if @options.editable
-          @_$(input).removeAttr "disabled" for input in @_form "inputs"
+          @_changeInputState @_$(input), "enabled" for input in @_form "inputs"
       when "inputs"
         [ @options.contentInput, @options.updateButton ]
       when "populate"
@@ -101,7 +106,7 @@ widget =
     @options.editable ?= not not @_$(@options.addButton).length
     if @options.editable then @_on @_$(@options.addButton),
       click: (e) =>
-        @_$(@options.addButton).button "loading"
+        @_changeInputState @_$(@options.addButton), "loading"
         @options.addRoute(@options.store.id).ajax
           contentType: Helpers.MimeTypes.json
           data: JSON.stringify
@@ -113,12 +118,12 @@ widget =
               .change()
             @_$(@options.contentInput).focus() if @options.editable
           complete: =>
-            @_$(@options.addButton).button "reset"
+            @_changeInputState @_$(@options.addButton), "reset"
     
     if @options.editable then @_on @_$(@options.deleteButton),
       click: (e) =>
         selected = @selected()
-        @_$(@options.deleteButton).button "loading"
+        @_changeInputState @_$(@options.deleteButton), "loading"
         if selected.data? then @options.deleteRoute(@options.store.id, selected.data.id).ajax
           success: (document) =>
             next = $(selected.item).next()
@@ -132,7 +137,7 @@ widget =
               item: selected.item
               data: document
           complete: =>
-            @_$(@options.deleteButton).button "reset"
+            @_changeInputState @_$(@options.deleteButton), "reset"
             # button reset sets a timeout to enables the button, so this makes sure it's disabled, if necessary
             window.setTimeout(=>
               @_$(@options.list).change()
@@ -143,10 +148,10 @@ widget =
         selected = @selected()
         @_form "populate", selected.data
         @_form if selected.data? and selected.data.isEditable then "enabled" else "disabled"
-        if selected.data?
-          @_$(@options.deleteButton).removeAttr "disabled"
-        else if @options.editable
-          @_$(@options.deleteButton).attr "disabled", true
+        if selected.data? and @options.editable
+          @_changeInputState @_$(@options.deleteButton), "enabled"
+        else
+          @_changeInputState @_$(@options.deleteButton), "disabled"
         @_trigger "selectionChange", e, selected
         
     if @options.editable then @_on @_$(@options.updateButton),
@@ -160,7 +165,7 @@ widget =
         updatedDoc.content = (updated = yes; content) if content and content isnt selected.data.content
         
         if updated
-          @_$(@options.updateButton).button "loading"
+          @_changeInputState @_$(@options.updateButton), "loading"
           @options.updateRoute(@options.store.id, updatedDoc.id).ajax
               contentType: Helpers.MimeTypes.json
               data: JSON.stringify updatedDoc
@@ -170,18 +175,15 @@ widget =
                   data: selected.data
                   updatedData: updatedDoc
               complete: =>
-                @_$(@options.updateButton).button "reset"
+                @_changeInputState @_$(@options.updateButton), "reset"
         
         e.preventDefault()
 
-    
-    @_form "disabled"
-    for control in [@options.addButton, @options.deleteButton]
-      @_$(control).attr "disabled", true
+    @option("store", @options.store)
+    #@_form "disabled"
+    #@_changeInputState @_$(control), "disabled" for control in [@options.addButton, @options.deleteButton]
     
     @_$(@options.list).tooltip()
-    @_$(@options.addButton).tooltip()
-    @_$(@options.deleteButton).tooltip()
     @_$(@options.contentInput).tooltip()
     @_$(@options.updateButton).tooltip()
     
@@ -200,6 +202,7 @@ widget =
     @_$(@options.updateButton).tooltip "destroy"
   
   _getCreateOptions: ->
+      store: null
       list: ".lst-documents"
       addButton: ".btn-add-doc"
       deleteButton: ".btn-delete-doc"

@@ -28,3 +28,22 @@ class Sare.Widget extends $.Widget
   
   _$: (s) ->
     $(@element).find s
+  
+  _changeInputState: (input, state) ->
+    switch state
+      when "enabled"
+        $(input)
+          .tooltip()
+          .removeAttr "disabled"
+      when "disabled"
+        $(input)
+          .tooltip("destroy")
+          .attr "disabled", true
+      when "loading"
+        $(input)
+          .tooltip("destroy")
+          .button state
+      when "reset"
+        $(input)
+          .tooltip()
+          .button state

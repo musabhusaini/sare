@@ -53,14 +53,14 @@ widget =
   _form: (option, data) ->
     switch option
       when "disabled"
-        @_$(input).attr("disabled", true) for input in @_form "inputs"
+        @_changeInputState @_$(input), "disabled" for input in @_form "inputs"
         @_$(@options.dropFileContainer)
           .text(@options.uploadFileMessage)
           .tooltip "destroy"
         @_destroyUploader()
       when "enabled"
         if @options.editable
-          @_$(input).removeAttr("disabled") for input in @_form "inputs"
+          @_changeInputState @_$(input), "enabled" for input in @_form "inputs"
           @_$(@options.dropFileContainer)
             .text(@options.dropFileMessage)
             .tooltip
@@ -118,7 +118,7 @@ widget =
           .tooltip("destroy")
           .tooltip
             title: @options.filenameTip
-        @_$(@options.updateButton).removeAttr "disabled"
+        #@_changeInputState @_$(@options.updateButton), "enabled"
     
     uploader.bind "UploadProgress", (up, file) =>
       if file.percent
@@ -168,7 +168,7 @@ widget =
     # handle add button click
     if @options.editable then @_on @_$(@options.addButton),
       click: (e) =>
-        @_$(@options.addButton).button "loading"
+        @_changeInputState @_$(@options.addButton), "loading"
         @options.addRoute().ajax
           contentType: Helpers.MimeTypes.json
           data: JSON.stringify
@@ -185,13 +185,13 @@ widget =
               item: option
               data: store
           complete: =>
-            @_$(@options.addButton).button "reset"
+            @_changeInputState @_$(@options.addButton), "reset"
     
     # handle delete store button click
     if @options.editable then @_on @_$(@options.deleteButton),
       click: (e) =>
         selected = @selected()
-        @_$(@options.deleteButton).button "loading"
+        @_changeInputState @_$(@options.deleteButton), "loading"
         if selected.data? then @options.deleteRoute(selected.data.id).ajax
           success: (store) =>
             next = $(selected.item).next()
@@ -205,7 +205,7 @@ widget =
               item: selected.item
               data: store
           complete: =>
-            @_$(@options.deleteButton).button "reset"
+            @_changeInputState @_$(@options.deleteButton), "reset"
             # button reset sets a timeout to enables the button, so this makes sure it's disabled, if necessary
             window.setTimeout(=>
               @_$(@options.list).change()
@@ -217,10 +217,8 @@ widget =
         selected = @selected()
         @_form "populate", selected.data
         @_form if selected.data? then "enabled" else "disabled"
-        if selected.data?
-          @_$(@options.deleteButton).removeAttr "disabled"
-        else if @options.editable
-          @_$(@options.deleteButton).attr "disabled", true
+        @_changeInputState @_$(@options.deleteButton),
+          if selected.data? and @options.editable then "enabled" else "disabled"
         @_trigger "selectionChange", e, selected
     
     # handle update button click
@@ -256,14 +254,14 @@ widget =
                 @_updateListItem selected.item, updatedStore
                 triggerEvent()
               complete: =>
-                @_$(@options.updateButton).button "reset"
+                @_changeInputState @_$(@options.updateButton), "reset"
           else
             @_updateListItem selected.item, updatedStore
             @_form "populate", updatedStore
-            @_$(@options.updateButton).button "reset"
+            @_changeInputState @_$(@options.updateButton), "reset"
             triggerEvent()
         
-        @_$(@options.updateButton).button "loading"
+        @_changeInputState @_$(@options.updateButton), "loading"
         if @_uploader?.files.length
           @_uploader.settings.url = jsRoutes.controllers.CollectionsController.update(selected.data?.id).url
           uploadComplete = (up, file, response) =>
@@ -276,13 +274,11 @@ widget =
         
         e.preventDefault()
 
-    @_$(@options.deleteButton).attr "disabled", true
-    if not @options.editable then @_$(@options.addButton).attr "disabled", true
+    @_changeInputState @_$(@options.deleteButton), "disabled"
+    @_changeInputState @_$(@options.addButton), if @options.editable then "enabled" else "disabled"
     @_form "disabled"
     
     @_$(@options.list).tooltip()
-    @_$(@options.addButton).tooltip()
-    @_$(@options.deleteButton).tooltip()
     @_$(@options.titleInput).tooltip()
     @_$(@options.descriptionInput).tooltip()
     @_$(@options.languageList).tooltip()
