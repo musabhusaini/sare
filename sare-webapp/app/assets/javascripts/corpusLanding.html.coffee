@@ -60,6 +60,8 @@ Document =
             $(Selectors.documentList).val(uuid).change() if $(Selectors.documentList).children("option").length == 1
 
 $ ->
+  $(Selectors.nextModuleButton).attr "disabled", true
+  
   $(Selectors.documentListContainer).documentList()
   
   $(Selectors.corpusListContainer).storeList
@@ -79,4 +81,4 @@ $ ->
       if selected?.data? then $(Selectors.nextModuleButton).removeAttr "disabled"
       else $(Selectors.nextModuleButton).attr "disabled", true
       $(Selectors.nextModuleButton).data Strings.moduleOutputDataKey,
-        if selected?.data? then JSON.stringify(selected.data) else null  
+        if selected?.data? then [ selected.data ] else null  

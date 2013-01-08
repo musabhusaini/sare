@@ -79,5 +79,7 @@ $ ->
   $(Selectors.nextModuleButton)
     .tooltip()
     .click =>
-      output = $(Selectors.nextModuleButton).data(Strings.moduleOutputDataKey) ? "[]"
-      location.href = jsRoutes.controllers.ModuleController.next(output).url
+      output = $(Selectors.nextModuleButton).data(Strings.moduleOutputDataKey) ? []
+      jsRoutes.controllers.ModuleController.options(output).ajax
+        success: (options) =>
+          # TODO: display the next dropdown
