@@ -80,7 +80,7 @@ public class Application extends Controller {
 	}
 	
 	public static Result homePage() {
-		return ok(index.render());
+		return ok(home.render());
 	}
 
 	public static Result keepAlive() {
