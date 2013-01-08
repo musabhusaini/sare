@@ -166,7 +166,7 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 		actualObject1.setOtherData(testOtherData);
 		
 		em.getTransaction().begin();
-		em.merge(testObject1);
+		em.merge(actualObject1);
 		em.getTransaction().commit();
 		em.clear();
 		

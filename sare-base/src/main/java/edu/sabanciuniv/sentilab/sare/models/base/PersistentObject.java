@@ -51,8 +51,8 @@ public abstract class PersistentObject
 	@Column
 	@Temporal(TemporalType.TIMESTAMP)
 	protected Date created;
-	
-	@Column
+
+	@Version
 	@Temporal(TemporalType.TIMESTAMP)
 	protected Date updated;
 	
@@ -91,13 +91,12 @@ public abstract class PersistentObject
 	
 	@PrePersist
 	protected void preCreate() {
-		this.created = this.updated = new Date();
+		this.created = new Date();
 		this.setOtherData();
 	}
 	
 	@PreUpdate
 	protected void preUpdate() {
-		this.updated = new Date();
 		this.setOtherData();
 	}
 	
