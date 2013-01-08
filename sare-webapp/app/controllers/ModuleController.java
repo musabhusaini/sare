@@ -46,7 +46,7 @@ import controllers.modules.base.Module;
 
 public class ModuleController extends Application {
 
-	private static Set<ModuleModel> getNextModules(String input) {
+	private static List<ModuleModel> getNextModules(String input) {
 		// get all the supplied view models.
 		List<ViewModel> suppliedViewModels = Lists.newArrayList();
 		JsonNode inputJson = Json.parse(input);
@@ -132,8 +132,19 @@ public class ModuleController extends Application {
 				modules.add(moduleViewModel);
 			}
 		}
-
-		return modules;
+		
+		// order first by relevance and then by name.
+		return Ordering.from(new Comparator<ModuleModel>() {
+			@Override
+			public int compare(ModuleModel o1, ModuleModel o2) {
+				int relDiff = (int)Math.round((o2.relevancyScore - o1.relevancyScore) * 1000);
+				if (relDiff == 0) {
+					return o2.name.compareTo(o1.name);
+				}
+				
+				return relDiff;
+			}
+		}).sortedCopy(modules);
 	}
 	
 	public static Result options(String input) {
@@ -141,7 +152,7 @@ public class ModuleController extends Application {
 	}
 	
 	public static Result nextPage(String input) {
-		Set<ModuleModel> modules = getNextModules(input);
+		List<ModuleModel> modules = getNextModules(input);
 		if (modules == null || modules.size() == 0) {
 			throw new IllegalArgumentException();
 		} else if (modules.size() == 1 && StringUtils.isNotEmpty(Iterables.getFirst(modules, null).getRoute())) {

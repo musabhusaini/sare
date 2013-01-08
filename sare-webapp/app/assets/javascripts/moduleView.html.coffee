@@ -76,10 +76,20 @@ Methods.stopSimulatedProgress = ->
 
 $ ->
   Methods.hideProgress()
+  
+  previous = {}
   $(Selectors.nextModuleButton)
     .tooltip()
     .click =>
-      output = $(Selectors.nextModuleButton).data(Strings.moduleOutputDataKey) ? []
+      output = JSON.stringify($(Selectors.nextModuleButton).data(Strings.moduleOutputDataKey) ? [])
+      if not previous.output? or output isnt previous.output
+        previous.output = output
+      else return
       jsRoutes.controllers.ModuleController.options(output).ajax
         success: (options) =>
-          # TODO: display the next dropdown
+          menu = $(Selectors.nextModuleButton).siblings("ul.dropdown-menu").empty()
+          for option in options
+            item = $("<a>")
+              .attr("href", option.route)
+              .text(option.name)
+              .appendTo $("<li>").appendTo menu

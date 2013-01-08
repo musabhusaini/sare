@@ -24,12 +24,15 @@ package controllers.factories;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
+import javax.annotation.Nullable;
+
 import models.base.*;
 
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.*;
 import org.reflections.Reflections;
 
+import play.Logger;
 import play.Play;
 import play.libs.Json;
 
@@ -38,10 +41,13 @@ import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
+import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 
 public class ViewModelFactory
 	implements IFactory<ViewModel, ViewModelFactoryOptions> {
 
+	public static final String MODEL_SUFFIX = "Model";
+	
 	private ViewModel createSpecific(Object model) {
 		Reflections reflections = new Reflections("models", Play.application().getWrappedApplication().classloader());
 		Set<Class<? extends ViewModel>> viewModelClasses = reflections.getSubTypesOf(ViewModel.class);
@@ -77,6 +83,7 @@ public class ViewModelFactory
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private ViewModel createSpecific(JsonNode json) {
 		if (!json.has("type")) {
 			return null;
@@ -87,24 +94,47 @@ public class ViewModelFactory
 			return null;
 		}
 		
-		if (!type.endsWith("Model")) {
-			type += "Model";
+		if (type.endsWith(MODEL_SUFFIX)) {
+			StringUtils.stripEnd(type, MODEL_SUFFIX);
 		}
 		
 		final String typeName = type;
-		Reflections reflections = new Reflections("models", Play.application().classloader());
-		Class<? extends ViewModel> availableViewModelClass = Iterables.find(reflections.getSubTypesOf(ViewModel.class),
-			new Predicate<Class<? extends ViewModel>>() {
+		Reflections reflections = new Reflections("edu.sabanciuniv.sentilab.sare.models");
+		Class<? extends PersistentObject> model = Iterables.find(reflections.getSubTypesOf(PersistentObject.class),
+			new Predicate<Class<? extends PersistentObject>>() {
 				@Override
-				public boolean apply(Class<? extends ViewModel> viewModelClass) {
-					return ClassUtils.getShortClassName(viewModelClass).equals(typeName);
+				public boolean apply(@Nullable Class<? extends PersistentObject> input) {
+					return typeName.equals(ClassUtils.getShortClassName(input));
 				}
 			}, null);
+				
+		Class<? extends ViewModel> availableViewModelClass = null;
+		while (model != null) {
+			final String modelName = ClassUtils.getShortClassName(model);
+			reflections = new Reflections("models", Play.application().classloader());
+			availableViewModelClass = Iterables.find(reflections.getSubTypesOf(ViewModel.class),
+				new Predicate<Class<? extends ViewModel>>() {
+					@Override
+					public boolean apply(Class<? extends ViewModel> viewModelClass) {
+						return ClassUtils.getShortClassName(viewModelClass).equals(modelName + MODEL_SUFFIX);
+					}
+				}, null);
+			
+			if (availableViewModelClass != null) {
+				break;
+			}
+			
+			model = (Class<? extends PersistentObject>) model.getSuperclass();
+			if (!PersistentObject.class.isAssignableFrom(model)) {
+				break;
+			}
+		}
 		
 		if (availableViewModelClass == null) {
 			return null;
 		}
-
+		
+		Logger.debug(availableViewModelClass.getName());
 		return Json.fromJson(json, availableViewModelClass);
 	}
 	
