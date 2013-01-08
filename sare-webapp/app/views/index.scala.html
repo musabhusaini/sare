@@ -24,12 +24,22 @@
 @contentHtml = {
 	<div class="offset5 span2">
 		<p>
-			<a id="btn-sigon" href="#" class="btn btn-primary btn-block btn-large disabled">Sign in</a>
+			<a id="btn-signon" href="#" class="btn btn-primary btn-block btn-large disabled"
+				title="Sign in to SARE with your account" data-placement="right">
+				Sign in
+			</a>
 		</p>
 		<p>
-			<a id="btn-guest" href="@controllers.routes.ModuleController.nextPage("[]")" class="btn btn-primary btn-block btn-large">Start as guest</a>
+			<a id="btn-guest" href="@controllers.routes.ModuleController.nextPage("[]")" class="btn btn-primary btn-block btn-large"
+				title="Start a temporary guest session" data-placement="right">
+				Start as guest
+			</a>
 		</p>
 	</div>
 }
 
-@main(content = contentHtml)
+@moreScripts = {
+	<script src="@routes.Assets.at("javascripts/index.html.js")" type="text/javascript"></script>
+}
+
+@main(content = contentHtml, scripts = moreScripts)
