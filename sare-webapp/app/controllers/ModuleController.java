@@ -68,6 +68,7 @@ public class ModuleController extends Application {
 		suppliedViewModels = Lists.newArrayList(Iterables.filter(suppliedViewModels, Predicates.notNull()));
 		
 		// get all the modules that can use these inputs.
+		Set<ModuleModel> nullModules = Sets.newHashSet();
 		Set<ModuleModel> modules = Sets.newHashSet();
 		Reflections reflections = new Reflections("controllers.modules", Play.application().classloader());
 		for (Class<? extends Module> moduleClass : reflections.getSubTypesOf(Module.class)) {
@@ -80,7 +81,7 @@ public class ModuleController extends Application {
 			final Set<Class<? extends ViewModel>> requiredViewModelClasses = Sets.newHashSet();
 			if (reqAnnotation != null) {
 				Collections.addAll(requiredViewModelClasses, reqAnnotation.types());
-			} // no annotation means no requirement
+			}
 			
 			// get all the supplied view modules that are relevant to this module.
 			List<ViewModel> usefulViewModels = Lists.newArrayList(Iterables.filter(suppliedViewModels,
@@ -129,8 +130,17 @@ public class ModuleController extends Application {
 					moduleViewModel.route = routes.ModuleController.renderInPlace(
 						Json.stringify(moduleViewModel.asJson())).url();
 				}
-				modules.add(moduleViewModel);
+				
+				if (requiredViewModelClasses.size() > 0) {
+					modules.add(moduleViewModel);
+				} else {
+					nullModules.add(moduleViewModel);
+				}
 			}
+		}
+		
+		if (modules.size() == 0) {
+			modules = nullModules;
 		}
 		
 		// order first by relevance and then by name.
