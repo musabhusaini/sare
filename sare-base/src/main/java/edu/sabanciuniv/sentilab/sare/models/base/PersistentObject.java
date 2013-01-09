@@ -46,7 +46,7 @@ public abstract class PersistentObject
 	 */
 	private static final long serialVersionUID = 1497804812766237628L;
 
-	private static final String DIRTY_FLAG_STRING = "dirty";
+	private static final String DIRTY_FLAG_STRING = "##dirty##";
 	
 	@Column
 	@Temporal(TemporalType.TIMESTAMP)
@@ -69,10 +69,10 @@ public abstract class PersistentObject
 	
 	@Basic(fetch=FetchType.LAZY)
 	@Column(name="other_data", columnDefinition="TEXT")
-	protected String otherData;
+	private String otherData;
 	
 	@Transient
-	protected JsonObject otherDataJson;
+	private JsonObject otherDataJson;
 	
 	protected void setOtherData() {
 		if (this.otherDataJson != null && this.otherDataJson.entrySet().size() == 0) {

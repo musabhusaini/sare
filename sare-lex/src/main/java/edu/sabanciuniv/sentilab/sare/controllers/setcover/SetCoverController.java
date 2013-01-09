@@ -46,15 +46,12 @@ public class SetCoverController
 
 	private double progress;
 	
-	private DocumentSetCover create(PersistentDocumentStore store, TokenizingOptions tokenizingOptions, double weightCoverage) {
+	private DocumentSetCover createSpecific(DocumentSetCover setCover, PersistentDocumentStore store, TokenizingOptions tokenizingOptions, double weightCoverage) {
 		Validate.notNull(store, CannedMessages.NULL_ARGUMENT, "store");
 		
 		if (tokenizingOptions == null) {
 			tokenizingOptions = new TokenizingOptions();
 		}
-		
-		// create a set cover based on this store.
-		DocumentSetCover setCover = new DocumentSetCover(store);
 		
 		// create a dummy set cover to keep the refuse in.
 		DocumentSetCover dummySetCover = new DocumentSetCover(store);
@@ -107,7 +104,8 @@ public class SetCoverController
 		// get rid of the dummy.
 		dummySetCover.setBaseStore(null);
 		
-		return this.reduceCoverage(setCover, weightCoverage);
+		return this.reduceCoverage(setCover, weightCoverage)
+			.setTokenizingTags(tokenizingOptions);
 	}
 	
 	private Pair<List<SetCoverDocument>, List<SetCoverDocument>> splitByCoverage(DocumentSetCover setCover, double weightCoverage) {
@@ -157,7 +155,10 @@ public class SetCoverController
 		}
 		
 		this.progress = 0.0;
-		DocumentSetCover setCover = this.create(options.getStore(), options.getTokenizingOptions(), options.getWeightCoverage());
+		
+		// create a set cover based on this store.
+		DocumentSetCover setCover = new DocumentSetCover(options.getStore());
+		this.createSpecific(setCover, options.getStore(), options.getTokenizingOptions(), options.getWeightCoverage());
 		
 		if (StringUtils.isNotEmpty(options.getTitle())) {
 			setCover.setTitle(options.getTitle());
@@ -198,7 +199,7 @@ public class SetCoverController
 			}
 		}
 		
-		return setCover;
+		return setCover.setWeightCoverage(weightCoverage);
 	}
 	
 	/**

@@ -82,6 +82,8 @@ public class SetCoverControllerTest {
 		int index=0;
 		SetCoverDocument firstDoc = Iterables.get(setCover.wrapGeneric(SetCoverDocument.class).getDocuments(), index);
 		assertNotNull(firstDoc);
+		assertNotNull(setCover.getTokenizingTags());
+		assertTrue(Iterables.size(setCover.getTokenizingTags()) > 0);
 		assertEquals(94.0, firstDoc.getWeight(), 0);
 		
 		for (SetCoverDocument doc : setCover.wrapGeneric(SetCoverDocument.class).getDocuments()) {
@@ -91,12 +93,13 @@ public class SetCoverControllerTest {
 	
 	@Test
 	public void testCreateWithWeightRatio() {
+		double weightCoverage = 0.8;
 		DocumentSetCover setCover;
 		try {
 			setCover = testController.create(new SetCoverFactoryOptions()
 				.setStore(testCorpus)
 				.setTokenizingOptions(testTokenizingOptions)
-				.setWeightCoverage(0.8));
+				.setWeightCoverage(weightCoverage));
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
@@ -104,6 +107,7 @@ public class SetCoverControllerTest {
 		
 		assertNotNull(setCover);
 		assertEquals(5, Iterables.size(setCover.getDocuments()));
+		assertEquals(weightCoverage, setCover.getWeightCoverage(), 0);
 		
 		int index=0;
 		SetCoverDocument firstDoc = Iterables.get(setCover.wrapGeneric(SetCoverDocument.class).getDocuments(), index);

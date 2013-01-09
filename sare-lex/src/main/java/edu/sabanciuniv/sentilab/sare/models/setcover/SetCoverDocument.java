@@ -23,6 +23,8 @@ package edu.sabanciuniv.sentilab.sare.models.setcover;
 
 import javax.persistence.*;
 
+import com.google.gson.JsonElement;
+
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 
 /**
@@ -39,15 +41,16 @@ public class SetCoverDocument
 	 */
 	private static final long serialVersionUID = -5638920050574370647L;
 	
-	@Column
-	private Double weight;
-
-	@PrePersist
-	@PreUpdate
+	private static final String WEIGHT_FIELD = "weight";
+	
 	private void updateWeight() {
-		if (this.weight == null) {
+		if (!this.hasSetWeight()) {
 			this.setWeight(this.getWeight());
 		}
+	}
+
+	private boolean hasSetWeight() {
+		return this.getOtherData().has(WEIGHT_FIELD);
 	}
 	
 	/**
@@ -56,8 +59,24 @@ public class SetCoverDocument
 	 * @return the {@code this} object.
 	 */
 	private SetCoverDocument setWeight(Double weight) {
-		this.weight = weight;
+		if (weight == null) {
+			this.getOtherData().remove(WEIGHT_FIELD);
+		} else {
+			this.getOtherData().addProperty(WEIGHT_FIELD, weight);
+		}
 		return this;
+	}
+
+	@Override
+	protected void preCreate() {
+		updateWeight();
+		super.preCreate();
+	}
+	
+	@Override
+	protected void preUpdate() {
+		updateWeight();
+		super.preUpdate();
 	}
 
 	/**
@@ -86,7 +105,14 @@ public class SetCoverDocument
 	 * @return the weight of this document.
 	 */
 	public double getWeight() {
-		return this.weight == null ? this.getTotalTokenWeight() : this.weight;
+		if (this.hasSetWeight()) {
+			JsonElement weight = this.getOtherData().get(WEIGHT_FIELD);
+			if (weight.isJsonPrimitive() && weight.getAsJsonPrimitive().isNumber()) {
+				return weight.getAsDouble();
+			}
+		}
+		
+		return this.getTotalTokenWeight();
 	}
 	
 	/**

@@ -21,10 +21,17 @@
 
 package edu.sabanciuniv.sentilab.sare.models.setcover;
 
-import java.util.Collections;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import javax.persistence.*;
 
+import com.google.common.base.Function;
+import com.google.common.collect.*;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.*;
+
+import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 
 /**
@@ -40,6 +47,9 @@ public class DocumentSetCover
 	 * 
 	 */
 	private static final long serialVersionUID = 6709686005135631465L;
+
+	private static final String TOKENIZING_TAGS_FIELD = "tokenizingTags";
+	private static final String WEIGHT_COVERAGE_FIELD = "weightCoverage";
 	
 	/**
 	 * Creates a new instance of the {@link DocumentSetCover} class.
@@ -87,6 +97,93 @@ public class DocumentSetCover
 		}
 		
 		return weight;
+	}
+	
+	/**
+	 * Gets the tokenizing tags that were used to create this set cover.
+	 * @return the {@link Iterables} of tag strings.
+	 */
+	public Iterable<String> getTokenizingTags() {
+		JsonElement field = this.getOtherData().get(TOKENIZING_TAGS_FIELD);
+		if (field != null && field.isJsonArray()) {
+			JsonArray array = field.getAsJsonArray();
+			return Iterables.transform(array, new Function<JsonElement, String>() {
+				@Override
+				public String apply(JsonElement input) {
+					return input.getAsString();
+				}
+			});
+		}
+		
+		return Lists.newArrayList();
+	}
+	
+	/**
+	 * Sets the tokenizing tags that were used to create this set cover.
+	 * Does not alter the set cover, just sets a value for record-keeping.
+	 * @param tokenizingTags the {@link Iterables} of tag strings to set.
+	 * @return the {@code this} object.
+	 */
+	public DocumentSetCover setTokenizingTags(Iterable<String> tokenizingTags) {
+		if (tokenizingTags == null) {
+			this.getOtherData().remove(TOKENIZING_TAGS_FIELD);
+		} else {
+			List<String> tokenizingTagsList = Lists.newArrayList(tokenizingTags);
+			this.getOtherData().add(TOKENIZING_TAGS_FIELD, new Gson().toJsonTree(tokenizingTagsList,
+				new TypeToken<List<String>>(){
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+				}.getType()));
+		}
+		return this;
+	}
+	
+	/**
+	 * Sets the tokenizing tags that were used to create this set cover.
+	 * Does not alter the set cover, just sets a value for record-keeping.
+	 * @param tokenizingOptions the {@link TokenizingOptions} object that was used to create this set cover.
+	 * @return the {@code this} object.
+	 */
+	public DocumentSetCover setTokenizingTags(TokenizingOptions tokenizingOptions) {
+		if (tokenizingOptions == null) {
+			return this.setTokenizingTags((Iterable<String>)null);
+		}
+		
+		return this.setTokenizingTags(Iterables.transform(tokenizingOptions.getTags(), new Function<Pattern, String>() {
+			@Override
+			public String apply(Pattern input) {
+				return input.pattern();
+			}
+		}));
+	}
+	
+	/**
+	 * Gets the weight coverage that was used to create this set cover.
+	 * @return the weight coverage used.
+	 */
+	public Double getWeightCoverage() {
+		JsonElement field = this.getOtherData().get(WEIGHT_COVERAGE_FIELD);
+		if (field != null && field.isJsonPrimitive() && field.getAsJsonPrimitive().isNumber()) {
+			return field.getAsDouble();
+		}
+		return null;
+	}
+	
+	/**
+	 * Sets the weight coverage that was used to create this set cover.
+	 * Does not alter the set cover, just sets a value for record-keeping.
+	 * @param weightCoverage the weight coverage to set.
+	 * @return the {@code this} object.
+	 */
+	public DocumentSetCover setWeightCoverage(Double weightCoverage) {
+		if (weightCoverage == null) {
+			this.getOtherData().remove(WEIGHT_COVERAGE_FIELD);
+		} else {
+			this.getOtherData().addProperty(WEIGHT_COVERAGE_FIELD, weightCoverage);
+		}
+		return this;
 	}
 	
 	@Override
