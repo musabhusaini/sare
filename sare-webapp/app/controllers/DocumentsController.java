@@ -49,6 +49,9 @@ public class DocumentsController extends Application {
 	}
 	
 	public static Result list(String collection) {
+		// make sure we have access to this collection.
+		fetchResource(collection, PersistentDocumentStore.class);
+		
 		return ok(play.libs.Json.toJson(new PersistentDocumentController().getAllUuids(em(), collection)));
 	}
 	
@@ -63,12 +66,12 @@ public class DocumentsController extends Application {
 		
 		if (store instanceof OpinionCorpus) {
 			OpinionDocumentModel viewModel = Json.fromJson(request().body().asJson(), OpinionDocumentModel.class);
-			OpinionDocumentFactoryOptions options = new OpinionDocumentFactoryOptions()
-				.setEm(em())
-				.setExistingId(document)
+			OpinionDocumentFactoryOptions options = (OpinionDocumentFactoryOptions)new OpinionDocumentFactoryOptions()
 				.setContent(viewModel.content)
 				.setPolarity(viewModel.polarity)
-				.setCorpus((OpinionCorpus)store);
+				.setCorpus((OpinionCorpus)store)
+				.setEm(em())
+				.setExistingId(document);
 			
 			OpinionDocument documentObj = new OpinionDocumentFactory().create(options);
 			if (em().contains(documentObj)) {
