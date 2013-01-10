@@ -38,6 +38,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
 
 public class SetCoverControllerTest {
 
@@ -56,7 +57,7 @@ public class SetCoverControllerTest {
 		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
-			.setTags(EnumSet.of(TagCaptureOptions.IGNORE_CASE, TagCaptureOptions.STARTS_WITH), "NN");
+			.setTags(EnumSet.of(TagCaptureOptions.IGNORE_CASE, TagCaptureOptions.EXACT), PosTag.NOUN);
 		
 		testController = new SetCoverController();
 	}

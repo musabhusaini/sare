@@ -174,7 +174,7 @@ public abstract class FullTextDocument
 			// only include token if the pos tag is included in tokenizing options (no tags in the options means we include everything).
 			if (this.getTokenizingOptions().getTags() == null ||
 				this.getTokenizingOptions().getTags().size() == 0 ||
-				Iterables.any(this.getTokenizingOptions().getTags(), StringPredicates.patternContains(nlpToken.getPosTag()))) {
+				Iterables.any(this.getTokenizingOptions().getTags(), StringPredicates.patternContains(nlpToken.getPosTag().getSimpleTag()))) {
 				
 				nlpToken.setLemmatized(this.getTokenizingOptions().isLemmatized());
 				MapsExtensions.increment(this.getTokenWeightMap(true, true), nlpToken);

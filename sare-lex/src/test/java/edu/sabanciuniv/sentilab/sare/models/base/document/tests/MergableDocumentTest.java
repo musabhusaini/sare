@@ -34,7 +34,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
 
 public class MergableDocumentTest {
 	
@@ -85,7 +85,7 @@ public class MergableDocumentTest {
 		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
-			.setTags(EnumSet.of(TagCaptureOptions.STARTS_WITH, TagCaptureOptions.IGNORE_CASE), "NN", "JJ");
+			.setTags(EnumSet.of(TagCaptureOptions.EXACT, TagCaptureOptions.IGNORE_CASE), PosTag.NOUN, PosTag.ADJECTIVE);
 		
 		testContent1 = "The quick brown fox jumps over lazy dogs. Why would a lazy dog take this humiliation?";
 		testDocument1 = (OpinionDocument)new OpinionDocument()
@@ -93,22 +93,22 @@ public class MergableDocumentTest {
 			.setStore(store);
 		
 		testMergeMap1 = Maps.newHashMap();
-		testMergeMap1.put("dog/NN", 3.0);
-		testMergeMap1.put("fox/NN", 2.0);
-		testMergeMap1.put("lazy/JJ", 3.0);
+		testMergeMap1.put("dog/" + PosTag.NOUN, 3.0);
+		testMergeMap1.put("fox/" + PosTag.NOUN, 2.0);
+		testMergeMap1.put("lazy/" + PosTag.ADJECTIVE, 3.0);
 		
 		testMergeMap2 = Maps.newHashMap(testMergeMap1);
 		
-		testMergeMap1.put("humiliation/NN", 1.0);
-		testMergeMap1.put("quick/JJ", 1.0);
-		testMergeMap1.put("brown/JJ", 1.0);
+		testMergeMap1.put("humiliation/" + PosTag.NOUN, 1.0);
+		testMergeMap1.put("quick/" + PosTag.ADJECTIVE, 1.0);
+		testMergeMap1.put("brown/" + PosTag.ADJECTIVE, 1.0);
 		
 		testContent2 = "Why must the fox humiliate the lazy dog in this way?";
 		testDocument2 = (OpinionDocument)new OpinionDocument()
 			.setTokenizingOptions(testTokenizingOptions)
 			.setStore(store);
 		
-		testMergeMap2.put("way/NN", 1.0);
+		testMergeMap2.put("way/" + PosTag.NOUN, 1.0);
 		
 		resetDocuments();
 	}

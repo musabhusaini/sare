@@ -67,9 +67,9 @@ public abstract class LinguisticToken
 
 	/**
 	 * Gets the POS tag of this token.
-	 * @return The POS tag.
+	 * @return A {@link PosTag} object representing the POS tag.
 	 */
-	public abstract String getPosTag();
+	public abstract PosTag getPosTag();
 	
 	/**
 	 * Gets the word that this token represents. Might be lemmatized depending on the value of the {@code isLemmatized} property.

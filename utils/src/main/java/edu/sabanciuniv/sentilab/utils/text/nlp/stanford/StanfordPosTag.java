@@ -25,31 +25,31 @@ import org.apache.commons.lang3.Validate;
 
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
-import edu.stanford.nlp.ling.CoreLabel;
 
-public class StanfordToken
-	extends LinguisticToken {
+public class StanfordPosTag extends PosTag {
 
-	private CoreLabel token;
-	
-	public StanfordToken(ILinguisticProcessor processor, CoreLabel token) {
-		super(processor);
+	public StanfordPosTag(ILinguisticProcessor processor, String tag) {
+		super(processor, Validate.notNull(tag, CannedMessages.NULL_ARGUMENT, "tag"));
+	}
+
+	@Override
+	public String getSimpleTag() {
+		if (this.tag.startsWith("JJ")) {
+			return ADJECTIVE;
+		}
 		
-		this.token = Validate.notNull(token, CannedMessages.NULL_ARGUMENT, "token");
-	}
-	
-	@Override
-	public String getLemma() {
-		return this.token.lemma(); 
-	}
-
-	@Override
-	public StanfordPosTag getPosTag() {
-		return new StanfordPosTag(this.processor, this.token.tag());
-	}
-
-	@Override
-	public String getText() {
-		return this.token.originalText();
+		if (this.tag.startsWith("NN")) {
+			return NOUN;
+		}
+		
+		if (this.tag.startsWith("RB") || this.tag.endsWith("RB")) {
+			return ADVERB;
+		}
+		
+		if (this.tag.startsWith("VB")) {
+			return VERB;
+		}
+		
+		return this.tag;
 	}
 }

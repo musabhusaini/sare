@@ -23,6 +23,7 @@ package edu.sabanciuniv.sentilab.sare.models.base.document;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Function;
@@ -37,6 +38,22 @@ import edu.sabanciuniv.sentilab.core.models.IModel;
 public class TokenizingOptions
 	implements IModel {
 
+	/**
+	 * Strips the pattern that was added to a tag to get the original tag.
+	 * @param pattern the pattern string to strip the pattern from.
+	 * @return the stripped tag string.
+	 */
+	public static String stripPattern(String pattern) {
+		if (pattern != null) {
+			Pattern metaPattern = Pattern.compile("\\(\\?i\\)?\\^?(.+?)\\$?");
+			Matcher matcher = metaPattern.matcher(pattern);
+			if (matcher.matches()) {
+				return matcher.group(1);
+			}
+		}		
+		return pattern;
+	}
+	
 	/**
 	 * An {@code enum} of various tag-capture options.
 	 * @author Mus'ab Husaini
@@ -54,6 +71,10 @@ public class TokenizingOptions
 		 * Option to match the end of tags.
 		 */
 		ENDS_WITH,
+		/**
+		 * Option to match the exact tag (a combination of {@code STARTS_WITH} and {@code ENDS_WITH}.
+		 */
+		EXACT,
 		/**
 		 * Option to use the provided pattern strings as regular expression patterns.
 		 */
@@ -92,32 +113,39 @@ public class TokenizingOptions
 	 * @return the {@code this} object.
 	 * @throws IllegalArgumentException if an unacceptable combination of options is provided.
 	 */
-	public TokenizingOptions setTags(final EnumSet<TagCaptureOptions> options, Iterable<String> tags) {
+	public TokenizingOptions setTags(EnumSet<TagCaptureOptions> options, Iterable<String> tags) {
 		if (tags == null) {
 			return this.setTags(null);
+		}
+		
+		final EnumSet<TagCaptureOptions> finalOptions = EnumSet.copyOf(options);
+		if (finalOptions.contains(TagCaptureOptions.EXACT)) {
+			finalOptions.remove(TagCaptureOptions.EXACT);
+			finalOptions.add(TagCaptureOptions.STARTS_WITH);
+			finalOptions.add(TagCaptureOptions.ENDS_WITH);
 		}
 		
 		return this.setTags(Iterables.transform(tags, new Function<String, Pattern>() {
 			@Override
 			public Pattern apply(String input) {
-				if (options == null || !options.contains(TagCaptureOptions.PATTERN)) {
+				if (finalOptions == null || !finalOptions.contains(TagCaptureOptions.PATTERN)) {
 					input = Pattern.quote(input);
 				}
 				
-				if (options != null) {
-					if (!options.contains(TagCaptureOptions.PATTERN)) {
-						if (options.contains(TagCaptureOptions.STARTS_WITH)) {
+				if (finalOptions != null) {
+					if (!finalOptions.contains(TagCaptureOptions.PATTERN)) {
+						if (finalOptions.contains(TagCaptureOptions.STARTS_WITH)) {
 							input = "^" + input;
 						}
 						
-						if (options.contains(TagCaptureOptions.ENDS_WITH)) {
+						if (finalOptions.contains(TagCaptureOptions.ENDS_WITH)) {
 							input = input + "$";
 						}
-					} else if (options.contains(TagCaptureOptions.STARTS_WITH) || options.contains(TagCaptureOptions.ENDS_WITH)) {
+					} else if (finalOptions.contains(TagCaptureOptions.STARTS_WITH) || finalOptions.contains(TagCaptureOptions.ENDS_WITH)) {
 						throw new IllegalArgumentException("Cannot combine the PATTERN option with the STARTS_WITH or ENDS_WITH options");
 					}
 					
-					if (options.contains(TagCaptureOptions.IGNORE_CASE)) {
+					if (finalOptions.contains(TagCaptureOptions.IGNORE_CASE)) {
 						input = "(?i)" + input;
 					}
 				}
