@@ -32,6 +32,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagC
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
 
 public class SetCoverDocumentTest
 	extends PersistenceTestsBase {
@@ -48,7 +49,7 @@ public class SetCoverDocumentTest
 	public void setUp() throws Exception {
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
-			.setTags(EnumSet.of(TagCaptureOptions.STARTS_WITH, TagCaptureOptions.IGNORE_CASE), "nn");
+			.setTags(EnumSet.of(TagCaptureOptions.EXACT, TagCaptureOptions.IGNORE_CASE), PosTag.NOUN);
 			
 		testCorpus = (OpinionCorpus)new OpinionCorpus()
 			.setLanguage("en")

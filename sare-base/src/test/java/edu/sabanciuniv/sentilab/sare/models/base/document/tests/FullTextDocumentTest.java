@@ -33,7 +33,7 @@ import com.google.common.collect.Maps;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
 
 public class FullTextDocumentTest {
 
@@ -50,21 +50,21 @@ public class FullTextDocumentTest {
 		
 		this.testContent = "The quick brown fox jumps over lazy dogs. Why would a lazy dog take this humiliation?";
 		this.testNnjjMap = Maps.newHashMap();
-		this.testNnjjMap.put("humiliation/NN", 1.0);
-		this.testNnjjMap.put("quick/JJ", 1.0);
-		this.testNnjjMap.put("fox/NN", 1.0);
-		this.testNnjjMap.put("lazy/JJ", 2.0);
-		this.testNnjjMap.put("brown/JJ", 1.0);
+		this.testNnjjMap.put("humiliation/" + PosTag.NOUN, 1.0);
+		this.testNnjjMap.put("quick/" + PosTag.ADJECTIVE, 1.0);
+		this.testNnjjMap.put("fox/" + PosTag.NOUN, 1.0);
+		this.testNnjjMap.put("lazy/" + PosTag.ADJECTIVE, 2.0);
+		this.testNnjjMap.put("brown/" + PosTag.ADJECTIVE, 1.0);
 
 		this.testNnjjLemmMap = Maps.newHashMap(this.testNnjjMap);
 		
-		this.testNnjjMap.put("dog/NN", 1.0);
-		this.testNnjjMap.put("dogs/NNS", 1.0);
+		this.testNnjjMap.put("dog/" + PosTag.NOUN, 1.0);
+		this.testNnjjMap.put("dogs/" + PosTag.NOUN, 1.0);
 		
-		this.testNnjjLemmMap.put("dog/NN", 2.0);
+		this.testNnjjLemmMap.put("dog/" + PosTag.NOUN, 2.0);
 
 		this.testTokenizingOptions = new TokenizingOptions()
-			.setTags(EnumSet.of(TagCaptureOptions.STARTS_WITH, TagCaptureOptions.IGNORE_CASE), "NN", "JJ");
+			.setTags(EnumSet.of(TagCaptureOptions.EXACT, TagCaptureOptions.IGNORE_CASE), PosTag.NOUN, PosTag.ADJECTIVE);
 		
 		this.testDocument = (OpinionDocument)new OpinionDocument()
 			.setStore(store);
@@ -133,10 +133,10 @@ public class FullTextDocumentTest {
 			.setTokenizingOptions(this.testTokenizingOptions)
 			.retokenize();
 		
-		String posTag = "nn";
+		String posTag = PosTag.NOUN;
 		Map<LinguisticToken, Double> weightMap = this.testDocument
 			.setTokenizingOptions(new TokenizingOptions()
-				.setTags(EnumSet.of(TagCaptureOptions.STARTS_WITH, TagCaptureOptions.IGNORE_CASE), posTag))
+				.setTags(EnumSet.of(TagCaptureOptions.EXACT, TagCaptureOptions.IGNORE_CASE), posTag))
 			.getTokenWeightMap();
 		
 		assertNotNull(weightMap);
@@ -144,7 +144,7 @@ public class FullTextDocumentTest {
 		assertFalse(this.testNnjjMap.size() == weightMap.size());
 		
 		for (Entry<LinguisticToken, Double> weightEntry : weightMap.entrySet()) {
-			assertTrue(weightEntry.getKey().getPosTag().toLowerCase().startsWith(posTag));
+			assertTrue(weightEntry.getKey().getPosTag().getSimpleTag().toLowerCase().startsWith(posTag));
 		}
 	}
 }
