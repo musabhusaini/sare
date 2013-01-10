@@ -154,7 +154,7 @@ public class DocumentSetCover
 		return this.setTokenizingTags(Iterables.transform(tokenizingOptions.getTags(), new Function<Pattern, String>() {
 			@Override
 			public String apply(Pattern input) {
-				return input.pattern();
+				return TokenizingOptions.stripPattern(input.pattern());
 			}
 		}));
 	}
