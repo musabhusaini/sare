@@ -21,9 +21,16 @@
 
 package edu.sabanciuniv.sentilab.sare.models.base;
 
+import java.util.UUID;
+
+import javax.persistence.EntityManager;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.gson.*;
 
 import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 /**
  * The base class for all factory options for factories that create {@link PersistentObject} instances.
@@ -33,7 +40,56 @@ import edu.sabanciuniv.sentilab.core.models.factory.IFactoryOptions;
 public abstract class PersistentObjectFactoryOptions<T extends PersistentObject>
 	implements IFactoryOptions<T> {
 
+	protected byte[] existingId;
 	protected String otherData;
+	protected EntityManager em;
+
+	/**
+	 * Gets the ID of an existing object to be modified.
+	 * @return the ID to fetch the object with.
+	 */
+	public byte[] getExistingId() {
+		return this.existingId;
+	}
+
+	/**
+	 * Sets the ID of an existing object to be modified. Must also provide a non-{@code null} value for {@code em}
+	 * if this is {@code null}
+	 * @param id the ID to fetch the object with.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObjectFactoryOptions<T> setExistingId(byte[] id) {
+		this.existingId = id;
+		return this;
+	}
+	
+	/**
+	 * Sets the ID of an existing object to be modified. Must also provide a non-{@code null} value for {@code em}
+	 * if this is {@code null}
+	 * @param id the ID to fetch the object with.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObjectFactoryOptions<T> setExistingId(String id) {
+		if (StringUtils.isEmpty(id)) {
+			return this;
+		}
+		
+		return this.setExistingId(UuidUtils.toBytes(id));
+	}
+
+	/**
+	 * Sets the ID of an existing object to be modified. Must also provide a non-{@code null} value for {@code em}
+	 * if this is {@code null}
+	 * @param id the ID to fetch the object with.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObjectFactoryOptions<T> setExistingId(UUID id) {
+		if (id == null) {
+			return this;
+		}
+		
+		return this.setExistingId(UuidUtils.toBytes(id));
+	}
 
 	/**
 	 * Gets any other data to be attached to the target object.
@@ -61,6 +117,24 @@ public abstract class PersistentObjectFactoryOptions<T extends PersistentObject>
 		}
 		
 		this.otherData = otherData;
+		return this;
+	}
+	
+	/**
+	 * Gets an entity manager that will be used in case an ID was provided.
+	 * @return the {@link EntityManager} that will be used.
+	 */
+	public EntityManager getEm() {
+		return this.em;
+	}
+
+	/**
+	 * Sets the entity manager to use in case an ID was provided. Only needed if an existing ID was provided.
+	 * @param em the {@link EntityManager} to be set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObjectFactoryOptions<T> setEm(EntityManager em) {
+		this.em = em;
 		return this;
 	}
 }

@@ -156,8 +156,24 @@ public class SetCoverController
 		
 		this.progress = 0.0;
 		
-		// create a set cover based on this store.
-		DocumentSetCover setCover = new DocumentSetCover(options.getStore());
+		DocumentSetCover setCover = null;
+		if (options.getExistingId() != null && options.getEm() != null) {
+			// if not found, we simply fall-back to the default behavior.
+			try {
+				setCover = options.getEm().find(DocumentSetCover.class, options.getExistingId());
+			} catch (IllegalArgumentException e) {
+				setCover = null;
+			}
+		}
+		
+		if (setCover == null) {
+			// create a set cover based on this store.
+			setCover = new DocumentSetCover(options.getStore());
+		} else {
+			// clear set cover if it already exists, we'll start afresh.
+			this.clear(setCover);
+		}
+		
 		this.createSpecific(setCover, options.getStore(), options.getTokenizingOptions(), options.getWeightCoverage());
 		
 		if (StringUtils.isNotEmpty(options.getTitle())) {
@@ -230,6 +246,20 @@ public class SetCoverController
 	 */
 	public Map<Integer, Double> calculateCoverageMatrix(DocumentSetCover setCover) {
 		return this.calculateCoverageMatrix(setCover, 5);
+	}
+	
+	/**
+	 * Clears the provided set cover and brings it back to empty. Connection with the base store is not severed.
+	 * @param setCover the {@link DocumentSetCover} object representing the set cover to clear.
+	 * @return the {@code this} object.
+	 */
+	public SetCoverController clear(DocumentSetCover setCover) {
+		Validate.notNull(setCover, CannedMessages.NULL_ARGUMENT, "setCover");
+		
+		setCover.setWeightCoverage(null)
+			.setTokenizingTags((Iterable<String>)null)
+			.setDocuments(null);
+		return this;
 	}
 	
 	@Override

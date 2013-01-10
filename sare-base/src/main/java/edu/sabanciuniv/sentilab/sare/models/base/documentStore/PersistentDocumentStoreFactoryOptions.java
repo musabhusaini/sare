@@ -28,8 +28,8 @@ import edu.sabanciuniv.sentilab.sare.models.base.PersistentObjectFactoryOptions;
  * @author Mus'ab Husaini
  * @param <T> the type of objects that will be created; must extend {@link PersistentDocumentStore}.
  */
-public abstract class PersistentDocumentStoreFactoryOptions<T extends PersistentDocumentStore> extends
-		PersistentObjectFactoryOptions<T> {
+public abstract class PersistentDocumentStoreFactoryOptions<T extends PersistentDocumentStore>
+	extends PersistentObjectFactoryOptions<T> {
 
 	protected String ownerId;
 	

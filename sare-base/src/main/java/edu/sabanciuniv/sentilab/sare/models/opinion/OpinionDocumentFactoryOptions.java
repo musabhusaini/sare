@@ -21,15 +21,9 @@
 
 package edu.sabanciuniv.sentilab.sare.models.opinion;
 
-import java.util.UUID;
-
-import javax.persistence.EntityManager;
-
-import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Node;
 
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObjectFactoryOptions;
-import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 /**
  * The default set of options that can be used to construct an {@link OpinionDocument} object.
@@ -39,60 +33,11 @@ import edu.sabanciuniv.sentilab.utils.UuidUtils;
 public class OpinionDocumentFactoryOptions
 	extends PersistentObjectFactoryOptions<OpinionDocument> {
 
-	private byte[] existingId;
 	private OpinionCorpus corpus;
 	private Node xmlNode;
 	private String content;
 	private Double polarity;
-	private EntityManager em;
 	
-	/**
-	 * Gets the ID of an existing document to be modified.
-	 * @return the ID to fetch the document with.
-	 */
-	public byte[] getExistingId() {
-		return this.existingId;
-	}
-
-	/**
-	 * Sets the ID of an existing document to be modified. Must also provide a non-{@code null} value for {@code em}
-	 * if this is {@code null}
-	 * @param id the ID to fetch the document with.
-	 * @return the {@code this} object.
-	 */
-	public OpinionDocumentFactoryOptions setExistingId(byte[] id) {
-		this.existingId = id;
-		return this;
-	}
-	
-	/**
-	 * Sets the ID of an existing document to be modified. Must also provide a non-{@code null} value for {@code em}
-	 * if this is {@code null}
-	 * @param id the ID to fetch the document with.
-	 * @return the {@code this} object.
-	 */
-	public OpinionDocumentFactoryOptions setExistingId(String id) {
-		if (StringUtils.isEmpty(id)) {
-			return this;
-		}
-		
-		return this.setExistingId(UuidUtils.toBytes(id));
-	}
-
-	/**
-	 * Sets the ID of an existing document to be modified. Must also provide a non-{@code null} value for {@code em}
-	 * if this is {@code null}
-	 * @param id the ID to fetch the document with.
-	 * @return the {@code this} object.
-	 */
-	public OpinionDocumentFactoryOptions setExistingId(UUID id) {
-		if (id == null) {
-			return this;
-		}
-		
-		return this.setExistingId(UuidUtils.toBytes(id));
-	}
-
 	/**
 	 * Gets the corpus the document will be stored in.
 	 * @return the {@link OpinionCorpus} object representing the corpus of documents.
@@ -162,24 +107,6 @@ public class OpinionDocumentFactoryOptions
 	 */
 	public OpinionDocumentFactoryOptions setPolarity(Double polarity) {
 		this.polarity = polarity;
-		return this;
-	}
-	
-	/**
-	 * Gets an entity manager that will be used in case an ID was provided.
-	 * @return the {@link EntityManager} that will be used.
-	 */
-	public EntityManager getEm() {
-		return this.em;
-	}
-
-	/**
-	 * Sets the entity manager to use in case an ID was provided. Only needed if an existing ID was provided.
-	 * @param em the {@link EntityManager} to be set.
-	 * @return the {@code this} object.
-	 */
-	public OpinionDocumentFactoryOptions setEm(EntityManager em) {
-		this.em = em;
 		return this;
 	}
 }

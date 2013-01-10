@@ -67,6 +67,24 @@ public class SetCoverControllerTest {
 	}
 
 	@Test
+	public void testClearClears() {
+		DocumentSetCover setCover;
+		try {
+			setCover = testController.create(new SetCoverFactoryOptions()
+				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not create set cover");
+			return;
+		}
+		
+		assertTrue(Iterables.size(setCover.getDocuments()) > 0);
+		testController.clear(setCover);
+		assertFalse(Iterables.size(setCover.getDocuments()) > 0);
+		assertFalse(Iterables.size(setCover.getTokenizingTags()) > 0);
+		assertNull(setCover.getWeightCoverage());
+	}
+	
+	@Test
 	public void testCreateWithTokenizingOptions() {
 		DocumentSetCover setCover;
 		try {

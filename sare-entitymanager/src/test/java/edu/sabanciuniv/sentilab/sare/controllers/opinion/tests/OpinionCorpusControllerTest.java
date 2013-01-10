@@ -46,7 +46,7 @@ public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 		testXmlCorpusFilename = "/test-corpus.xml";
 		testFactory = new OpinionCorpusFactory();
 		testCorpus = new OpinionCorpus();
-		testOptions = new OpinionCorpusFactoryOptions()
+		testOptions = (OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 			.setExistingId(testCorpus.getId())
 			.setEm(em);
 	}
@@ -67,10 +67,10 @@ public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 	public void testCreateWithNonExistingIdCreatesNewObject() {
 		UUID id = UUID.randomUUID();
 		testOptions
-			.setExistingId(id)
-			.setEm(em)
 			.setContent("some content")
-			.setFormat("txt");
+			.setFormat("txt")
+			.setExistingId(id)
+			.setEm(em);
 		OpinionCorpus actualCorpus = testFactory.create(testOptions);
 		assertNotNull(actualCorpus);
 		assertNotEquals(id, actualCorpus.getIdentifier());
