@@ -33,6 +33,12 @@ Sare = window.Sare = $.extend window.Sare,
   Helpers:
     MimeTypes:
       json: "application/json"
+    Guid: 
+      random: ->
+        "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace /[xy]/g, (c) ->
+          r = window.Math.random() * 16|0 
+          v = if c is "x" then r else (r & 0x3|0x8)
+          v.toString 16
 
 # function that pings the server repeatedly.
 ping = ->

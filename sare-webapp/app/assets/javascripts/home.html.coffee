@@ -27,9 +27,27 @@ Sare = window.Sare
 Page = Sare.Page
 Helpers = Sare.Helpers
 Selectors = Page.Selectors
+Selectors.contentContainer = "#ctr-content"
 Selectors.signonButton = "#btn-signon"
 Selectors.guestSignonButton = "#btn-guest"
 
 $ ->
-  $(Selectors.signonButton).tooltip()
-  $(Selectors.guestSignonButton).tooltip()
+  init = ->
+    $(Selectors.signonButton)
+      .tooltip()
+    $(Selectors.guestSignonButton)
+      .tooltip()
+
+  init()
+  
+  $(Selectors.contentContainer).on "click", Selectors.signonButton,
+    (e) ->
+      e.preventDefault()
+      
+  $(Selectors.contentContainer).on "click", Selectors.guestSignonButton,
+    (e) ->
+#      e.preventDefault()
+#      $(Selectors.guestSignonButton).tooltip "destroy"
+#      $(Selectors.contentContainer).loadHtml
+#        revert: init
+#        route: $(e.target).attr "href"
