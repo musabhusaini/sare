@@ -25,71 +25,15 @@ $ = window.jQuery
 jsRoutes = window.jsRoutes
 Sare = window.Sare
 Page = Sare.Page
+Widgets = Page.Widgets
 Selectors = Page.Selectors
 Strings = Page.Strings
-Methods = Page.Methods
 
 #define page constants
 Strings.moduleOutputDataKey = "output"
-Selectors.progressContainer = "#ctr-progress"
-Selectors.nextModuleButton = "#btn-next-module"
-
-# function to show the progress bar
-Methods.showProgress = ->
-  $(Selectors.progressContainer).show()
-
-# function to hide the progress bar
-Methods.hideProgress = ->
-  $(Selectors.progressContainer).hide()
-
-# function to set progress on the progress bar
-Methods.setProgress = (percent) ->
-  $(Selectors.progressContainer)
-    .children(".bar").first()
-      .css("width", percent + "%")
-
-progressSimData =
-  progress: 0
-  handler: null
-
-# function to simulate progress on the progress bar
-Methods.simulateProgress = (timeStep, progressStep) ->
-  timeStep = timeStep ? 100
-  progressStep = progressStep ? 10
-  Methods.showProgress()
-  progressSimData.progress = 0
-  simulator = ->
-    Methods.setProgress progressSimData.progress
-    if progressSimData.progress > 100
-      progressSimData.progress = 100
-    else if progressSimData.progress is 100
-      progressSimData.progress = 0
-    else progressSimData.progress += progressStep
-    progressSimData.handler = window.setTimeout simulator, timeStep
-  simulator()
-
-# function to stop progress simulation
-Methods.stopSimulatedProgress = ->
-  window.clearTimeout(progressSimData.handler) if progressSimData.handler?
-  Methods.setProgress 0
-  Methods.hideProgress()
+Selectors.moduleManagerContainer = "#ctr-module-manager"
 
 $ ->
-  Methods.hideProgress()
-  
-  previous = {}
-  $(Selectors.nextModuleButton)
-    .tooltip()
-    .click =>
-      output = JSON.stringify($(Selectors.nextModuleButton).data(Strings.moduleOutputDataKey) ? [])
-      if not previous.output? or output isnt previous.output
-        previous.output = output
-      else return
-      jsRoutes.controllers.ModuleController.options(output).ajax
-        success: (options) =>
-          menu = $(Selectors.nextModuleButton).siblings("ul.dropdown-menu").empty()
-          for option in options
-            item = $("<a>")
-              .attr("href", option.route)
-              .text(option.name)
-              .appendTo $("<li>").appendTo menu
+  Widgets.moduleManager = $.proxy $(Selectors.moduleManagerContainer).moduleManager, $(Selectors.moduleManagerContainer)
+  Widgets.moduleManager()
+  Widgets.moduleManager "option", "output", []

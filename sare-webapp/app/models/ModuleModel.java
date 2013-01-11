@@ -27,7 +27,7 @@ import models.base.ViewModel;
 public class ModuleModel extends ViewModel {
 
 	public String name;
-	public String route;
+	public String url;
 	public double relevancyScore;
 	
 	public ModuleModel(Module module) {
@@ -51,12 +51,12 @@ public class ModuleModel extends ViewModel {
 		return this;
 	}
 
-	public String getRoute() {
-		return route;
+	public String getUrl() {
+		return url;
 	}
 
-	public ModuleModel setRoute(String route) {
-		this.route = route;
+	public ModuleModel setUrl(String url) {
+		this.url = url;
 		return this;
 	}
 

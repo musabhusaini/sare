@@ -28,6 +28,7 @@ Sare = window.Sare = $.extend window.Sare,
     Configuration: {}
     Strings: {}
     Objects: {}
+    Widgets: {}
     Methods: {}
     Selectors: {}
   Helpers:

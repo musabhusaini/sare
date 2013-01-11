@@ -32,7 +32,6 @@ import org.apache.commons.lang3.*;
 import org.codehaus.jackson.*;
 import org.reflections.Reflections;
 
-import play.Logger;
 import play.Play;
 import play.libs.Json;
 
@@ -134,7 +133,6 @@ public class ViewModelFactory
 			return null;
 		}
 		
-		Logger.debug(availableViewModelClass.getName());
 		return Json.fromJson(json, availableViewModelClass);
 	}
 	

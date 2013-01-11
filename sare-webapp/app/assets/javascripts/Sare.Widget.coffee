@@ -32,18 +32,18 @@ class Sare.Widget extends $.Widget
   _changeInputState: (input, state) ->
     switch state
       when "enabled"
-        $(input)
+        @_$(input)
           .tooltip()
           .removeAttr "disabled"
       when "disabled"
-        $(input)
+        @_$(input)
           .tooltip("destroy")
           .attr "disabled", true
       when "loading"
-        $(input)
+        @_$(input)
           .tooltip("destroy")
           .button state
       when "reset"
-        $(input)
+        @_$(input)
           .tooltip()
           .button state

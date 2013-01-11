@@ -23,11 +23,9 @@ along with SARE. If not, see <http://www.gnu.org/licenses/>.
 $ = window.jQuery
 jsRoutes = window.jsRoutes
 JSON = window.JSON
-plupload = window.plupload
 Sare = window.Sare
 Page = Sare.Page
 Helpers = Sare.Helpers
-PageOptions = Page.Options
 Strings = Page.Strings
 Methods = Page.Methods
 Selectors = Page.Selectors
@@ -39,25 +37,6 @@ Selectors.documentListContainer = "#ctr-document-list"
 Selectors.documentList = "#lst-documents"
 Selectors.addDocumentButton = "#btn-add-doc"
 Selectors.deleteDocumentButton = "#btn-delete-doc"
-
-Document =
-  # document list, add, delete controls
-  Controls:
-    display: (corpus) ->
-      $(Selectors.documentList).empty()
-      if not corpus? or not corpus.id?
-        $(Selectors.addDocumentButton).attr "disabled", true
-        return $(Selectors.deleteDocumentButton).attr "disabled", true
-      
-      $(Selectors.addDocumentButton).removeAttr "disabled"
-      jsRoutes.controllers.DocumentsController.list(corpus.id).ajax
-        success: (uuids) =>
-          uuids ?= []
-          for uuid in uuids
-            $(Selectors.documentList).append $("<option>")
-              .val(uuid)
-              .text uuid
-            $(Selectors.documentList).val(uuid).change() if $(Selectors.documentList).children("option").length == 1
 
 $ ->
   $(Selectors.nextModuleButton).attr "disabled", true

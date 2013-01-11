@@ -33,9 +33,12 @@ import org.codehaus.jackson.node.*;
 import com.google.common.base.Function;
 import com.google.common.collect.*;
 
+import play.Logger;
+import play.api.templates.Html;
 import play.libs.Json;
 import play.mvc.*;
 import views.html.*;
+import views.html.tags.*;
 import models.base.*;
 import models.documentStore.PersistentDocumentStoreModel;
 import controllers.base.SareTransactionalAction;
@@ -56,7 +59,7 @@ public class CorpusModule extends Module {
 
 	@Override
 	public String getRoute(Iterable<ViewModel> viewModels) {
-		return controllers.modules.routes.CorpusModule.landingPage().url();
+		return controllers.modules.routes.CorpusModule.module(false).url();
 	}
 	
 	public static List<LinguisticProcessorInfo> getSupportedLanguages() {
@@ -75,7 +78,8 @@ public class CorpusModule extends Module {
 		return ok(jsonArray);
 	}
 	
-	public static Result landingPage() {
+	public static Result module(boolean partial) {
+		Logger.debug(partial + "");
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
 		List<String> uuids = docStoreController.getAllUuids(em(), getUsername());
 		List<PersistentDocumentStoreModel> stores = Lists.transform(uuids,
@@ -87,6 +91,17 @@ public class CorpusModule extends Module {
 				}
 			});
 		
-		return ok(corpusLanding.render(stores));
+		Html partialView = storeList.render(stores, true);
+		if (!partial) {
+			return ok(moduleView.render(partialView, null, null));
+		} else {
+			return ok(partialView);
+		}
+	}
+	
+	public static Result storeDetailsForm(String collection) {
+		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)createViewModel(
+			fetchResource(collection, PersistentDocumentStore.class));
+		return ok(storeDetails.render(viewModel, true));
 	}
 }

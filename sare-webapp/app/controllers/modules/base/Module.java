@@ -37,9 +37,5 @@ public abstract class Module extends Application {
 	
 	public abstract String getDisplayName();
 	
-	public boolean isPartiallyRendered() {
-		return false;
-	}
-	
 	public abstract String getRoute(Iterable<ViewModel> viewModels);
 }

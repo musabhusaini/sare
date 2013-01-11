@@ -36,11 +36,9 @@ import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import play.Play;
-import play.api.libs.ws.*;
-import play.api.templates.Html;
 import play.libs.Json;
 import play.mvc.*;
-import views.html.*;
+import views.html.moduleView;
 import controllers.base.*;
 import controllers.modules.base.Module;
 
@@ -121,16 +119,11 @@ public class ModuleController extends Application {
 				
 				// set the module view model properties and add.
 				ModuleModel moduleViewModel = new ModuleModel(module);
-				moduleViewModel.route = module.getRoute(usefulViewModels);
+				moduleViewModel.url = module.getRoute(usefulViewModels);
 				// let's not divide by zero!
 				moduleViewModel.relevancyScore = suppliedViewModels.size() != 0 ?
 					usefulViewModels.size() / (double)suppliedViewModels.size() : 1.0;
 
-				if (module.isPartiallyRendered()) {
-					moduleViewModel.route = routes.ModuleController.renderInPlace(
-						Json.stringify(moduleViewModel.asJson())).url();
-				}
-				
 				if (requiredViewModelClasses.size() > 0) {
 					modules.add(moduleViewModel);
 				} else {
@@ -161,25 +154,7 @@ public class ModuleController extends Application {
 		return ok(play.libs.Json.toJson(getNextModules(input)));
 	}
 	
-	public static Result nextPage(String input) {
-		List<ModuleModel> modules = getNextModules(input);
-		if (modules == null || modules.size() == 0) {
-			throw new IllegalArgumentException();
-		} else if (modules.size() == 1 && StringUtils.isNotEmpty(Iterables.getFirst(modules, null).getRoute())) {
-			return redirect(Iterables.getFirst(modules, null).getRoute());
-		}
-		
-		return ok(moduleSelection.render(getNextModules(input)));
-	}
-	
-	public static Result renderInPlace(String module) {
-		JsonNode moduleJson = Json.parse(module);
-		ModuleModel moduleViewModel = Json.fromJson(moduleJson, ModuleModel.class);
-		if (moduleViewModel == null || StringUtils.isEmpty(moduleViewModel.route)) {
-			throw new IllegalArgumentException();
-		}
-		
-		Response response = WS.url(moduleViewModel.route).get().value().get().get();
-		return ok(moduleView.render(new Html(response.body()), moduleViewModel, null, null));
+	public static Result landingPage() {
+		return ok(moduleView.render(null, null, null));
 	}
 }

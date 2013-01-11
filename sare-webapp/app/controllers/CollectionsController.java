@@ -31,7 +31,6 @@ import org.codehaus.jackson.JsonNode;
 import com.google.common.collect.Iterables;
 
 import models.documentStore.*;
-import play.Logger;
 import play.mvc.*;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -101,7 +100,6 @@ public class CollectionsController extends Application {
 		OpinionCorpusFactory corpusFactory = new OpinionCorpusFactory();
 		options.setOwnerId(SessionedAction.getUsername(ctx()));
 		OpinionCorpus corpus = corpusFactory.create(options);
-		Logger.debug(Iterables.getFirst(corpus.getDocuments(), new OpinionDocument()).getContent() + "");
 		if (em().contains(corpus)) {
 			for (PersistentObject obj : corpus.getDocuments()) {
 				if (em().contains(obj)) {

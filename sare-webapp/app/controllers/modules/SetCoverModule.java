@@ -21,8 +21,13 @@
 
 package controllers.modules;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+
+import play.mvc.Result;
 import models.base.ViewModel;
 import models.documentStore.PersistentDocumentStoreModel;
+import views.html.tags.*;
 import controllers.modules.base.Module;
 
 @Module.Requires(types={ PersistentDocumentStoreModel.class })
@@ -30,11 +35,22 @@ public class SetCoverModule extends Module {
 
 	@Override
 	public String getDisplayName() {
-		return "Reduction by set cover";
+		return "Reduce by set cover";
 	}
 
 	@Override
 	public String getRoute(Iterable<ViewModel> viewModels) {
-		return controllers.base.routes.Application.homePage().url();
+		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)Iterables.find(viewModels,
+			Predicates.instanceOf(PersistentDocumentStoreModel.class), null);
+		
+		if (viewModel == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		return controllers.modules.routes.SetCoverModule.module(viewModel.id, false).url();
+	}
+	
+	public static Result module(String collection, boolean partial) {
+		return ok(setcover.render());
 	}
 }
