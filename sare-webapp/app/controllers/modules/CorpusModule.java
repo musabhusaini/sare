@@ -34,10 +34,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.*;
 
 import play.Logger;
-import play.api.templates.Html;
 import play.libs.Json;
 import play.mvc.*;
-import views.html.*;
 import views.html.tags.*;
 import models.base.*;
 import models.documentStore.PersistentDocumentStoreModel;
@@ -91,12 +89,7 @@ public class CorpusModule extends Module {
 				}
 			});
 		
-		Html partialView = storeList.render(stores, true);
-		if (!partial) {
-			return ok(moduleView.render(partialView, null, null));
-		} else {
-			return ok(partialView);
-		}
+		return module(storeList.render(stores, true), partial);
 	}
 	
 	public static Result storeDetailsForm(String collection) {

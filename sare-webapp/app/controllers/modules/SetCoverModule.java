@@ -51,6 +51,6 @@ public class SetCoverModule extends Module {
 	}
 	
 	public static Result module(String collection, boolean partial) {
-		return ok(setcover.render());
+		return module(setcover.render(), partial);
 	}
 }

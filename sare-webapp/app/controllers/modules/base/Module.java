@@ -23,6 +23,10 @@ package controllers.modules.base;
 
 import java.lang.annotation.*;
 
+import play.api.templates.Html;
+import play.mvc.Result;
+import views.html.moduleView;
+
 import controllers.base.Application;
 
 import models.base.*;
@@ -33,6 +37,14 @@ public abstract class Module extends Application {
 	@Target({ElementType.TYPE})
 	public static @interface Requires {
 		public Class<? extends ViewModel>[] types() default {};
+	}
+	
+	protected static Result module(Html partialView, boolean partial) {
+		if (!partial) {
+			return ok(moduleView.render(partialView, null, null));
+		} else {
+			return ok(partialView);
+		}
 	}
 	
 	public abstract String getDisplayName();
