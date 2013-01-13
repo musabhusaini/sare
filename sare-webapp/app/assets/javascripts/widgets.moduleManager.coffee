@@ -25,23 +25,41 @@ Sare = window.Sare
 
 Math = window.Math
 history = window.history
+location = window.location
+localStorage = window.localStorage
 
 widget =
-  _browserState:
-    counter: 1 + Math.round Math.random()*1000
-    previous: {}
+  _getPrevState: ->
+    JSON.parse localStorage["previous"]
     
-  _generateBrowserState: (url) ->
-    uid: @_browserState.counter++
-    url: url
+  _updatePrevState: (state) ->
+    state = $.extend {
+      url: window.location.href
+    }, state
+    localStorage["previous"] = JSON.stringify state
+    state
+    
+  _getPageCounter: ->
+    counter = localStorage["counter"]
+    if counter?
+      counter = window.Number counter
+    counter ? 0
+    
+  _updatePageCounter: ->
+    counter = @_getPageCounter()
+    localStorage["counter"] = counter + 1
+    counter
+    
+  _generateBrowserState: ->
+    uid: @_updatePageCounter()
     
   _pushBrowserState: (module) ->
-    history.pushState state = @_generateBrowserState(module.url), module.name, module.url
-    @_browserState.previous = state
+    history.pushState state = @_generateBrowserState(), module.name, module.url
+    @_updatePrevState state
     
   _replaceBrowserState: (module) ->
-    history.replaceState state = @_generateBrowserState(module.url), module.name, module.url
-    @_browserState.previous = state
+    history.replaceState state = @_generateBrowserState(), module.name, module.url
+    @_updatePrevState state
     
   _forwardModules: null
   _backwardModules: null
@@ -78,6 +96,8 @@ widget =
     if @_currentModule?
       @_remove oldModule
       @_display @_currentModule
+    else
+      location.reload()
     @_currentModule
   
   _display: (module) ->
@@ -112,15 +132,13 @@ widget =
     @_forwardModules = []
     @_backwardModules = []
     
-    $(window).on "popstate", (e) =>
-      state = history.state
-      uid = state?.uid ? @_browserState.counter
-      if not @_browserState.previous.url? and not state?.url? and @_browserState.previous.uid isnt uid
-        window.location.reload()
-      else
-        @next() if uid > @_browserState.previous.uid
-        @previous() if uid < @_browserState.previous.uid
-      @_browserState.previous = state
+    window.addEventListener "popstate", (e) =>
+      state = e.state
+      uid = state?.uid
+      if uid?
+        @next() if uid > @_getPrevState()?.uid
+        @previous() if uid < @_getPrevState()?.uid
+        @_updatePrevState state
     
     module =
       url: null
