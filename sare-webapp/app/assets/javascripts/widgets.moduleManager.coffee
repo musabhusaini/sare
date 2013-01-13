@@ -88,6 +88,8 @@ widget =
     if @_currentModule?
       @_callModule oldModule, "disable"
       @_display @_currentModule
+    else
+      location.reload()
     @_currentModule
   
   previous: ->
