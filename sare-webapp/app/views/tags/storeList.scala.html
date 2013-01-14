@@ -23,8 +23,6 @@
 
 @import scala.util._
 
-@import play.libs._
-
 @defining(Random.nextInt(1000)) { uid =>
 <script src="@controllers.routes.Assets.at("javascripts/widgets.storeList.js")" type="text/javascript"></script>
 <script type="text/javascript">
@@ -45,15 +43,19 @@
 		<div class="modal-body">
 		</div>
 		<div class="modal-footer">
-			<button id="btn-apply-@uid" class="btn-apply btn btn-primary">Apply</button>
-	    	<button id="btn-close-@uid" class="btn-close btn" data-dismiss="modal">Close</button>
+			<button id="btn-apply-@uid" class="btn-apply btn btn-primary" data-loading-text="Updating...">
+				Apply
+			</button>
+	    	<button id="btn-close-@uid" class="btn-close btn" data-dismiss="modal">
+	    		Close
+	    	</button>
 		</div>
 	</div>
 	<form class="form-inline">
 		<label for="lst-store-@uid">Corpus:</label>
 		<select id="lst-store-@uid" class="lst-store span3" autofocus="autofocus" title="List of existing corpora" data-placement="top">
 			@for(store <- stores) {
-				<option value="@store.id" data-store="@Json.toJson(store)">
+				<option value="@store.id" data-store="@store.asJson()">
 					@if(store.title != null) {
 						@store.title
 					} else {

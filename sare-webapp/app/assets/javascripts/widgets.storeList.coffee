@@ -77,8 +77,23 @@ widget =
     @_on @_$(@options.detailsButton),
       click: (e) =>
         e.preventDefault()
-        @_$(@options.detailsModalContainer).modal
-          remote: @options.detailsFormRoute(@selected().data.id).url
+        @_$(@options.detailsModalContainer)
+          .modal
+            remote: @options.detailsFormRoute(@selected().data.id).url
+
+    # TODO: not working for some reason.
+    @_on @_$(@options.detailsModalContainer),
+      storeDetailsUpdate: (e, data) =>
+        { updatedStore } = data
+        if updatedStore? then @_updateListItem @selected().item, updatedStore
+       
+    @_on @_$(@options.detailsModalContainer),
+      hidden: =>
+        data = @_$(@options.innerFormContainer).data @options.dataKey
+        if data? then @_updateListItem @selected().item, data
+        @_$(@options.detailsModalContainer)
+          .find(".modal-body").empty().end()
+          .data "modal", null
     
     # handle delete store button click
     if @options.editable then @_on @_$(@options.deleteButton),
@@ -150,7 +165,8 @@ widget =
       list: ".lst-store"
       addButton: ".btn-add-store"
       detailsButton: ".btn-store-details"
-      detailsModalContainer: ".ctr-corpus-details"
+      detailsModalContainer: ".ctr-store-details"
+      innerFormContainer: ".ctr-store-details-inner"
       deleteButton: ".btn-delete-store"
       addRoute: jsRoutes.controllers.CollectionsController.create
       detailsFormRoute: jsRoutes.controllers.modules.CorpusModule.storeDetailsForm

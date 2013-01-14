@@ -77,7 +77,6 @@ public class CorpusModule extends Module {
 	}
 	
 	public static Result module(boolean partial) {
-		Logger.debug(partial + "");
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
 		List<String> uuids = docStoreController.getAllUuids(em(), getUsername());
 		List<PersistentDocumentStoreModel> stores = Lists.transform(uuids,
@@ -95,6 +94,7 @@ public class CorpusModule extends Module {
 	public static Result storeDetailsForm(String collection) {
 		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)createViewModel(
 			fetchResource(collection, PersistentDocumentStore.class));
+		Logger.debug(viewModel.asJson() + "");
 		return ok(storeDetails.render(viewModel, true));
 	}
 }

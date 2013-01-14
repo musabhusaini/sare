@@ -67,7 +67,7 @@ widget =
       file_data_name: @options.filenameKey
       max_file_size: "10mb"
       max_file_count: @options.uploadFileCount
-      url: jsRoutes.controllers.CollectionsController.create().url
+      url: @options.createRoute().url
   
     defaults =
       text: @options.dropFileMessage
@@ -117,9 +117,7 @@ widget =
         .tooltip("destroy")
         .tooltip
           title: @options.dropFileTip
-      selected = @selected()
       store = JSON.parse response.response
-      @_updateListItem selected.item, store
       @_trigger "fileUpload", up,
         file: file
         data: store
@@ -141,71 +139,17 @@ widget =
     @_uploader = null
 
   _create: ->
+    if not @options.store?
+      @options.store = @_$(@options.innerContainer).data @options.dataKey
     @options.editable ?= not not @_$(@options.addButton).length
-    
-    # handle add button click
-    if @options.editable then @_on @_$(@options.addButton),
-      click: (e) =>
-        @_changeInputState @_$(@options.addButton), "loading"
-        @options.addRoute().ajax
-          contentType: Helpers.MimeTypes.json
-          data: JSON.stringify
-            content: ""
-            format: "text"
-          success: (store) =>
-            @_updateListItem(option = $("<option>"), store)
-            @_$(@options.list)
-              .append(option)
-              .val(store.id)
-              .change()
-            @_$(@options.titleInput).focus() if @options.editable
-            @_trigger "itemAdd", e,
-              item: option
-              data: store
-          complete: =>
-            @_changeInputState @_$(@options.addButton), "reset"
-    
-    # handle delete store button click
-    if @options.editable then @_on @_$(@options.deleteButton),
-      click: (e) =>
-        selected = @selected()
-        @_changeInputState @_$(@options.deleteButton), "loading"
-        if selected.data? then @options.deleteRoute(selected.data.id).ajax
-          success: (store) =>
-            next = $(selected.item).next()
-            next = $(selected.item).prev() if not next.length
-            @_$(@options.list)
-              .val $(next).data(@options.dataKey)?.id
-            @_$(@options.list)
-              .change()
-            $(selected.item).remove()
-            @_trigger "itemRemove", e,
-              item: selected.item
-              data: store
-          complete: =>
-            @_changeInputState @_$(@options.deleteButton), "reset"
-            # button reset sets a timeout to enables the button, so this makes sure it's disabled, if necessary
-            window.setTimeout(=>
-              @_$(@options.list).change()
-            , 0)
-      
-    # handle store list selection change
-    @_on @_$(@options.list),
-      change: (e) =>
-        selected = @selected()
-        @_form "populate", selected.data
-        @_form if selected.data? then "enabled" else "disabled"
-        @_changeInputState @_$(@options.deleteButton),
-          if selected.data? and @options.editable then "enabled" else "disabled"
-        @_trigger "selectionChange", e, selected
-    
+        
     # handle update button click
     if @options.editable then @_on @_$(@options.updateButton),
       click: (e) =>
-        selected = @selected()
         updateStore = (store, updatedStore) =>
           triggerEvent = =>
-            @_trigger "itemUpdate", e,
+            @_$(@options.innerContainer).data @options.dataKey, @options.store = updatedStore
+            @_trigger "update", e,
               data: store
               updatedData: updatedStore
 
@@ -229,46 +173,46 @@ widget =
               contentType: Helpers.MimeTypes.json
               data: JSON.stringify updateOptions
               success: (updatedStore) =>
-                @_updateListItem selected.item, updatedStore
                 triggerEvent()
               complete: =>
                 @_changeInputState @_$(@options.updateButton), "reset"
           else
-            @_updateListItem selected.item, updatedStore
             @_form "populate", updatedStore
             @_changeInputState @_$(@options.updateButton), "reset"
             triggerEvent()
         
         @_changeInputState @_$(@options.updateButton), "loading"
         if @_uploader?.files.length
-          @_uploader.settings.url = jsRoutes.controllers.CollectionsController.update(selected.data?.id).url
+          @_uploader.settings.url = @options.updateRoute(@options.store?.id).url
           uploadComplete = (up, file, response) =>
             updatedStore = JSON.parse response.response
             @_uploader.unbind "FileUploaded", uploadComplete
-            updateStore selected.data, updatedStore
+            updateStore @options.store, updatedStore
           @_uploader.bind "FileUploaded", uploadComplete
           @_uploader.start()
-        else updateStore selected.data
+        else updateStore @options.store
         
         e.preventDefault()
-
-    @_changeInputState @_$(@options.deleteButton), "disabled"
-    @_changeInputState @_$(@options.addButton), if @options.editable then "enabled" else "disabled"
-    @_form "disabled"
     
-    @_$(@options.list).tooltip()
+    @_on ".modal",
+      hidden: =>
+        @destroy()
+    
+    if @options.editable and @options.store?
+      @_form "enabled"
+      @_changeInputState @_$(@options.updateButton), "enabled"
+    else
+      @_form "disabled"
+      @_changeInputState @_$(@options.updateButton), "disabled"
+    
+    if @options.store?
+      @_form "populate", @options.store
+    
     @_$(@options.titleInput).tooltip()
     @_$(@options.descriptionInput).tooltip()
     @_$(@options.languageList).tooltip()
     @_$(@options.browseButton).tooltip()
     
-    # select the first store, if any
-    firstItem = @_$(@options.list).children("option:first")
-    if firstItem.length
-      @_$(@options.list)
-        .val($(firstItem).data(@options.dataKey)?.id)
-        .change()
-  
   _destroy: ->
     @_$(@options.titleInput).tooltip "destroy"
     @_$(@options.descriptionInput).tooltip "destroy"
@@ -278,15 +222,18 @@ widget =
     @_$(@options.updateButton).tooltip "destroy"
     
   _getCreateOptions: ->
+      innerContainer: ".ctr-store-details-inner"
       titleInput: ".input-store-title"
       descriptionInput: ".input-store-desc"
       languageList: ".lst-store-language"
       uploadContainer: ".ctr-store-upload"
       dropFileContainer: ".ctr-store-dropfile"
       browseButton: ".btn-store-browse"
-      updateButton: ".btn-store-update"
+      updateButton: ".btn-apply"
+      createRoute: jsRoutes.controllers.CollectionsController.create
       updateRoute: jsRoutes.controllers.CollectionsController.update
       uploadFileCount: 1
+      dataKey: "store"
       filenameKey: "corpus"
       uploadFileMessage: "Upload file"
       dropFileMessage: "Drop file or browse"
