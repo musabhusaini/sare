@@ -41,7 +41,8 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 @Entity
 @DiscriminatorValue("setcover-corpus")
 public class DocumentSetCover
-	extends DocumentCorpus {
+	extends DocumentCorpus
+	implements IDerivedStore {
 
 	/**
 	 * 
