@@ -81,7 +81,7 @@ widget =
           .modal
             remote: @options.detailsFormRoute(@selected().data.id).url
 
-    # TODO: not working for some reason.
+    # TODO: not working for some reason. fix it!
     @_on @_$(@options.detailsModalContainer),
       storeDetailsUpdate: (e, data) =>
         { updatedStore } = data
