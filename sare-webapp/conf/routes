@@ -55,7 +55,7 @@ GET		/view/modules						controllers.ModuleController.landingPage()
 GET		/view/modules/corpus					controllers.modules.CorpusModule.module(partial: Boolean ?= false)
 GET		/view/modules/corpus/:collection/form	controllers.modules.CorpusModule.storeDetailsForm(collection: String)
 
-GET		/view/modules/setcover/:collection		controllers.modules.SetCoverModule.module(collection: String, partial: Boolean ?= false)
+GET		/view/modules/reduction/:collection		controllers.modules.SetCoverModule.module(collection: String, partial: Boolean ?= false)
 
 # Support queries
 GET		/api/support/languages		controllers.modules.CorpusModule.supportedLanguages()

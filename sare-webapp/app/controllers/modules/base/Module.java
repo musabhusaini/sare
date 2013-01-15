@@ -50,4 +50,8 @@ public abstract class Module extends Application {
 	public abstract String getDisplayName();
 	
 	public abstract String getRoute(Iterable<ViewModel> viewModels);
+	
+	public boolean canPartiallyRender() {
+		return true;
+	}
 }
