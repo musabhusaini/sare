@@ -37,15 +37,17 @@ widget =
           .tooltip "destroy"
         @_destroyUploader()
       when "enabled"
-        if @options.editable
-          @_changeInputState @_$(input), "enabled" for input in @_form "inputs"
+        @_changeInputState @_$(input), "enabled" for input in @_form "inputs"
+        if not @options.isDerived
           @_$(@options.dropFileContainer)
             .text(@options.dropFileMessage)
             .tooltip
               title: @options.dropFileTip
           @_createUploader()
       when "inputs"
-        [ @options.titleInput, @options.descriptionInput, @options.languageList, @options.browseButton ]
+        inputs = [ @options.titleInput, @options.descriptionInput, @options.languageList ]
+        inputs.push(@options.browseButton) if not @options.isDerived
+        inputs
       when "populate"
         @_$(@options.titleInput).val data?.title
         @_$(@options.descriptionInput).val data?.description
@@ -54,9 +56,25 @@ widget =
 
   _uploader: null
   
+  _getUpdated: (store) ->
+    store ?= @options.store 
+    { title, description, language } = updatedStore = {
+      title: @_$(@options.titleInput).val()
+      description: @_$(@options.descriptionInput).val()
+      language: @_$(@options.languageList).val()
+    }
+    
+    updated = no
+    updated = yes if title and title isnt store?.title
+    updated = yes if description and description isnt store?.description
+    updated = yes if language and language isnt store?.language
+    updated = yes if not @options.isDerived and @_uploader?.files?.length
+
+    return if updated then $.extend(store, updatedStore) else updated
+    
   # function to set up the uploader and start it
   _createUploader: ->
-    return null if @_uploader?
+    return null if @_uploader? or @options.isDerived
     
     # initialize the uploader
     uploader = @_uploader = new plupload.Uploader
@@ -139,12 +157,11 @@ widget =
     @_uploader = null
 
   _create: ->
-    if not @options.store?
-      @options.store = @_$(@options.innerContainer).data @options.dataKey
-    @options.editable ?= not not @_$(@options.addButton).length
+    @options.store ?= @_$(@options.innerContainer).data @options.dataKey
+    @options.isDerived ?= not @_$(@options.browseButton).length
         
     # handle update button click
-    if @options.editable then @_on @_$(@options.updateButton),
+    @_on @_$(@options.updateButton),
       click: (e) =>
         updateStore = (store, updatedStore) =>
           triggerEvent = =>
@@ -152,23 +169,17 @@ widget =
             @_trigger "update", e,
               data: store
               updatedData: updatedStore
+          
+          updated = @_getUpdated store
+          if not not updated
+            updatedStore = updatedStore ? store
+            updateOptions = updatedStore
+            updateOptions.title = updated.title
+            updateOptions.description = updated.description
+            updateOptions.language = updated.language
+            updateOptions =
+              details: updateOptions
 
-          [ title, description, language ] = [
-            @_$(@options.titleInput).val()
-            @_$(@options.descriptionInput).val()
-            @_$(@options.languageList).val()
-          ]
-          
-          updatedStore = updatedStore ? store
-          updated = no
-          updateOptions = updatedStore
-          updateOptions.title = (updated = yes; title) if title and title isnt store.title
-          updateOptions.description = (updated = yes; description) if description and description isnt store.description
-          updateOptions.language = (updated = yes; language) if language and language isnt store.language
-          updateOptions =
-            details: updateOptions
-          
-          if updated
             @options.updateRoute(updatedStore.id).ajax
               contentType: Helpers.MimeTypes.json
               data: JSON.stringify updateOptions
@@ -177,12 +188,13 @@ widget =
               complete: =>
                 @_changeInputState @_$(@options.updateButton), "reset"
           else
-            @_form "populate", updatedStore
             @_changeInputState @_$(@options.updateButton), "reset"
-            triggerEvent()
+            if updatedStore?
+              @_form "populate", updatedStore
+              triggerEvent()
         
         @_changeInputState @_$(@options.updateButton), "loading"
-        if @_uploader?.files.length
+        if not @options.isDerived and @_uploader?.files.length
           @_uploader.settings.url = @options.updateRoute(@options.store?.id).url
           uploadComplete = (up, file, response) =>
             updatedStore = JSON.parse response.response
@@ -193,12 +205,12 @@ widget =
         else updateStore @options.store
         
         e.preventDefault()
-    
-    @_on ".modal",
+        
+    @_on @_$(".modal"),
       hidden: =>
         @destroy()
     
-    if @options.editable and @options.store?
+    if @options.store?
       @_form "enabled"
       @_changeInputState @_$(@options.updateButton), "enabled"
     else
@@ -223,6 +235,7 @@ widget =
     
   _getCreateOptions: ->
       innerContainer: ".ctr-store-details-inner"
+      detailsForm: ".frm-details"
       titleInput: ".input-store-title"
       descriptionInput: ".input-store-desc"
       languageList: ".lst-store-language"
