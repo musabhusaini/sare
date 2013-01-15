@@ -108,57 +108,63 @@
 			</div>
 		</div>
 
-		@if(showPageHeader) {
-			<div class="container-fluid page-header-container">
-				<div class="row-fluid page-header">
-					<div class="offset@((12-contentWidth)/2) span@contentWidth">
-						<h1>Sentilab Sare</h1>
-						<p class="lead">
-							A Sentiment Analysis Research Environment
-						</p>
+		<div id="wrap">
+			@if(showPageHeader) {
+				<div class="container-fluid page-header-container">
+					<div class="row-fluid page-header">
+						<div class="offset@((12-contentWidth)/2) span@contentWidth">
+							<h1>Sentilab Sare</h1>
+							<p class="lead">
+								A Sentiment Analysis Research Environment
+							</p>
+						</div>
+					</div>
+				</div>
+			}
+	
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<div class="span@((12-contentWidth)/2) leftbar">
+						@leftbar
+					</div>
+					
+					<div class="span@contentWidth centerbody">
+						@content
+					</div>
+					
+					<div class="span@((12-contentWidth)/2) rightbar">
+						@rightbar
 					</div>
 				</div>
 			</div>
-		}
-
-		<div class="container-fluid">
-			<div class="row-fluid">
-				<div class="span@((12-contentWidth)/2) leftbar">
-					@leftbar
-				</div>
-				
-				<div class="span@contentWidth centerbody">
-					@content
-				</div>
-				
-				<div class="span@((12-contentWidth)/2) rightbar">
-					@rightbar
-				</div>
-			</div>
+			
+			<div id="push"></div>
 		</div>
 		
-		<footer class="container-fluid">
-			<div class="row-fluid">
-				<div class="offset@((12-contentWidth)/2) span@contentWidth">
-					<p>
-						Copyright &copy; <a href="http://www.sabanciuniv.edu" target="_blank">Sabanc&#305; University</a> 2013.
-						All rights reserved.
-					</p>
-					<p>
-						A <a href="http://www.sentilab.sabanciuniv.edu" target="_blank">Sabanc&#305; Sentilab</a> project.
-					</p>
-					<p>
-						Source code is available under <a href="http://www.gnu.org/licenses/gpl-3.0.html.en" target="_blank">GNU GPL v3.0</a>
-						from <a href="https://bitbucket.org/musabhusaini/sare" target="_blank">Bitbucket</a>.
-					</p>
-					<ul class="footer-links">
-						<li>
-							<a href="#">About</a>
-						</li>
-						<li>
-							<a href="#">Contact</a>
-						</li>
-					</ul>
+		<footer>
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<div class="offset@((12-contentWidth)/2) span@contentWidth">
+						<p>
+							Copyright &copy; <a href="http://www.sabanciuniv.edu" target="_blank">Sabanc&#305; University</a> 2013.
+							All rights reserved.
+						</p>
+						<p>
+							A <a href="http://www.sentilab.sabanciuniv.edu" target="_blank">Sabanc&#305; Sentilab</a> project.
+						</p>
+						<p>
+							Source code is available under <a href="http://www.gnu.org/licenses/gpl-3.0.html.en" target="_blank">GNU GPL v3.0</a>
+							from <a href="https://bitbucket.org/musabhusaini/sare" target="_blank">Bitbucket</a>.
+						</p>
+						<ul class="footer-links">
+							<li>
+								<a href="#">About</a>
+							</li>
+							<li>
+								<a href="#">Contact</a>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</footer>
