@@ -35,7 +35,7 @@ public class SetCoverModule extends Module {
 
 	@Override
 	public String getDisplayName() {
-		return "Reduce by set cover";
+		return "Reduce";
 	}
 
 	@Override
