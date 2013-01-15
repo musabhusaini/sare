@@ -44,10 +44,10 @@
 		</div>
 		<div class="modal-footer">
 			<button id="btn-apply-@uid" class="btn-apply btn btn-primary" data-loading-text="Updating...">
-				Apply
+				<i class="icon-ok"></i> Apply
 			</button>
 	    	<button id="btn-close-@uid" class="btn-close btn" data-dismiss="modal">
-	    		Close
+	    		<i class="icon-remove"></i> Close
 	    	</button>
 		</div>
 	</div>
@@ -66,15 +66,15 @@
 		</select>
 		@if(editable) {
 			<button type="submit" id="btn-add-store-@uid" class="btn-add-store btn btn-primary" title="Add a new corpus" data-placement="top" data-loading-text="Adding...">
-				Add
+				<i class="icon-plus"></i> Add
 			</button>
 		}
 		<button id="btn-store-details-@uid" class="btn-store-details btn btn-info" title="More details about this corpus" data-placement="top">
-			More...
+			<i class="icon-asterisk"></i> More...
 		</button>
 		@if(editable) {
 			<button id="btn-delete-store-@uid" class="btn-delete-store btn btn-warning" title="Delete this corpus" data-placement="top" data-loading-text="Deleting...">
-				Delete
+				<i class="icon-trash"></i> Delete
 			</button>
 		}
 	</form>

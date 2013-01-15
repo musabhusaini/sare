@@ -68,6 +68,7 @@ widget =
               .append(option)
               .val(store.id)
               .change()
+            @_$(@options.detailsButton).click()
             @_trigger "itemAdd", e,
               item: option
               data: store
