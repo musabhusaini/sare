@@ -53,6 +53,7 @@ widget =
         @_$(@options.descriptionInput).val data?.description
         if data?.language
           @_$(@options.languageList).val data.language
+        @_$(@options.sizeText).val data?.size
 
   _uploader: null
   
@@ -174,8 +175,9 @@ widget =
     # applies changes to the store.
     applyStoreChanges = (e, callback) =>
       updateStore = (store, updatedStore) =>
-        triggerEvent = (updatedStore) =>
+        finalizeUpdate = (updatedStore) =>
           @_$(@options.innerContainer).data @options.dataKey, @options.store = updatedStore
+          @_form "populate", updatedStore
           callback?()
           @_trigger "update", e,
             data: store
@@ -195,15 +197,14 @@ widget =
             contentType: Helpers.MimeTypes.json
             data: JSON.stringify updateOptions
             success: (updatedStore) =>
-              triggerEvent(updatedStore)
+              finalizeUpdate(updatedStore)
             complete: =>
               @_changeInputState @_$(@options.updateButton), "reset"
               @_fixButtons()
         else
           @_changeInputState @_$(@options.updateButton), "reset"
           if updatedStore?
-            @_form "populate", updatedStore
-            triggerEvent(updatedStore)
+            finalizeUpdate(updatedStore)
             @_fixButtons()
       
       @_changeInputState @_$(@options.updateButton), "loading"
@@ -311,6 +312,7 @@ widget =
       titleInput: ".input-store-title"
       descriptionInput: ".input-store-desc"
       languageList: ".lst-store-language"
+      sizeText: ".txt-store-size"
       uploadContainer: ".ctr-store-upload"
       dropFileContainer: ".ctr-store-dropfile"
       browseButton: ".btn-store-browse"

@@ -57,13 +57,20 @@
 			<input id="input-store-desc-@uid" type="text" class="input-store-desc span8" value="@store.description"
 				placeholder="Describe it" title="Brief description of the corpus" />
 			<div class="row-fluid">
-				<label for="lst-store-language-@uid">Corpus language</label>
-				<select id="lst-store-language-@uid" class="lst-store-language input-small" value="@store.language"
-					title="Language of the corpus">
-					@for(language <- CorpusModule.getSupportedLanguages()) {
-					<option value="@language.languageCode()">@language.languageName()</option>
-					}
-				</select>
+				<div class="span6">
+					<label for="lst-store-language-@uid">Corpus language</label>
+					<select id="lst-store-language-@uid" class="lst-store-language span6" value="@store.language"
+						title="Language of the corpus">
+						@for(language <- CorpusModule.getSupportedLanguages()) {
+						<option value="@language.languageCode()">@language.languageName()</option>
+						}
+					</select>
+				</div>
+				<div class="span2">
+					<label for="txt-store-size-@uid">Size</label>
+					<input id="txt-store-size-@uid" type="text" class="txt-store-size span12" disabled="disabled"
+						value="@store.size" placeholder="0" title="Total number of documents currently in this corpus" />
+				</div>
 			</div>
 			@if(!isDerived) {
 			<div id="ctr-store-upload-@uid" class="ctr-store-upload">

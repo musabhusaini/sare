@@ -29,7 +29,7 @@ location = window.location
 localStorage = window.localStorage
 
 widget =
-  _getPrevState: ->
+  _prevState: ->
     JSON.parse localStorage["previous"]
     
   _updatePrevState: (state) ->
@@ -39,14 +39,14 @@ widget =
     localStorage["previous"] = JSON.stringify state
     state
     
-  _getPageCounter: ->
+  _pageCounter: ->
     counter = localStorage["counter"]
     if counter?
       counter = window.Number counter
     counter ? 0
     
   _updatePageCounter: ->
-    counter = @_getPageCounter()
+    counter = @_pageCounter()
     localStorage["counter"] = counter + 1
     counter
     
@@ -64,6 +64,12 @@ widget =
   _forwardModules: null
   _backwardModules: null
   _currentModule: null
+  
+  modules: ->
+    back = @_backwardModules ? []
+    current = if @_currentModule? then [ @_currentModules ] else []
+    next = @_forwardModules ? []
+    back.concat current, next
   
   replace: (module, noDisplay) ->
     return null if not module? or typeof module isnt "object"
@@ -142,8 +148,8 @@ widget =
       state = e.state
       uid = state?.uid
       if uid?
-        @next() if uid > @_getPrevState()?.uid
-        @previous() if uid < @_getPrevState()?.uid
+        @next() if uid > @_prevState()?.uid
+        @previous() if uid < @_prevState()?.uid
         @_updatePrevState state
     
     module =
