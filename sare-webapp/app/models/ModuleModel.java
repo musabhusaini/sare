@@ -28,6 +28,7 @@ public class ModuleModel extends ViewModel {
 
 	public String name;
 	public String url;
+	public boolean canPartiallyRender;
 	public double relevancyScore;
 	
 	public ModuleModel(Module module) {
@@ -57,6 +58,15 @@ public class ModuleModel extends ViewModel {
 
 	public ModuleModel setUrl(String url) {
 		this.url = url;
+		return this;
+	}
+	
+	public boolean getCanPartiallRender() {
+		return this.canPartiallyRender;
+	}
+	
+	public ModuleModel setCanPartiallyRender(boolean canPartiallyRender) {
+		this.canPartiallyRender = canPartiallyRender;
 		return this;
 	}
 

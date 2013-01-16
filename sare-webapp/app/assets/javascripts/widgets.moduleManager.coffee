@@ -108,6 +108,10 @@ widget =
     else
       @option "output", null
       
+    if not module.canPartiallyRender and module.url?
+      location.href = module.url
+      return
+      
     if module.target? and @_$(@options.contentContainer).has($(module.target)).length
       @_callModule module, "refresh"
       return @_callModule module, "enable"

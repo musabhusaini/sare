@@ -120,6 +120,7 @@ public class ModuleController extends Application {
 				// set the module view model properties and add.
 				ModuleModel moduleViewModel = new ModuleModel(module);
 				moduleViewModel.url = module.getRoute(usefulViewModels);
+				moduleViewModel.canPartiallyRender = module.canPartiallyRender();
 				// let's not divide by zero!
 				moduleViewModel.relevancyScore = suppliedViewModels.size() != 0 ?
 					usefulViewModels.size() / (double)suppliedViewModels.size() : 1.0;
