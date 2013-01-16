@@ -54,3 +54,14 @@ delayedPing = ->
 # start pinging
 if Sare.Configuration.pingTimeout isnt 0
   delayedPing()
+
+fixWindowHeight = ->
+  $("body")
+    .css("height", "100%")
+    .height($("body").height() - 82)
+
+$(window).resize ->
+  fixWindowHeight()
+
+$ ->
+  fixWindowHeight()
