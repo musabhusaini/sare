@@ -43,10 +43,16 @@
 		<div class="modal-body">
 		</div>
 		<div class="modal-footer">
-			<button id="btn-apply-@uid" class="btn-apply btn btn-primary" data-loading-text="Updating...">
-				<i class="icon-ok"></i> Apply
+			<button id="btn-ok-@uid" class="btn-ok btn btn-primary" data-loading-text="Updating..." title="Save and close">
+				<i class="icon-ok"></i> OK
 			</button>
-	    	<button id="btn-close-@uid" class="btn-close btn" data-dismiss="modal">
+			<button id="btn-apply-@uid" class="btn-apply btn btn-primary" data-loading-text="Updating..." title="Save changes">
+				<i class="icon-pencil"></i> Apply
+			</button>
+			<button id="btn-reset-@uid" class="btn-reset btn" title="Revert changes">
+				<i class="icon-repeat"></i> Reset
+			</button>
+	    	<button id="btn-close-@uid" class="btn-close btn" data-dismiss="modal" title="Close this dialog">
 	    		<i class="icon-remove"></i> Close
 	    	</button>
 		</div>

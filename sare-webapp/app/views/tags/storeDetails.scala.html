@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(store: documentStore.PersistentDocumentStoreModel, editable: Boolean = true)
+@(store: documentStore.PersistentDocumentStoreModel, isDerived: Boolean = false)
 
 @import scala.util._
 
@@ -33,7 +33,7 @@
 	(function(window, $) {
 		$(function() {
 			$("#ctr-store-details-inner-@uid").closest(".ctr-store-details").storeDetails({
-				editable: @editable
+				isDerived: @isDerived
 			});
 		});
 	})(window, window.jQuery);
@@ -48,24 +48,24 @@
 			<a>Document</a>
 		</li>
 	</ul>
-	<form>
+	<form class="frm-details">
 		<fieldset>
 			<label for="input-store-title-@uid">Title</label>
 			<input id="input-store-title-@uid" type="text" class="input-store-title span5" value="@store.title"
-				@if(!editable) { disabled="disabled" } placeholder="Give this corpus a title" title="Title of the corpus" />
+				placeholder="Give this corpus a title" title="Title of the corpus" />
 			<label for="input-store-desc-@uid">Description</label>
 			<input id="input-store-desc-@uid" type="text" class="input-store-desc span8" value="@store.description"
-				@if(!editable) { disabled="disabled" } placeholder="Describe it" title="Brief description of the corpus" />
+				placeholder="Describe it" title="Brief description of the corpus" />
 			<div class="row-fluid">
 				<label for="lst-store-language-@uid">Corpus language</label>
 				<select id="lst-store-language-@uid" class="lst-store-language input-small" value="@store.language"
-					@if(!editable) { disabled="disabled" } title="Language of the corpus">
+					title="Language of the corpus">
 					@for(language <- CorpusModule.getSupportedLanguages()) {
 					<option value="@language.languageCode()">@language.languageName()</option>
 					}
 				</select>
 			</div>
-			@if(editable) {
+			@if(!isDerived) {
 			<div id="ctr-store-upload-@uid" class="ctr-store-upload">
 				<div class="row-fluid">
 					<div id="ctr-store-dropfile-@uid" class="ctr-store-dropfile span8 well well-small"></div>

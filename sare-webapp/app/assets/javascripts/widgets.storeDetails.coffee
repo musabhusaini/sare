@@ -37,15 +37,17 @@ widget =
           .tooltip "destroy"
         @_destroyUploader()
       when "enabled"
-        if @options.editable
-          @_changeInputState @_$(input), "enabled" for input in @_form "inputs"
+        @_changeInputState @_$(input), "enabled" for input in @_form "inputs"
+        if not @options.isDerived
           @_$(@options.dropFileContainer)
             .text(@options.dropFileMessage)
             .tooltip
               title: @options.dropFileTip
           @_createUploader()
       when "inputs"
-        [ @options.titleInput, @options.descriptionInput, @options.languageList, @options.browseButton ]
+        inputs = [ @options.titleInput, @options.descriptionInput, @options.languageList ]
+        inputs.push(@options.browseButton) if not @options.isDerived
+        inputs
       when "populate"
         @_$(@options.titleInput).val data?.title
         @_$(@options.descriptionInput).val data?.description
@@ -54,9 +56,25 @@ widget =
 
   _uploader: null
   
+  _getUpdated: (store) ->
+    store ?= @options.store 
+    { title, description, language } = updatedStore = {
+      title: @_$(@options.titleInput).val()
+      description: @_$(@options.descriptionInput).val()
+      language: @_$(@options.languageList).val()
+    }
+    
+    updated = no
+    updated = yes if title and title isnt store?.title
+    updated = yes if description and description isnt store?.description
+    updated = yes if language and language isnt store?.language
+    updated = yes if not @options.isDerived and @_uploader?.files?.length
+
+    return if updated then $.extend({}, store, updatedStore) else updated
+    
   # function to set up the uploader and start it
   _createUploader: ->
-    return null if @_uploader?
+    return null if @_uploader? or @options.isDerived
     
     # initialize the uploader
     uploader = @_uploader = new plupload.Uploader
@@ -96,18 +114,20 @@ widget =
           .tooltip("destroy")
           .tooltip
             title: @options.filenameTip
-        #@_changeInputState @_$(@options.updateButton), "enabled"
+        @_fixButtons()
     
     uploader.bind "UploadProgress", (up, file) =>
       if file.percent
         @_trigger "uploadProgress", up, file
   
     uploader.bind "Error", (up, error) =>
+      up.removeFile file for file in up.files
       @_$(@options.dropFileContainer)
         .text(@options.uploadFailedMessage)
         .tooltip("destroy")
         .tooltip
           title: @options.dropFileTip
+      @_fixButtons()
       @_trigger "uploadError", up, error
   
     uploader.bind "FileUploaded", (up, file, response) =>
@@ -124,6 +144,7 @@ widget =
     
     uploader.bind "UploadComplete", (up, files) =>
       @_trigger "uploadComplete", up, files
+      @_fixButtons()
     
     if uploader.runtime is "html5"
       @_$(@options.dropFileContainer).on "dragenter", dragenter
@@ -135,101 +156,168 @@ widget =
 
   _destroyUploader: ->
     @_uploader?.stop()
-    @_uploader?.destroy()
+    #@_uploader?.destroy()
     @_uploader = null
 
-  _create: ->
-    if not @options.store?
-      @options.store = @_$(@options.innerContainer).data @options.dataKey
-    @options.editable ?= not not @_$(@options.addButton).length
-        
-    # handle update button click
-    if @options.editable then @_on @_$(@options.updateButton),
-      click: (e) =>
-        updateStore = (store, updatedStore) =>
-          triggerEvent = =>
-            @_$(@options.innerContainer).data @options.dataKey, @options.store = updatedStore
-            @_trigger "update", e,
-              data: store
-              updatedData: updatedStore
+  _fixButtons: ->
+    # delay execution so that this happens at the end.
+    window.setTimeout =>
+      for input in [ @options.updateButton, @options.resetButton ]
+        @_changeInputState @_$(input), if not not @_getUpdated() then "enabled" else "disabled"
+    , 0
+    return true
 
-          [ title, description, language ] = [
-            @_$(@options.titleInput).val()
-            @_$(@options.descriptionInput).val()
-            @_$(@options.languageList).val()
-          ]
-          
+  _create: ->
+    @options.store ?= @_$(@options.innerContainer).data @options.dataKey
+    @options.isDerived ?= not @_$(@options.browseButton).length
+
+    # applies changes to the store.
+    applyStoreChanges = (e, callback) =>
+      updateStore = (store, updatedStore) =>
+        triggerEvent = (updatedStore) =>
+          @_$(@options.innerContainer).data @options.dataKey, @options.store = updatedStore
+          callback?()
+          @_trigger "update", e,
+            data: store
+            updatedData: updatedStore
+        
+        updated = @_getUpdated store
+        if not not updated
           updatedStore = updatedStore ? store
-          updated = no
           updateOptions = updatedStore
-          updateOptions.title = (updated = yes; title) if title and title isnt store.title
-          updateOptions.description = (updated = yes; description) if description and description isnt store.description
-          updateOptions.language = (updated = yes; language) if language and language isnt store.language
+          updateOptions.title = updated.title
+          updateOptions.description = updated.description
+          updateOptions.language = updated.language
           updateOptions =
             details: updateOptions
-          
-          if updated
-            @options.updateRoute(updatedStore.id).ajax
-              contentType: Helpers.MimeTypes.json
-              data: JSON.stringify updateOptions
-              success: (updatedStore) =>
-                triggerEvent()
-              complete: =>
-                @_changeInputState @_$(@options.updateButton), "reset"
-          else
+  
+          @options.updateRoute(updatedStore.id).ajax
+            contentType: Helpers.MimeTypes.json
+            data: JSON.stringify updateOptions
+            success: (updatedStore) =>
+              triggerEvent(updatedStore)
+            complete: =>
+              @_changeInputState @_$(@options.updateButton), "reset"
+              @_fixButtons()
+        else
+          @_changeInputState @_$(@options.updateButton), "reset"
+          if updatedStore?
             @_form "populate", updatedStore
-            @_changeInputState @_$(@options.updateButton), "reset"
-            triggerEvent()
-        
-        @_changeInputState @_$(@options.updateButton), "loading"
-        if @_uploader?.files.length
-          @_uploader.settings.url = @options.updateRoute(@options.store?.id).url
-          uploadComplete = (up, file, response) =>
-            updatedStore = JSON.parse response.response
-            @_uploader.unbind "FileUploaded", uploadComplete
-            updateStore @options.store, updatedStore
-          @_uploader.bind "FileUploaded", uploadComplete
-          @_uploader.start()
-        else updateStore @options.store
-        
+            triggerEvent(updatedStore)
+            @_fixButtons()
+      
+      @_changeInputState @_$(@options.updateButton), "loading"
+      if not @options.isDerived and @_uploader?.files.length
+        @_uploader.settings.url = @options.updateRoute(@options.store?.id).url
+        uploadComplete = (up, file, response) =>
+          updatedStore = JSON.parse response.response
+          @_uploader.unbind "FileUploaded", uploadComplete
+          updateStore @options.store, updatedStore
+        @_uploader.bind "FileUploaded", uploadComplete
+        @_uploader.start()
+      else updateStore @options.store
+
+    # ok button just applies and closes.
+    @_on @_$(@options.okButton),
+      click: (e) =>
+        if not @_getUpdated()
+          @_$(@options.closeButton).click()
+        else
+          @_changeInputState @_$(@options.okButton), "loading"
+          applyStoreChanges e, =>
+            @_changeInputState @_$(@options.okButton), "reset"
+            @_$(@options.closeButton).click()
+        e.preventDefault()
+      
+    # handle update button click
+    @_on @_$(@options.updateButton),
+      click: (e) =>
+        applyStoreChanges e
         e.preventDefault()
     
-    @_on ".modal",
-      hidden: =>
-        @destroy()
+    # handle reset
+    @_on @_$(@options.resetButton),
+      click: (e) =>
+        if not @options.isDerived and @_uploader?
+          @_uploader.removeFile file for file in @_uploader.files
+          @_$(@options.dropFileContainer)
+            .text(@options.dropFileMessage)
+            .tooltip("destroy")
+            .tooltip
+              title: @options.dropFileTip
+
+        @_form "populate", @options.store
+        @_fixButtons()
+        e.preventDefault()
     
-    if @options.editable and @options.store?
-      @_form "enabled"
-      @_changeInputState @_$(@options.updateButton), "enabled"
-    else
-      @_form "disabled"
-      @_changeInputState @_$(@options.updateButton), "disabled"
+    # we want to make sure the right buttons are enabled.
+    @_on @_$("input"),
+      keyup: =>
+        @_fixButtons()
+    
+    # we want to make sure the right buttons are enabled.
+    @_on @_$("select"),
+      change: =>
+        @_fixButtons()
+    
+    # destroy this widget when the modal is hidden.
+    @_on $(@element),
+      hidden: =>
+        window.setTimeout =>
+          @destroy()
+        , 0
+    
+    # do the inits.
+    @_form (if @options.store? then "enabled" else "disabled")
+    @_changeInputState @_$(@options.updateButton), (if @options.store? then "enabled" else "disabled")
     
     if @options.store?
       @_form "populate", @options.store
     
-    @_$(@options.titleInput).tooltip()
-    @_$(@options.descriptionInput).tooltip()
-    @_$(@options.languageList).tooltip()
-    @_$(@options.browseButton).tooltip()
+    # enable/disable all the right buttons.
+    @_fixButtons()
+    
+    inputs = [
+      @options.okButton
+      @options.updateButton
+      @options.resetButton
+      @options.closeButton
+      @options.titleInput
+      @options.descriptionInput
+      @options.languageList
+      @options.browseButton
+    ]
+    
+    @_$(input).tooltip() for input in inputs
     
   _destroy: ->
-    @_$(@options.titleInput).tooltip "destroy"
-    @_$(@options.descriptionInput).tooltip "destroy"
-    @_$(@options.languageList).tooltip "destroy"
-    @_$(@options.dropFileContainer).tooltip "destroy"
-    @_$(@options.browseButton).tooltip "destroy"
-    @_$(@options.updateButton).tooltip "destroy"
+    inputs = [
+      @options.okButton
+      @options.updateButton
+      @options.resetButton
+      @options.closeButton
+      @options.titleInput
+      @options.descriptionInput
+      @options.languageList
+      @options.browseButton
+    ]
+    
+    @_$(input).tooltip("destroy") for input in inputs
+    @_destroyUploader()
     
   _getCreateOptions: ->
       innerContainer: ".ctr-store-details-inner"
+      detailsForm: ".frm-details"
       titleInput: ".input-store-title"
       descriptionInput: ".input-store-desc"
       languageList: ".lst-store-language"
       uploadContainer: ".ctr-store-upload"
       dropFileContainer: ".ctr-store-dropfile"
       browseButton: ".btn-store-browse"
+      okButton: ".btn-ok"
       updateButton: ".btn-apply"
+      resetButton: ".btn-reset"
+      closeButton: ".btn-close"
       createRoute: jsRoutes.controllers.CollectionsController.create
       updateRoute: jsRoutes.controllers.CollectionsController.update
       uploadFileCount: 1

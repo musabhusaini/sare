@@ -33,7 +33,6 @@ import org.codehaus.jackson.node.*;
 import com.google.common.base.Function;
 import com.google.common.collect.*;
 
-import play.Logger;
 import play.libs.Json;
 import play.mvc.*;
 import views.html.tags.*;
@@ -42,7 +41,7 @@ import models.documentStore.PersistentDocumentStoreModel;
 import controllers.base.SareTransactionalAction;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
 import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactory;
 
@@ -92,9 +91,9 @@ public class CorpusModule extends Module {
 	}
 	
 	public static Result storeDetailsForm(String collection) {
-		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)createViewModel(
-			fetchResource(collection, PersistentDocumentStore.class));
-		Logger.debug(viewModel.asJson() + "");
-		return ok(storeDetails.render(viewModel, true));
+		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
+		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)createViewModel(store);
+		
+		return ok(storeDetails.render(viewModel, store instanceof IDerivedStore));
 	}
 }
