@@ -68,8 +68,10 @@
 				</div>
 				<div class="span2">
 					<label for="txt-store-size-@uid">Size</label>
-					<input id="txt-store-size-@uid" type="text" class="txt-store-size span12" disabled="disabled"
-						value="@store.size" placeholder="0" title="Total number of documents currently in this corpus" />
+					<span id="txt-store-size-@uid" class="txt-store-size input-block-level uneditable-input"
+						title="Number of documents in this corpus">
+						@store.size
+					</span>
 				</div>
 			</div>
 			@if(!isDerived) {

@@ -53,7 +53,7 @@ widget =
         @_$(@options.descriptionInput).val data?.description
         if data?.language
           @_$(@options.languageList).val data.language
-        @_$(@options.sizeText).val data?.size
+        @_$(@options.sizeText).text data?.size
 
   _uploader: null
   
@@ -286,6 +286,7 @@ widget =
       @options.titleInput
       @options.descriptionInput
       @options.languageList
+      @options.sizeText
       @options.browseButton
     ]
     
@@ -300,6 +301,7 @@ widget =
       @options.titleInput
       @options.descriptionInput
       @options.languageList
+      @options.sizeText
       @options.browseButton
     ]
     
