@@ -21,36 +21,19 @@
 
 package controllers.modules;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-
-import play.mvc.Result;
-import models.documentStore.DocumentCorpusModel;
-import models.documentStore.PersistentDocumentStoreModel;
-import views.html.tags.*;
+import models.documentStore.*;
 import controllers.modules.base.Module;
 
-@Module.Requires({PersistentDocumentStoreModel.class})
-public class SetCoverModule extends Module {
+@Module.Requireses({@Module.Requires, @Module.Requires(DocumentCorpusModel.class)})
+public class AspectLexiconBuilder extends Module {
 
 	@Override
 	public String getDisplayName() {
-		return "Reduce";
+		return "Build aspect lexicon";
 	}
 
 	@Override
 	public String getRoute() {
-		DocumentCorpusModel viewModel = (DocumentCorpusModel)Iterables.find(this.viewModels,
-			Predicates.instanceOf(DocumentCorpusModel.class), null);
-		
-		if (viewModel == null) {
-			throw new IllegalArgumentException();
-		}
-		
-		return controllers.modules.routes.SetCoverModule.module(viewModel.id, false).url();
-	}
-	
-	public static Result module(String collection, boolean partial) {
-		return module(setcover.render(), partial);
+		return "/";
 	}
 }

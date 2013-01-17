@@ -70,65 +70,77 @@ public class ModuleController extends Application {
 		Set<ModuleModel> modules = Sets.newHashSet();
 		Reflections reflections = new Reflections("controllers.modules", Play.application().classloader());
 		for (Class<? extends Module> moduleClass : reflections.getSubTypesOf(Module.class)) {
-			// get the Module.Requires annotation for each module class.
-			Module.Requires reqAnnotation = null;
+			// get the Module.Requires/Requireses annotation for each module class.
+			// the requirements within each Module.Require are ANDed.
+			// the requirements across multiple Module.Require annotations are ORed.
+			List<Module.Requires> requireds = Lists.newArrayList();
 			if (moduleClass.isAnnotationPresent(Module.Requires.class)) {
-				reqAnnotation = moduleClass.getAnnotation(Module.Requires.class);
+				requireds.add(moduleClass.getAnnotation(Module.Requires.class));
+			}
+			if (moduleClass.isAnnotationPresent(Module.Requireses.class)) {
+				Collections.addAll(requireds, moduleClass.getAnnotation(Module.Requireses.class).value());
 			}
 			
-			final Set<Class<? extends ViewModel>> requiredViewModelClasses = Sets.newHashSet();
-			if (reqAnnotation != null) {
-				Collections.addAll(requiredViewModelClasses, reqAnnotation.types());
+			if (requireds.size() == 0) {
+				requireds.add(null);
 			}
 			
-			// get all the supplied view modules that are relevant to this module.
-			List<ViewModel> usefulViewModels = Lists.newArrayList(Iterables.filter(suppliedViewModels,
-				new Predicate<ViewModel>() {
-					@Override
-					public boolean apply(@Nullable ViewModel input) {
-						// if this class is required, then return true.
-						if (requiredViewModelClasses.contains(input.getClass())) {
-							return true;
-						}
-						
-						// if any of its super classes are required, that also works.
-						for (Class<?> superClass : ClassUtils.getAllSuperclasses(input.getClass())) {
-							if (requiredViewModelClasses.contains(superClass)) {
-								return true;
-							}
-						}
-						
-						return false;
-					}
-				}));
-			
-			// if all the requirements were satisfied.
-			if (usefulViewModels.size() >= requiredViewModelClasses.size()) {
-				// try to create an instance of the module.
-				Module module = null;
-				try {
-					module = moduleClass.newInstance();
-				} catch (InstantiationException | IllegalAccessException e) {
-					module = null;
-				} finally {
-					if (module == null) {
-						// in this case, there is a problem with the module, so just ignore.
-						continue;
-					}
+			for (Module.Requires required : requireds) {
+				final Set<Class<? extends ViewModel>> requiredViewModelClasses = Sets.newHashSet();
+				if (required != null) {
+					Collections.addAll(requiredViewModelClasses, required.value());
 				}
 				
-				// set the module view model properties and add.
-				ModuleModel moduleViewModel = new ModuleModel(module);
-				moduleViewModel.url = module.getRoute(usefulViewModels);
-				moduleViewModel.canPartiallyRender = module.canPartiallyRender();
-				// let's not divide by zero!
-				moduleViewModel.relevancyScore = suppliedViewModels.size() != 0 ?
-					usefulViewModels.size() / (double)suppliedViewModels.size() : 1.0;
-
-				if (requiredViewModelClasses.size() > 0) {
-					modules.add(moduleViewModel);
-				} else {
-					nullModules.add(moduleViewModel);
+				// get all the supplied view modules that are relevant to this module.
+				List<ViewModel> usefulViewModels = Lists.newArrayList(Iterables.filter(suppliedViewModels,
+					new Predicate<ViewModel>() {
+						@Override
+						public boolean apply(@Nullable ViewModel input) {
+							// if this class is required, then return true.
+							if (requiredViewModelClasses.contains(input.getClass())) {
+								return true;
+							}
+							
+							// if any of its super classes are required, that also works.
+							for (Class<?> superClass : ClassUtils.getAllSuperclasses(input.getClass())) {
+								if (requiredViewModelClasses.contains(superClass)) {
+									return true;
+								}
+							}
+							
+							return false;
+						}
+					}));
+				
+				// if all the requirements were satisfied.
+				if (usefulViewModels.size() >= requiredViewModelClasses.size()) {
+					// try to create an instance of the module.
+					Module module = null;
+					try {
+						module = moduleClass.newInstance();
+						module.setViewModels(usefulViewModels);
+					} catch (InstantiationException | IllegalAccessException e) {
+						module = null;
+					} finally {
+						if (module == null) {
+							// in this case, there is a problem with the module, so just ignore.
+							continue;
+						}
+					}
+					
+					// set the module view model properties and add.
+					ModuleModel moduleViewModel = new ModuleModel(module);
+					moduleViewModel.url = module.getRoute();
+					moduleViewModel.canPartiallyRender = module.canPartiallyRender();
+					// let's not divide by zero!
+					moduleViewModel.relevancyScore = suppliedViewModels.size() != 0 ?
+						usefulViewModels.size() / (double)suppliedViewModels.size() : 1.0;
+	
+					if (requiredViewModelClasses.size() > 0) {
+						modules.add(moduleViewModel);
+					} else {
+						nullModules.add(moduleViewModel);
+					}
 				}
 			}
 		}
@@ -143,7 +155,7 @@ public class ModuleController extends Application {
 			public int compare(ModuleModel o1, ModuleModel o2) {
 				int relDiff = (int)Math.round((o2.relevancyScore - o1.relevancyScore) * 1000);
 				if (relDiff == 0) {
-					return o2.name.compareTo(o1.name);
+					return o1.name.compareTo(o2.name);
 				}
 				
 				return relDiff;

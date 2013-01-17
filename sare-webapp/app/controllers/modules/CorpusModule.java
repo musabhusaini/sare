@@ -36,7 +36,6 @@ import com.google.common.collect.*;
 import play.libs.Json;
 import play.mvc.*;
 import views.html.tags.*;
-import models.base.*;
 import models.documentStore.PersistentDocumentStoreModel;
 import controllers.base.SareTransactionalAction;
 import controllers.modules.base.Module;
@@ -55,7 +54,7 @@ public class CorpusModule extends Module {
 	}
 
 	@Override
-	public String getRoute(Iterable<ViewModel> viewModels) {
+	public String getRoute() {
 		return controllers.modules.routes.CorpusModule.module(false).url();
 	}
 	
@@ -76,6 +75,7 @@ public class CorpusModule extends Module {
 	}
 	
 	public static Result module(boolean partial) {
+		// TODO: this should only get corpora.
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
 		List<String> uuids = docStoreController.getAllUuids(em(), getUsername());
 		List<PersistentDocumentStoreModel> stores = Lists.transform(uuids,
@@ -83,7 +83,7 @@ public class CorpusModule extends Module {
 				@Override
 				@Nullable
 				public PersistentDocumentStoreModel apply(@Nullable String input) {
-					return new PersistentDocumentStoreModel(fetchResource(input, PersistentDocumentStore.class));
+					return (PersistentDocumentStoreModel)createViewModel(fetchResource(input, PersistentDocumentStore.class));
 				}
 			});
 		

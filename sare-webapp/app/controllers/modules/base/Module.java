@@ -36,7 +36,13 @@ public abstract class Module extends Application {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.TYPE})
 	public static @interface Requires {
-		public Class<? extends ViewModel>[] types() default {};
+		public Class<? extends ViewModel>[] value() default {};
+	}
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.TYPE})
+	public static @interface Requireses {
+		Requires[] value();
 	}
 	
 	protected static Result module(Html partialView, boolean partial) {
@@ -47,9 +53,15 @@ public abstract class Module extends Application {
 		}
 	}
 	
+	protected Iterable<ViewModel> viewModels;
+	public Module setViewModels(Iterable<ViewModel> viewModels) {
+		this.viewModels = viewModels;
+		return this;
+	}
+	
 	public abstract String getDisplayName();
 	
-	public abstract String getRoute(Iterable<ViewModel> viewModels);
+	public abstract String getRoute();
 	
 	public boolean canPartiallyRender() {
 		return true;
