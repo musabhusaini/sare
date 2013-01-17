@@ -47,11 +47,9 @@ import controllers.DocumentsController;
 import controllers.base.*;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
-import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
-import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionDocumentFactory;
+import edu.sabanciuniv.sentilab.sare.controllers.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument;
-import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
@@ -88,9 +86,8 @@ public class CorpusModule extends Module {
 	}
 	
 	public static Result modulePage(boolean partial) {
-		// TODO: this should only get corpora.
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
-		List<String> uuids = docStoreController.getAllUuids(em(), getUsername());
+		List<String> uuids = docStoreController.getAllUuids(em(), getUsername(), DocumentCorpus.class);
 		List<PersistentDocumentStoreModel> stores = Lists.transform(uuids,
 			new Function<String, PersistentDocumentStoreModel>() {
 				@Override
