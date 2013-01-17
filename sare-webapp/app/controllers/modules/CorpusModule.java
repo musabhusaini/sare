@@ -28,6 +28,9 @@ import java.util.*;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.*;
 
 import com.google.common.base.Function;
@@ -35,12 +38,22 @@ import com.google.common.collect.*;
 
 import play.libs.Json;
 import play.mvc.*;
+import play.mvc.Http.MultipartFormData;
+import play.mvc.Http.MultipartFormData.FilePart;
 import views.html.tags.*;
-import models.documentStore.PersistentDocumentStoreModel;
-import controllers.base.SareTransactionalAction;
+import models.document.OpinionDocumentModel;
+import models.documentStore.*;
+import controllers.DocumentsController;
+import controllers.base.*;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
+import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
+import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionDocumentFactory;
+import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
+import edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument;
+import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
+import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
 import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactory;
 
@@ -55,7 +68,7 @@ public class CorpusModule extends Module {
 
 	@Override
 	public String getRoute() {
-		return controllers.modules.routes.CorpusModule.module(false).url();
+		return controllers.modules.routes.CorpusModule.modulePage(false).url();
 	}
 	
 	public static List<LinguisticProcessorInfo> getSupportedLanguages() {
@@ -74,7 +87,7 @@ public class CorpusModule extends Module {
 		return ok(jsonArray);
 	}
 	
-	public static Result module(boolean partial) {
+	public static Result modulePage(boolean partial) {
 		// TODO: this should only get corpora.
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
 		List<String> uuids = docStoreController.getAllUuids(em(), getUsername());
@@ -87,13 +100,116 @@ public class CorpusModule extends Module {
 				}
 			});
 		
-		return module(storeList.render(stores, true), partial);
+		return moduleRender(storeList.render(stores, true), partial);
 	}
 	
-	public static Result storeDetailsForm(String collection) {
-		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
+	public static Result storeDetailsForm(String corpus) {
+		PersistentDocumentStore store = fetchResource(corpus, PersistentDocumentStore.class);
 		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)createViewModel(store);
 		
 		return ok(storeDetails.render(viewModel, store instanceof IDerivedStore));
+	}
+	
+	public static Result create() {
+		return update(null);
+	}
+	
+	public static Result update(String corpus) {
+		OpinionCorpusFactoryOptions options = null;
+		
+		MultipartFormData formData = request().body().asMultipartFormData();
+		if (formData != null) {
+			// if we have a multi-part form with a file.
+			if (formData.getFiles() != null) {
+				// get either the file named "corpus" or the first one.
+				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("corpus"),
+					Iterables.getFirst(formData.getFiles(), null));
+				if (filePart != null) {
+					options = new OpinionCorpusFactoryOptions()
+						.setFile(filePart.getFile())
+						.setFormat(FilenameUtils.getExtension(filePart.getFilename()));
+				}
+			}
+		} else {
+			// otherwise try as a json body.
+			JsonNode json = request().body().asJson();
+			if (json != null) {
+				OpinionCorpusFactoryOptionsModel viewModel = play.libs.Json.fromJson(json,
+					OpinionCorpusFactoryOptionsModel.class);
+				if (viewModel != null) {
+					options = viewModel.toFactoryOptions();
+				} else {
+					throw new IllegalArgumentException();
+				}
+			} else {
+				// if not json, then treat the whole thing as a file.
+				options = new OpinionCorpusFactoryOptions()
+					.setFile(request().body().asRaw().asFile())
+					.setFormat(request().getHeader(CONTENT_TYPE));
+			}
+		}
+		
+		if (options == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		options
+			.setExistingId(corpus)
+			.setEm(em());
+		
+		OpinionCorpusFactory corpusFactory = new OpinionCorpusFactory();
+		options.setOwnerId(SessionedAction.getUsername(ctx()));
+		OpinionCorpus corpusObj = corpusFactory.create(options);
+		if (em().contains(corpusObj)) {
+			for (PersistentObject obj : corpusObj.getDocuments()) {
+				if (em().contains(obj)) {
+					em().merge(obj);
+				} else {
+					em().persist(obj);
+				}
+			}
+			em().merge(corpusObj);
+			return ok(createViewModel(corpusObj).asJson());
+		} else {
+			em().persist(corpusObj);
+			return created(createViewModel(corpusObj).asJson());
+		}
+	}
+	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	public static Result addDocument(String corpus) {
+		return updateDocument(corpus, null);
+	}
+	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	public static Result updateDocument(String corpus, String document) {
+		DocumentCorpus store = fetchResource(corpus, DocumentCorpus.class);
+		
+		if (store instanceof OpinionCorpus) {
+			OpinionDocumentModel viewModel = Json.fromJson(request().body().asJson(), OpinionDocumentModel.class);
+			OpinionDocumentFactoryOptions options = (OpinionDocumentFactoryOptions)new OpinionDocumentFactoryOptions()
+				.setContent(viewModel.content)
+				.setPolarity(viewModel.polarity)
+				.setCorpus((OpinionCorpus)store)
+				.setEm(em())
+				.setExistingId(document);
+			
+			OpinionDocument documentObj = new OpinionDocumentFactory().create(options);
+			if (em().contains(documentObj)) {
+				em().merge(documentObj);
+			} else {
+				em().persist(documentObj);
+			}
+			
+			return created(createViewModel(documentObj).asJson());
+		}
+		
+		return badRequest();
+	}
+	
+	public static Result deleteDocument(String corpus, String document) {
+		FullTextDocument documentObj = DocumentsController.fetchDocument(corpus, document, FullTextDocument.class);
+		em().remove(documentObj);
+		return ok(createViewModel(documentObj).asJson());
 	}
 }

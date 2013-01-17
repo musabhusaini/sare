@@ -322,8 +322,8 @@ widget =
       updateButton: ".btn-apply"
       resetButton: ".btn-reset"
       closeButton: ".btn-close"
-      createRoute: jsRoutes.controllers.CollectionsController.create
-      updateRoute: jsRoutes.controllers.CollectionsController.update
+      createRoute: jsRoutes.controllers.modules.CorpusModule.create
+      updateRoute: jsRoutes.controllers.modules.CorpusModule.update
       uploadFileCount: 1
       dataKey: "store"
       filenameKey: "corpus"

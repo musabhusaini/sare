@@ -23,29 +23,28 @@ package controllers;
 
 import static controllers.base.SareTransactionalAction.*;
 
-import models.document.OpinionDocumentModel;
-
-import play.libs.Json;
 import play.mvc.*;
 
 import controllers.base.*;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentController;
-import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionDocumentFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
-import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 @With(SareTransactionalAction.class)
 public class DocumentsController extends Application {
 
-	private static PersistentDocument fetchDocument(String collection, String document) {
-		PersistentDocument documentObj = fetchResource(document, PersistentDocument.class);
+	public static <T extends PersistentDocument> T fetchDocument(String collection, String document, Class<T> clazz) {
+		T documentObj = fetchResource(document, clazz);
 		if (!UuidUtils.normalize(collection).equals(UuidUtils.normalize(documentObj.getStore().getIdentifier()))) {
 			throw new IllegalArgumentException();
 		}
 		return documentObj;
+	}
+	
+	public static PersistentDocument fetchDocument(String collection, String document) {
+		return fetchDocument(collection, document, PersistentDocument.class);
 	}
 	
 	public static Result list(String collection) {
@@ -55,44 +54,7 @@ public class DocumentsController extends Application {
 		return ok(play.libs.Json.toJson(new PersistentDocumentController().getAllUuids(em(), collection)));
 	}
 	
-	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result add(String collection) {
-		return update(collection, null);
-	}
-	
-	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result update(String collection, String document) {
-		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
-		
-		if (store instanceof OpinionCorpus) {
-			OpinionDocumentModel viewModel = Json.fromJson(request().body().asJson(), OpinionDocumentModel.class);
-			OpinionDocumentFactoryOptions options = (OpinionDocumentFactoryOptions)new OpinionDocumentFactoryOptions()
-				.setContent(viewModel.content)
-				.setPolarity(viewModel.polarity)
-				.setCorpus((OpinionCorpus)store)
-				.setEm(em())
-				.setExistingId(document);
-			
-			OpinionDocument documentObj = new OpinionDocumentFactory().create(options);
-			if (em().contains(documentObj)) {
-				em().merge(documentObj);
-			} else {
-				em().persist(documentObj);
-			}
-			
-			return created(createViewModel(documentObj).asJson());
-		}
-		
-		return badRequest();
-	}
-	
 	public static Result get(String collection, String document) {
 		return ok(createViewModel(fetchDocument(collection, document)).asJson());
-	}
-	
-	public static Result delete(String collection, String document) {
-		PersistentDocument documentObj = fetchDocument(collection, document);
-		em().remove(documentObj);
-		return ok(createViewModel(documentObj).asJson());
 	}
 }

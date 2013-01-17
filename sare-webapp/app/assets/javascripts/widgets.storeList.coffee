@@ -169,7 +169,7 @@ widget =
       detailsModalContainer: ".ctr-store-details"
       innerFormContainer: ".ctr-store-details-inner"
       deleteButton: ".btn-delete-store"
-      addRoute: jsRoutes.controllers.CollectionsController.create
+      addRoute: jsRoutes.controllers.modules.CorpusModule.create
       detailsFormRoute: jsRoutes.controllers.modules.CorpusModule.storeDetailsForm
       deleteRoute: jsRoutes.controllers.CollectionsController.delete
       dataKey: "store"

@@ -35,27 +35,28 @@ GET		/view/session/login				controllers.base.Application.loginPage()
 GET		/view/session/logout			controllers.base.Application.logoutPage()
 
 # Collections
-GET		/api/collections						controllers.CollectionsController.list()
-POST	/api/collections						controllers.CollectionsController.create()
-GET		/api/collections/:collection			controllers.CollectionsController.get(collection: String)
-POST	/api/collections/:collection			controllers.CollectionsController.update(collection: String)
-DELETE	/api/collections/:collection			controllers.CollectionsController.delete(collection: String)
+GET		/api/collections				controllers.CollectionsController.list()
+GET		/api/collections/:collection	controllers.CollectionsController.get(collection: String)
+DELETE	/api/collections/:collection	controllers.CollectionsController.delete(collection: String)
 
 # Documents
 GET		/api/collections/:collection/documents				controllers.DocumentsController.list(collection: String)
-POST	/api/collections/:collection/documents				controllers.DocumentsController.add(collection: String)
 GET		/api/collections/:collection/documents/:document	controllers.DocumentsController.get(collection: String, document: String)
-POST	/api/collections/:collection/documents/:document	controllers.DocumentsController.update(collection: String, document: String)
-DELETE	/api/collections/:collection/documents/:document	controllers.DocumentsController.delete(collection: String, document: String)
 
 # Modules
 GET		/api/modules/options/:input			controllers.ModuleController.options(input: String)
 GET		/view/modules						controllers.ModuleController.landingPage()
 
-GET		/view/modules/corpus					controllers.modules.CorpusModule.module(partial: Boolean ?= false)
-GET		/view/modules/corpus/:collection/form	controllers.modules.CorpusModule.storeDetailsForm(collection: String)
+POST	/api/modules/opinions								controllers.modules.CorpusModule.create()
+POST	/api/modules/opinions/:corpus						controllers.modules.CorpusModule.update(corpus: String)
+POST	/api/modules/opinions/:corpus/documents				controllers.modules.CorpusModule.addDocument(corpus: String)
+POST	/api/modules/opinions/:corpus/documents/:document	controllers.modules.CorpusModule.updateDocument(corpus: String, document: String)
+DELETE	/api/modules/opinions/:corpus/documents/:document	controllers.modules.CorpusModule.deleteDocument(corpus: String, document: String)
 
-GET		/view/modules/reduction/:collection		controllers.modules.SetCoverModule.module(collection: String, partial: Boolean ?= false)
+GET		/view/modules/corpora					controllers.modules.CorpusModule.modulePage(partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/form		controllers.modules.CorpusModule.storeDetailsForm(corpus: String)
+
+GET		/view/modules/reduction/:corpus		controllers.modules.SetCoverModule.modulePage(corpus: String, partial: Boolean ?= false)
 
 # Support queries
 GET		/api/support/languages		controllers.modules.CorpusModule.supportedLanguages()

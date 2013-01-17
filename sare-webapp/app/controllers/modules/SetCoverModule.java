@@ -25,8 +25,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
 import play.mvc.Result;
-import models.documentStore.DocumentCorpusModel;
-import models.documentStore.PersistentDocumentStoreModel;
+import models.documentStore.*;
 import views.html.tags.*;
 import controllers.modules.base.Module;
 
@@ -47,10 +46,10 @@ public class SetCoverModule extends Module {
 			throw new IllegalArgumentException();
 		}
 		
-		return controllers.modules.routes.SetCoverModule.module(viewModel.id, false).url();
+		return controllers.modules.routes.SetCoverModule.modulePage(viewModel.id, false).url();
 	}
 	
-	public static Result module(String collection, boolean partial) {
-		return module(setcover.render(), partial);
+	public static Result modulePage(String corpus, boolean partial) {
+		return moduleRender(setcover.render(), partial);
 	}
 }

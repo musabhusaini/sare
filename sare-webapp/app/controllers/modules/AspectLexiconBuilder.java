@@ -21,6 +21,7 @@
 
 package controllers.modules;
 
+import play.mvc.Result;
 import models.documentStore.*;
 import controllers.modules.base.Module;
 
@@ -35,5 +36,9 @@ public class AspectLexiconBuilder extends Module {
 	@Override
 	public String getRoute() {
 		return "/";
+	}
+	
+	public Result module(String corpus, boolean partial) {
+		return TODO;
 	}
 }

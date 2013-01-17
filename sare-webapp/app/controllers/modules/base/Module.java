@@ -45,7 +45,7 @@ public abstract class Module extends Application {
 		Requires[] value();
 	}
 	
-	protected static Result module(Html partialView, boolean partial) {
+	protected static Result moduleRender(Html partialView, boolean partial) {
 		if (!partial) {
 			return ok(moduleView.render(partialView, null, null));
 		} else {

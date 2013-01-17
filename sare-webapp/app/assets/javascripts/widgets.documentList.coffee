@@ -210,9 +210,9 @@ widget =
       updateButton: ".btn-update-doc"
       listRoute: jsRoutes.controllers.DocumentsController.list
       getRoute: jsRoutes.controllers.DocumentsController.get
-      addRoute: jsRoutes.controllers.DocumentsController.add
-      updateRoute: jsRoutes.controllers.DocumentsController.update
-      deleteRoute: jsRoutes.controllers.DocumentsController.delete
+      addRoute: jsRoutes.controllers.modules.CorpusModule.addDocument
+      updateRoute: jsRoutes.controllers.modules.CorpusModule.updateDocument
+      deleteRoute: jsRoutes.controllers.modules.CorpusModule.deleteDocument
       dataKey: "document"
 
 $.widget "widgets.documentList", Sare.Widget, widget
