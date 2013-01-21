@@ -19,6 +19,28 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-<div>
-	Hello world!
-</div>
+@(corpus: documentStore.DocumentCorpusModel = null, lexicon: documentStore.AspectLexiconModel = null, editable: Boolean = true)
+
+@import scala.util._
+
+@defining(Random.nextInt(1000)) { uid =>
+	@if(lexicon == null) {
+		<div id="ctr-lexica-@uid">
+			@tags.storeList(stores = modules.AspectLexBuilder.getLexica(), editable = true, storeType = "Aspect Lexica")
+		</div>
+	}
+	
+	@if(corpus != null) {
+		<p>we have a corpus</p>
+	}
+
+<script type="text/javascript">
+	(function(window, $) {
+		$(function() {
+			$("#ctr-lexica-@uid > .ctr-module").storeList("option", {
+				addRoute: jsRoutes.controllers.modules.AspectLexBuilder.create
+			});
+		});
+	})(window, window.jQuery);
+</script>
+}

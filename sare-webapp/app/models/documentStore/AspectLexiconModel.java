@@ -19,26 +19,18 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package controllers.modules;
+package models.documentStore;
 
-import play.mvc.Result;
-import models.documentStore.*;
-import controllers.modules.base.Module;
+import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
 
-@Module.Requireses({@Module.Requires, @Module.Requires(DocumentCorpusModel.class)})
-public class AspectLexiconBuilder extends Module {
-
-	@Override
-	public String getDisplayName() {
-		return "Build aspect lexicon";
-	}
-
-	@Override
-	public String getRoute() {
-		return "/";
+public class AspectLexiconModel
+	extends PersistentDocumentStoreModel {
+	
+	public AspectLexiconModel(AspectLexicon lexicon) {
+		super(lexicon);
 	}
 	
-	public Result module(String corpus, boolean partial) {
-		return TODO;
+	public AspectLexiconModel() {
+		this(null);
 	}
 }

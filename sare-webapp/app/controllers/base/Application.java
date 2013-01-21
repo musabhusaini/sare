@@ -118,9 +118,11 @@ public class Application extends Controller {
 			controllers.base.routes.javascript.Application.keepAlive(),
 			controllers.base.routes.javascript.Application.login(),
 			controllers.base.routes.javascript.Application.logout(),
+			controllers.routes.javascript.CollectionsController.supportedLanguages(),
 			controllers.routes.javascript.CollectionsController.list(),
 			controllers.routes.javascript.CollectionsController.get(),
 			controllers.routes.javascript.CollectionsController.delete(),
+			controllers.routes.javascript.CollectionsController.detailsForm(),
 			controllers.routes.javascript.DocumentsController.list(),
 			controllers.routes.javascript.DocumentsController.get(),
 			controllers.routes.javascript.ModuleController.options(),
@@ -129,9 +131,7 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.CorpusModule.update(),
 			controllers.modules.routes.javascript.CorpusModule.addDocument(),
 			controllers.modules.routes.javascript.CorpusModule.updateDocument(),
-			controllers.modules.routes.javascript.CorpusModule.deleteDocument(),
-			controllers.modules.routes.javascript.CorpusModule.storeDetailsForm(),
-			controllers.modules.routes.javascript.CorpusModule.supportedLanguages()
+			controllers.modules.routes.javascript.CorpusModule.deleteDocument()
 		));
 	}
 }

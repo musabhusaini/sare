@@ -31,7 +31,6 @@ import javax.annotation.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.*;
 
 import com.google.common.base.Function;
 import com.google.common.collect.*;
@@ -52,8 +51,6 @@ import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
-import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
-import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactory;
 
 @With(SareTransactionalAction.class)
 @Module.Requires
@@ -68,27 +65,10 @@ public class CorpusModule extends Module {
 	public String getRoute() {
 		return controllers.modules.routes.CorpusModule.modulePage(false).url();
 	}
-	
-	public static List<LinguisticProcessorInfo> getSupportedLanguages() {
-		return Lists.newArrayList(LinguisticProcessorFactory.getSupportedProcessors());
-	}
-	
-	public static Result supportedLanguages() {
-		ArrayNode jsonArray = Json.newObject().arrayNode();
-		for (LinguisticProcessorInfo lpi : getSupportedLanguages()) {
-			ObjectNode json = Json.newObject();
-			json.put("code", lpi.languageCode());
-			json.put("name", lpi.languageName());
-			jsonArray.add(json);
-		}
 		
-		return ok(jsonArray);
-	}
-	
-	public static Result modulePage(boolean partial) {
+	public static List<PersistentDocumentStoreModel> getCorpora() {
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
-		List<String> uuids = docStoreController.getAllUuids(em(), getUsername(), DocumentCorpus.class);
-		List<PersistentDocumentStoreModel> stores = Lists.transform(uuids,
+		return Lists.transform(docStoreController.getAllUuids(em(), getUsername(), DocumentCorpus.class),
 			new Function<String, PersistentDocumentStoreModel>() {
 				@Override
 				@Nullable
@@ -96,17 +76,12 @@ public class CorpusModule extends Module {
 					return (PersistentDocumentStoreModel)createViewModel(fetchResource(input, PersistentDocumentStore.class));
 				}
 			});
-		
-		return moduleRender(storeList.render(stores, true), partial);
 	}
-	
-	public static Result storeDetailsForm(String corpus) {
-		PersistentDocumentStore store = fetchResource(corpus, PersistentDocumentStore.class);
-		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)createViewModel(store);
 		
-		return ok(storeDetails.render(viewModel, store instanceof IDerivedStore));
+	public static Result modulePage(boolean partial) {
+		return moduleRender(storeList.render(getCorpora(), true, "Corpus"), partial);
 	}
-	
+		
 	public static Result create() {
 		return update(null);
 	}

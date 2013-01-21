@@ -61,7 +61,7 @@
 					<label for="lst-store-language-@uid">Corpus language</label>
 					<select id="lst-store-language-@uid" class="lst-store-language span6" value="@store.language"
 						title="Language of the corpus">
-						@for(language <- CorpusModule.getSupportedLanguages()) {
+						@for(language <- CollectionsController.getSupportedLanguages()) {
 						<option value="@language.languageCode()">@language.languageName()</option>
 						}
 					</select>

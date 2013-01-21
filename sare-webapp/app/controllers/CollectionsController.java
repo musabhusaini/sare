@@ -24,15 +24,43 @@ package controllers;
 import static controllers.base.SareTransactionalAction.*;
 import static controllers.base.SessionedAction.*;
 
+import java.util.List;
+
+import models.documentStore.PersistentDocumentStoreModel;
+
+import org.codehaus.jackson.node.*;
+
+import com.google.common.collect.Lists;
+
+import play.libs.Json;
 import play.mvc.*;
+import views.html.tags.*;
 
 import controllers.base.*;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.*;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
+import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
+import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactory;
 
 @With(SareTransactionalAction.class)
 public class CollectionsController extends Application {
+
+	public static List<LinguisticProcessorInfo> getSupportedLanguages() {
+		return Lists.newArrayList(LinguisticProcessorFactory.getSupportedProcessors());
+	}
+
+	public static Result supportedLanguages() {
+		ArrayNode jsonArray = Json.newObject().arrayNode();
+		for (LinguisticProcessorInfo lpi : getSupportedLanguages()) {
+			ObjectNode json = Json.newObject();
+			json.put("code", lpi.languageCode());
+			json.put("name", lpi.languageName());
+			jsonArray.add(json);
+		}
+		
+		return ok(jsonArray);
+	}
 
 	public static Result list() {
 		return ok(play.libs.Json.toJson(new PersistentDocumentStoreController().getAllUuids(em(), getUsername())));
@@ -48,5 +76,12 @@ public class CollectionsController extends Application {
 		em().remove(collectionObj);
 		
 		return ok(createViewModelQuietly(collectionObj).asJson());
+	}
+	
+	public static Result detailsForm(String collection) {
+		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
+		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)createViewModel(store);
+		
+		return ok(storeDetails.render(viewModel, store instanceof IDerivedStore));
 	}
 }
