@@ -26,68 +26,90 @@
 @import controllers.modules._
 
 @defining(Random.nextInt(1000)) { uid =>
+<div id="ctr-store-details-@uid" class="ctr-store-details modal hide fade" data-store="@store.asJson()">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">×</button>
+		<h3>More details</h3>
+	</div>
+	<div class="modal-body">
+		<div class="tabbable tabs-left">
+			<ul id="nav-tabs-@uid" class="nav nav-tabs">
+				<li class="active">
+					<a>Details</a>
+				</li>
+				<li>
+					<a>Document</a>
+				</li>
+			</ul>
+			<form class="frm-details">
+				<fieldset>
+					<label for="input-store-title-@uid">Title</label>
+					<input id="input-store-title-@uid" type="text" class="input-store-title span5" value="@store.title"
+						placeholder="Give this corpus a title" title="Title of the corpus" />
+					<label for="input-store-desc-@uid">Description</label>
+					<input id="input-store-desc-@uid" type="text" class="input-store-desc span8" value="@store.description"
+						placeholder="Describe it" title="Brief description of the corpus" />
+					<div class="row-fluid">
+						<div class="span6">
+							<label for="lst-store-language-@uid">Corpus language</label>
+							<select id="lst-store-language-@uid" class="lst-store-language span6" value="@store.language"
+								title="Language of the corpus">
+								@for(language <- CollectionsController.getSupportedLanguages()) {
+								<option value="@language.languageCode()">@language.languageName()</option>
+								}
+							</select>
+						</div>
+						<div class="span2">
+							<label for="txt-store-size-@uid">Size</label>
+							<span id="txt-store-size-@uid" class="txt-store-size input-block-level uneditable-input"
+								title="Number of documents in this corpus">
+								@store.size
+							</span>
+						</div>
+					</div>
+					@if(!isDerived) {
+					<div id="ctr-store-upload-@uid" class="ctr-store-upload">
+						<div class="row-fluid">
+							<div id="ctr-store-dropfile-@uid" class="ctr-store-dropfile span8 well well-small"></div>
+							<div class="span4">
+								<button id="btn-store-browse-@uid" class="btn-store-browse btn"
+									title="Look for a file to upload" data-placement="bottom">
+									<i class="icon-folder-open"></i> Browse
+								</button>
+							</div>
+						</div>
+					</div>
+					}
+				</fieldset>
+			</form>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button id="btn-ok-@uid" class="btn-ok btn btn-primary" data-loading-text="Updating..." title="Save and close">
+			<i class="icon-ok"></i> OK
+		</button>
+		<button id="btn-apply-@uid" class="btn-apply btn btn-primary" data-loading-text="Updating..." title="Save changes">
+			<i class="icon-pencil"></i> Apply
+		</button>
+		<button id="btn-reset-@uid" class="btn-reset btn" title="Revert changes">
+			<i class="icon-repeat"></i> Reset
+		</button>
+    	<button id="btn-close-@uid" class="btn-close btn" data-dismiss="modal" title="Close this dialog">
+    		<i class="icon-remove"></i> Close
+    	</button>
+	</div>
+</div>
+
 <link rel="stylesheet" href="@controllers.routes.Assets.at("stylesheets/storeDetails.css")">
 <script src="@controllers.routes.Assets.at("plugins/plupload/js/plupload.full.js")" type="text/javascript"></script>
 <script src="@controllers.routes.Assets.at("javascripts/widgets.storeDetails.js")" type="text/javascript"></script>
 <script type="text/javascript">
 	(function(window, $) {
 		$(function() {
-			$("#ctr-store-details-inner-@uid").closest(".ctr-store-details").storeDetails({
+			$("#ctr-store-details-@uid").storeDetails({
 				isDerived: @isDerived
 			});
 		});
 	})(window, window.jQuery);
 </script>
-
-<div id="ctr-store-details-inner-@uid" class="ctr-store-details-inner tabbable tabs-left" data-store="@store.asJson()">
-	<ul id="nav-tabs-@uid" class="nav nav-tabs">
-		<li class="active">
-			<a>Details</a>
-		</li>
-		<li>
-			<a>Document</a>
-		</li>
-	</ul>
-	<form class="frm-details">
-		<fieldset>
-			<label for="input-store-title-@uid">Title</label>
-			<input id="input-store-title-@uid" type="text" class="input-store-title span5" value="@store.title"
-				placeholder="Give this corpus a title" title="Title of the corpus" />
-			<label for="input-store-desc-@uid">Description</label>
-			<input id="input-store-desc-@uid" type="text" class="input-store-desc span8" value="@store.description"
-				placeholder="Describe it" title="Brief description of the corpus" />
-			<div class="row-fluid">
-				<div class="span6">
-					<label for="lst-store-language-@uid">Corpus language</label>
-					<select id="lst-store-language-@uid" class="lst-store-language span6" value="@store.language"
-						title="Language of the corpus">
-						@for(language <- CollectionsController.getSupportedLanguages()) {
-						<option value="@language.languageCode()">@language.languageName()</option>
-						}
-					</select>
-				</div>
-				<div class="span2">
-					<label for="txt-store-size-@uid">Size</label>
-					<span id="txt-store-size-@uid" class="txt-store-size input-block-level uneditable-input"
-						title="Number of documents in this corpus">
-						@store.size
-					</span>
-				</div>
-			</div>
-			@if(!isDerived) {
-			<div id="ctr-store-upload-@uid" class="ctr-store-upload">
-				<div class="row-fluid">
-					<div id="ctr-store-dropfile-@uid" class="ctr-store-dropfile span8 well well-small"></div>
-					<div class="span4">
-						<button id="btn-store-browse-@uid" class="btn-store-browse btn"
-							title="Look for a file to upload" data-placement="bottom">
-							<i class="icon-folder-open"></i> Browse
-						</button>
-					</div>
-				</div>
-			</div>
-			}
-		</fieldset>
-	</form>
-</div>
 }

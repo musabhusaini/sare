@@ -25,27 +25,7 @@
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-module-@uid" class="ctr-module">
-	<div id="ctr-store-details-@uid" class="ctr-store-details modal hide fade">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal">×</button>
-			<h3>More details</h3>
-		</div>
-		<div class="modal-body">
-		</div>
-		<div class="modal-footer">
-			<button id="btn-ok-@uid" class="btn-ok btn btn-primary" data-loading-text="Updating..." title="Save and close">
-				<i class="icon-ok"></i> OK
-			</button>
-			<button id="btn-apply-@uid" class="btn-apply btn btn-primary" data-loading-text="Updating..." title="Save changes">
-				<i class="icon-pencil"></i> Apply
-			</button>
-			<button id="btn-reset-@uid" class="btn-reset btn" title="Revert changes">
-				<i class="icon-repeat"></i> Reset
-			</button>
-	    	<button id="btn-close-@uid" class="btn-close btn" data-dismiss="modal" title="Close this dialog">
-	    		<i class="icon-remove"></i> Close
-	    	</button>
-		</div>
+	<div id="ctr-store-details-outer-@uid" class="ctr-store-details-outer">
 	</div>
 	<form class="form-inline">
 		<label for="lst-store-@uid">@storeType:</label>

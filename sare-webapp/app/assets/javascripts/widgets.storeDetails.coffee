@@ -86,7 +86,6 @@ widget =
       file_data_name: @options.filenameKey
       max_file_size: "10mb"
       max_file_count: @options.uploadFileCount
-      url: @options.createRoute().url
   
     defaults =
       text: @options.dropFileMessage
@@ -157,7 +156,7 @@ widget =
 
   _destroyUploader: ->
     @_uploader?.stop()
-    #@_uploader?.destroy()
+    @_uploader?.destroy?()
     @_uploader = null
 
   _fixButtons: ->
@@ -169,14 +168,17 @@ widget =
     return true
 
   _create: ->
-    @options.store ?= @_$(@options.innerContainer).data @options.dataKey
+    @options.store ?= $(@element).data @options.dataKey
     @options.isDerived ?= not @_$(@options.browseButton).length
-
+    
+    # create the modal.
+    $(@element).modal()
+        
     # applies changes to the store.
     applyStoreChanges = (e, callback) =>
       updateStore = (store, updatedStore) =>
         finalizeUpdate = (updatedStore) =>
-          @_$(@options.innerContainer).data @options.dataKey, @options.store = updatedStore
+          $(@element).data @options.dataKey, @options.store = updatedStore
           @_form "populate", updatedStore
           callback?()
           @_trigger "update", e,
@@ -263,7 +265,7 @@ widget =
     
     # destroy this widget when the modal is hidden.
     @_on $(@element),
-      hidden: =>
+      "hidden .modal": =>
         window.setTimeout =>
           @destroy()
         , 0
@@ -293,6 +295,8 @@ widget =
     @_$(input).tooltip() for input in inputs
     
   _destroy: ->
+    $(@element).modal "destroy"
+    
     inputs = [
       @options.okButton
       @options.updateButton
@@ -309,7 +313,6 @@ widget =
     @_destroyUploader()
     
   _getCreateOptions: ->
-      innerContainer: ".ctr-store-details-inner"
       detailsForm: ".frm-details"
       titleInput: ".input-store-title"
       descriptionInput: ".input-store-desc"
@@ -322,7 +325,6 @@ widget =
       updateButton: ".btn-apply"
       resetButton: ".btn-reset"
       closeButton: ".btn-close"
-      createRoute: jsRoutes.controllers.modules.CorpusModule.create
       updateRoute: jsRoutes.controllers.modules.CorpusModule.update
       uploadFileCount: 1
       dataKey: "store"
