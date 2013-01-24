@@ -22,6 +22,10 @@ along with SARE. If not, see <http://www.gnu.org/licenses/>.
 JSON = window.JSON
 $ = window.jQuery
 Sare = window.Sare
+Page = Sare.Page
+Selectors = Page.Selectors
+
+Selectors.moduleContainer = ".ctr-module"
 
 Math = window.Math
 history = window.history
@@ -134,8 +138,8 @@ widget =
   
   _callModule: (module, call, data) ->
     return null if not module? or not module.target?
-    target = $(module.target).filter(@options.moduleContainer)
-    target = $(module.target).find(@options.moduleContainer) if not target.length
+    target = $(module.target).filter(Selectors.moduleContainer)
+    target = $(module.target).find(Selectors.moduleContainer) if not target.length
     widget = $(target).first().data @options.widgetKey
     if typeof widget is "object"
       widget[call] data
@@ -178,13 +182,14 @@ widget =
                 .data(@options.moduleKey, module)
                 .appendTo @_$ @options.nextModulesButtons
     
+    $.Widget.prototype._setOption.apply @, arguments
+    
   _getCreateOptions: ->
     output: null
     contentContainer: ".ctr-module-content"
     nextModulesButtons: ".btg-next-modules"
     progressBarContainer: ".ctr-progress"
     moduleControlsContainer: ".ctr-module-controls"
-    moduleContainer: ".ctr-module"
     moduleKey: "module"
     widgetKey: "widget"
     moduleOptionsRoute: jsRoutes.controllers.ModuleController.options

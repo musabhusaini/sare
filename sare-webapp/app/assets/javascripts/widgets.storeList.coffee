@@ -151,12 +151,13 @@ widget =
   _destroy: ->
     for input in [ @options.list, @options.addButton, @options.detailsButton, @options.deleteButton ]
       $(@_$ input).tooltip "destroy"
-    
+
   _setOption: (key, value) ->
     switch key
       when "disabled"
         for input in [ @options.list, @options.addButton, @options.detailsButton, @options.deleteButton ]
           @_changeInputState input, if value then "disabled" else "enabled"
+    $.Widget.prototype._setOption.apply @, arguments
   
   _getCreateOptions: ->
       list: ".lst-store"

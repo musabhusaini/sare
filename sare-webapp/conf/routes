@@ -59,6 +59,9 @@ POST	/api/modules/opinions/:corpus/documents/:document	controllers.modules.Corpu
 DELETE	/api/modules/opinions/:corpus/documents/:document	controllers.modules.CorpusModule.deleteDocument(corpus: String, document: String)
 
 # Aspect lexicon builder module
+POST	/api/modules/lexica											controllers.modules.AspectLexBuilder.create(corpus = null)
+POST	/api/modules/corpora/:corpus/lexica							controllers.modules.AspectLexBuilder.create(corpus: String)
+
 GET		/view/modules/lexica/builder								controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon = null, partial: Boolean ?= false)
 GET		/view/modules/lexica/:lexicon/builder						controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon: String, partial: Boolean ?= false)
 GET		/view/modules/corpora/:corpus/lexica/builder				controllers.modules.AspectLexBuilder.modulePage(corpus: String, lexicon = null, partial: Boolean ?= false)

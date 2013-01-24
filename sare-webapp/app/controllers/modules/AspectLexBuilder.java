@@ -88,6 +88,11 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	public static Result create(String corpus) {
+		return update(corpus, null);
+	}
+	
+	public static Result update(String corpus, String lexicon) {
+		//DocumentCorpus corpusObj = fetchResourceQuietly(corpus, DocumentCorpus.class);
 		return TODO;
 	}
 }

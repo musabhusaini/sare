@@ -38,7 +38,7 @@ public class CorpusModuleTest extends TestBase {
 
 	@Test
 	public void testSupportedLanguages() {
-		Result result = callAction(controllers.modules.routes.ref.CorpusModule.supportedLanguages());
+		Result result = callAction(controllers.routes.ref.CollectionsController.supportedLanguages());
 		
 		assertThat(result).isNotNull();
 		assertThat(status(result)).isEqualTo(OK);

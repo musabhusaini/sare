@@ -131,7 +131,8 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.CorpusModule.update(),
 			controllers.modules.routes.javascript.CorpusModule.addDocument(),
 			controllers.modules.routes.javascript.CorpusModule.updateDocument(),
-			controllers.modules.routes.javascript.CorpusModule.deleteDocument()
+			controllers.modules.routes.javascript.CorpusModule.deleteDocument(),
+			controllers.modules.routes.javascript.AspectLexBuilder.create()
 		));
 	}
 }
