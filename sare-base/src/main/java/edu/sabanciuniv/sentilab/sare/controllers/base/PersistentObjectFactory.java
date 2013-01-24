@@ -41,7 +41,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
 public abstract class PersistentObjectFactory<T extends PersistentObject, O extends PersistentObjectFactoryOptions<T>>
 	extends ControllerBase
 	implements IFactory<T, O> {
-
+	
 	protected abstract T createPrivate(O options) throws IllegalFactoryOptionsException;
 	
 	@Override

@@ -30,10 +30,15 @@ public class AspectLexiconController
 	implements IDocumentStoreController {
 
 	@Override
-	protected AspectLexicon createPrivate(AspectLexiconFactoryOptions options)
+	protected AspectLexicon createPrivate(AspectLexiconFactoryOptions options, AspectLexicon lexicon)
 		throws IllegalFactoryOptionsException {
 		
-		// TODO Auto-generated method stub
-		return null;
+		if (lexicon == null) {
+			lexicon = new AspectLexicon(options.getBaseCorpus());
+		}
+		
+		// TODO: add support for uploading file.
+		
+		return lexicon;
 	}
 }

@@ -54,7 +54,7 @@ public class OpinionCorpusFactoryOptionsModel extends ViewModel {
 	public OpinionCorpusFactoryOptions toFactoryOptions() {
 		PersistentDocumentStoreModel corpusView = ObjectUtils.defaultIfNull(details, new PersistentDocumentStoreModel());
 		
-		return new OpinionCorpusFactoryOptions()
+		return (OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 			.setContent(content)
 			.setFormat(format)
 			.setTextDelimiter(delimiter)

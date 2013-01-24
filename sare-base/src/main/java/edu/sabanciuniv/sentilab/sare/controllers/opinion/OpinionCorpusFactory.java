@@ -219,24 +219,11 @@ public final class OpinionCorpusFactory
 	}
 	
 	@Override
-	protected OpinionCorpus createPrivate(OpinionCorpusFactoryOptions options)
+	protected OpinionCorpus createPrivate(OpinionCorpusFactoryOptions options, OpinionCorpus corpus)
 		throws IllegalFactoryOptionsException {
-		
-		boolean created = true;
-		boolean existing = true;
-		OpinionCorpus corpus = null;
-		if (options.getExistingId() != null && options.getEm() != null) {
-			// if not found, we simply fall-back to the default behavior.
-			try {
-				corpus = options.getEm().find(OpinionCorpus.class, options.getExistingId());
-			} catch (IllegalArgumentException e) {
-				corpus = null;
-			}
-		}
 		
 		if (corpus == null) {
 			corpus = new OpinionCorpus();
-			existing = false;
 		}
 		
 		String format = StringUtils.isNotEmpty(options.getFormat()) ? options.getFormat() :
@@ -257,27 +244,9 @@ public final class OpinionCorpusFactory
 				this.createSpecific(corpus, options.getInputStream(), format, options);
 			} else if (options.getFile() != null) {
 				this.createSpecific(corpus, options.getFile(), format, options);
-			} else {
-				created = false;
 			}
 		} catch (IOException e) {
 			throw new IllegalFactoryOptionsException("there was an error reading the input", e);
-		}
-		
-		if (!created && !existing) {
-			throw new IllegalFactoryOptionsException("options did not have enough or correct information to create this object");
-		}
-		
-		if (StringUtils.isNotEmpty(options.getTitle())) {
-			corpus.setTitle(options.getTitle());
-		}
-		
-		if (StringUtils.isNotEmpty(options.getDescription())) {
-			corpus.setDescription(options.getDescription());
-		}
-		
-		if (StringUtils.isNotEmpty(options.getLanguage())) {
-			corpus.setLanguage(options.getLanguage());
 		}
 		
 		return corpus;

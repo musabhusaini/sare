@@ -24,22 +24,36 @@
 @import scala.util._
 
 @defining(Random.nextInt(1000)) { uid =>
+<div id="ctr-module-@uid" class="ctr-module" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }>
 	@if(lexicon == null) {
-		<div id="ctr-lexica-@uid">
+		<div id="ctr-lexica-@uid" class="ctr-lexica row-fluid">
 			@tags.storeList(stores = modules.AspectLexBuilder.getLexica(), editable = true, storeType = "Aspect Lexica")
 		</div>
 	}
 	
-	@if(corpus != null) {
-		<p>we have a corpus</p>
-	}
+	<div class="row-fluid">
+		@if(corpus != null) {
+			<div id="ctr-documents-@uid" class="ctr-documents span6" data-corpus="@corpus.asJson()">
+			</div>
+		}
+		
+		<div class="span6">
+			<div id="ctr-aspects-@uid" class="ctr-aspects span6">
+				<!-- display aspect tree -->
+			</div>
+			<div id="ctr-keywords-@uid" class="ctr-keywords span6">
+				<!-- display keyword tree -->
+			</div>
+		</div>
+	</div>
+</div>
 
+<script type="text/javascript" src="@controllers.routes.Assets.at("plugins/jstree/jquery.jstree.js")"></script>
+<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.aspectLexBuilder.js")"></script>
 <script type="text/javascript">
 	(function(window, $) {
 		$(function() {
-			$("#ctr-lexica-@uid > .ctr-module").storeList("option", {
-				addRoute: jsRoutes.controllers.modules.AspectLexBuilder.create
-			});
+			$("#ctr-module-@uid").aspectLexBuilder();
 		});
 	})(window, window.jQuery);
 </script>

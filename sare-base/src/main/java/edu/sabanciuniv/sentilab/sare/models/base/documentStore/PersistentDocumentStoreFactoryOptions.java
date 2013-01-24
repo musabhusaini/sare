@@ -31,8 +31,65 @@ import edu.sabanciuniv.sentilab.sare.models.base.PersistentObjectFactoryOptions;
 public abstract class PersistentDocumentStoreFactoryOptions<T extends PersistentDocumentStore>
 	extends PersistentObjectFactoryOptions<T> {
 
+	protected String title;
+	protected String description;
+	protected String language;
 	protected String ownerId;
 	
+	/**
+	 * Gets the title of the store to be created.
+	 * @return the title of the store.
+	 */
+	public String getTitle() {
+		return this.title;
+	}
+	
+	/**
+	 * Sets the title of the store to create.
+	 * @param title the title of the store to set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStoreFactoryOptions<T> setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+	
+	/**
+	 * Gets the description of the store to be created.
+	 * @return the description of the store.
+	 */
+	public String getDescription() {
+		return this.description;
+	}
+	
+	/**
+	 * Sets the description of the store to create.
+	 * @param description the description of the store to be set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStoreFactoryOptions<T> setDescription(String description) {
+		this.description = description;
+		return this;
+	}
+	
+	/**
+	 * Gets the language of the store to be created.
+	 * @return the language of the store.
+	 */
+	public String getLanguage() {
+		return this.language;
+	}
+	
+	/**
+	 * Sets the language of the store to create.
+	 * @param language the language of the store to be set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStoreFactoryOptions<T> setLanguage(String language) {
+		this.language = language;
+		return this;
+	}
+
 	/**
 	 * Gets the owner ID that will be set on the target object.
 	 * @return the owner ID to be set.

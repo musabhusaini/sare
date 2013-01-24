@@ -21,6 +21,10 @@
 
 package edu.sabanciuniv.sentilab.sare.controllers.base.documentStore;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.reflect.TypeToken;
+
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.base.PersistentObjectFactory;
 import edu.sabanciuniv.sentilab.sare.controllers.base.document.IDocumentController;
@@ -40,7 +44,36 @@ public abstract class PersistentDocumentStoreFactory<T extends PersistentDocumen
 		throws IllegalFactoryOptionsException {
 		
 		T obj = super.create(options);
-		obj.setOwnerId(options.getOwnerId());
+		
+		if (StringUtils.isNotEmpty(options.getOwnerId())) {
+			obj.setOwnerId(options.getOwnerId());
+		}
+		
+		if (StringUtils.isNotEmpty(options.getTitle())) {
+			obj.setTitle(options.getTitle());
+		}
+		
+		if (StringUtils.isNotEmpty(options.getDescription())) {
+			obj.setDescription(options.getDescription());
+		}
+		
+		if (StringUtils.isNotEmpty(options.getLanguage())) {
+			obj.setLanguage(options.getLanguage());
+		}
+		
 		return obj;
 	}
+	
+	@SuppressWarnings({ "unchecked", "serial" })
+	@Override
+	protected T createPrivate(O options) {
+		T existing = null;
+		if (options.getExistingId() != null && options.getEm() != null) {
+			existing = (T)options.getEm().find(new TypeToken<T>(this.getClass()){}.getRawType(), options.getExistingId());
+		}
+		
+		return this.createPrivate(options, existing);
+	}
+	
+	protected abstract T createPrivate(O options, T existing);
 }

@@ -144,27 +144,16 @@ public class SetCoverController
 	}
 	
 	@Override
-	protected DocumentSetCover createPrivate(SetCoverFactoryOptions options)
+	protected DocumentSetCover createPrivate(SetCoverFactoryOptions options, DocumentSetCover setCover)
 		throws IllegalFactoryOptionsException {
 		
 		try {
-			Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
 			Validate.notNull(options.getStore(), CannedMessages.NULL_ARGUMENT, "options.store");
 		} catch (NullPointerException e) {
 			throw new IllegalFactoryOptionsException(e);
 		}
 		
 		this.progress = 0.0;
-		
-		DocumentSetCover setCover = null;
-		if (options.getExistingId() != null && options.getEm() != null) {
-			// if not found, we simply fall-back to the default behavior.
-			try {
-				setCover = options.getEm().find(DocumentSetCover.class, options.getExistingId());
-			} catch (IllegalArgumentException e) {
-				setCover = null;
-			}
-		}
 		
 		if (setCover == null) {
 			// create a set cover based on this store.

@@ -21,9 +21,33 @@
 
 package edu.sabanciuniv.sentilab.sare.models.aspect;
 
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStoreFactoryOptions;
 
+/**
+ * Factory options for factories that can create {@link AspectLexicon} objects.
+ * @author Mus'ab Husaini
+ */
 public class AspectLexiconFactoryOptions
 	extends PersistentDocumentStoreFactoryOptions<AspectLexicon> {
-
+	
+	private DocumentCorpus baseCorpus;
+	
+	/**
+	 * Gets the base corpus that will be set for the lexicon.
+	 * @return the {@link DocumentCorpus} object representing the base corpus.
+	 */
+	public DocumentCorpus getBaseCorpus() {
+		return this.baseCorpus;
+	}
+	
+	/**
+	 * Sets the base corpus to set for the lexicon (can be null).
+	 * @param baseCorpus the {@link DocumentCorpus} object representing the base corpus to be set.
+	 * @return the {@code this} object.
+	 */
+	public AspectLexiconFactoryOptions setBaseCorpus(DocumentCorpus baseCorpus) {
+		this.baseCorpus = baseCorpus;
+		return this;
+	}
 }

@@ -191,15 +191,11 @@ public class OpinionCorpusFactoryTest {
 	}
 	
 	@Test
-	public void testCreateFromNothingFails() {
-		boolean thrown = false;
-		
+	public void testCreateFromNothing() {
 		try {
-			testFactory.create(new OpinionCorpusFactoryOptions());
+			assertNotNull(testFactory.create(new OpinionCorpusFactoryOptions()));
 		} catch (IllegalFactoryOptionsException e) {
-			thrown = true;
+			fail("could not create from nothing");
 		}
-		
-		assertTrue(thrown);
 	}
 }

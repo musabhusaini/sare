@@ -33,69 +33,12 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumen
 public class OpinionCorpusFactoryOptions extends
 	PersistentDocumentStoreFactoryOptions<OpinionCorpus> {
 
-	private String title;
-	private String description;
-	private String language;
 	private File file;
 	private String format;
 	private byte[] bytes;
 	private InputStream inputStream;
 	private String content;
 	private String textDelimiter;
-	
-	/**
-	 * Gets the title of the corpus to be created.
-	 * @return the title of the corpus.
-	 */
-	public String getTitle() {
-		return this.title;
-	}
-	
-	/**
-	 * Sets the title of the corpus to create.
-	 * @param title the title of the corpus to set.
-	 * @return the {@code this} object.
-	 */
-	public OpinionCorpusFactoryOptions setTitle(String title) {
-		this.title = title;
-		return this;
-	}
-	
-	/**
-	 * Gets the description of the corpus to be created.
-	 * @return the description of the corpus.
-	 */
-	public String getDescription() {
-		return this.description;
-	}
-	
-	/**
-	 * Sets the description of the corpus to create.
-	 * @param description the description of the corpus to be set.
-	 * @return the {@code this} object.
-	 */
-	public OpinionCorpusFactoryOptions setDescription(String description) {
-		this.description = description;
-		return this;
-	}
-	
-	/**
-	 * Gets the language of the corpus to be created.
-	 * @return the language of the corpus.
-	 */
-	public String getLanguage() {
-		return this.language;
-	}
-	
-	/**
-	 * Sets the language of the corpus to create.
-	 * @param language the language of the corpus to be set.
-	 * @return the {@code this} object.
-	 */
-	public OpinionCorpusFactoryOptions setLanguage(String language) {
-		this.language = language;
-		return this;
-	}
 	
 	/**
 	 * Gets the file to read the corpus contents from.
