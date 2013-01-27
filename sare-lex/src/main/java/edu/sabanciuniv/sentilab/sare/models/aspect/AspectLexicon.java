@@ -57,6 +57,20 @@ public class AspectLexicon
 		this();
 		this.setBaseStore(baseStore);
 	}
+
+	/**
+	 * Gets the corpus this lexicon or its parent lexicon is based on, if any.
+	 * @return the {@link DocumentCorpus} this lexicon is based on.
+	 */
+	public DocumentCorpus getBaseCorpus() {
+		if (this.getBaseStore() instanceof AspectLexicon) {
+			return ((AspectLexicon)this.getBaseStore()).getBaseCorpus();
+		} else if (this.getBaseStore() instanceof DocumentCorpus) {
+			return (DocumentCorpus)this.getBaseStore();
+		}
+		
+		return null;
+	}
 	
 	/**
 	 * Gets the aspect expressions in this aspect.

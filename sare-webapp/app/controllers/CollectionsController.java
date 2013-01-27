@@ -21,6 +21,7 @@
 
 package controllers;
 
+import static models.base.ViewModel.*;
 import static controllers.base.SareTransactionalAction.*;
 import static controllers.base.SessionedAction.*;
 

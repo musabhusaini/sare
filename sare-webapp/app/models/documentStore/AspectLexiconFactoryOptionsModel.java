@@ -21,22 +21,26 @@
 
 package models.documentStore;
 
-import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
+import org.apache.commons.lang3.ObjectUtils;
 
-public class AspectLexiconModel
-	extends PersistentDocumentStoreModel {
+import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconFactoryOptions;
+
+public class AspectLexiconFactoryOptionsModel
+	extends PersistentDocumentStoreFactoryOptionsModel {
 	
-	public DocumentCorpusModel baseCorpus;
-	
-	public AspectLexiconModel(AspectLexicon lexicon) {
-		super(lexicon);
-		
-		if (lexicon != null) {
-			this.baseCorpus = (DocumentCorpusModel)createViewModel(lexicon.getBaseCorpus());
-		}
+	public AspectLexiconFactoryOptionsModel(AspectLexiconFactoryOptions options) {
+		super(options);
 	}
 	
-	public AspectLexiconModel() {
+	public AspectLexiconFactoryOptionsModel() {
 		this(null);
+	}
+	
+	public AspectLexiconFactoryOptions toFactoryOptions() {
+		AspectLexiconModel lexiconView = (AspectLexiconModel)ObjectUtils.defaultIfNull(details, new AspectLexiconModel());
+		
+		return (AspectLexiconFactoryOptions)new AspectLexiconFactoryOptions()
+			.setTitle(lexiconView.title)
+			.setDescription(lexiconView.description);
 	}
 }

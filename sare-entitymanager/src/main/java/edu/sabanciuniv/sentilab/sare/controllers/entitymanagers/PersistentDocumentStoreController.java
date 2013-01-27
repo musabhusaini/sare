@@ -43,7 +43,7 @@ public class PersistentDocumentStoreController
 	extends ControllerBase {
 	
 	/**
-	 * Gets all UUIDs for {@code T} type objects owned by the given owner.
+	 * Gets all UUIDs for {@code T} type document stores owned by the given owner.
 	 * @param em the {@link EntityManager} to use.
 	 * @param ownerId the ID of the owner.
 	 * @param entityClass the specific type of document stores to be retrieved; must be annotated with the {@link Entity} annotation.

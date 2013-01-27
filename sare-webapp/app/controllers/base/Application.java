@@ -21,12 +21,8 @@
 
 package controllers.base;
 
-import org.codehaus.jackson.JsonNode;
-
 import actors.*;
 import models.*;
-import models.base.*;
-import controllers.factories.ViewModelFactory;
 import play.*;
 import play.db.ebean.Transactional;
 import play.mvc.*;
@@ -36,48 +32,6 @@ import views.html.*;
 @Transactional
 @With({ SessionedAction.class, ErrorHandledAction.class, LoggedAction.class })
 public class Application extends Controller {
-	
-	protected static <T> ViewModel createViewModel(T model) {
-		ViewModel viewModel = new ViewModelFactory().create(new ViewModelFactoryOptions().setModel(model));
-		if (viewModel == null) {
-			throw new IllegalArgumentException();
-		}
-		
-		return viewModel;
-	}
-	
-	protected static ViewModel createViewModel(JsonNode json) {
-		ViewModel viewModel = new ViewModelFactory().create(new ViewModelFactoryOptions().setJson(json));
-		if (viewModel == null) {
-			throw new IllegalArgumentException();
-		}
-		
-		return viewModel;
-	}
-	
-	protected static <T> ViewModel createViewModelQuietly(T model, ViewModel defaultViewModel) {
-		try {
-			return createViewModel(model);
-		} catch (IllegalArgumentException e) {
-			return defaultViewModel;
-		}
-	}
-	
-	protected static <T> ViewModel createViewModelQuietly(T model) {
-		return createViewModelQuietly(model, new ViewModel());
-	}
-	
-	protected static ViewModel createViewModelQuietly(JsonNode json, ViewModel defaultViewModel) {
-		try {
-			return createViewModel(json);
-		} catch (IllegalArgumentException e) {
-			return defaultViewModel;
-		}
-	}
-	
-	protected static ViewModel createViewModelQuietly(JsonNode json) {
-		return createViewModelQuietly(json, new ViewModel());
-	}
 	
 	public static Result homePage() {
 		return ok(home.render());
@@ -132,7 +86,8 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.CorpusModule.addDocument(),
 			controllers.modules.routes.javascript.CorpusModule.updateDocument(),
 			controllers.modules.routes.javascript.CorpusModule.deleteDocument(),
-			controllers.modules.routes.javascript.AspectLexBuilder.create()
+			controllers.modules.routes.javascript.AspectLexBuilder.create(),
+			controllers.modules.routes.javascript.AspectLexBuilder.update()
 		));
 	}
 }

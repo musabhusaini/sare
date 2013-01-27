@@ -141,7 +141,7 @@ widget =
     target = $(module.target).filter(Selectors.moduleContainer)
     target = $(module.target).find(Selectors.moduleContainer) if not target.length
     widget = $(target).first().data @options.widgetKey
-    if typeof widget is "object"
+    if widget? and typeof widget is "object"
       widget[call] data
     
   _create: ->

@@ -21,6 +21,7 @@
 
 package controllers.modules;
 
+import static models.base.ViewModel.*;
 import static controllers.base.SessionedAction.*;
 import static controllers.base.SareTransactionalAction.*;
 
@@ -106,8 +107,7 @@ public class CorpusModule extends Module {
 			// otherwise try as a json body.
 			JsonNode json = request().body().asJson();
 			if (json != null) {
-				OpinionCorpusFactoryOptionsModel viewModel = play.libs.Json.fromJson(json,
-					OpinionCorpusFactoryOptionsModel.class);
+				OpinionCorpusFactoryOptionsModel viewModel = Json.fromJson(json, OpinionCorpusFactoryOptionsModel.class);
 				if (viewModel != null) {
 					options = viewModel.toFactoryOptions();
 				} else {
@@ -132,20 +132,20 @@ public class CorpusModule extends Module {
 		OpinionCorpusFactory corpusFactory = new OpinionCorpusFactory();
 		options.setOwnerId(SessionedAction.getUsername(ctx()));
 		OpinionCorpus corpusObj = corpusFactory.create(options);
-		if (em().contains(corpusObj)) {
-			for (PersistentObject obj : corpusObj.getDocuments()) {
-				if (em().contains(obj)) {
-					em().merge(obj);
-				} else {
-					em().persist(obj);
-				}
-			}
-			em().merge(corpusObj);
-			return ok(createViewModel(corpusObj).asJson());
-		} else {
+		if (!em().contains(corpusObj)) {
 			em().persist(corpusObj);
 			return created(createViewModel(corpusObj).asJson());
 		}
+		
+		for (PersistentObject obj : corpusObj.getDocuments()) {
+			if (em().contains(obj)) {
+				em().merge(obj);
+			} else {
+				em().persist(obj);
+			}
+		}
+		em().merge(corpusObj);
+		return ok(createViewModel(corpusObj).asJson());
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)

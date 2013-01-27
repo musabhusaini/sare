@@ -30,7 +30,14 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.base.PersistentObject</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditableTextDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PartialTextDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditablePartialDocument</class>
+		
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.Lexicon</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus</class>
@@ -59,7 +66,14 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.base.PersistentObject</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditableTextDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PartialTextDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditablePartialDocument</class>
+		
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.Lexicon</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus</class>
@@ -89,7 +103,14 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.base.PersistentObject</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditableTextDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PartialTextDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditablePartialDocument</class>
+		
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.Lexicon</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus</class>

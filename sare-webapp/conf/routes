@@ -61,6 +61,8 @@ DELETE	/api/modules/opinions/:corpus/documents/:document	controllers.modules.Cor
 # Aspect lexicon builder module
 POST	/api/modules/lexica											controllers.modules.AspectLexBuilder.create(corpus = null)
 POST	/api/modules/corpora/:corpus/lexica							controllers.modules.AspectLexBuilder.create(corpus: String)
+POST	/api/modules/lexica/:lexicon								controllers.modules.AspectLexBuilder.update(corpus = null, lexicon: String)
+POST	/api/modules/corpora/:corpus/lexica/:lexicon				controllers.modules.AspectLexBuilder.update(corpus: String, lexicon: String)
 
 GET		/view/modules/lexica/builder								controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon = null, partial: Boolean ?= false)
 GET		/view/modules/lexica/:lexicon/builder						controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon: String, partial: Boolean ?= false)

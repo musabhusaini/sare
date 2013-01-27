@@ -25,10 +25,54 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.*;
 import org.springframework.util.ClassUtils;
 
+import controllers.factories.ViewModelFactory;
+
 import play.libs.Json;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ViewModel {
+
+	public static <T> ViewModel createViewModel(T model) {
+		ViewModel viewModel = new ViewModelFactory().create(new ViewModelFactoryOptions().setModel(model));
+		if (viewModel == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		return viewModel;
+	}
+	
+	public static ViewModel createViewModel(JsonNode json) {
+		ViewModel viewModel = new ViewModelFactory().create(new ViewModelFactoryOptions().setJson(json));
+		if (viewModel == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		return viewModel;
+	}
+	
+	public static <T> ViewModel createViewModelQuietly(T model, ViewModel defaultViewModel) {
+		try {
+			return createViewModel(model);
+		} catch (IllegalArgumentException e) {
+			return defaultViewModel;
+		}
+	}
+	
+	public static <T> ViewModel createViewModelQuietly(T model) {
+		return createViewModelQuietly(model, new ViewModel());
+	}
+	
+	public static ViewModel createViewModelQuietly(JsonNode json, ViewModel defaultViewModel) {
+		try {
+			return createViewModel(json);
+		} catch (IllegalArgumentException e) {
+			return defaultViewModel;
+		}
+	}
+	
+	public static ViewModel createViewModelQuietly(JsonNode json) {
+		return createViewModelQuietly(json, new ViewModel());
+	}
 
 	public String type;
 	

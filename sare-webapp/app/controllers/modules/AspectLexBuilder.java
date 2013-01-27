@@ -23,24 +23,27 @@ package controllers.modules;
 
 import static controllers.base.SareTransactionalAction.*;
 import static controllers.base.SessionedAction.*;
+import static models.base.ViewModel.*;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.*;
+import org.codehaus.jackson.JsonNode;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
-import play.mvc.Result;
-import play.mvc.With;
+import play.libs.Json;
+import play.mvc.*;
 import views.html.tags.*;
 import models.documentStore.*;
-import controllers.base.SareTransactionalAction;
+import controllers.base.*;
 import controllers.modules.base.Module;
+import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconController;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
-import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
+import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 
 @With(SareTransactionalAction.class)
@@ -92,7 +95,44 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	public static Result update(String corpus, String lexicon) {
-		//DocumentCorpus corpusObj = fetchResourceQuietly(corpus, DocumentCorpus.class);
-		return TODO;
+		DocumentCorpus corpusObj = fetchResourceQuietly(corpus, DocumentCorpus.class);
+		AspectLexiconFactoryOptions options = null;
+		
+		JsonNode json = request().body().asJson();
+		if (json != null) {
+			AspectLexiconFactoryOptionsModel viewModel = Json.fromJson(json, AspectLexiconFactoryOptionsModel.class);
+			if (viewModel != null) {
+				options = viewModel.toFactoryOptions();
+				
+				if (lexicon != null) {
+					AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+					if (!ObjectUtils.equals(lexiconObj.getBaseCorpus(), corpusObj)) {
+						throw new IllegalArgumentException();
+					}
+				}
+				
+				options.setBaseCorpus(corpusObj);
+			} else {
+				throw new IllegalArgumentException();
+			}
+		}
+		
+		if (options == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		options.setExistingId(lexicon);
+		options.setEm(em());
+		options.setOwnerId(SessionedAction.getUsername(ctx()));
+		
+		AspectLexiconController factory = new AspectLexiconController();
+		AspectLexicon lexiconObj = factory.create(options);
+		if (!em().contains(lexiconObj)) {
+			em().persist(lexiconObj);
+			return created(createViewModel(lexiconObj).asJson());
+		}
+		
+		em().merge(lexiconObj);
+		return ok(createViewModel(lexiconObj).asJson());
 	}
 }

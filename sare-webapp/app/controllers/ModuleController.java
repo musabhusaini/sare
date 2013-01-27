@@ -21,6 +21,8 @@
 
 package controllers;
 
+import static models.base.ViewModel.*;
+
 import java.util.*;
 
 import javax.annotation.Nullable;
