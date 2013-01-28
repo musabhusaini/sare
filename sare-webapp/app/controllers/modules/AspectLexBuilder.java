@@ -27,8 +27,6 @@ import static models.base.ViewModel.*;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
 
@@ -42,7 +40,7 @@ import models.documentStore.*;
 import controllers.base.*;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconController;
-import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.LexiconController;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
@@ -56,16 +54,21 @@ import edu.sabanciuniv.sentilab.utils.UuidUtils;
 })
 public class AspectLexBuilder extends Module {
 
+	public static List<PersistentDocumentStoreModel> getLexica(DocumentCorpusModel corpus) {
+		LexiconController lexiconController = new LexiconController();
+		List<PersistentDocumentStoreModel> lexica = Lists.newArrayList();
+		for (String lexiconId : lexiconController.getAllLexica(em(), getUsername(), AspectLexicon.class)) {
+			AspectLexicon lexicon = fetchResource(lexiconId, AspectLexicon.class);
+			if (corpus == null || (lexicon.getBaseStore() != null
+				&& UuidUtils.normalize(corpus.id).equals(UuidUtils.normalize(lexicon.getBaseCorpus().getId())))) {
+				lexica.add((PersistentDocumentStoreModel)createViewModel(lexicon));
+			}
+		}
+		return lexica;
+	}
+	
 	public static List<PersistentDocumentStoreModel> getLexica() {
-		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
-		return Lists.transform(docStoreController.getAllUuids(em(), getUsername(), AspectLexicon.class),
-			new Function<String, PersistentDocumentStoreModel>() {
-				@Override
-				@Nullable
-				public PersistentDocumentStoreModel apply(@Nullable String input) {
-					return (PersistentDocumentStoreModel)createViewModel(fetchResource(input, PersistentDocumentStore.class));
-				}
-			});
+		return getLexica(null);
 	}
 	
 	@Override
