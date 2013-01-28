@@ -45,6 +45,7 @@ import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconController;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 @With(SareTransactionalAction.class)
 @Module.Requireses({
@@ -106,7 +107,9 @@ public class AspectLexBuilder extends Module {
 				
 				if (lexicon != null) {
 					AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
-					if (!ObjectUtils.equals(lexiconObj.getBaseCorpus(), corpusObj)) {
+					if (corpus != null && (lexiconObj.getBaseCorpus() == null
+						|| !ObjectUtils.equals(UuidUtils.normalize(lexiconObj.getBaseCorpus().getId()),
+								UuidUtils.normalize(corpus)))) {
 						throw new IllegalArgumentException();
 					}
 				}
