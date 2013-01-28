@@ -37,8 +37,7 @@ widget =
     if not @options.lexicon?
       @_$(@options.lexicaContainer).children(Selectors.moduleContainer).storeList "option",
         addRoute: =>
-          debugger
-          jsRoutes.controllers.modules.AspectLexBuilder.create(@options.corpus ? null)
+          jsRoutes.controllers.modules.AspectLexBuilder.create(@options.corpus ? "null")
     
     if @options.corpus?
       # TODO: create the documents widget.

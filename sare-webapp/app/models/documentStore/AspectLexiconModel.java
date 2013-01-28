@@ -31,7 +31,7 @@ public class AspectLexiconModel
 	public AspectLexiconModel(AspectLexicon lexicon) {
 		super(lexicon);
 		
-		if (lexicon != null) {
+		if (lexicon != null && lexicon.getBaseCorpus() != null) {
 			this.baseCorpus = (DocumentCorpusModel)createViewModel(lexicon.getBaseCorpus());
 		}
 	}

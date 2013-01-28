@@ -106,7 +106,14 @@
 <script type="text/javascript">
 	(function(window, $) {
 		$(function() {
+			debugger
 			$("#ctr-store-details-@uid").storeDetails({
+				updateRoute: @store match {
+					case _:documentStore.AspectLexiconModel => { function(lexicon) {
+						return jsRoutes.controllers.modules.AspectLexBuilder.update("null", lexicon);
+					} }
+					case _ => { jsRoutes.controllers.modules.CorpusModule.update }
+				},
 				isDerived: @isDerived
 			});
 		});

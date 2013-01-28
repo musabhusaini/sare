@@ -37,10 +37,10 @@ public class AspectLexiconFactoryOptionsModel
 	}
 	
 	public AspectLexiconFactoryOptions toFactoryOptions() {
-		AspectLexiconModel lexiconView = (AspectLexiconModel)ObjectUtils.defaultIfNull(details, new AspectLexiconModel());
+		PersistentDocumentStoreModel storeView = (PersistentDocumentStoreModel)ObjectUtils.defaultIfNull(details, new PersistentDocumentStoreModel());
 		
 		return (AspectLexiconFactoryOptions)new AspectLexiconFactoryOptions()
-			.setTitle(lexiconView.title)
-			.setDescription(lexiconView.description);
+			.setTitle(storeView.title)
+			.setDescription(storeView.description);
 	}
 }
