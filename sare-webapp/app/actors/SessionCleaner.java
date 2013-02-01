@@ -61,7 +61,9 @@ public class SessionCleaner extends UntypedActor {
 			for (String uuid : uuids) {
 				Logger.info("deleting store " + uuid + " owned by " + session.ownerId);
 				PersistentDocumentStore store = em.find(PersistentDocumentStore.class, UuidUtils.toBytes(uuid));
-				em.remove(store);
+				if (store != null) {
+					em.remove(store);
+				}
 			}
 			
 			em.getTransaction().commit();
