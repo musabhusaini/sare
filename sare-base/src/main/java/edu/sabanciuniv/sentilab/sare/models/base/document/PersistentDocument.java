@@ -131,6 +131,15 @@ public abstract class PersistentDocument
 	 * @return the {@code this} object.
 	 */
 	public PersistentDocument setBaseDocument(PersistentDocument baseDocument) {
+		// make sure we don't end up with a cyclical tree.
+		PersistentDocument chainBase = baseDocument;
+		while (chainBase != null) {
+			if (chainBase.getIdentifier().equals(this.getIdentifier())) {
+				throw new IllegalArgumentException("derived document tree must be acyclic");
+			}
+			chainBase = chainBase.getBaseDocument();
+		}
+		
 		PersistentDocument prevBase = this.getBaseDocument();
 		
 		this.baseDocument = baseDocument;

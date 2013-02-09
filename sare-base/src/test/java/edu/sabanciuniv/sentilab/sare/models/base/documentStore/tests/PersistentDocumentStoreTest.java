@@ -132,6 +132,26 @@ public class PersistentDocumentStoreTest {
 		assertTrue(testStore3.hasDerivedStore(testStore1));
 		assertTrue(testStore3.getReferers().contains(testStore1));
 	}
+	
+	@Test
+	public void testSetBaseStoreChecksForCycle() {
+		boolean thrown = false;
+		try {
+			testStore1.setBaseStore(testStore1);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+		
+		thrown = false;
+		testStore1.setBaseStore(testStore2);
+		try {
+			testStore2.setBaseStore(testStore1);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+	}
 
 	@Test
 	public void testAddDerivedStoresPropagates() {
@@ -152,6 +172,26 @@ public class PersistentDocumentStoreTest {
 		assertFalse(testStore1.getReferers().contains(testStore2));
 		assertFalse(testStore2.getBaseStore() == testStore1);
 		assertFalse(testStore2.getReferences().contains(testStore1));
+	}
+	
+	@Test
+	public void testAddDerivedStoresChecksForCycle() {
+		boolean thrown = false;
+		try {
+			testStore1.addDerivedStore(testStore1);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+		
+		thrown = false;
+		testStore1.addDerivedStore(testStore2);
+		try {
+			testStore2.addDerivedStore(testStore1);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
 	}
 	
 	@Test

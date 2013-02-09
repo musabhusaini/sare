@@ -130,6 +130,26 @@ public class PersistentDocumentTest {
 	}
 	
 	@Test
+	public void testSetBaseDocumentChecksForCycle() {
+		boolean thrown = false;
+		try {
+			testDocument1.setBaseDocument(testDocument1);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+		
+		thrown = false;
+		testDocument1.setBaseDocument(testDocument2);
+		try {
+			testDocument2.setBaseDocument(testDocument1);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+	}
+	
+	@Test
 	public void testAddDerivedDocumentsPropagates() {
 		testDocument1.addDerivedDocument(testDocument2);
 		
@@ -137,6 +157,26 @@ public class PersistentDocumentTest {
 		assertTrue(testDocument1.getReferers().contains(testDocument2));
 		assertTrue(testDocument2.getBaseDocument() == testDocument1);
 		assertTrue(testDocument2.getReferences().contains(testDocument1));
+	}
+	
+	@Test
+	public void testAddDerivedDocumentsChecksForCycle() {
+		boolean thrown = true;
+		try {
+			testDocument1.addDerivedDocument(testDocument1);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+		
+		thrown = false;
+		testDocument1.addDerivedDocument(testDocument2);
+		try {
+			testDocument2.addDerivedDocument(testDocument1);
+		} catch (IllegalArgumentException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
 	}
 	
 	@Test

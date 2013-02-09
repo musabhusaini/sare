@@ -111,6 +111,15 @@ public abstract class PersistentDocumentStore
 	 * @return the {@code this} object.
 	 */
 	public PersistentDocumentStore setBaseStore(PersistentDocumentStore baseStore) {
+		// make sure we don't end up with a cyclical tree.
+		PersistentDocumentStore chainBase = baseStore;
+		while (chainBase != null) {
+			if (chainBase.getIdentifier().equals(this.getIdentifier())) {
+				throw new IllegalArgumentException("derived document tree must be acyclic");
+			}
+			chainBase = chainBase.getBaseStore();
+		}
+		
 		PersistentDocumentStore prevBase = this.getBaseStore();
 		
 		this.baseStore = baseStore;
