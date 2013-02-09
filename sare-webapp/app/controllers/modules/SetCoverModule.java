@@ -29,7 +29,7 @@ import models.documentStore.*;
 import views.html.tags.*;
 import controllers.modules.base.Module;
 
-@Module.Requires({PersistentDocumentStoreModel.class})
+@Module.Requires({DocumentCorpusModel.class})
 public class SetCoverModule extends Module {
 
 	@Override

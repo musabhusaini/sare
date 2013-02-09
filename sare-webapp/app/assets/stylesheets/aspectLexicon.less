@@ -19,26 +19,6 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.controllers.aspect;
-
-import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
-import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.*;
-import edu.sabanciuniv.sentilab.sare.models.aspect.*;
-
-public class AspectLexiconController
-	extends PersistentDocumentStoreFactory<AspectLexicon, AspectLexiconFactoryOptions>
-	implements IDocumentStoreController {
-
-	@Override
-	protected AspectLexicon createPrivate(AspectLexiconFactoryOptions options, AspectLexicon lexicon)
-		throws IllegalFactoryOptionsException {
-		
-		if (lexicon == null) {
-			lexicon = new AspectLexicon(options.getBaseStore());
-		}
-		
-		// TODO: add support for uploading file.
-		
-		return lexicon;
-	}
+.lexicon-tree {
+  height: 250px;
 }

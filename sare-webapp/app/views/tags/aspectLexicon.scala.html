@@ -1,0 +1,70 @@
+@*
+ * Sentilab SARE: a Sentiment Analysis Research Environment
+ * Copyright (C) 2013 Sabanci University Sentilab
+ * http://sentilab.sabanciuniv.edu
+ * 
+ * This file is part of SARE.
+ * 
+ * SARE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *  
+ * SARE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with SARE. If not, see <http://www.gnu.org/licenses/>.
+ *@
+
+@(lexicon: documentStore.AspectLexiconModel, editable: Boolean = true)
+
+@import scala.util._
+
+@defining(Random.nextInt(1000)) { uid =>
+<div id="ctr-module-@uid" class="ctr-module" data-lexicon="@lexicon.asJson()">
+	<div class="span6">
+		<div class="row-fluid">
+			<label>Aspects:</label>
+		</div>
+		<div id="ctr-aspects-@uid" class="ctr-aspects lexicon-tree row-fluid">
+		</div>
+		@if(editable) {
+		<div class="row-fluid">
+			<button type="submit" id="btn-add-aspect-@uid" class="btn-add-aspect btn btn-primary" title="Add a new aspect" data-placement="bottom" data-loading-text="Adding...">
+				<i class="icon-plus"></i> Add
+			</button>
+			<button id="btn-delete-aspect-@uid" class="btn-delete-aspect btn btn-warning" title="Delete this aspect" data-placement="bottom" data-loading-text="Deleting...">
+				<i class="icon-trash"></i> Delete
+			</button>
+		</div>
+		}
+	</div>
+	<div class="span6">
+		<div class="row-fluid">
+			<label>Keywords:</label>
+		</div>
+		<div id="ctr-keywords-@uid" class="ctr-keywords lexicon-tree row-fluid">
+		</div>
+		@if(editable) {
+		<div class="row-fluid">
+		</div>
+		}
+	</div>
+</div>
+
+<link rel="stylesheet" href="@routes.Assets.at("stylesheets/aspectLexicon.css")">
+<script type="text/javascript" src="@controllers.routes.Assets.at("plugins/jstree/jquery.jstree.js")"></script>
+<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.aspectLexicon.js")"></script>
+<script type="text/javascript">
+	(function(window, $) {
+		$(function() {
+			$("#ctr-module-@uid").aspectLexicon({
+				editable: @editable
+			});
+		});
+	})(window, window.jQuery);
+</script>
+}

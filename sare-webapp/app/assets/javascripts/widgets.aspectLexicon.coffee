@@ -32,23 +32,35 @@ Widgets = Page.Widgets
 widget =
   _create: ->
     @options.lexicon ?= $(@element).data @options.lexiconKey
-    @options.corpus ?= $(@element).data @options.corpusKey
     
-    if not @options.lexicon?
-      @_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
-        storelistselectionchange: (e, selected) =>
-          lexicon = selected.data
-          @_$(@options.lexiconContainer).empty()
-          if lexicon? then @_$(@options.lexiconContainer)
-            .load @options.lexiconViewRoute(lexicon.id).url
-      @_$(@options.lexicaContainer).children(Selectors.moduleContainer)
-        .storeList "option",
-          addRoute: =>
-            jsRoutes.controllers.modules.AspectLexBuilder.create(@options.corpus?.id ? "null")
+    @_$(@options.aspectsContainer).jstree
+      json_data:
+        progressive_render: true
+        data: @options.lexicon.children ? []
+        ajax:
+          url: (node) =>
+            @options.getLexiconRoute(node.aspect.id)
+          success: (data) =>
+            data: data.title
+            children: data.children
+            aspect: data
+      plugins: [ "themes", "json_data", "ui", "crrm", "dnd" ]
     
-    if @options.corpus?
-      # TODO: create the documents widget.
-      @_$(@options.documentsContainer)
+    @_$(@options.aspectsContainer).on "before.jstree", (e, data) =>
+      switch data.func
+        when "create"
+          debugger
+    
+    @_$(@options.addAspectButton).click =>
+      @_$(@options.aspectsContainer).jstree "create", null, "inside"
+    
+    @_$(@options.deleteAspectButton).click =>
+      @_$(@options.aspectsContainer).jstree "remove", null
+    
+    @_$(@options.keywordsContainer).jstree
+      json_data:
+        data: []
+      plugins: [ "themes", "json_data", "ui", "crrm", "dnd" ]
 
   refresh: ->
     $(@element).data @options.widgetKey, @
@@ -62,12 +74,12 @@ widget =
     $.Widget.prototype._setOption.apply @, arguments
   
   _getCreateOptions: ->
-      lexicaContainer: ".ctr-lexica"
-      documentsContainer: ".ctr-documents"
-      lexiconContainer: ".ctr-alex"
-      lexiconViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.lexiconView
+      aspectsContainer: ".ctr-aspects"
+      keywordsContainer: ".ctr-keywords"
+      addAspectButton: ".btn-add-aspect"
+      deleteAspectButton: ".btn-delete-aspect"
+      getLexiconRoute: jsRoutes.controllers.CollectionsController.get
       lexiconKey: "lexicon"
-      corpusKey: "corpus"
       widgetKey: "widget"
 
-$.widget "widgets.aspectLexBuilder", Sare.Widget, widget
+$.widget "widgets.aspectLexicon", Sare.Widget, widget

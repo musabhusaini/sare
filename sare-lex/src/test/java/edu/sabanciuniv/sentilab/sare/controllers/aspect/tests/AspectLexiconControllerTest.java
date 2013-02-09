@@ -45,7 +45,7 @@ public class AspectLexiconControllerTest {
 
 	@Test
 	public void testCreateSetsBaseCorpus() {
-		testOptions.setBaseCorpus(testCorpus);
+		testOptions.setBaseStore(testCorpus);
 		AspectLexicon actualLexicon = testController.create(testOptions);
 		
 		assertNotNull(actualLexicon);

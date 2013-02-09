@@ -28,7 +28,7 @@
 	@if(corpus != null) { data-corpus="@corpus.asJson()" }>
 	@if(lexicon == null) {
 		<div id="ctr-lexica-@uid" class="ctr-lexica row-fluid">
-			@tags.storeList(stores = modules.AspectLexBuilder.getLexica(corpus), editable = true, storeType = "Aspect Lexica")
+			@tags.storeList(stores = modules.AspectLexBuilder.getLexica(corpus), editable = true, storeType = "Aspect Lexicon")
 		</div>
 	}
 	
@@ -39,17 +39,13 @@
 		}
 		
 		<div id="ctr-alex-@uid" class="ctr-alex span6">
-			<div id="ctr-aspects-@uid" class="ctr-aspects span6">
-				<!-- display aspect tree -->
-			</div>
-			<div id="ctr-keywords-@uid" class="ctr-keywords span6">
-				<!-- display keyword tree -->
-			</div>
+			@if(lexicon != null) {
+				@tags.aspectLexicon(lexicon, editable)
+			}
 		</div>
 	</div>
 </div>
 
-<script type="text/javascript" src="@controllers.routes.Assets.at("plugins/jstree/jquery.jstree.js")"></script>
 <script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.aspectLexBuilder.js")"></script>
 <script type="text/javascript">
 	(function(window, $) {

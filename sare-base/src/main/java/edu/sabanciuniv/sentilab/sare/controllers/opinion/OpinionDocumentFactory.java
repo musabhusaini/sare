@@ -73,22 +73,12 @@ public class OpinionDocumentFactory
 	}
 
 	@Override
-	protected OpinionDocument createPrivate(OpinionDocumentFactoryOptions options)
+	protected OpinionDocument createPrivate(OpinionDocumentFactoryOptions options, OpinionDocument document)
 		throws IllegalFactoryOptionsException {
 		
 		Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
 		
 		boolean existing = true;
-		OpinionDocument document = null;
-		if (options.getExistingId() != null && options.getEm() != null) {
-			// if not found, we simply fall-back to the default behavior.
-			try {
-				document = options.getEm().find(OpinionDocument.class, options.getExistingId());
-			} catch (IllegalArgumentException e) {
-				document = null;
-			}
-		}
-		
 		if (document == null) {
 			document = new OpinionDocument();
 			existing = false;

@@ -23,13 +23,24 @@ package models.documentStore;
 
 import org.apache.commons.lang3.ObjectUtils;
 
+import controllers.base.SareTransactionalAction;
+
 import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 
 public class AspectLexiconFactoryOptionsModel
 	extends PersistentDocumentStoreFactoryOptionsModel {
 	
+	public PersistentDocumentStoreModel baseStore;
+	
 	public AspectLexiconFactoryOptionsModel(AspectLexiconFactoryOptions options) {
 		super(options);
+		
+		if (options != null) {
+			if (options.getBaseStore() != null) {
+				this.baseStore = (PersistentDocumentStoreModel)createViewModel(options.getBaseStore());
+			}
+		}
 	}
 	
 	public AspectLexiconFactoryOptionsModel() {
@@ -39,8 +50,14 @@ public class AspectLexiconFactoryOptionsModel
 	public AspectLexiconFactoryOptions toFactoryOptions() {
 		PersistentDocumentStoreModel storeView = (PersistentDocumentStoreModel)ObjectUtils.defaultIfNull(details, new PersistentDocumentStoreModel());
 		
-		return (AspectLexiconFactoryOptions)new AspectLexiconFactoryOptions()
+		AspectLexiconFactoryOptions options = (AspectLexiconFactoryOptions)new AspectLexiconFactoryOptions()
 			.setTitle(storeView.title)
 			.setDescription(storeView.description);
+		
+		if (this.baseStore != null && SareTransactionalAction.em() != null) {
+			options.setBaseStore(SareTransactionalAction.fetchResource(this.baseStore.id, PersistentDocumentStore.class));
+		}
+		
+		return options;
 	}
 }

@@ -29,6 +29,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
+import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus;
 
 public class AspectLexiconTests {
 
@@ -192,5 +194,15 @@ public class AspectLexiconTests {
 		}, null);
 		
 		assertNull(subAspect);
+	}
+	
+	@Test
+	public void testGetBaseCorpus() {
+		DocumentCorpus testCorpus = new OpinionCorpus();
+		testLexicon.setBaseStore(testCorpus);
+		AspectLexicon testAspect = testLexicon.addAspect(testString1);
+		
+		assertEquals(testCorpus, testLexicon.getBaseCorpus());
+		assertEquals(testCorpus, testAspect.getBaseCorpus());
 	}
 }

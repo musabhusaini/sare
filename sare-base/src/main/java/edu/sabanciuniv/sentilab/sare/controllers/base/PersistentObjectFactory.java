@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 
 import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
@@ -42,8 +43,9 @@ public abstract class PersistentObjectFactory<T extends PersistentObject, O exte
 	extends ControllerBase
 	implements IFactory<T, O> {
 	
-	protected abstract T createPrivate(O options) throws IllegalFactoryOptionsException;
-	
+	protected abstract T createPrivate(O options, T existing) throws IllegalFactoryOptionsException;
+
+	@SuppressWarnings({ "unchecked", "serial" })
 	@Override
 	public T create(O options)
 		throws IllegalFactoryOptionsException {
@@ -51,7 +53,12 @@ public abstract class PersistentObjectFactory<T extends PersistentObject, O exte
 		try {
 			Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
 			
-			T obj = this.createPrivate(options);
+			T obj = null;
+			if (options.getExistingId() != null && options.getEm() != null) {
+				obj = (T)options.getEm().find(new TypeToken<T>(this.getClass()){}.getRawType(), options.getExistingId());
+			}
+
+			obj = this.createPrivate(options, obj);
 			
 			// merge the other data.
 			if (obj != null && options.getOtherData() != null) {

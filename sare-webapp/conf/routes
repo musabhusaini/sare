@@ -59,15 +59,20 @@ POST	/api/modules/opinions/:corpus/documents/:document	controllers.modules.Corpu
 DELETE	/api/modules/opinions/:corpus/documents/:document	controllers.modules.CorpusModule.deleteDocument(corpus: String, document: String)
 
 # Aspect lexicon builder module
-POST	/api/modules/lexica											controllers.modules.AspectLexBuilder.create(corpus = null)
-POST	/api/modules/corpora/:corpus/lexica							controllers.modules.AspectLexBuilder.create(corpus: String)
-POST	/api/modules/lexica/:lexicon								controllers.modules.AspectLexBuilder.update(corpus = null, lexicon: String)
-POST	/api/modules/corpora/:corpus/lexica/:lexicon				controllers.modules.AspectLexBuilder.update(corpus: String, lexicon: String)
+POST	/api/modules/lexica/:lexicon/aspects	controllers.modules.AspectLexBuilder.addAspect(lexicon: String)
+POST	/api/modules/aspects/:aspect			controllers.modules.AspectLexBuilder.updateAspect(aspect: String)
 
-GET		/view/modules/lexica/builder								controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon = null, partial: Boolean ?= false)
-GET		/view/modules/lexica/:lexicon/builder						controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon: String, partial: Boolean ?= false)
-GET		/view/modules/corpora/:corpus/lexica/builder				controllers.modules.AspectLexBuilder.modulePage(corpus: String, lexicon = null, partial: Boolean ?= false)
-GET		/view/modules/corpora/:corpus/lexica/:lexicon/builder		controllers.modules.AspectLexBuilder.modulePage(corpus: String, lexicon: String, partial: Boolean ?= false)
+POST	/api/modules/lexica								controllers.modules.AspectLexBuilder.create(corpus = null)
+POST	/api/modules/corpora/:corpus/lexica				controllers.modules.AspectLexBuilder.create(corpus: String)
+POST	/api/modules/lexica/:lexicon					controllers.modules.AspectLexBuilder.update(corpus = null, lexicon: String)
+POST	/api/modules/corpora/:corpus/lexica/:lexicon	controllers.modules.AspectLexBuilder.update(corpus: String, lexicon: String)
+
+GET		/view/modules/lexica/builder							controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon = null, partial: Boolean ?= false)
+GET		/view/modules/lexica/:lexicon/builder					controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon: String, partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/lexica/builder			controllers.modules.AspectLexBuilder.modulePage(corpus: String, lexicon = null, partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/lexica/:lexicon/builder	controllers.modules.AspectLexBuilder.modulePage(corpus: String, lexicon: String, partial: Boolean ?= false)
+
+GET		/view/modules/lexica/:lexicon							controllers.modules.AspectLexBuilder.lexiconView(lexicon: String)
 
 # Corpus reduction module
 GET		/view/modules/reduction/:corpus		controllers.modules.SetCoverModule.modulePage(corpus: String, partial: Boolean ?= false)

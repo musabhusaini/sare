@@ -21,19 +21,50 @@
 
 package models.documentStore;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
 
 public class AspectLexiconModel
 	extends PersistentDocumentStoreModel {
 	
 	public DocumentCorpusModel baseCorpus;
+	public AspectLexiconModel parent;
+	public List<AspectLexiconModel> children;
 	
-	public AspectLexiconModel(AspectLexicon lexicon) {
+	public AspectLexiconModel(AspectLexicon lexicon, boolean expandFamily) {
 		super(lexicon);
 		
-		if (lexicon != null && lexicon.getBaseCorpus() != null) {
-			this.baseCorpus = (DocumentCorpusModel)createViewModel(lexicon.getBaseCorpus());
+		if (lexicon != null) {
+			if (lexicon.getBaseCorpus() != null) {
+				this.baseCorpus = (DocumentCorpusModel)createViewModel(lexicon.getBaseCorpus());
+			}
+			
+			if (expandFamily) {
+				if (lexicon.getBaseStore() instanceof AspectLexicon) {
+					this.parent = new AspectLexiconModel((AspectLexicon)lexicon.getBaseStore(), false);
+				}
+
+				this.children = Lists.newArrayList(Iterables.transform(Iterables.filter(lexicon.getDerivedStores(), AspectLexicon.class),
+					new Function<AspectLexicon, AspectLexiconModel>() {
+						@Override
+						@Nullable
+						public AspectLexiconModel apply(@Nullable AspectLexicon input) {
+							return new AspectLexiconModel(input, false);
+						}
+					}));
+			}
 		}
+	}
+	
+	public AspectLexiconModel(AspectLexicon lexicon) {
+		this(lexicon, true);
 	}
 	
 	public AspectLexiconModel() {
