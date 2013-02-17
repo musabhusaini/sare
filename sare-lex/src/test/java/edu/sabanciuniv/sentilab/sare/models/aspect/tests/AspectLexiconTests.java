@@ -34,14 +34,16 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus;
 
 public class AspectLexiconTests {
 
-	private AspectLexicon testLexicon;
+	private AspectLexicon testLexicon1;
+	private AspectLexicon testLexicon2;
 	private String testString1;
 	private String testString2;
 	private String testString3;
 	
 	@Before
 	public void setUp() throws Exception {
-		testLexicon = new AspectLexicon();
+		testLexicon1 = new AspectLexicon();
+		testLexicon2 = new AspectLexicon();
 		
 		testString1 = "test-string-1";
 		testString2 = "test-string-2";
@@ -54,51 +56,51 @@ public class AspectLexiconTests {
 
 	@Test
 	public void testFindExpression() {
-		testLexicon.addExpression(testString1);
-		testLexicon.addExpression(testString2);
+		testLexicon1.addExpression(testString1);
+		testLexicon1.addExpression(testString2);
 		
-		AspectExpression actualExpression = testLexicon.findExpression(testString1);
+		AspectExpression actualExpression = testLexicon1.findExpression(testString1);
 		assertNotNull(actualExpression);
 		assertEquals(testString1, actualExpression.getContent());
 		
-		actualExpression = testLexicon.findExpression(testString3);
+		actualExpression = testLexicon1.findExpression(testString3);
 		assertNull(actualExpression);
 	}
 	
 	@Test
 	public void testFindExpressionNonRecursive() {
-		AspectLexicon subAspect = testLexicon.addAspect(testString1);
+		AspectLexicon subAspect = testLexicon1.addAspect(testString1);
 		subAspect.addExpression(testString2);
 		
-		AspectExpression actualExpression = testLexicon.findExpression(testString2, false);
+		AspectExpression actualExpression = testLexicon1.findExpression(testString2, false);
 		assertNull(actualExpression);
 	}
 
 	@Test
 	public void testFindExpressionRecursive() {
-		AspectLexicon subAspect = testLexicon.addAspect(testString1);
+		AspectLexicon subAspect = testLexicon1.addAspect(testString1);
 		subAspect.addExpression(testString2);
 		
-		AspectExpression actualExpression = testLexicon.findExpression(testString2, true);
+		AspectExpression actualExpression = testLexicon1.findExpression(testString2, true);
 		assertNotNull(actualExpression);
 		assertEquals(testString2, actualExpression.getContent());
 		
-		actualExpression = testLexicon.findExpression(testString3, true);
+		actualExpression = testLexicon1.findExpression(testString3, true);
 		assertNull(actualExpression);
 	}
 	
 	@Test
 	public void testHasExpression() {
-		testLexicon.addExpression(testString1);
+		testLexicon1.addExpression(testString1);
 		
-		assertTrue(testLexicon.hasExpression(testString1));
-		assertFalse(testLexicon.hasExpression(testString2));
+		assertTrue(testLexicon1.hasExpression(testString1));
+		assertFalse(testLexicon1.hasExpression(testString2));
 	}
 
 	@Test
 	public void testAddExpression() {
-		testLexicon.addExpression(testString1);
-		Iterable<AspectExpression> expressions = testLexicon.getExpressions();
+		testLexicon1.addExpression(testString1);
+		Iterable<AspectExpression> expressions = testLexicon1.getExpressions();
 		AspectExpression expression = Iterables.find(expressions, new Predicate<AspectExpression>() {
 			@Override
 			public boolean apply(AspectExpression input) {
@@ -111,9 +113,9 @@ public class AspectLexiconTests {
 
 	@Test
 	public void testRemoveExpression() {
-		testLexicon.addExpression(testString1);
-		testLexicon.removeExpression(testString1);
-		Iterable<AspectExpression> expressions = testLexicon.getExpressions();
+		testLexicon1.addExpression(testString1);
+		testLexicon1.removeExpression(testString1);
+		Iterable<AspectExpression> expressions = testLexicon1.getExpressions();
 		AspectExpression expression = Iterables.find(expressions, new Predicate<AspectExpression>() {
 			@Override
 			public boolean apply(AspectExpression input) {
@@ -126,51 +128,51 @@ public class AspectLexiconTests {
 
 	@Test
 	public void testFindAspect() {
-		testLexicon.addAspect(testString1);
-		testLexicon.addAspect(testString2);
+		testLexicon1.addAspect(testString1);
+		testLexicon1.addAspect(testString2);
 		
-		AspectLexicon actualSubAspect = testLexicon.findAspect(testString1);
+		AspectLexicon actualSubAspect = testLexicon1.findAspect(testString1);
 		assertNotNull(actualSubAspect);
 		assertEquals(testString1, actualSubAspect.getTitle());
 		
-		actualSubAspect = testLexicon.findAspect(testString3);
+		actualSubAspect = testLexicon1.findAspect(testString3);
 		assertNull(actualSubAspect);
 	}
 	
 	@Test
 	public void testFindAspectNonRecursive() {
-		AspectLexicon subAspect = testLexicon.addAspect(testString1);
+		AspectLexicon subAspect = testLexicon1.addAspect(testString1);
 		subAspect.addAspect(testString2);
 		
-		AspectLexicon actualSubAspect = testLexicon.findAspect(testString2, false);
+		AspectLexicon actualSubAspect = testLexicon1.findAspect(testString2, false);
 		assertNull(actualSubAspect);
 	}
 	
 	@Test
 	public void testFindAspectRecursive() {
-		AspectLexicon subAspect = testLexicon.addAspect(testString1);
+		AspectLexicon subAspect = testLexicon1.addAspect(testString1);
 		subAspect.addAspect(testString2);
 		
-		AspectLexicon foundSubAspect = testLexicon.findAspect(testString2, true);
+		AspectLexicon foundSubAspect = testLexicon1.findAspect(testString2, true);
 		assertNotNull(foundSubAspect);
 		assertEquals(testString2, foundSubAspect.getTitle());
 		
-		foundSubAspect = testLexicon.findAspect(testString3, true);
+		foundSubAspect = testLexicon1.findAspect(testString3, true);
 		assertNull(foundSubAspect);
 	}
 
 	@Test
 	public void testHasAspect() {
-		testLexicon.addAspect(testString1);
+		testLexicon1.addAspect(testString1);
 		
-		assertTrue(testLexicon.hasAspect(testString1));
-		assertFalse(testLexicon.hasAspect(testString2));
+		assertTrue(testLexicon1.hasAspect(testString1));
+		assertFalse(testLexicon1.hasAspect(testString2));
 	}
 
 	@Test
 	public void testAddAspect() {
-		testLexicon.addAspect(testString1);
-		Iterable<AspectLexicon> subAspects = testLexicon.getAspects();
+		testLexicon1.addAspect(testString1);
+		Iterable<AspectLexicon> subAspects = testLexicon1.getAspects();
 		AspectLexicon subAspect = Iterables.find(subAspects, new Predicate<AspectLexicon>() {
 			@Override
 			public boolean apply(AspectLexicon input) {
@@ -183,9 +185,11 @@ public class AspectLexiconTests {
 
 	@Test
 	public void testRemoveAspect() {
-		testLexicon.addAspect(testString1);
-		testLexicon.removeAspect(testString1);
-		Iterable<AspectLexicon> subAspects = testLexicon.getAspects();
+		AspectLexicon testAspect = testLexicon1.addAspect(testString1);
+		AspectLexicon actualAspect = testLexicon1.removeAspect(testString1);
+		assertEquals(testAspect, actualAspect);
+		
+		Iterable<AspectLexicon> subAspects = testLexicon1.getAspects();
 		AspectLexicon subAspect = Iterables.find(subAspects, new Predicate<AspectLexicon>() {
 			@Override
 			public boolean apply(AspectLexicon input) {
@@ -199,10 +203,43 @@ public class AspectLexiconTests {
 	@Test
 	public void testGetBaseCorpus() {
 		DocumentCorpus testCorpus = new OpinionCorpus();
-		testLexicon.setBaseStore(testCorpus);
-		AspectLexicon testAspect = testLexicon.addAspect(testString1);
+		testLexicon1.setBaseStore(testCorpus);
+		AspectLexicon testAspect = testLexicon1.addAspect(testString1);
 		
-		assertEquals(testCorpus, testLexicon.getBaseCorpus());
+		assertEquals(testCorpus, testLexicon1.getBaseCorpus());
 		assertEquals(testCorpus, testAspect.getBaseCorpus());
+	}
+	
+	@Test
+	public void testMigrateAspectMigratesNonDupe() {
+		AspectLexicon testAspect = testLexicon1.addAspect(testString1);
+		assertTrue(testLexicon2.migrateAspect(testAspect));
+		assertEquals(testAspect.getBaseStore(), testLexicon2);
+	}
+	
+	@Test
+	public void testMigrateAspectDoesNotMigrateDupe() {
+		AspectLexicon testAspect = testLexicon1.addAspect(testString1);
+		testLexicon2.addAspect(testString1);
+		assertFalse(testLexicon2.migrateAspect(testAspect));
+		assertNotEquals(testAspect.getBaseStore(), testLexicon2);
+	}
+	
+	@Test
+	public void testUpdateAspectUpdatesNonDupe() {
+		AspectLexicon testAspect = testLexicon1.addAspect(testString1);
+		AspectLexicon actualAspect = testLexicon1.updateAspect(testAspect.getTitle(), testString2);
+		assertEquals(testAspect, actualAspect);
+		assertEquals(testString2, actualAspect.getTitle());
+	}
+	
+	@Test
+	public void testUpdateAspectDoesNotUpdateDupe() {
+		AspectLexicon testAspect = testLexicon1.addAspect(testString1);
+		testLexicon1.addAspect(testString2);
+		AspectLexicon actualAspect = testLexicon1.updateAspect(testAspect.getTitle(), testString2);
+		assertNull(actualAspect);
+		assertEquals(testString1, testAspect.getTitle());
+		assertEquals(testLexicon1, testAspect.getBaseStore());
 	}
 }

@@ -26,8 +26,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
 
@@ -38,7 +37,7 @@ public class AspectLexiconModel
 	public AspectLexiconModel parent;
 	public List<AspectLexiconModel> children;
 	
-	public AspectLexiconModel(AspectLexicon lexicon, boolean expandFamily) {
+	public AspectLexiconModel(AspectLexicon lexicon, boolean expandChildren) {
 		super(lexicon);
 		
 		if (lexicon != null) {
@@ -46,19 +45,21 @@ public class AspectLexiconModel
 				this.baseCorpus = (DocumentCorpusModel)createViewModel(lexicon.getBaseCorpus());
 			}
 			
-			if (expandFamily) {
-				if (lexicon.getBaseStore() instanceof AspectLexicon) {
-					this.parent = new AspectLexiconModel((AspectLexicon)lexicon.getBaseStore(), false);
-				}
-
-				this.children = Lists.newArrayList(Iterables.transform(Iterables.filter(lexicon.getDerivedStores(), AspectLexicon.class),
+			if (Iterables.size(lexicon.getDerivedStores()) == 0) {
+				this.children = null;
+			} else {
+				this.children = expandChildren ? Lists.newArrayList(Iterables.transform(Iterables.filter(lexicon.getDerivedStores(), AspectLexicon.class),
 					new Function<AspectLexicon, AspectLexiconModel>() {
 						@Override
 						@Nullable
 						public AspectLexiconModel apply(@Nullable AspectLexicon input) {
 							return new AspectLexiconModel(input, false);
 						}
-					}));
+					})) : Lists.<AspectLexiconModel>newArrayList();
+			}
+			
+			if (lexicon.getBaseStore() instanceof AspectLexicon) {
+				this.parent = new AspectLexiconModel((AspectLexicon)lexicon.getBaseStore(), false);
 			}
 		}
 	}

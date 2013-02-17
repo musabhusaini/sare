@@ -26,6 +26,7 @@ import static controllers.base.SessionedAction.*;
 import static models.base.ViewModel.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
@@ -153,36 +154,53 @@ public class AspectLexBuilder extends Module {
 		return ok(aspectLexicon.render(lexiconObj, true));
 	}
 	
-	private static AspectLexicon updateAspect(AspectLexiconFactoryOptions options) {
-		// TODO: fill in.
-		return null;
-	}
-	
 	public static Result addAspect(String lexicon) {
-		JsonNode json = request().body().asJson();
-		AspectLexiconFactoryOptionsModel options = json != null ?
-			Json.fromJson(json, AspectLexiconFactoryOptionsModel.class) : new AspectLexiconFactoryOptionsModel();
-		
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
-		options.baseStore = (AspectLexiconModel)createViewModel(lexiconObj);
+		String aspectText = request().body().asText();
+		if (StringUtils.isEmpty(aspectText)) {
+			aspectText = UUID.randomUUID().toString();
+		}
 		
-		return created(createViewModel(updateAspect(options.toFactoryOptions())).asJson());
+		AspectLexicon aspectObj = lexiconObj.addAspect(aspectText);
+		if (aspectObj == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		return created(createViewModel(aspectObj).asJson());
 	}
 	
-	public static Result updateAspect(String aspect) {
-		JsonNode json = request().body().asJson();
-		AspectLexiconFactoryOptionsModel optionsModel = json != null ?
-			Json.fromJson(json, AspectLexiconFactoryOptionsModel.class) : new AspectLexiconFactoryOptionsModel();
+	public static Result updateAspect(String lexicon, String aspect) {
+		if (StringUtils.isEmpty(lexicon)) {
+			
+		}
+		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
+		String aspectText = request().body().asText();
 		
-		fetchResource(aspect, AspectLexicon.class);
-		AspectLexiconFactoryOptions options = optionsModel.toFactoryOptions();
-		options.setEm(em());
-		options.setExistingId(aspect);
+		if (!lexiconObj.migrateAspect(aspectObj)) {
+			throw new IllegalArgumentException();
+		}
 		
-		return ok(createViewModel(updateAspect(options)).asJson());
+		aspectObj = lexiconObj.updateAspect(aspectObj.getTitle(), aspectText);
+		if (aspectObj == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		return ok(createViewModel(aspectObj).asJson());
 	}
 	
 	public static Result deleteAspect(String lexicon, String aspect) {
+		if (StringUtils.isNotEmpty(lexicon)) {
+			AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+			AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
+			if (aspectObj.getBaseStore() != null &&
+				aspectObj.getBaseStore().getIdentifier().equals(lexiconObj.getBaseStore().getIdentifier())) {
+				return ok(createViewModel(lexiconObj.removeAspect(aspectObj.getTitle())).asJson());
+			} else {
+				throw new IllegalArgumentException();
+			}
+		}
+		
 		return CollectionsController.delete(aspect);
 	}
 }

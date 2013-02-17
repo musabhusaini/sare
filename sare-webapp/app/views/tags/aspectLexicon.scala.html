@@ -25,7 +25,7 @@
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-module-@uid" class="ctr-module" data-lexicon="@lexicon.asJson()">
-	<div class="span6">
+	<div class="span5">
 		<div class="row-fluid">
 			<label>Aspects:</label>
 		</div>
@@ -34,15 +34,18 @@
 		@if(editable) {
 		<div class="row-fluid">
 			<button type="submit" id="btn-add-aspect-@uid" class="btn-add-aspect btn btn-primary" title="Add a new aspect" data-placement="bottom" data-loading-text="Adding...">
-				<i class="icon-plus"></i> Add
+				<i class="icon-plus"></i>
+			</button>
+			<button id="btn-update-aspect-@uid" class="btn-update-aspect btn" title="Update this aspect" data-placement="bottom" data-loading-text="Updating...">
+				<i class="icon-pencil"></i>
 			</button>
 			<button id="btn-delete-aspect-@uid" class="btn-delete-aspect btn btn-warning" title="Delete this aspect" data-placement="bottom" data-loading-text="Deleting...">
-				<i class="icon-trash"></i> Delete
+				<i class="icon-trash"></i>
 			</button>
 		</div>
 		}
 	</div>
-	<div class="span6">
+	<div class="offset1 span5">
 		<div class="row-fluid">
 			<label>Keywords:</label>
 		</div>

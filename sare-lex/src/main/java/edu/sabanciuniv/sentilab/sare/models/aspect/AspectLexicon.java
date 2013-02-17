@@ -23,10 +23,13 @@ package edu.sabanciuniv.sentilab.sare.models.aspect;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang3.Validate;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
+import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**
  * A class that represents an aspect lexicon.
@@ -142,7 +145,9 @@ public class AspectLexicon
 	 */
 	public AspectExpression addExpression(String expression) {
 		if (!this.hasExpression(expression)) {
-			return (AspectExpression)new AspectExpression().setContent(expression).setStore(this);
+			return (AspectExpression)new AspectExpression()
+				.setContent(expression)
+				.setStore(this);
 		}
 		
 		return null;
@@ -173,7 +178,7 @@ public class AspectLexicon
 	 * @return the {@link AspectLexicon} object for the aspect if present, {@code null} otherwise.
 	 */
 	public AspectLexicon findAspect(final String aspect, boolean recursive) {
-		AspectLexicon aspectLexicon = Iterables.find(Iterables.filter(this.getAspects(), AspectLexicon.class), new Predicate<AspectLexicon>() {
+		AspectLexicon aspectLexicon = Iterables.find(this.getAspects(), new Predicate<AspectLexicon>() {
 			@Override
 			public boolean apply(AspectLexicon input) {
 				return aspect != null && aspect.equalsIgnoreCase(input.getTitle());
@@ -238,11 +243,60 @@ public class AspectLexicon
 	/**
 	 * Removes a given aspect from this lexicon.
 	 * @param aspect the aspect title to remove.
-	 * @return {@code true} if the aspect was removed, {@code false} otherwise.
+	 * @return the {@link AspectLexicon} object that was removed, or {@code null} if none was removed.
 	 */
-	public boolean removeAspect(String aspect) {
+	public AspectLexicon removeAspect(String aspect) {
 		AspectLexicon aspectLexicon = this.findAspect(aspect);
-		return aspectLexicon != null ? this.removeDerivedStore(aspectLexicon) : false;
+		if (aspectLexicon != null) {
+			this.removeDerivedStore(aspectLexicon);
+		}
+		
+		return aspectLexicon;
+	}
+	
+	/**
+	 * Migrates a given aspect to this lexicon.
+	 * @param aspect the {@link AspectLexicon} object to migrate.
+	 * @return {@code true} if the aspect was migrated, {@code false} otherwise.
+	 */
+	public boolean migrateAspect(AspectLexicon aspect) {
+		Validate.notNull(aspect, CannedMessages.NULL_ARGUMENT, "aspect");
+		
+		if (aspect.getBaseStore() != null && aspect.getBaseStore().getIdentifier().equals(this.getIdentifier())) {
+			return true;
+		}
+		
+		if (this.hasAspect(aspect.getTitle())) {
+			return false;
+		}
+		
+		aspect.setBaseStore(this);
+		return true;
+	}
+	
+	/**
+	 * Updates an aspect to a new value.
+	 * @param aspect the original aspect.
+	 * @param newValue the new value of the aspect.
+	 * @return the {@link AspectLexicon} object that was updated; {@code null} if nothing was updated.
+	 */
+	public AspectLexicon updateAspect(String aspect, String newValue) {
+		AspectLexicon aspectObj = this.findAspect(aspect);
+		if (aspectObj == null) {
+			return null;
+		}
+		
+		if (this.hasAspect(newValue)) {
+			return null;
+		}
+		
+		aspectObj.setTitle(newValue);
+		return aspectObj;
+	}
+	
+	@Override
+	public String getOwnerId() {
+		return super.getOwnerId() == null && this.getBaseStore() != null ? this.getBaseStore().getOwnerId() : super.getOwnerId();
 	}
 	
 	@Override
