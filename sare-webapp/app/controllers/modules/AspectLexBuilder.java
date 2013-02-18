@@ -25,8 +25,7 @@ import static controllers.base.SareTransactionalAction.*;
 import static controllers.base.SessionedAction.*;
 import static models.base.ViewModel.*;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
@@ -118,8 +117,7 @@ public class AspectLexBuilder extends Module {
 				if (lexicon != null) {
 					AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 					if (corpus != null && (lexiconObj.getBaseCorpus() == null
-						|| !ObjectUtils.equals(UuidUtils.normalize(lexiconObj.getBaseCorpus().getId()),
-								UuidUtils.normalize(corpus)))) {
+						|| !ObjectUtils.equals(lexiconObj.getBaseCorpus(), corpusObj))) {
 						throw new IllegalArgumentException();
 					}
 				}
@@ -154,38 +152,63 @@ public class AspectLexBuilder extends Module {
 		return ok(aspectLexicon.render(lexiconObj, true));
 	}
 	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
 	public static Result addAspect(String lexicon) {
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
-		String aspectText = request().body().asText();
-		if (StringUtils.isEmpty(aspectText)) {
-			aspectText = UUID.randomUUID().toString();
+		JsonNode aspectJson = request().body().asJson();
+		AspectLexiconModel aspect = null;
+		if (aspectJson == null) {
+			aspect = new AspectLexiconModel();
+		} else {
+			aspect = Json.fromJson(aspectJson, AspectLexiconModel.class);
 		}
 		
-		AspectLexicon aspectObj = lexiconObj.addAspect(aspectText);
+		// if no title, generate an unused one.
+		if (StringUtils.isEmpty(aspect.title)) {
+			int count = 1;
+			while (lexiconObj.hasAspect("Aspect " + count)) {
+				count++;
+			}
+			aspect.title = "Aspect " + count;
+		}
+		
+		AspectLexicon aspectObj = lexiconObj.addAspect(aspect.title);
 		if (aspectObj == null) {
 			throw new IllegalArgumentException();
 		}
 		
+		em().persist(aspectObj);
 		return created(createViewModel(aspectObj).asJson());
 	}
 	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
 	public static Result updateAspect(String lexicon, String aspect) {
-		if (StringUtils.isEmpty(lexicon)) {
-			
-		}
-		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		AspectLexicon lexiconObj = null;
 		AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
-		String aspectText = request().body().asText();
+		JsonNode updatedAspectNode = request().body().asJson();
 		
-		if (!lexiconObj.migrateAspect(aspectObj)) {
+		if (StringUtils.isNotEmpty(lexicon)) {
+			lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+			
+			if ((aspectObj.getParentAspect() == null || !ObjectUtils.equals(aspectObj.getParentAspect(), lexiconObj))
+				&& !lexiconObj.migrateAspect(aspectObj)) {
+				throw new IllegalArgumentException();
+			}
+		} else if (aspectObj.getParentAspect() != null) {
+			lexiconObj = aspectObj.getParentAspect();
+		} else {
 			throw new IllegalArgumentException();
 		}
 		
-		aspectObj = lexiconObj.updateAspect(aspectObj.getTitle(), aspectText);
-		if (aspectObj == null) {
-			throw new IllegalArgumentException();
+		if (updatedAspectNode != null) {
+			AspectLexiconModel updatedAspect = Json.fromJson(updatedAspectNode, AspectLexiconModel.class);
+			aspectObj = lexiconObj.updateAspect(aspectObj.getTitle(), updatedAspect.title);
+			if (aspectObj == null) {
+				throw new IllegalArgumentException();
+			}
 		}
 		
+		em().merge(aspectObj);
 		return ok(createViewModel(aspectObj).asJson());
 	}
 	
@@ -193,9 +216,11 @@ public class AspectLexBuilder extends Module {
 		if (StringUtils.isNotEmpty(lexicon)) {
 			AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 			AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
-			if (aspectObj.getBaseStore() != null &&
-				aspectObj.getBaseStore().getIdentifier().equals(lexiconObj.getBaseStore().getIdentifier())) {
-				return ok(createViewModel(lexiconObj.removeAspect(aspectObj.getTitle())).asJson());
+			if (aspectObj.getParentAspect() != null
+				&& ObjectUtils.equals(aspectObj.getParentAspect(), lexiconObj)) {
+				aspectObj = lexiconObj.removeAspect(aspectObj.getTitle());
+				em().remove(aspectObj);
+				return ok(createViewModel(aspectObj).asJson());
 			} else {
 				throw new IllegalArgumentException();
 			}

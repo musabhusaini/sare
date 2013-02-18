@@ -211,6 +211,20 @@ public class AspectLexiconTests {
 	}
 	
 	@Test
+	public void testGetParentAspect() {
+		testLexicon1.setBaseStore(testLexicon2);
+		assertEquals(testLexicon2, testLexicon1.getParentAspect());
+		assertNull(testLexicon2.getParentAspect());
+	}
+		
+	@Test
+	public void testGetBaseLexicon() {
+		testLexicon1.setBaseStore(testLexicon2);
+		assertEquals(testLexicon2, testLexicon1.getBaseLexicon());
+		assertEquals(testLexicon2, testLexicon2.getBaseLexicon());
+	}
+	
+	@Test
 	public void testMigrateAspectMigratesNonDupe() {
 		AspectLexicon testAspect = testLexicon1.addAspect(testString1);
 		assertTrue(testLexicon2.migrateAspect(testAspect));

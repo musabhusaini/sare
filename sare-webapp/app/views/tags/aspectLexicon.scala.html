@@ -33,10 +33,10 @@
 		</div>
 		@if(editable) {
 		<div class="row-fluid">
-			<button type="submit" id="btn-add-aspect-@uid" class="btn-add-aspect btn btn-primary" title="Add a new aspect" data-placement="bottom" data-loading-text="Adding...">
+			<button id="btn-add-aspect-@uid" class="btn-add-aspect btn btn-primary" title="Add a new aspect" data-placement="bottom" data-loading-text="Adding...">
 				<i class="icon-plus"></i>
 			</button>
-			<button id="btn-update-aspect-@uid" class="btn-update-aspect btn" title="Update this aspect" data-placement="bottom" data-loading-text="Updating...">
+			<button id="btn-update-aspect-@uid" class="btn-update-aspect btn btn-info" title="Update this aspect" data-placement="bottom" data-loading-text="Updating...">
 				<i class="icon-pencil"></i>
 			</button>
 			<button id="btn-delete-aspect-@uid" class="btn-delete-aspect btn btn-warning" title="Delete this aspect" data-placement="bottom" data-loading-text="Deleting...">
@@ -53,6 +53,15 @@
 		</div>
 		@if(editable) {
 		<div class="row-fluid">
+			<button id="btn-add-keyword-@uid" class="btn-add-keyword btn btn-primary" title="Add a new keyword" data-placement="bottom" data-loading-text="Adding...">
+				<i class="icon-plus"></i>
+			</button>
+			<button id="btn-update-keyword-@uid" class="btn-update-keyword btn btn-info" title="Update this keyword" data-placement="bottom" data-loading-text="Updating...">
+				<i class="icon-pencil"></i>
+			</button>
+			<button id="btn-delete-keyword-@uid" class="btn-delete-keyword btn btn-warning" title="Delete this keyword" data-placement="bottom" data-loading-text="Deleting...">
+				<i class="icon-trash"></i>
+			</button>
 		</div>
 		}
 	</div>

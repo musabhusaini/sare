@@ -32,6 +32,8 @@ Sare = window.Sare = $.extend window.Sare,
     Methods: {}
     Selectors: {}
   Helpers:
+    ContentTypes:
+      json: "application/json; charset=utf-8"
     MimeTypes:
       json: "application/json"
     Guid: 

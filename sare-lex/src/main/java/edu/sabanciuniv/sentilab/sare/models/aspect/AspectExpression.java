@@ -38,5 +38,4 @@ public class AspectExpression
 	 * 
 	 */
 	private static final long serialVersionUID = 8749649591681294449L;
-	
 }

@@ -23,6 +23,7 @@ package edu.sabanciuniv.sentilab.sare.models.aspect;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Predicate;
@@ -73,6 +74,29 @@ public class AspectLexicon
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Gets the parent aspect of this aspect.
+	 * @return the {@link AspectLexicon} object representing the parent aspect; {@code null} if none.
+	 */
+	public AspectLexicon getParentAspect() {
+		if (this.getBaseStore() instanceof AspectLexicon) {
+			return (AspectLexicon)this.getBaseStore();
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Gets the base lexicon of this aspect.
+	 * @return the {@link AspectLexicon} object representing the base lexicon; {@code this} object if it is the lexicon itself.
+	 */
+	public AspectLexicon getBaseLexicon() {
+		if (this.getParentAspect() == null) {
+			return this;
+		}
+		return this.getParentAspect().getBaseLexicon();
 	}
 	
 	/**
@@ -285,7 +309,9 @@ public class AspectLexicon
 		if (aspectObj == null) {
 			return null;
 		}
-		
+		if (StringUtils.equals(aspect, newValue)) {
+			return aspectObj;
+		}
 		if (this.hasAspect(newValue)) {
 			return null;
 		}

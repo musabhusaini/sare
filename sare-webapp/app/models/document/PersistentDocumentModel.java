@@ -21,8 +21,7 @@
 
 package models.document;
 
-import edu.sabanciuniv.sentilab.sare.models.base.document.EditableDocument;
-import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
+import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import models.PersistentObjectModel;
 
 public class PersistentDocumentModel

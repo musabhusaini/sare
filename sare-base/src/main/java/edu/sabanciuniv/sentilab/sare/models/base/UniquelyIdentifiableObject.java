@@ -125,4 +125,18 @@ public class UniquelyIdentifiableObject
 	public String toString() {
 		return this.id.toString();
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof UniquelyIdentifiableObject) {
+			return this.getIdentifier().equals(((UniquelyIdentifiableObject)other).getIdentifier());
+		}
+		
+		return super.equals(other);
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.getIdentifier().hashCode();
+	}
 }
