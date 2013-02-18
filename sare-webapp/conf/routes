@@ -70,6 +70,13 @@ POST	/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexB
 DELETE	/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.deleteAspect(lexicon = null, aspect: String)
 DELETE	/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.deleteAspect(lexicon: String, aspect: String)
 
+GET		/api/modules/lexica/aspects/:aspect/keywords				controllers.modules.AspectLexBuilder.getExpressions(aspect: String)
+POST	/api/modules/lexica/aspects/:aspect/keywords				controllers.modules.AspectLexBuilder.addExpression(aspect: String)
+POST	/api/modules/lexica/aspects/keywords/:expression			controllers.modules.AspectLexBuilder.updateExpression(aspect = null, expression: String)
+POST	/api/modules/lexica/aspects/:aspect/keywords/:expression	controllers.modules.AspectLexBuilder.updateExpression(aspect: String, expression: String)
+DELETE	/api/modules/lexica/aspects/keywords/:expression			controllers.modules.AspectLexBuilder.deleteExpression(aspect = null, expression: String)
+DELETE	/api/modules/lexica/aspects/:aspect/keywords/:expression	controllers.modules.AspectLexBuilder.deleteExpression(aspect: String, expression: String)
+
 GET		/view/modules/lexica/builder							controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon = null, partial: Boolean ?= false)
 GET		/view/modules/lexica/:lexicon/builder					controllers.modules.AspectLexBuilder.modulePage(corpus = null, lexicon: String, partial: Boolean ?= false)
 GET		/view/modules/corpora/:corpus/lexica/builder			controllers.modules.AspectLexBuilder.modulePage(corpus: String, lexicon = null, partial: Boolean ?= false)

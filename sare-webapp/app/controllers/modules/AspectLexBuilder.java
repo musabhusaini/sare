@@ -27,6 +27,8 @@ import static models.base.ViewModel.*;
 
 import java.util.*;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
 
@@ -36,6 +38,7 @@ import com.google.common.collect.*;
 import play.libs.Json;
 import play.mvc.*;
 import views.html.tags.*;
+import models.document.PersistentDocumentModel;
 import models.documentStore.*;
 import controllers.CollectionsController;
 import controllers.base.*;
@@ -156,19 +159,13 @@ public class AspectLexBuilder extends Module {
 	public static Result addAspect(String lexicon) {
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		JsonNode aspectJson = request().body().asJson();
-		AspectLexiconModel aspect = null;
-		if (aspectJson == null) {
-			aspect = new AspectLexiconModel();
-		} else {
-			aspect = Json.fromJson(aspectJson, AspectLexiconModel.class);
-		}
+		AspectLexiconModel aspect = aspectJson == null ?
+			new AspectLexiconModel() : Json.fromJson(aspectJson, AspectLexiconModel.class);
 		
 		// if no title, generate an unused one.
 		if (StringUtils.isEmpty(aspect.title)) {
-			int count = 1;
-			while (lexiconObj.hasAspect("Aspect " + count)) {
-				count++;
-			}
+			int count = 0;
+			while (lexiconObj.hasAspect("Aspect " + ++count));
 			aspect.title = "Aspect " + count;
 		}
 		
@@ -179,6 +176,11 @@ public class AspectLexBuilder extends Module {
 		
 		em().persist(aspectObj);
 		return created(createViewModel(aspectObj).asJson());
+	}
+	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	public static Result updateExpression(String aspect, String expression) {
+		return TODO;
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
@@ -227,5 +229,56 @@ public class AspectLexBuilder extends Module {
 		}
 		
 		return CollectionsController.delete(aspect);
+	}
+	
+	public static Result getExpressions(String aspect) {
+		AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
+		List<PersistentDocumentModel> expressions = Lists.newArrayList(Iterables.transform(aspectObj.getExpressions(),
+			new Function<AspectExpression, PersistentDocumentModel>() {
+				@Override
+				@Nullable
+				public PersistentDocumentModel apply(@Nullable AspectExpression input) {
+					return (PersistentDocumentModel)createViewModel(input);
+				}
+			}));
+		
+		return ok(Json.toJson(expressions));
+	}
+	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	public static Result addExpression(String aspect) {
+		AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
+		JsonNode expressionJson = request().body().asJson();
+		PersistentDocumentModel expression = expressionJson == null ?
+			new PersistentDocumentModel() : Json.fromJson(expressionJson, PersistentDocumentModel.class);
+		
+		// if no content, generate an unused one.
+		if (StringUtils.isEmpty(expression.content)) {
+			int count = 0;
+			while (aspectObj.hasExpression("Keyword " + ++count));
+			expression.content = "Keyword " + count;
+		}
+		
+		AspectExpression expressionObj = aspectObj.addExpression(expression.content);
+		if (expressionObj == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		em().persist(expressionObj);
+		return created(createViewModel(expressionObj).asJson());
+	}
+	
+	public static Result deleteExpression(String aspect, String expression) {
+		AspectExpression expressionObj = fetchResource(expression, AspectExpression.class);
+		if (StringUtils.isNotEmpty(aspect)) {
+			AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
+			if (expressionObj.getAspect() != null
+				&& ObjectUtils.equals(expressionObj.getAspect(), aspectObj)) {
+				expressionObj = aspectObj.removeExpression(expressionObj.getContent());
+			}
+		}
+		
+		em().remove(expressionObj);
+		return ok(createViewModel(expressionObj).asJson());
 	}
 }

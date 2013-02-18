@@ -91,6 +91,10 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.AspectLexBuilder.addAspect(),
 			controllers.modules.routes.javascript.AspectLexBuilder.updateAspect(),
 			controllers.modules.routes.javascript.AspectLexBuilder.deleteAspect(),
+			controllers.modules.routes.javascript.AspectLexBuilder.getExpressions(),
+			controllers.modules.routes.javascript.AspectLexBuilder.addExpression(),
+			controllers.modules.routes.javascript.AspectLexBuilder.updateExpression(),
+			controllers.modules.routes.javascript.AspectLexBuilder.deleteExpression(),
 			controllers.modules.routes.javascript.AspectLexBuilder.lexiconView()
 		));
 	}

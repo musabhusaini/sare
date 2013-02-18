@@ -38,4 +38,15 @@ public class AspectExpression
 	 * 
 	 */
 	private static final long serialVersionUID = 8749649591681294449L;
+	
+	/**
+	 * Gets the aspect this expression belongs to.
+	 * @return the {@link AspectLexicon} object this expression belongs to; {@code null} if none.
+	 */
+	public AspectLexicon getAspect() {
+		if (this.getStore() instanceof AspectLexicon) {
+			return (AspectLexicon)this.getStore();
+		}
+		return null;
+	}
 }

@@ -23,8 +23,7 @@ package edu.sabanciuniv.sentilab.sare.models.aspect;
 
 import javax.persistence.*;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.*;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -180,11 +179,11 @@ public class AspectLexicon
 	/**
 	 * Removes the given expression from this lexicon.
 	 * @param expression the expression to remove.
-	 * @return {@code true} if an expression was removed, {@code false} otherwise.
+	 * @return the {@link AspectExpression} that was removed; {@code null} if none.
 	 */
-	public boolean removeExpression(String expression) {
+	public AspectExpression removeExpression(String expression) {
 		AspectExpression aspectExpression = this.findExpression(expression);
-		return aspectExpression != null ? this.removeDocument(aspectExpression) : false;
+		return this.removeDocument(aspectExpression) ? aspectExpression : null;
 	}
 
 	/**
