@@ -180,7 +180,31 @@ public class AspectLexBuilder extends Module {
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
 	public static Result updateExpression(String aspect, String expression) {
-		return TODO;
+		AspectLexicon aspectObj = null;
+		AspectExpression expressionObj = fetchResource(expression, AspectExpression.class);
+		JsonNode updatedExpressionNode = request().body().asJson();
+		
+		if (StringUtils.isNotEmpty(aspect)) {
+			aspectObj = fetchResource(aspect, AspectLexicon.class);
+			if (!ObjectUtils.equals(expressionObj.getAspect(), aspectObj) && !aspectObj.migrateExpression(expressionObj)) {
+				throw new IllegalArgumentException();
+			}
+		} else if (expressionObj.getAspect() != null) {
+			aspectObj = expressionObj.getAspect();
+		} else {
+			throw new IllegalArgumentException();
+		}
+		
+		if (updatedExpressionNode != null) {
+			PersistentDocumentModel updatedExpression = Json.fromJson(updatedExpressionNode, PersistentDocumentModel.class);
+			expressionObj = aspectObj.updateExpression(expressionObj.getContent(), updatedExpression.content);
+			if (expressionObj == null) {
+				throw new IllegalArgumentException();
+			}
+		}
+		
+		em().merge(expressionObj);
+		return ok(createViewModel(expressionObj).asJson());
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
@@ -192,8 +216,7 @@ public class AspectLexBuilder extends Module {
 		if (StringUtils.isNotEmpty(lexicon)) {
 			lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 			
-			if ((aspectObj.getParentAspect() == null || !ObjectUtils.equals(aspectObj.getParentAspect(), lexiconObj))
-				&& !lexiconObj.migrateAspect(aspectObj)) {
+			if (!ObjectUtils.equals(aspectObj.getParentAspect(), lexiconObj) && !lexiconObj.migrateAspect(aspectObj)) {
 				throw new IllegalArgumentException();
 			}
 		} else if (aspectObj.getParentAspect() != null) {

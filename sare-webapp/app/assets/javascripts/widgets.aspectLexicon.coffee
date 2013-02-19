@@ -30,67 +30,87 @@ Selectors = Page.Selectors
 Widgets = Page.Widgets
 
 widget =
-  _makeAspectNode: (aspect) ->
+  _makeAspectNode: (aspect, metadata) ->
+    metadata = $.extend {}, metadata ? {},
+      aspect: aspect
     node =
       data: aspect.title
       children: if aspect.children? then (@_makeAspectNode(child) for child in (aspect.children)) else null
-      metadata:
-        aspect: aspect
+      metadata: metadata
     node.state = "closed" if node.children?
     node
 
-  _makeKeywordNode: (keyword) ->
-    data: keyword.content
-    metadata:
+  _makeKeywordNode: (keyword, metadata) ->
+    metadata = $.extend {}, metadata ? {},
       keyword: keyword
+    data: keyword.content
+    metadata: metadata
 
-  getSelectedAspectNode: ->
-    @_$(@options.aspectsContainer).jstree "get_selected"
-    
   getSelectedAspect: ->
-    @getSelectedAspectNode().data @options.aspectKey
+    node = @_$(@options.aspectsContainer).jstree "get_selected"
+    node: node
+    data: node.data @options.aspectKey
   
-  addAspect: (lexicon, title) ->
-    lexicon ?= @getSelectedAspect() ? @options.lexicon
-    aspect = title: (title ? null)
-    @options.addAspectRoute(lexicon.id).ajax
-      contentType: Helpers.ContentTypes.json
-      data: JSON.stringify aspect
-      success: (aspect) =>
-        node = @_$(@options.aspectsContainer) if not @getSelectedAspectNode().length
-        @_$(@options.aspectsContainer).jstree "create", node ? null, "inside", @_makeAspectNode aspect
+  addAspect: (lexicon, title, superficial, skipRename) ->
+    display = (aspect) =>
+      node = @_makeAspectNode aspect,
+        superficial: superficial
+      @_$(@options.aspectsContainer).jstree "create",
+        @_$(@options.aspectsContainer), "last", node, null , skipRename ? false
+    
+    lexicon ?= @options.lexicon
+    if superficial
+      display title
+    else
+      aspect = title: (title ? null)
+      @options.addAspectRoute(lexicon.id).ajax
+        contentType: Helpers.ContentTypes.json
+        data: JSON.stringify aspect
+        success: display
 
-  removeAspect: (node) ->
-    node = node ? @getSelectedAspectNode()
-    aspect = $(node).data @options.aspectKey
-    @options.deleteAspectRoute("null", aspect.id).ajax
-      success: =>
-        @_$(@options.aspectsContainer).jstree "remove", null
+  removeAspect: (node, superficial) ->
+    display = (node) => @_$(@options.aspectsContainer).jstree "remove", node
+    node = node ? @getSelectedAspect().node
+    if superficial
+      display node
+    else
+      aspect = $(node).data @options.aspectKey
+      @options.deleteAspectRoute("null", aspect.id).ajax
+        success: => display node
 
-  getSelectedKeywordNode: ->
-    @_$(@options.keywordsContainer).jstree "get_selected"
-  
   getSelectedKeyword: ->
-    @getSelectedKeywordNode().data @options.keywordKey
+    node = @_$(@options.keywordsContainer).jstree "get_selected"
+    node: node
+    data: node.data @options.keywordKey
   
-  addKeyword: (aspect, content) ->
-    aspect ?= @getSelectedAspect()
-    keyword = content: (content ? null)
-    @options.addKeywordRoute(aspect.id).ajax
-      contentType: Helpers.ContentTypes.json
-      data: JSON.stringify keyword
-      success: (keyword) =>
-        @_$(@options.keywordsContainer).jstree "create",
-          @_$(@options.keywordsContainer), "inside", @_makeKeywordNode keyword
+  addKeyword: (aspect, content, superficial, skipRename) ->
+    display = (keyword) =>
+      node = @_makeKeywordNode keyword,
+        superficial: superficial
+      @_$(@options.keywordsContainer).jstree "create",
+        @_$(@options.keywordsContainer), "inside", node, null, skipRename ? false
+    aspect ?= @getSelectedAspect().data
+    if superficial
+      display content
+    else
+      keyword = content: (content ? null)
+      @options.addKeywordRoute(aspect.id).ajax
+        contentType: Helpers.ContentTypes.json
+        data: JSON.stringify keyword
+        success: display
   
-  removeKeyword: (node) ->
-    node = node ? @getSelectedKeywordNode()
-    keyword = $(node).data @options.keywordKey
-    @options.deleteKeywordRoute("null", keyword.id).ajax
-      success: =>
-        @_$(@options.keywordsContainer).jstree "remove", null
+  removeKeyword: (node, superficial) ->
+    display = (node) => @_$(@options.keywordsContainer).jstree "remove", node
+    node = node ? @getSelectedKeyword().node
+    if superficial
+      display node
+    else
+      keyword = $(node).data @options.keywordKey
+      @options.deleteKeywordRoute("null", keyword.id).ajax
+        success: => display node
   
   _create: ->
+    superficialKey = "superficial"
     @options.lexicon ?= $(@element).data @options.lexiconKey
     
     editAspectInputs = [ @options.updateAspectButton, @options.deleteAspectButton ]
@@ -98,56 +118,99 @@ widget =
     
     editKeywordInputs = [ @options.updateKeywordButton, @options.deleteKeywordButton ]
     (keywordInputs = editKeywordInputs.slice()).push @options.addKeywordButton
+
+    selectNode = (tree, node) ->
+      prev = $(tree).jstree "get_selected"
+      node ?= $(tree).find "li:eq(0)"
+      $(tree)
+        .jstree("select_node", $ node)
+        .jstree "deselect_node", $ prev
+
+    populateKeywords = (aspect, keywords) =>
+      nodes = @_$(@options.keywordsContainer).find "li"
+      if nodes.length then @_$(@options.keywordsContainer).jstree "delete_node", nodes
+      @addKeyword(aspect, keyword, true, true) for keyword in (keywords ? [])
+      window.setTimeout =>
+        selectNode @_$ @options.keywordsContainer
+      , 0
     
-    @_$(@options.aspectsContainer).on "rename_node.jstree", (e, data) =>
-      aspect = $(data.rslt.obj).data @options.aspectKey
-      @options.updateAspectRoute("null", aspect.id).ajax
-        contentType: Helpers.ContentTypes.json
-        data: JSON.stringify
-          title: data.rslt.name
-        success: (aspect) =>
-          $(data.rslt.obj).data @options.aspectKey, aspect
-        error: ->
-          $.jstree.rollback data.rlbk
+    @_$(@options.aspectsContainer).on
+      "rename_node.jstree": (e, data) =>
+        aspect = $(data.rslt.obj).data @options.aspectKey
+        @options.updateAspectRoute("null", aspect.id).ajax
+          contentType: Helpers.ContentTypes.json
+          data: JSON.stringify
+            title: data.rslt.name
+          success: (aspect) =>
+            $(data.rslt.obj).data @options.aspectKey, aspect
+          error: ->
+            $.jstree.rollback data.rlbk
     
-    @_$(@options.aspectsContainer).on "move_node.jstree", (e, data) =>
-      aspect = $(data.rslt.o).data @options.aspectKey
-      lexicon = $(data.rslt.np).data(@options.aspectKey) ? @options.lexicon
-      @options.updateAspectRoute(lexicon.id, aspect.id).ajax
-        success: (aspect) =>
-          $(data.rslt.o).data @options.aspectKey, aspect
-        error: ->
-          $.jstree.rollback data.rlbk
+      "move_node.jstree": (e, data) =>
+        aspect = $(data.rslt.o).data @options.aspectKey
+        lexicon = $(data.rslt.np).data(@options.aspectKey) ? @options.lexicon
+        @options.updateAspectRoute(lexicon.id, aspect.id).ajax
+          success: (aspect) =>
+            $(data.rslt.o).data @options.aspectKey, aspect
+          error: ->
+            $.jstree.rollback data.rlbk
     
-    @_$(@options.aspectsContainer).on "select_node.jstree", (e, data) =>
-      @_changeInputState(input, "enabled") for input in editAspectInputs
-      @_changeInputState(input, "enabled") for input in keywordInputs
-      @_changeInputState(input, "disabled") for input in editKeywordInputs
-      
-      aspect = $(data.rslt.obj).data @options.aspectKey
-      @_$(@options.keywordsContainer).jstree "delete_node", @_$(@options.keywordsContainer).find("li")
-      @options.getKeywordsRoute(aspect.id).ajax
-        success: (keywords) =>
-          for keyword in keywords
-            @_$(@options.keywordsContainer).jstree "create",
-              @_$(@options.keywordsContainer), "last", @_makeKeywordNode(keyword), null, true
+      "select_node.jstree": (e, data) =>
+        @_changeInputState(input, "enabled") for input in editAspectInputs
+        @_changeInputState(input, "enabled") for input in keywordInputs
+        @_changeInputState(input, "disabled") for input in editKeywordInputs
+        
+        aspect = $(data.rslt.obj).data @options.aspectKey
+        @options.getKeywordsRoute(aspect.id).ajax
+          success: (keywords) =>
+            populateKeywords aspect, keywords
+            # want this to execute in the end so as to override other focus operations.
+            window.setTimeout ->
+              data.inst.set_focus()
+            , 0
+          error: =>
+            populateKeywords null, []
     
-    @_$(@options.aspectsContainer).on "deselect_node.jstree", (e, data) =>
-      @_changeInputState(input, "disabled") for input in editAspectInputs
-      @_changeInputState(input, "disabled") for input in keywordInputs
-      @_$(@options.keywordsContainer).jstree "delete_node", @_$(@options.keywordsContainer).find("li")
-      
+      "deselect_node.jstree": (e, data) =>
+        if not data.inst.get_selected().length
+          @_changeInputState(input, "disabled") for input in editAspectInputs
+          @_changeInputState(input, "disabled") for input in keywordInputs
+          populateKeywords null, []
+    
+      "create_node.jstree": (e, data) =>
+        if not $(data.rslt.obj).data(superficialKey)
+          selectNode @_$(@options.aspectsContainer), data.rslt.obj
+    
+      "delete_node.jstree": (e, data) =>
+        prev = data.rslt.prev
+        prev = @_$(@options.aspectsContainer).find("li:eq(0)") if not prev?[0]
+        if not prev?[0]
+          @_$(@options.keywordsContainer).jstree "delete_node", @_$(@options.keywordsContainer).find("li")
+        else
+          selectNode @_$(@options.aspectsContainer), prev
+    
     @_$(@options.aspectsContainer).jstree
       ui:
         select_limit: 1
       json_data:
-        data: @_makeAspectNode(@options.lexicon).children ? []
+        data: []
         ajax:
           url: (node) =>
             @options.getLexiconRoute($(node).data(@options.aspectKey).id).url
           success: (data) =>
             @_makeAspectNode(data).children
-      plugins: [ "themes", "json_data", "ui", "crrm", "dnd", "sort" ]
+      hotkeys:
+        insert: => @addAspect()
+        del: => @removeAspect()
+      plugins: [ "themes", "json_data", "ui", "crrm", "dnd", "sort", "hotkeys" ]
+    
+    # do this later so we don't end up getting overwritten.
+    window.setTimeout =>
+      @addAspect(@options.lexicon, aspect, true, true) for aspect in (@options.lexicon.children ? [])
+      window.setTimeout =>
+        selectNode @_$ @options.aspectsContainer
+      , 0
+    , 0
     
     @_$(@options.addAspectButton)
       .tooltip()
@@ -163,40 +226,68 @@ widget =
       .click => @removeAspect()
     
     @_changeInputState(input, "disabled") for input in editAspectInputs
+    
+    trees = @_$(@options.aspectsContainer).add @_$ @options.keywordsContainer
+    trees.on "click", "a", (e) =>
+      $(e.target).focus()
 
-    @_$(@options.keywordsContainer).on "rename_node.jstree", (e, data) =>
-      keyword = $(data.rslt.obj).data @options.keywordKey
-      @options.updateKeywordRoute("null", keyword.id).ajax
-        contentType: Helpers.ContentTypes.json
-        data: JSON.stringify
-          content: data.rslt.name
-        success: (keyword) =>
-          $(data.rslt.obj).data @options.keywordKey, keyword
-        error: ->
-          $.jstree.rollback data.rlbk
-    
-    @_$(@options.keywordsContainer).on "select_node.jstree", (e, data) =>
-      @_changeInputState(input, "enabled") for input in keywordInputs
-    
-    @_$(@options.keywordsContainer).on "deselect_node.jstree", (e, data) =>
-      @_changeInputState(input, "disabled") for input in keywordInputs
-    
+    @_on $(window.document),
+      "click": (e) ->
+        if not $(e.target).closest(trees).length
+          $(trees).jstree "unset_focus"
+
+    @_$(@options.keywordsContainer).on
+      "rename_node.jstree": (e, data) =>
+        keyword = $(data.rslt.obj).data @options.keywordKey
+        @options.updateKeywordRoute("null", keyword.id).ajax
+          contentType: Helpers.ContentTypes.json
+          data: JSON.stringify
+            content: data.rslt.name
+          success: (keyword) =>
+            $(data.rslt.obj).data @options.keywordKey, keyword
+          error: ->
+            $.jstree.rollback data.rlbk
+      
+      "select_node.jstree": (e, data) =>
+        @_changeInputState(input, "enabled") for input in keywordInputs
+        data.inst.set_focus()
+      
+      "deselect_node.jstree": (e, data) =>
+        if not data.inst.get_selected().length
+          @_changeInputState(input, "disabled") for input in editKeywordInputs
+      
+      "create_node.jstree": (e, data) =>
+        if not $(data.rslt.obj).data(superficialKey)
+          selectNode @_$(@options.keywordsContainer), data.rslt.obj
+      
+      "delete_node.jstree": (e, data) =>
+        prev = data.rslt.prev
+        prev = @_$(@options.keywordsContainer).find("li:eq(0)") if not prev?[0]
+        if not not prev?[0] then selectNode @_$(@options.keywordsContainer), prev
+      
     @_$(@options.keywordsContainer).jstree
       crrm:
         move:
           check_move: -> false
       themes:
-        dots: false
         icons: false
       ui:
         select_limit: 1
       json_data:
         data: []
-      plugins: [ "themes", "json_data", "ui", "crrm", "dnd", "sort" ]
+      hotkeys:
+        insert: => @addKeyword()
+        del: => @removeKeyword()
+      plugins: [ "themes", "json_data", "ui", "crrm", "dnd", "sort", "hotkeys" ]
     
     @_$(@options.addKeywordButton)
       .tooltip()
       .click => @addKeyword()
+
+    @_$(@options.updateKeywordButton)
+      .tooltip()
+      .click =>
+        @_$(@options.keywordsContainer).jstree "rename", null
     
     @_$(@options.deleteKeywordButton)
       .tooltip()

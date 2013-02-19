@@ -233,10 +233,11 @@ public class AspectLexiconTests {
 	
 	@Test
 	public void testMigrateAspectDoesNotMigrateDupe() {
-		AspectLexicon testAspect = testLexicon1.addAspect(testString1);
-		testLexicon2.addAspect(testString1);
-		assertFalse(testLexicon2.migrateAspect(testAspect));
-		assertNotEquals(testAspect.getBaseStore(), testLexicon2);
+		AspectLexicon testAspect1 = testLexicon1.addAspect(testString1);
+		AspectLexicon testAspect2 = testLexicon2.addAspect(testString1);
+		assertFalse(testLexicon2.migrateAspect(testAspect1));
+		assertNotEquals(testLexicon2, testAspect1.getParentAspect());
+		assertEquals(testLexicon2, testAspect2.getParentAspect());
 	}
 	
 	@Test
@@ -249,11 +250,47 @@ public class AspectLexiconTests {
 	
 	@Test
 	public void testUpdateAspectDoesNotUpdateDupe() {
-		AspectLexicon testAspect = testLexicon1.addAspect(testString1);
-		testLexicon1.addAspect(testString2);
-		AspectLexicon actualAspect = testLexicon1.updateAspect(testAspect.getTitle(), testString2);
-		assertNull(actualAspect);
-		assertEquals(testString1, testAspect.getTitle());
-		assertEquals(testLexicon1, testAspect.getBaseStore());
+		AspectLexicon testAspect1 = testLexicon1.addAspect(testString1);
+		AspectLexicon testAspect2 = testLexicon1.addAspect(testString2);
+		AspectLexicon actualAspect1 = testLexicon1.updateAspect(testAspect1.getTitle(), testString2);
+		assertNull(actualAspect1);
+		assertEquals(testString1, testAspect1.getTitle());
+		assertEquals(testLexicon1, testAspect1.getParentAspect());
+		assertEquals(testLexicon1, testAspect2.getParentAspect());
+	}
+	
+	@Test
+	public void testMigrateExpressionMigratesNonDupe() {
+		AspectExpression testExpression = testLexicon1.addExpression(testString1);
+		assertTrue(testLexicon2.migrateExpression(testExpression));
+		assertEquals(testLexicon2, testExpression.getAspect());
+	}
+	
+	@Test
+	public void testMigrateExpressionDoesNotMigrateDupe() {
+		AspectExpression testExpression1 = testLexicon1.addExpression(testString1);
+		AspectExpression testExpression2 = testLexicon2.addExpression(testString1);
+		assertFalse(testLexicon2.migrateExpression(testExpression1));
+		assertNotEquals(testLexicon2, testExpression1.getAspect());
+		assertEquals(testLexicon2, testExpression2.getAspect());
+	}
+	
+	@Test
+	public void testUpdateExpressionUpdatesNonDupe() {
+		AspectExpression testExpression = testLexicon1.addExpression(testString1);
+		AspectExpression actualExpression = testLexicon1.updateExpression(testExpression.getContent(), testString2);
+		assertEquals(testExpression, actualExpression);
+		assertEquals(testString2, actualExpression.getContent());
+	}
+	
+	@Test
+	public void testUpdateExpressionDoesNotUpdateDupe() {
+		AspectExpression testExpression1 = testLexicon1.addExpression(testString1);
+		AspectExpression testExpression2 = testLexicon1.addExpression(testString2);
+		AspectExpression actualExpression1 = testLexicon1.updateExpression(testExpression1.getContent(), testString2);
+		assertNull(actualExpression1);
+		assertEquals(testString1, testExpression1.getContent());
+		assertEquals(testLexicon1, testExpression1.getAspect());
+		assertEquals(testLexicon1, testExpression2.getAspect());
 	}
 }

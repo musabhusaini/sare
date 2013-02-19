@@ -187,6 +187,48 @@ public class AspectLexicon
 	}
 
 	/**
+	 * Migrates a given expression to this lexicon.
+	 * @param expression the {@link AspectExpression} object to migrate.
+	 * @return {@code true} if theexpression was migrated, {@code false} otherwise.
+	 */
+	public boolean migrateExpression(AspectExpression expression) {
+		Validate.notNull(expression, CannedMessages.NULL_ARGUMENT, "expression");
+		
+		if (this.equals(expression.getAspect())) {
+			return true;
+		}
+		
+		if (this.hasExpression(expression.getContent())) {
+			return false;
+		}
+		
+		expression.setStore(this);
+		return true;
+	}
+	
+	/**
+	 * Updates an expression to a new value.
+	 * @param expression the original expression.
+	 * @param newValue the new value of the expression
+	 * @return the {@link AspectExpression} object that was update; {@code null} if nothing was updated.
+	 */
+	public AspectExpression updateExpression(String expression, String newValue) {
+		AspectExpression expressionObj = this.findExpression(expression);
+		if (expressionObj == null) {
+			return null;
+		}
+		if (StringUtils.equals(expression, newValue)) {
+			return expressionObj;
+		}
+		if (this.hasExpression(newValue)) {
+			return null;
+		}
+		
+		expressionObj.setContent(newValue);
+		return expressionObj;
+	}
+	
+	/**
 	 * Gets all the aspects stored under this lexicon.
 	 * @return the {@link Iterable} of {@link AspectLexicon} items stored under this lexicon.
 	 */
@@ -285,7 +327,7 @@ public class AspectLexicon
 	public boolean migrateAspect(AspectLexicon aspect) {
 		Validate.notNull(aspect, CannedMessages.NULL_ARGUMENT, "aspect");
 		
-		if (aspect.getBaseStore() != null && aspect.getBaseStore().getIdentifier().equals(this.getIdentifier())) {
+		if (this.equals(aspect.getBaseStore())) {
 			return true;
 		}
 		
@@ -296,7 +338,7 @@ public class AspectLexicon
 		aspect.setBaseStore(this);
 		return true;
 	}
-	
+		
 	/**
 	 * Updates an aspect to a new value.
 	 * @param aspect the original aspect.
