@@ -54,6 +54,9 @@ public class SareTransactionalAction extends Action.Simple {
 	public static <T extends PersistentObject> T fetchResource(Context ctx, String id, Class<T> clazz) {
 		Validate.notNull(clazz);
 		
+		Logger.info(LoggedAction.getLogEntry(ctx,
+			String.format("attempting to fetch resource: %s of type: %s", id, clazz.getName())));
+		
 		T object = null;
 		if (UuidUtils.isUuid(id) && em() != null) {
 			try {
@@ -71,6 +74,9 @@ public class SareTransactionalAction extends Action.Simple {
 		if (object == null) {
 			throw new EntityNotFoundException(id);
 		}
+		
+		Logger.info(LoggedAction.getLogEntry(ctx,
+			String.format("found resource: %s of type: %s", id, clazz.getName())));
 		return object;
 	}
 	

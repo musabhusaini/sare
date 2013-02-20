@@ -268,6 +268,29 @@ public class AspectLexBuilder extends Module {
 		return ok(Json.toJson(expressions));
 	}
 	
+	public static Result getExpression(String aspect, String expression) {
+		AspectLexicon aspectObj = null;
+		AspectExpression expressionObj = null;
+		
+		if (UuidUtils.isUuid(aspect)) {
+			aspectObj = fetchResource(aspect, AspectLexicon.class);
+		}
+		if (UuidUtils.isUuid(expression)) {
+			expressionObj = fetchResourceQuietly(expression, AspectExpression.class);
+			if (expressionObj != null && aspectObj != null && !ObjectUtils.equals(expressionObj.getAspect(), aspectObj)) {
+				throw new IllegalArgumentException();
+			}
+		}
+		
+		if (expressionObj == null && aspectObj != null) {
+			expressionObj = aspectObj.findExpression(expression);
+		} else if (expressionObj == null) {
+			return notFoundEntity(expression);
+		}
+		
+		return ok(createViewModel(expressionObj).asJson());
+	}
+	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
 	public static Result addExpression(String aspect) {
 		AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);

@@ -70,10 +70,12 @@ POST	/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexB
 DELETE	/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.deleteAspect(lexicon = null, aspect: String)
 DELETE	/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.deleteAspect(lexicon: String, aspect: String)
 
+GET		/api/modules/lexica/aspects/keywords/:expression			controllers.modules.AspectLexBuilder.getExpression(aspect = null, expression: String)
+GET		/api/modules/lexica/aspects/:aspect/keywords/:expression	controllers.modules.AspectLexBuilder.getExpression(aspect: String, expression: String)
 GET		/api/modules/lexica/aspects/:aspect/keywords				controllers.modules.AspectLexBuilder.getExpressions(aspect: String)
-POST	/api/modules/lexica/aspects/:aspect/keywords				controllers.modules.AspectLexBuilder.addExpression(aspect: String)
 POST	/api/modules/lexica/aspects/keywords/:expression			controllers.modules.AspectLexBuilder.updateExpression(aspect = null, expression: String)
 POST	/api/modules/lexica/aspects/:aspect/keywords/:expression	controllers.modules.AspectLexBuilder.updateExpression(aspect: String, expression: String)
+POST	/api/modules/lexica/aspects/:aspect/keywords				controllers.modules.AspectLexBuilder.addExpression(aspect: String)
 DELETE	/api/modules/lexica/aspects/keywords/:expression			controllers.modules.AspectLexBuilder.deleteExpression(aspect = null, expression: String)
 DELETE	/api/modules/lexica/aspects/:aspect/keywords/:expression	controllers.modules.AspectLexBuilder.deleteExpression(aspect: String, expression: String)
 

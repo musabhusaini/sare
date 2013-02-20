@@ -227,6 +227,24 @@ widget =
             @options.getLexiconRoute($(node).data(@options.aspectKey).id).url
           success: (data) =>
             @_makeAspectNode(data).children
+      crrm:
+        move:
+          check_move: (m) =>
+            aspect = $(m.o).data @options.aspectKey
+            lexicon = $(m.np).data @options.aspectKey
+            
+            if not aspect?
+              # handle the case of moving a keyword into an aspect.
+              keyword = $(m.o).data @options.keywordKey
+              if keyword?
+                if not lexicon?
+                  return false;
+                else
+                  response = @options.getKeywordRoute(lexicon.id, keyword.content).ajax
+                    async: false
+                  return response.status isnt 200
+            true
+
       hotkeys:
         insert: => @addAspect()
         del: => @removeAspect()
@@ -348,6 +366,7 @@ widget =
       addAspectRoute: jsRoutes.controllers.modules.AspectLexBuilder.addAspect
       updateAspectRoute: jsRoutes.controllers.modules.AspectLexBuilder.updateAspect
       deleteAspectRoute: jsRoutes.controllers.modules.AspectLexBuilder.deleteAspect
+      getKeywordRoute: jsRoutes.controllers.modules.AspectLexBuilder.getExpression
       getKeywordsRoute: jsRoutes.controllers.modules.AspectLexBuilder.getExpressions
       addKeywordRoute: jsRoutes.controllers.modules.AspectLexBuilder.addExpression
       updateKeywordRoute: jsRoutes.controllers.modules.AspectLexBuilder.updateExpression
