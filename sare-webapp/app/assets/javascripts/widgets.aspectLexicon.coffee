@@ -43,7 +43,9 @@ widget =
   _makeKeywordNode: (keyword, metadata) ->
     metadata = $.extend {}, metadata ? {},
       keyword: keyword
-    data: keyword.content
+    data:
+      title: keyword.content
+      icon: jsRoutes.controllers.Assets.at("/plugins/jstree/themes/misc/file.png").url
     metadata: metadata
 
   getSelectedAspect: ->
@@ -119,6 +121,8 @@ widget =
     editKeywordInputs = [ @options.updateKeywordButton, @options.deleteKeywordButton ]
     (keywordInputs = editKeywordInputs.slice()).push @options.addKeywordButton
 
+    state = {}
+
     selectNode = (tree, node) ->
       prev = $(tree).jstree "get_selected"
       node ?= $(tree).find "li:eq(0)"
@@ -146,9 +150,33 @@ widget =
           error: ->
             $.jstree.rollback data.rlbk
     
+      "prepare_move.jstree": (e, data) =>
+        state.aspectsRlbk = @_$(@options.aspectsContainer).jstree "get_rollback"
+        state.keywordsRlbk = @_$(@options.keywordsContainer).jstree "get_rollback"
+      
       "move_node.jstree": (e, data) =>
         aspect = $(data.rslt.o).data @options.aspectKey
-        lexicon = $(data.rslt.np).data(@options.aspectKey) ? @options.lexicon
+        lexicon = $(data.rslt.np).data @options.aspectKey
+        
+        if not aspect?
+          # handle the case of moving a keyword into an aspect.
+          keyword = $(data.rslt.o).data @options.keywordKey
+          if keyword?
+            revertKeywords = =>
+              $.jstree.rollback state.keywordsRlbk
+              state.keywordsRlbk = null
+              
+            $.jstree.rollback state.aspectsRlbk
+            state.aspectsRlbk = null
+            if not lexicon?
+              revertKeywords()
+            else
+              @options.updateKeywordRoute(lexicon.id, keyword.id).ajax
+                error: =>
+                  revertKeywords()
+            return true
+        
+        lexicon ?= @options.lexicon
         @options.updateAspectRoute(lexicon.id, aspect.id).ajax
           success: (aspect) =>
             $(data.rslt.o).data @options.aspectKey, aspect
@@ -178,7 +206,7 @@ widget =
           populateKeywords null, []
     
       "create_node.jstree": (e, data) =>
-        if not $(data.rslt.obj).data(superficialKey)
+        if not $(data.rslt.obj).data superficialKey
           selectNode @_$(@options.aspectsContainer), data.rslt.obj
     
       "delete_node.jstree": (e, data) =>
@@ -257,7 +285,7 @@ widget =
           @_changeInputState(input, "disabled") for input in editKeywordInputs
       
       "create_node.jstree": (e, data) =>
-        if not $(data.rslt.obj).data(superficialKey)
+        if not $(data.rslt.obj).data superficialKey
           selectNode @_$(@options.keywordsContainer), data.rslt.obj
       
       "delete_node.jstree": (e, data) =>
@@ -265,12 +293,13 @@ widget =
         prev = @_$(@options.keywordsContainer).find("li:eq(0)") if not prev?[0]
         if not not prev?[0] then selectNode @_$(@options.keywordsContainer), prev
       
+      "move_node.jstree": (e, data) =>
+        debugger
+      
     @_$(@options.keywordsContainer).jstree
       crrm:
         move:
           check_move: -> false
-      themes:
-        icons: false
       ui:
         select_limit: 1
       json_data:

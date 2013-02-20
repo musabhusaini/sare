@@ -68,6 +68,7 @@ public class Application extends Controller {
 	public static Result javascriptRoutes() {
 		response().setContentType("text/javascript");
 		return ok(Routes.javascriptRouter("jsRoutes",
+			controllers.routes.javascript.Assets.at(),
 			controllers.base.routes.javascript.Application.homePage(),
 			controllers.base.routes.javascript.Application.keepAlive(),
 			controllers.base.routes.javascript.Application.login(),
