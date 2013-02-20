@@ -123,7 +123,9 @@ widget =
         for input in [ @options.deleteButton, @options.detailsButton ]
           @_changeInputState @_$(input), if selected.data? and @options.editable then "enabled" else "disabled"
         Widgets.moduleManager "option", "output", (selected.data ? null)
-        @_trigger "selectionChange", e, selected
+        # for some reason, the second trigger doesn't work in all cases.
+        $(@element).trigger "storeListSelectionChange", selected
+        @_trigger "selectionchange", e, selected
     
     for input in [ @options.deleteButton, @options.detailsButton ]
       @_changeInputState @_$(input), "disabled"

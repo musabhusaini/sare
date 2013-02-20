@@ -36,9 +36,12 @@
 		@if(corpus != null) {
 			<div id="ctr-documents-@uid" class="ctr-documents span6">
 			</div>
+			
+			<div class="span1">
+			</div>
 		}
 		
-		<div id="ctr-alex-@uid" class="ctr-alex span6">
+		<div id="ctr-alex-@uid" class="ctr-alex span5">
 			@if(lexicon != null) {
 				@tags.aspectLexicon(lexicon, editable)
 			}

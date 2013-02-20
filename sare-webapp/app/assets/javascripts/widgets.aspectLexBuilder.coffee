@@ -36,11 +36,12 @@ widget =
     
     if not @options.lexicon?
       @_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
-        storelistselectionchange: (e, selected) =>
+        "storeListSelectionChange": (e, selected) =>
           lexicon = selected.data
           @_$(@options.lexiconContainer).empty()
           if lexicon? then @_$(@options.lexiconContainer)
             .load @options.lexiconViewRoute(lexicon.id).url
+      
       @_$(@options.lexicaContainer).children(Selectors.moduleContainer)
         .storeList "option",
           addRoute: =>
