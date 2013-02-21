@@ -35,6 +35,7 @@ import org.codehaus.jackson.JsonNode;
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
+import play.api.templates.Html;
 import play.libs.Json;
 import play.mvc.*;
 import views.html.tags.*;
@@ -148,6 +149,16 @@ public class AspectLexBuilder extends Module {
 		
 		em().merge(lexiconObj);
 		return ok(createViewModel(lexiconObj).asJson());
+	}
+	
+	public static Html renderDocumentsView(String corpus, String lexicon) {
+		// TODO: fix this.
+		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
+		return documentSlider.render((PersistentDocumentStoreModel)createViewModel(corpusObj));
+	}
+	
+	public static Result documentsView(String corpus, String lexicon) {
+		return ok(renderDocumentsView(corpus, lexicon));
 	}
 	
 	public static Result lexiconView(String lexicon) {

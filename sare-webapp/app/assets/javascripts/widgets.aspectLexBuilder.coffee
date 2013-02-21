@@ -37,10 +37,14 @@ widget =
     if not @options.lexicon?
       @_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
         "storeListSelectionChange": (e, selected) =>
-          lexicon = selected.data
+          @options.lexicon = selected.data
           @_$(@options.lexiconContainer).empty()
-          if lexicon? then @_$(@options.lexiconContainer)
-            .load @options.lexiconViewRoute(lexicon.id).url
+          if @options.lexicon?
+            if @options.corpus?
+              @_$(@options.documentsContainer)
+                .load @options.documentsViewRoute(@options.corpus.id, @options.lexicon.id).url
+            @_$(@options.lexiconContainer)
+              .load @options.lexiconViewRoute(@options.lexicon.id).url
       
       @_$(@options.lexicaContainer).children(Selectors.moduleContainer)
         .storeList "option",
@@ -66,6 +70,7 @@ widget =
       lexicaContainer: ".ctr-lexica"
       documentsContainer: ".ctr-documents"
       lexiconContainer: ".ctr-alex"
+      documentsViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.documentsView
       lexiconViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.lexiconView
       lexiconKey: "lexicon"
       corpusKey: "corpus"

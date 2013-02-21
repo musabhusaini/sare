@@ -250,8 +250,9 @@ widget =
         del: => @removeAspect()
       plugins: [ "themes", "json_data", "ui", "crrm", "dnd", "sort", "hotkeys" ]
     
-    # do this later so we don't end up getting overwritten.
+    # do this later so we don't end up getting overridden.
     window.setTimeout =>
+      @_$(@options.aspectsContainer).jstree "set_focus"
       @addAspect(@options.lexicon, aspect, true, true) for aspect in (@options.lexicon.children ? [])
       window.setTimeout =>
         selectNode @_$ @options.aspectsContainer
@@ -339,7 +340,7 @@ widget =
     @_$(@options.deleteKeywordButton)
       .tooltip()
       .click => @removeKeyword()
-      
+    
     @_changeInputState(input, "disabled") for input in keywordInputs
     
   refresh: ->

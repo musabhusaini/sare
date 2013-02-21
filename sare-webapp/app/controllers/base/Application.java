@@ -97,7 +97,8 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.AspectLexBuilder.addExpression(),
 			controllers.modules.routes.javascript.AspectLexBuilder.updateExpression(),
 			controllers.modules.routes.javascript.AspectLexBuilder.deleteExpression(),
-			controllers.modules.routes.javascript.AspectLexBuilder.lexiconView()
+			controllers.modules.routes.javascript.AspectLexBuilder.lexiconView(),
+			controllers.modules.routes.javascript.AspectLexBuilder.documentsView()
 		));
 	}
 }

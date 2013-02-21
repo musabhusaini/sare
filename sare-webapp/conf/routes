@@ -84,6 +84,7 @@ GET		/view/modules/lexica/:lexicon/builder					controllers.modules.AspectLexBuil
 GET		/view/modules/corpora/:corpus/lexica/builder			controllers.modules.AspectLexBuilder.modulePage(corpus: String, lexicon = null, partial: Boolean ?= false)
 GET		/view/modules/corpora/:corpus/lexica/:lexicon/builder	controllers.modules.AspectLexBuilder.modulePage(corpus: String, lexicon: String, partial: Boolean ?= false)
 
+GET		/view/modules/corpora/:corpus/lexica/:lexicon/documents	controllers.modules.AspectLexBuilder.documentsView(corpus: String, lexicon: String)
 GET		/view/modules/lexica/:lexicon							controllers.modules.AspectLexBuilder.lexiconView(lexicon: String)
 
 # Corpus reduction module

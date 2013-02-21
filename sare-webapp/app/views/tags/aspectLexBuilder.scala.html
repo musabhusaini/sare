@@ -23,6 +23,8 @@
 
 @import scala.util._
 
+@import controllers.modules._
+
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-module-@uid" class="ctr-module" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }
 	@if(corpus != null) { data-corpus="@corpus.asJson()" }>
@@ -35,6 +37,9 @@
 	<div class="row-fluid">
 		@if(corpus != null) {
 			<div id="ctr-documents-@uid" class="ctr-documents span6">
+				@if(lexicon != null) {
+					@AspectLexBuilder.renderDocumentsView(corpus.id, lexicon.id)
+				}
 			</div>
 			
 			<div class="span1">
