@@ -64,6 +64,9 @@ POST	/api/modules/corpora/:corpus/lexica				controllers.modules.AspectLexBuilder
 POST	/api/modules/lexica/:lexicon					controllers.modules.AspectLexBuilder.update(corpus = null, lexicon: String)
 POST	/api/modules/corpora/:corpus/lexica/:lexicon	controllers.modules.AspectLexBuilder.update(corpus: String, lexicon: String)
 
+GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, index: Int = -1)
+GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/:index	controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, index: Int)
+
 POST	/api/modules/lexica/:lexicon/aspects			controllers.modules.AspectLexBuilder.addAspect(lexicon: String)
 POST	/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.updateAspect(lexicon = null, aspect: String)
 POST	/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.updateAspect(lexicon: String, aspect: String)

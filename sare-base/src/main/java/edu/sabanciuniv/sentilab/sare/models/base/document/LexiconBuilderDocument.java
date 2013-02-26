@@ -32,7 +32,7 @@ import edu.sabanciuniv.sentilab.core.models.UserInaccessibleModel;
 @Entity
 @DiscriminatorValue("lex-builder-doc")
 public class LexiconBuilderDocument
-	extends FullTextDocument implements UserInaccessibleModel {
+	extends FullTextDocument implements UserInaccessibleModel, IWeightedDocument {
 
 	private static final long serialVersionUID = -2107212900717706813L;
 	
@@ -67,6 +67,7 @@ public class LexiconBuilderDocument
 		return null;
 	}
 	
+	@Override
 	public Double getWeight() {
 		return this.weight;
 	}

@@ -87,13 +87,13 @@ public class SetCoverDocument
 	public String getContent() {
 		return this.getBaseDocument() != null ? this.getBaseDocument().getContent() : null;
 	}
-
+	
 	/**
 	 * Gets the weight of this document.
 	 * @return the weight of this document.
 	 */
 	@Override
-	public double getWeight() {
+	public Double getWeight() {
 		return this.weight != null ? this.weight : this.getTotalTokenWeight();
 	}
 	

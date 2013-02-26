@@ -32,5 +32,5 @@ public interface IWeightedDocument
 	 * Gets the weight of the document.
 	 * @return the weight of the document.
 	 */
-	public double getWeight();
+	public Double getWeight();
 }

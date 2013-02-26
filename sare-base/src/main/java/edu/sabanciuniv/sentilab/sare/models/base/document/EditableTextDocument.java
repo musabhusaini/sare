@@ -37,12 +37,12 @@ public abstract class EditableTextDocument
 	 */
 	private static final long serialVersionUID = 5392373511223975393L;
 
-	@Column(name="title")
-	private String content;
+	@Column(columnDefinition="TEXT")
+	private String title;
 	
 	@Override
 	public String getContent() {
-		return this.content;
+		return this.title;
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public abstract class EditableTextDocument
 	 */
 	@Override
 	public EditableTextDocument setContent(String content) {
-		this.content = content;
+		this.title = content;
 		this.weight = content != null ? (double)this.getContent().length() : 0.0;
 		return this;
 	}

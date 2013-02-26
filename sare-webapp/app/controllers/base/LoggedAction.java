@@ -35,8 +35,8 @@ public class LoggedAction extends Action.Simple {
 			Validate.notNull(ctx);
 		}
 		
-		return String.format("%s - { request-uri: %s, username: %s, remote-address: %s, session: %s }",
-			message, ctx.request().uri(), StringUtils.defaultIfEmpty(SessionedAction.getUsername(ctx), "anonymous"),
+		return String.format("%s - { request-method: %s, request-uri: %s, username: %s, remote-address: %s, session: %s }",
+			message, ctx.request().method(), ctx.request().uri(), StringUtils.defaultIfEmpty(SessionedAction.getUsername(ctx), "anonymous"),
 			ctx.request().remoteAddress(), SessionedAction.getSessionKey(ctx));
 	}
 	

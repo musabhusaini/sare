@@ -19,12 +19,12 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(store: documentStore.PersistentDocumentStoreModel)
+@(corpus: documentStore.DocumentCorpusModel, lexicon: documentStore.AspectLexiconModel)
 
 @import scala.util._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-module-@uid" class="ctr-module" data-store="@store.asJson()">
+<div id="ctr-module-@uid" class="ctr-module" data-corpus="@corpus.asJson()" data-lexicon="@lexicon.asJson()">
 	<div class="row-fluid">
 		<label>Document:</label>
 	</div>
@@ -41,9 +41,11 @@
 </div>
 
 <link rel="stylesheet" href="@routes.Assets.at("stylesheets/documentSlider.css")">
+<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.documentSlider.js")"></script>
 <script type="text/javascript">
 	(function(window, $) {
 		$(function() {
+			$("#ctr-module-@uid").documentSlider();
 		});
 	})(window, window.jQuery);
 </script>

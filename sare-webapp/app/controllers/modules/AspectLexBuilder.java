@@ -45,8 +45,10 @@ import controllers.CollectionsController;
 import controllers.base.*;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconController;
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.LexiconBuilderController;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.LexiconController;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
+import edu.sabanciuniv.sentilab.sare.models.base.document.LexiconBuilderDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
@@ -152,9 +154,10 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	public static Html renderDocumentsView(String corpus, String lexicon) {
-		// TODO: fix this.
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
-		return documentSlider.render((PersistentDocumentStoreModel)createViewModel(corpusObj));
+		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		return documentSlider
+			.render((DocumentCorpusModel)createViewModel(corpusObj), (AspectLexiconModel)createViewModel(lexiconObj));
 	}
 	
 	public static Result documentsView(String corpus, String lexicon) {
@@ -164,6 +167,25 @@ public class AspectLexBuilder extends Module {
 	public static Result lexiconView(String lexicon) {
 		AspectLexiconModel lexiconObj = (AspectLexiconModel)createViewModel(fetchResource(lexicon, AspectLexicon.class));
 		return ok(aspectLexicon.render(lexiconObj, true));
+	}
+	
+	public static Result getDocument(String corpus, String lexicon, Integer index) {
+		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
+		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		
+		if (index < 0) {
+			index = null;
+		}
+		
+		LexiconBuilderController controller = new LexiconBuilderController();
+		LexiconBuilderDocumentStore builder = controller.findBuilder(em(), corpusObj, lexiconObj);
+		if (builder == null) {
+			builder = new AspectLexiconBuilderDocumentStore(corpusObj, lexiconObj);
+			em().persist(builder);
+		}
+		
+		LexiconBuilderDocument document = controller.getDocument(em(), builder, index);
+		return ok(createViewModel(document).asJson());
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
