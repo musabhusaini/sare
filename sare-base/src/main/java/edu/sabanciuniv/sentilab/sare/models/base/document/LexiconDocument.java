@@ -19,34 +19,24 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.aspect;
+package edu.sabanciuniv.sentilab.sare.models.base.document;
 
 import javax.persistence.*;
 
-import edu.sabanciuniv.sentilab.sare.models.base.document.*;
-
 /**
- * A class that represents an aspect expression.
+ * The basic unit of a lexicon.
  * @author Mus'ab Husaini
  */
 @Entity
-@DiscriminatorValue("aspect-expression")
-public class AspectExpression
-	extends LexiconDocument {
+@DiscriminatorValue("lex-doc")
+public class LexiconDocument
+	extends EditablePartialDocument {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8749649591681294449L;
+	private static final long serialVersionUID = -4658589725445481595L;
 
-	/**
-	 * Gets the aspect this expression belongs to.
-	 * @return the {@link AspectLexicon} object this expression belongs to; {@code null} if none.
-	 */
-	public AspectLexicon getAspect() {
-		if (this.getStore() instanceof AspectLexicon) {
-			return (AspectLexicon)this.getStore();
-		}
-		return null;
+	@Override
+	public LexiconDocument setContent(String content) {
+		super.setContent(content == null ? content : content.toLowerCase().trim());
+		return this;
 	}
 }

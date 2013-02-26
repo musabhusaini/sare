@@ -37,7 +37,6 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * The base class for all persistent document objects.
  * @author Mus'ab Husaini
  */
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Entity
 public abstract class PersistentDocument
 	extends PersistentObject

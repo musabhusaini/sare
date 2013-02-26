@@ -122,6 +122,10 @@ public abstract class FullTextDocument
 	 * @return the {@link TokenizingOptions} object representing a copy of the tokenizing options.
 	 */
 	public TokenizingOptions getTokenizingOptions() {
+		if (this.tokenizingOptions == null) {
+			this.tokenizingOptions = new TokenizingOptions();
+		}
+		
 		return this.tokenizingOptions.clone();
 	}
 

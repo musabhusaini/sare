@@ -23,29 +23,40 @@ package edu.sabanciuniv.sentilab.sare.models.aspect;
 
 import javax.persistence.*;
 
-import edu.sabanciuniv.sentilab.sare.models.base.document.*;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 
 /**
- * A class that represents an aspect expression.
+ * An aspect lexicon builder store.
  * @author Mus'ab Husaini
  */
 @Entity
-@DiscriminatorValue("aspect-expression")
-public class AspectExpression
-	extends LexiconDocument {
+@DiscriminatorValue("alex-builder")
+public class AspectLexiconBuilderDocumentStore
+	extends LexiconBuilderDocumentStore {
 
+	private static final long serialVersionUID = -6183785889418787784L;
+	
 	/**
-	 * 
+	 * Creates a new instance of the {@link AspectLexiconBuilderDocumentStore}.
+	 * @param corpus the {@link DocumentCorpus} the lexicon is based on.
+	 * @param lexicon the {@link AspectLexicon} being built.
 	 */
-	private static final long serialVersionUID = 8749649591681294449L;
-
+	public AspectLexiconBuilderDocumentStore(DocumentCorpus corpus, AspectLexicon lexicon) {
+		super(corpus, lexicon);
+	}
+	
 	/**
-	 * Gets the aspect this expression belongs to.
-	 * @return the {@link AspectLexicon} object this expression belongs to; {@code null} if none.
+	 * Creates a new instance of the {@link AspectLexiconBuilderDocumentStore}.
 	 */
-	public AspectLexicon getAspect() {
-		if (this.getStore() instanceof AspectLexicon) {
-			return (AspectLexicon)this.getStore();
+	public AspectLexiconBuilderDocumentStore() {
+		this(null, null);
+	}
+	
+	@Override
+	public AspectLexicon getLexicon() {
+		Lexicon lexicon = super.getLexicon();
+		if (lexicon instanceof AspectLexicon) {
+			return (AspectLexicon)lexicon;
 		}
 		return null;
 	}

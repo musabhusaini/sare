@@ -34,10 +34,14 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditableTextDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PartialTextDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditablePartialDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconBuilderDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconDocument</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.Lexicon</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.HybridDocumentStore</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDocumentStore</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus</class>
@@ -47,6 +51,7 @@
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconBuilderDocumentStore</class>
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		
@@ -70,10 +75,14 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditableTextDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PartialTextDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditablePartialDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconBuilderDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconDocument</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.Lexicon</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.HybridDocumentStore</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDocumentStore</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus</class>
@@ -83,6 +92,7 @@
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconBuilderDocumentStore</class>
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		
@@ -107,10 +117,14 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditableTextDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PartialTextDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditablePartialDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconBuilderDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconDocument</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.Lexicon</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.HybridDocumentStore</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDocumentStore</class>
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus</class>
@@ -120,6 +134,7 @@
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconBuilderDocumentStore</class>
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		

@@ -38,7 +38,6 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * The base class for all objects that can store documents.
  * @author Mus'ab Husaini
  */
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Entity
 public abstract class PersistentDocumentStore
 	extends PersistentObject

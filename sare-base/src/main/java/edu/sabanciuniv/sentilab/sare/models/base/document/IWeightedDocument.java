@@ -19,34 +19,18 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.aspect;
-
-import javax.persistence.*;
-
-import edu.sabanciuniv.sentilab.sare.models.base.document.*;
+package edu.sabanciuniv.sentilab.sare.models.base.document;
 
 /**
- * A class that represents an aspect expression.
+ * A class that implements this interface is a document with a calculated weight.
  * @author Mus'ab Husaini
  */
-@Entity
-@DiscriminatorValue("aspect-expression")
-public class AspectExpression
-	extends LexiconDocument {
+public interface IWeightedDocument
+	extends IDocument {
 
 	/**
-	 * 
+	 * Gets the weight of the document.
+	 * @return the weight of the document.
 	 */
-	private static final long serialVersionUID = 8749649591681294449L;
-
-	/**
-	 * Gets the aspect this expression belongs to.
-	 * @return the {@link AspectLexicon} object this expression belongs to; {@code null} if none.
-	 */
-	public AspectLexicon getAspect() {
-		if (this.getStore() instanceof AspectLexicon) {
-			return (AspectLexicon)this.getStore();
-		}
-		return null;
-	}
+	public double getWeight();
 }
