@@ -29,6 +29,7 @@ import models.ResourceFetchError;
 
 import org.apache.commons.lang3.*;
 
+import edu.sabanciuniv.sentilab.core.models.UserInaccessibleModel;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.SareEntityManagerFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
@@ -63,7 +64,7 @@ public class SareTransactionalAction extends Action.Simple {
 				byte[] uuid = UuidUtils.toBytes(UuidUtils.create(id));
 				object = em().find(clazz, uuid);
 				
-				if (object != null && !SessionedAction.isOwnerOf(object)) {
+				if (object != null && (!SessionedAction.isOwnerOf(object) || object instanceof UserInaccessibleModel )) {
 					throw new AccessControlException(id);
 				}
 			} catch (EntityNotFoundException e) {

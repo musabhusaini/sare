@@ -39,9 +39,6 @@ public class SetCoverDocument
 	 */
 	private static final long serialVersionUID = -5638920050574370647L;
 	
-	@Column(name="weight")
-	private Double weight;
-	
 	private void updateWeight() {
 		if (this.weight == null) {
 			this.setWeight(this.getWeight());

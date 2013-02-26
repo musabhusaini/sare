@@ -23,6 +23,8 @@ package edu.sabanciuniv.sentilab.sare.models.base.document;
 
 import javax.persistence.*;
 
+import edu.sabanciuniv.sentilab.core.models.*;
+
 /**
  * The basic unit of a lexicon.
  * @author Mus'ab Husaini
@@ -30,7 +32,7 @@ import javax.persistence.*;
 @Entity
 @DiscriminatorValue("lex-doc")
 public class LexiconDocument
-	extends EditablePartialDocument {
+	extends EditablePartialDocument implements UserInaccessibleModel  {
 
 	private static final long serialVersionUID = -4658589725445481595L;
 
@@ -38,5 +40,10 @@ public class LexiconDocument
 	public LexiconDocument setContent(String content) {
 		super.setContent(content == null ? content : content.toLowerCase().trim());
 		return this;
+	}
+
+	@Override
+	public IModel getAccessible() {
+		return null;
 	}
 }

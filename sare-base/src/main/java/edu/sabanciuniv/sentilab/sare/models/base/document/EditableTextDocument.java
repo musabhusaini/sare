@@ -53,6 +53,7 @@ public abstract class EditableTextDocument
 	@Override
 	public EditableTextDocument setContent(String content) {
 		this.content = content;
+		this.weight = content != null ? (double)this.getContent().length() : 0.0;
 		return this;
 	}
 }

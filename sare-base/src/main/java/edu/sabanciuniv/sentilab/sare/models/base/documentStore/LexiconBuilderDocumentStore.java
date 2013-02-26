@@ -23,10 +23,10 @@ package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 
 import javax.persistence.Entity;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicates;
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
+import edu.sabanciuniv.sentilab.core.models.UserInaccessibleModel;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 
 /**
@@ -35,7 +35,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
  */
 @Entity
 public abstract class LexiconBuilderDocumentStore
-	extends HybridDocumentStore {
+	extends HybridDocumentStore implements UserInaccessibleModel {
 	
 	private static final long serialVersionUID = -5249613407009854782L;
 	
@@ -111,5 +111,10 @@ public abstract class LexiconBuilderDocumentStore
 	public String getOwnerId() {
 		return super.getOwnerId() != null ? super.getOwnerId() :
 			this.getBaseStore() != null ? this.getBaseStore().getOwnerId() : null;
+	}
+
+	@Override
+	public DocumentCorpus getAccessible() {
+		return this.getCorpus();
 	}
 }

@@ -19,28 +19,18 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.tests;
+package edu.sabanciuniv.sentilab.core.models;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import edu.sabanciuniv.sentilab.sare.controllers.opinion.tests.*;
-import edu.sabanciuniv.sentilab.sare.models.base.document.tests.*;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.tests.*;
-import edu.sabanciuniv.sentilab.sare.models.base.tests.*;
-
-@RunWith(Suite.class)
-@SuiteClasses({
-	UniquelyIdentifiableObjectTest.class,
-	PersistentObjectTest.class,
-	PersistentDocumentTest.class,
-	FullTextDocumentTest.class,
-	LexiconBuilderDocumentTest.class,
-	PersistentDocumentStoreTest.class,
-	LexiconBuilderDocumentStoreTest.class,
-	OpinionDocumentFactoryTest.class,
-	OpinionCorpusFactoryTest.class
-})
-public class SareBaseTests {
+/**
+ * A model that implements this interface is inaccessible to the user.
+ * @author Mus'ab Husaini
+ */
+public interface UserInaccessibleModel
+	extends IModel {
+	
+	/**
+	 * Gets a user accessible version of this model; {@code null} if no such version can be obtained.
+	 * @return an {@link IModel} object which is accessible by the user.
+	 */
+	public IModel getAccessible();
 }

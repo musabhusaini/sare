@@ -23,6 +23,8 @@ package edu.sabanciuniv.sentilab.sare.models.base.document;
 
 import javax.persistence.*;
 
+import edu.sabanciuniv.sentilab.core.models.UserInaccessibleModel;
+
 /**
  * A document that shadows a full text document for a lexicon builder.
  * @author Mus'ab Husaini
@@ -30,12 +32,9 @@ import javax.persistence.*;
 @Entity
 @DiscriminatorValue("lex-builder-doc")
 public class LexiconBuilderDocument
-	extends FullTextDocument {
+	extends FullTextDocument implements UserInaccessibleModel {
 
 	private static final long serialVersionUID = -2107212900717706813L;
-	
-	@Column(name = "flag")
-	private boolean isSeen;
 	
 	/**
 	 * Creates an instance of {@link LexiconBuilderDocument}.
@@ -43,6 +42,11 @@ public class LexiconBuilderDocument
 	 */
 	public LexiconBuilderDocument(FullTextDocument baseDocument) {
 		this.setBaseDocument(baseDocument);
+		
+		if (baseDocument != null) {
+			this.weight = baseDocument instanceof IWeightedDocument ?
+				((IWeightedDocument)baseDocument).getWeight() : baseDocument.weight;
+		}
 	}
 	
 	/**
@@ -61,6 +65,10 @@ public class LexiconBuilderDocument
 			return (FullTextDocument)this.getBaseDocument();
 		}
 		return null;
+	}
+	
+	public Double getWeight() {
+		return this.weight;
 	}
 	
 	@Override
@@ -86,7 +94,7 @@ public class LexiconBuilderDocument
 	 * @return {@code true} if the document has been seen, {@code false} otherwise.
 	 */
 	public boolean isSeen() {
-		return this.isSeen;
+		return this.flag;
 	}
 	
 	/**
@@ -95,7 +103,12 @@ public class LexiconBuilderDocument
 	 * @return the {@code this} object.
 	 */
 	public LexiconBuilderDocument setSeen(boolean isSeen) {
-		this.isSeen = isSeen;
+		this.flag = isSeen;
 		return this;
+	}
+
+	@Override
+	public FullTextDocument getAccessible() {
+		return this.getFullTextDocument();
 	}
 }

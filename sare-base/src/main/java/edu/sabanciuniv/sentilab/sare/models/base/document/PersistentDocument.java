@@ -61,6 +61,12 @@ public abstract class PersistentDocument
 	@OneToMany(mappedBy = "baseDocument")
 	private Collection<PersistentDocument> derivedDocuments;
 	
+	@Column(name = "weight")
+	protected Double weight;
+
+	@Column(name = "flag")
+	protected boolean flag;
+	
 	protected PersistentDocument addDerivedDocument(PersistentDocument derivedDocument) {
 		Validate.notNull(derivedDocument, CannedMessages.NULL_ARGUMENT, "derivedDocument");
 		

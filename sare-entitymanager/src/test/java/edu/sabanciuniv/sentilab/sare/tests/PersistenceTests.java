@@ -26,8 +26,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.tests.*;
-import edu.sabanciuniv.sentilab.sare.controllers.opinion.tests.OpinionCorpusControllerTest;
-import edu.sabanciuniv.sentilab.sare.controllers.opinion.tests.OpinionDocumentControllerTest;
+import edu.sabanciuniv.sentilab.sare.controllers.opinion.tests.*;
 import edu.sabanciuniv.sentilab.sare.models.base.tests.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.tests.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.tests.*;
@@ -41,6 +40,7 @@ import edu.sabanciuniv.sentilab.sare.models.setcover.tests.*;
 	DocumentSetCoverTest.class,
 	PersistentDocumentControllerTest.class,
 	PersistentDocumentStoreControllerTest.class,
+	LexiconBuilderControllerTests.class,
 	OpinionCorpusControllerTest.class,
 	OpinionDocumentControllerTest.class
 })

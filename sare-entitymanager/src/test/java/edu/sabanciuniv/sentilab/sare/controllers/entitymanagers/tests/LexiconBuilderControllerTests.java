@@ -56,10 +56,10 @@ public class LexiconBuilderControllerTests
 	public void setUp() throws Exception {
 		testCorpus = new OpinionCorpus();
 		testDocument1 = (OpinionDocument)new OpinionDocument()
-			.setContent("this is the first test document. it's better than the other.")
+			.setContent("this is the first test document. it's ok.")
 			.setStore(testCorpus);
 		testDocument2 = (OpinionDocument)new OpinionDocument()
-			.setContent("this is the second test document. it's ok.")
+			.setContent("this is the second test document. it's better than the other.")
 			.setStore(testCorpus);
 		
 		testLexicon = new AspectLexicon();
@@ -145,6 +145,7 @@ public class LexiconBuilderControllerTests
 		assertEquals(0, actualDocuments.size());
 	}
 	
+	@Test
 	public void testGetSeenTokens() {
 		em.getTransaction().begin();
 		persist(testBuilder);
@@ -156,6 +157,7 @@ public class LexiconBuilderControllerTests
 		assertEquals(2, actualTokens.size());
 	}
 	
+	@Test
 	public void testGetSeenTokensWithNone() {
 		testToken1.setStore(null);
 		testToken2.setStore(null);
@@ -170,6 +172,7 @@ public class LexiconBuilderControllerTests
 		assertEquals(0, actualTokens.size());
 	}
 	
+	@Test
 	public void testIsSeenToken() {
 		testToken2.setStore(null);
 		
@@ -182,8 +185,40 @@ public class LexiconBuilderControllerTests
 		assertFalse(testController.isSeenToken(em, testBuilder, testToken2.getContent()));
 	}
 	
+	@Test
+	public void testGetDocument() {
+		em.getTransaction().begin();
+		persist(testBuilder);
+		em.getTransaction().commit();
+		em.clear();
+		
+		LexiconBuilderDocument actualDocument1 = testController.getDocument(em, testBuilder, 0);
+		assertNotNull(actualDocument1);
+		assertEquals(testLBDocument2, actualDocument1);
+		
+		LexiconBuilderDocument actualDocument2 = testController.getDocument(em, testBuilder, 1);
+		assertNotNull(actualDocument2);
+		assertEquals(testLBDocument1, actualDocument2);
+	}
+	
+	@Test
 	public void testGetNextDocument() {
 		testLBDocument1.setSeen(false);
+		
+		em.getTransaction().begin();
+		persist(testBuilder);
+		em.getTransaction().commit();
+		em.clear();
+
+		LexiconBuilderDocument actualDocument = testController.getNextDocument(em, testBuilder);
+		assertNotNull(actualDocument);
+		assertEquals(testLBDocument2, actualDocument);
+	}
+
+	@Test
+	public void testGetNextDocumentWithSeenDocument() {
+		testLBDocument1.setSeen(false);
+		testLBDocument2.setSeen(true);
 		
 		em.getTransaction().begin();
 		persist(testBuilder);
@@ -195,17 +230,7 @@ public class LexiconBuilderControllerTests
 		assertEquals(testLBDocument1, actualDocument);
 	}
 
-	public void testGetNextDocumentWithSeenDocument() {
-		em.getTransaction().begin();
-		persist(testBuilder);
-		em.getTransaction().commit();
-		em.clear();
-
-		LexiconBuilderDocument actualDocument = testController.getNextDocument(em, testBuilder);
-		assertNotNull(actualDocument);
-		assertEquals(testLBDocument2, actualDocument);
-	}
-
+	@Test
 	public void testSetSeenDocument() {
 		testLBDocument1.setSeen(false);
 		
