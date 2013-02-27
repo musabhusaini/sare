@@ -173,10 +173,10 @@ widget =
         if typeof value is "object" then value = JSON.stringify(value) 
         @options.moduleOptionsRoute(value).ajax
           success: (modules) =>
-            @_$(@options.moduleControlsContainer).show()
             @_$(@options.nextModulesButtons).empty()
             for module in modules
             	if module.id isnt @_currentModule.id or @_currentModule.allowSelfOutput
+            	  @_$(@options.moduleControlsContainer).show()
 	              $("<button>")
 	                .text(module.name)
 	                .addClass("btn")

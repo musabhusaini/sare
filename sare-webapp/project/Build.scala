@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -42,6 +42,7 @@ object ApplicationBuild extends Build {
 	// Only compile the bootstrap bootstrap.less file and any other *.less file in the stylesheets directory
 	def customLessEntryPoints(base: File): PathFinder = (
 		(base / "app" / "assets" / "stylesheets" / "bootstrap" * "bootstrap.less") +++
+		(base / "app" / "assets" / "stylesheets" / "bootstrap" * "responsive.less") +++
 		(base / "app" / "assets" / "stylesheets" * "*.less")
 	)
 
