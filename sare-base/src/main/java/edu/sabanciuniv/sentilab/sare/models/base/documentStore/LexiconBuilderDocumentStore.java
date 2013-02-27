@@ -21,7 +21,7 @@
 
 package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
@@ -34,7 +34,8 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
  * @author Mus'ab Husaini
  */
 @Entity
-public abstract class LexiconBuilderDocumentStore
+@DiscriminatorValue("lex-builder")
+public class LexiconBuilderDocumentStore
 	extends HybridDocumentStore implements UserInaccessibleModel {
 	
 	private static final long serialVersionUID = -5249613407009854782L;

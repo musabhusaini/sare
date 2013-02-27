@@ -51,8 +51,14 @@ public abstract class FullTextDocument
 	@Transient
 	private TokenizingOptions tokenizingOptions;
 	
+	/**
+	 * This is the original content that was used for tokenization.
+	 */
 	@Transient
 	private String tokenizedContent;
+	
+	@Transient
+	private LinguisticText parsedContent;
 	
 	@Transient
 	private Map<LinguisticToken, Double> tokenWeightMap;
@@ -137,6 +143,7 @@ public abstract class FullTextDocument
 	public FullTextDocument setTokenizingOptions(TokenizingOptions tokenizingOptions) {
 		this.tokenizingOptions = tokenizingOptions.clone();
 		this.tokenizedContent = null;
+		this.parsedContent = null;
 		return this;
 	}
 	
@@ -187,7 +194,19 @@ public abstract class FullTextDocument
 		
 		// make a note of the content that was used. when it changes, we will retokenize.
 		this.tokenizedContent = this.getContent();
+		this.parsedContent = nlpText;
 		return this;
+	}
+	
+	/**
+	 * Gets the content as parsed by the NLP engine.
+	 * @return the output of the NLP engine as a {@link LinguisticText} object.
+	 */
+	public LinguisticText getParsedContent() {
+		if (this.parsedContent == null) {
+			this.retokenize();
+		}
+		return this.parsedContent;
 	}
 	
 	@Override

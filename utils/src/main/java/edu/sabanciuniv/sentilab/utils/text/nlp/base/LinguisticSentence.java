@@ -47,4 +47,17 @@ public abstract class LinguisticSentence
 	 * @return the linguistic dependencies in this sentence.
 	 */
 	public abstract Iterable<LinguisticDependency> getDependencies();
+	
+	@Override
+	public String toString(boolean rich) {
+		if (!rich) {
+			return super.toString(rich);
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		for (LinguisticToken token : this.getTokens()) {
+			sb.append(token.toString(rich));
+		}
+		return sb.toString();
+	}
 }

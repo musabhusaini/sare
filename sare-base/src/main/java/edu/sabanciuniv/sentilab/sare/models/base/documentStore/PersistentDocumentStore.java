@@ -58,9 +58,6 @@ public abstract class PersistentDocumentStore
 	@Column(name="owner_id")
 	private String ownerId;
 	
-	@Column(columnDefinition="TEXT")
-	protected String title;
-	
 	/**
 	 * The documents stored under this store. Derived classes are responsible for maintaining this relationship.
 	 */
@@ -288,6 +285,21 @@ public abstract class PersistentDocumentStore
 	}
 	
 	/**
+	 * Adds all the given document to this store.
+	 * @param documents the {@link Iterable} of {@link PersistentDocument} objects to add.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStore addDocuments(Iterable<? extends PersistentDocument> documents) {
+		Validate.notNull(documents, CannedMessages.NULL_ARGUMENT, "documents");
+		
+		for (PersistentDocument document : documents) {
+			this.addDocument(document);
+		}
+		
+		return this;
+	}
+	
+	/**
 	 * Removes a document from this store.
 	 * @param document the {@code PersistentDocument} object to remove.
 	 * @return {@code true} if an element was removed as a result of this call. 
@@ -312,6 +324,21 @@ public abstract class PersistentDocumentStore
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Removes all the given documents from this store.
+	 * @param documents the {@link Iterable} of {@link PersistentDocument} objects to remove.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStore removeDocuments(Iterable<? extends PersistentDocument> documents) {
+		Validate.notNull(documents, CannedMessages.NULL_ARGUMENT, "documents");
+		
+		for (PersistentDocument document : documents) {
+			this.removeDocument(document);
+		}
+		
+		return this;
 	}
 	
 	/**

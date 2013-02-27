@@ -24,6 +24,7 @@ package edu.sabanciuniv.sentilab.sare.models.setcover;
 import javax.persistence.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticText;
 
 /**
  * The class for set cover documents.
@@ -84,7 +85,39 @@ public class SetCoverDocument
 	}
 	
 	@Override
+	public SetCoverDocument setBaseDocument(PersistentDocument baseDocument) {
+		super.setBaseDocument(baseDocument);
+		this.title = null;
+		this.getContent(true);
+		return this;
+	}
+	
+	@Override
 	public String getContent() {
+		return this.getContent(false);
+	}
+	
+	/**
+	 * Gets the (possibly NLP-enriched) content of this document.
+	 * @param enriched {@code true} if NLP-enriched content is desired, {@code false} otherwise.
+	 * @return the (possibly NLP-enriched) content of this document.
+	 */
+	public String getContent(boolean enriched) {
+		if (enriched) {
+			if (this.getBaseDocument() != null && this.getBaseDocument() instanceof FullTextDocument &&
+				(this.title == null
+				|| (this.getLastUpdatedDate() != null && this.getBaseDocument().getLastUpdatedDate() != null
+				&& this.getLastUpdatedDate().getTime() <= this.getBaseDocument().getLastUpdatedDate().getTime()))) {
+				
+				FullTextDocument ftDoc = (FullTextDocument)this.getBaseDocument();
+				LinguisticText parsedContent = ftDoc.getParsedContent();
+				if (parsedContent != null) {
+					this.title = parsedContent.toString(true);
+				}
+			}
+			
+			return this.title;
+		}
 		return this.getBaseDocument() != null ? this.getBaseDocument().getContent() : null;
 	}
 	

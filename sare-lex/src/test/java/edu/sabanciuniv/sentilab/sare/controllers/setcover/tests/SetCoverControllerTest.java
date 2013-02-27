@@ -24,8 +24,7 @@ package edu.sabanciuniv.sentilab.sare.controllers.setcover.tests;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.EnumSet;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.*;
 

@@ -37,9 +37,6 @@ public abstract class EditableTextDocument
 	 */
 	private static final long serialVersionUID = 5392373511223975393L;
 
-	@Column(columnDefinition="TEXT")
-	private String title;
-	
 	@Override
 	public String getContent() {
 		return this.title;

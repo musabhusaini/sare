@@ -66,6 +66,9 @@ public abstract class PersistentObject
 	
 	@ManyToMany(mappedBy="referencedObjects", cascade=CascadeType.ALL)
 	protected List<PersistentObject> refererObjects;
+
+	@Column(columnDefinition="TEXT")
+	protected String title;
 	
 	@Basic(fetch=FetchType.LAZY)
 	@Column(name="other_data", columnDefinition="TEXT")

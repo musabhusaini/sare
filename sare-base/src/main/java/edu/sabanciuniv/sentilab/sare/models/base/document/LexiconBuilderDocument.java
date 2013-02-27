@@ -24,6 +24,7 @@ package edu.sabanciuniv.sentilab.sare.models.base.document;
 import javax.persistence.*;
 
 import edu.sabanciuniv.sentilab.core.models.UserInaccessibleModel;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDocumentStore;
 
 /**
  * A document that shadows a full text document for a lexicon builder.
@@ -35,6 +36,9 @@ public class LexiconBuilderDocument
 	extends FullTextDocument implements UserInaccessibleModel, IWeightedDocument {
 
 	private static final long serialVersionUID = -2107212900717706813L;
+	
+	@Transient
+	protected Long rank;
 	
 	/**
 	 * Creates an instance of {@link LexiconBuilderDocument}.
@@ -67,6 +71,35 @@ public class LexiconBuilderDocument
 		return null;
 	}
 	
+	/**
+	 * Gets the lexicon builder this document belongs to.
+	 * @return the {@link LexiconBuilderDocumentStore} this document belongs to.
+	 */
+	public LexiconBuilderDocumentStore getLexiconBuilder() {
+		if (this.getStore() instanceof LexiconBuilderDocumentStore) {
+			return (LexiconBuilderDocumentStore)this.getStore();
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the rank of this document.
+	 * @return the rank of this document; {@code null} if none is set.
+	 */
+	public Long getRank() {
+		return this.rank;
+	}
+	
+	/**
+	 * Sets the rank of this document.
+	 * @param rank the rank of this document; {@code null} to unset.
+	 * @return the {@code this} object.
+	 */
+	public LexiconBuilderDocument setRank(Long rank) {
+		this.rank = rank;
+		return this;
+	}
+
 	@Override
 	public Double getWeight() {
 		return this.weight;

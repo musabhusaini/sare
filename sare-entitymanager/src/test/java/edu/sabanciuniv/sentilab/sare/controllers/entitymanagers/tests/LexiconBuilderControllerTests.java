@@ -23,17 +23,18 @@ package edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.tests;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.*;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.LexiconBuilderController;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDocumentStore;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
@@ -69,7 +70,7 @@ public class LexiconBuilderControllerTests
 		persist(testLexicon);
 		em.getTransaction().commit();
 		
-		testBuilder = new AspectLexiconBuilderDocumentStore(testCorpus, testLexicon);
+		testBuilder = new LexiconBuilderDocumentStore(testCorpus, testLexicon);
 		Iterable<PersistentDocument> docs = testBuilder.getDocuments();
 		testLBDocument1 = (LexiconBuilderDocument)Iterables.get(docs, 0);
 		testLBDocument2 = (LexiconBuilderDocument)Iterables.get(docs, 1);
@@ -252,5 +253,37 @@ public class LexiconBuilderControllerTests
 		for (LinguisticToken token : tokens) {
 			assertTrue(testController.isSeenToken(em, testBuilder, token.getWord()));
 		}
+	}
+	
+	@Test
+	public void testRefreshBuilder() {
+		em.getTransaction().begin();
+		persist(testBuilder);
+		em.getTransaction().commit();
+		
+		final OpinionDocument anotherDocument = (OpinionDocument)new OpinionDocument()
+			.setContent("whatever")
+			.setStore(testCorpus);
+		em.getTransaction().begin();
+		persist(anotherDocument);
+		em.getTransaction().commit();
+		em.clear();
+		
+		LexiconBuilderDocumentStore actualBuilder = em.find(LexiconBuilderDocumentStore.class, testBuilder.getId());
+		em.getTransaction().begin();
+		testController.refreshBuilder(em, actualBuilder);
+		em.getTransaction().commit();
+		em.clear();
+		
+		actualBuilder = em.find(LexiconBuilderDocumentStore.class, testBuilder.getId());
+		List<LexiconBuilderDocument> builderDocuments = testController.getDocuments(em, actualBuilder);
+		assertEquals(Iterables.size(testCorpus.getDocuments()), builderDocuments.size());
+		
+		assertNotNull(Iterables.find(builderDocuments, new Predicate<LexiconBuilderDocument>() {
+			@Override
+			public boolean apply(LexiconBuilderDocument input) {
+				return ObjectUtils.equals(input.getBaseDocument(), anotherDocument);
+			}
+		}, null));
 	}
 }

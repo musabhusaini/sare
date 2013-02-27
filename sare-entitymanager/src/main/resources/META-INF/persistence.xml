@@ -51,7 +51,6 @@
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
-		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconBuilderDocumentStore</class>
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		
@@ -92,7 +91,7 @@
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
-		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconBuilderDocumentStore</class>
+
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		
@@ -134,7 +133,6 @@
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
-		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconBuilderDocumentStore</class>
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		

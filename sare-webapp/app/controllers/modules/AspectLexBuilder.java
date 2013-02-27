@@ -180,8 +180,10 @@ public class AspectLexBuilder extends Module {
 		LexiconBuilderController controller = new LexiconBuilderController();
 		LexiconBuilderDocumentStore builder = controller.findBuilder(em(), corpusObj, lexiconObj);
 		if (builder == null) {
-			builder = new AspectLexiconBuilderDocumentStore(corpusObj, lexiconObj);
+			builder = new LexiconBuilderDocumentStore(corpusObj, lexiconObj);
 			em().persist(builder);
+		} else {
+			controller.refreshBuilder(em(), builder);
 		}
 		
 		LexiconBuilderDocument document = controller.getDocument(em(), builder, index);

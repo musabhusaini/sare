@@ -52,4 +52,9 @@ public class StanfordToken
 	public String getText() {
 		return this.token.originalText();
 	}
+	
+	@Override
+	public String toString(boolean rich) {
+		return super.toString(rich) + (rich ? token.after() : "");
+	}
 }

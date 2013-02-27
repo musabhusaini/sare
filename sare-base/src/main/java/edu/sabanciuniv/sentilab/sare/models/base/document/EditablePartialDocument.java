@@ -21,7 +21,6 @@
 
 package edu.sabanciuniv.sentilab.sare.models.base.document;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
@@ -38,12 +37,9 @@ public abstract class EditablePartialDocument
 	 */
 	private static final long serialVersionUID = 1135997891869496330L;
 
-	@Column(name="title")
-	private String content;
-
 	@Override
 	public String getContent() {
-		return this.content;
+		return this.title;
 	}
 	
 	/**
@@ -53,7 +49,7 @@ public abstract class EditablePartialDocument
 	 */
 	@Override
 	public EditablePartialDocument setContent(String content) {
-		this.content = content;
+		this.title = content;
 		return this;
 	}
 }

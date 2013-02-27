@@ -48,6 +48,15 @@ public abstract class LinguisticEntity
 		return this.getText();
 	}
 	
+	/**
+	 * Gets a string representation of this entity, possibly an information rich version.
+	 * @param rich {@code true} if an information rich version is needed; {@code false} otherwise.
+	 * @return the {@link String} representation of this entity.
+	 */
+	public String toString(boolean rich) {
+		return this.toString();
+	}
+	
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof LinguisticEntity) {

@@ -27,8 +27,7 @@ import java.util.List;
 
 import org.junit.*;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;

@@ -58,7 +58,35 @@ public class LexiconBuilderController
 	private <T> T getSingleResult(TypedQuery<T> query) {
 		return query.getResultList().size() > 0 ? query.getSingleResult() : null;
 	}
-
+	
+	/**
+	 * Refreshes the state of the given builder based on its base corpus and adds any missing documents.
+	 * @param em the {@link EntityManager} to use.
+	 * @param builder the {@link LexiconBuilderDocumentStore} to refresh.
+	 * @return the supplied {@link LexiconBuilderDocumentStore} object.
+	 */
+	public LexiconBuilderDocumentStore refreshBuilder(EntityManager em, LexiconBuilderDocumentStore builder) {
+		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
+		Validate.notNull(builder, CannedMessages.NULL_ARGUMENT, "builder");
+		Validate.notNull(builder.getCorpus(), CannedMessages.NULL_ARGUMENT, "builder.corpus");
+		
+		TypedQuery<FullTextDocument> ftdQuery = em.createQuery("SELECT d FROM FullTextDocument d " +
+			"WHERE d.store=:corpus " +
+			"AND NOT EXISTS (SELECT bd FROM LexiconBuilderDocument bd WHERE bd.store=:builder AND bd.baseDocument=d)",
+			FullTextDocument.class);
+		
+		ftdQuery
+			.setParameter("corpus", builder.getCorpus())
+			.setParameter("builder", builder);
+		
+		for (FullTextDocument document : ftdQuery.getResultList()) {
+			LexiconBuilderDocument lbd = new LexiconBuilderDocument(document);
+			builder.addDocument(lbd);
+			em.persist(lbd);
+		}
+		return builder;
+	}
+	
 	/**
 	 * Finds the builder associated with a given corpus and lexicon.
 	 * @param em the {@link EntityManager} to use.

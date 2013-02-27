@@ -125,4 +125,21 @@ public class SetCoverDocumentTest
 		actualSetCoverDocument.resetWeight();
 		assertEquals(testDocument.getTotalTokenWeight(), actualSetCoverDocument.getWeight(), 0);
 	}
+	
+	@Test
+	public void testEnrichedContentChangesWithBase() {
+		em.getTransaction().begin();
+		persist(testSetCover);
+		persist(testSetCoverDocument);
+		em.getTransaction().commit();
+		
+		testDocument.setContent("this is a modified test document.");
+		em.getTransaction().begin();
+		em.merge(testDocument);
+		em.getTransaction().commit();
+		em.clear();
+		
+		SetCoverDocument actualSetCoverDocument = em.find(SetCoverDocument.class, testSetCoverDocument.getId());
+		assertEquals(((FullTextDocument)actualSetCoverDocument.getBaseDocument()).getParsedContent().toString(true), actualSetCoverDocument.getContent(true));
+	}
 }

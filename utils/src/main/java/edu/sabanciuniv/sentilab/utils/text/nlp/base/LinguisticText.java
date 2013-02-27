@@ -47,4 +47,17 @@ public abstract class LinguisticText
 	 * @return the tokens in this text.
 	 */
 	public abstract Iterable<LinguisticToken> getTokens();
+	
+	@Override
+	public String toString(boolean rich) {
+		if (!rich) {
+			return super.toString(rich);
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		for (LinguisticSentence sentence : this.getSentences()) {
+			sb.append(sentence.toString(rich));
+		}
+		return sb.toString();
+	}
 }
