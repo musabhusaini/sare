@@ -35,5 +35,6 @@ Selectors.moduleManagerContainer = "#ctr-module-manager"
 
 $ ->
   Widgets.moduleManager = $.proxy $(Selectors.moduleManagerContainer).moduleManager, $(Selectors.moduleManagerContainer)
-  Widgets.moduleManager()
+  Widgets.moduleManager
+  	entryModule: $(Selectors.moduleManagerContainer).data "module"
   Widgets.moduleManager "option", "output", []

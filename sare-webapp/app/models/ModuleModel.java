@@ -22,20 +22,28 @@
 package models;
 
 import controllers.modules.base.Module;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 import models.base.ViewModel;
 
 public class ModuleModel extends ViewModel {
 
+	public String id;
 	public String name;
 	public String url;
 	public boolean canPartiallyRender;
+	public boolean allowSelfOutput;
 	public double relevancyScore;
 	
 	public ModuleModel(Module module) {
 		super(module);
 		
 		if (module != null) {
+			this.id = UuidUtils.normalize(module.getId());
 			this.name = module.getDisplayName();
+			this.url = module.getRoute();
+			this.canPartiallyRender = module.canPartiallyRender();
+			this.allowSelfOutput = module.allowSelfOutput();
+			this.relevancyScore = 1.0;
 		}
 	}
 	
@@ -61,7 +69,7 @@ public class ModuleModel extends ViewModel {
 		return this;
 	}
 	
-	public boolean getCanPartiallRender() {
+	public boolean getCanPartiallyRender() {
 		return this.canPartiallyRender;
 	}
 	

@@ -26,9 +26,13 @@
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-module-@uid" class="ctr-module" data-corpus="@corpus.asJson()" data-lexicon="@lexicon.asJson()">
 	<div class="row-fluid">
-		<label>Document:</label>
+		<div class="widget-header">
+			<label for="ctr-document-@uid">Document</label>
+		</div>
 	</div>
-	<div id="ctr-document-@uid" class="ctr-document row-fluid">
+	<div class="row-fluid">
+		<div id="ctr-document-@uid" class="ctr-document">
+		</div>
 	</div>
 	<div class="row-fluid">
 		<button id="btn-prev-doc-@uid" class="btn-prev-doc btn btn-primary" title="Previous document" data-placement="bottom" data-loading-text="Navigating...">

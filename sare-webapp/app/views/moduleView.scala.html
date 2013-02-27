@@ -19,10 +19,10 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(content: Html, styles: Html = null, scripts: Html = null)
+@(module: models.ModuleModel, content: Html, styles: Html = null, scripts: Html = null)
 
 @contentHtml = {
-	<div id="ctr-module-manager">
+	<div id="ctr-module-manager" @if(module != null) { data-module="@module.asJson()" }>
 		<div class="ctr-module-content">
 			@content
 		</div>

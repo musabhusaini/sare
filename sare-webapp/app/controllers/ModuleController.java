@@ -132,8 +132,6 @@ public class ModuleController extends Application {
 					
 					// set the module view model properties and add.
 					ModuleModel moduleViewModel = new ModuleModel(module);
-					moduleViewModel.url = module.getRoute();
-					moduleViewModel.canPartiallyRender = module.canPartiallyRender();
 					// let's not divide by zero!
 					moduleViewModel.relevancyScore = suppliedViewModels.size() != 0 ?
 						usefulViewModels.size() / (double)suppliedViewModels.size() : 1.0;
@@ -170,6 +168,6 @@ public class ModuleController extends Application {
 	}
 	
 	public static Result landingPage() {
-		return ok(moduleView.render(null, null, null));
+		return ok(moduleView.render(null, null, null, null));
 	}
 }

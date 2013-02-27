@@ -22,6 +22,9 @@
 package controllers.modules.base;
 
 import java.lang.annotation.*;
+import java.util.UUID;
+
+import com.google.common.collect.Lists;
 
 import play.api.templates.Html;
 import play.mvc.Result;
@@ -29,9 +32,11 @@ import views.html.moduleView;
 
 import controllers.base.Application;
 
+import models.ModuleModel;
 import models.base.*;
 
-public abstract class Module extends Application {
+public abstract class Module
+	extends Application {
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.TYPE})
@@ -45,19 +50,28 @@ public abstract class Module extends Application {
 		Requires[] value();
 	}
 	
-	protected static Result moduleRender(Html partialView, boolean partial) {
+	protected static Result moduleRender(Module module, Html partialView, boolean partial) {
 		if (!partial) {
-			return ok(moduleView.render(partialView, null, null));
+			return ok(moduleView.render(new ModuleModel(module), partialView, null, null));
 		} else {
 			return ok(partialView);
 		}
 	}
 	
+	public Module() {
+		this.setViewModels(null);
+	}
+	
 	protected Iterable<ViewModel> viewModels;
 	public Module setViewModels(Iterable<ViewModel> viewModels) {
+		if (viewModels == null) {
+			viewModels = Lists.newArrayList();
+		}
 		this.viewModels = viewModels;
 		return this;
 	}
+	
+	public abstract UUID getId();
 	
 	public abstract String getDisplayName();
 	
@@ -65,5 +79,9 @@ public abstract class Module extends Application {
 	
 	public boolean canPartiallyRender() {
 		return true;
+	}
+	
+	public boolean allowSelfOutput() {
+		return false;
 	}
 }

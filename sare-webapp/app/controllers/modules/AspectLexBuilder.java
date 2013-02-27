@@ -79,6 +79,11 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	@Override
+	public UUID getId() {
+		return UuidUtils.create("454cbf44cf154b0c8792fedc717da027");
+	}
+	
+	@Override
 	public String getDisplayName() {
 		return "Build aspect lexicon";
 	}
@@ -103,7 +108,7 @@ public class AspectLexBuilder extends Module {
 			corpusObj = lexiconObj.baseCorpus;
 		}
 		
-		return moduleRender(aspectLexBuilder.render(corpusObj, lexiconObj, true), partial);
+		return moduleRender(new AspectLexBuilder(), aspectLexBuilder.render(corpusObj, lexiconObj, true), partial);
 	}
 	
 	public static Result create(String corpus) {

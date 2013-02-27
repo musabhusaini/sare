@@ -21,6 +21,8 @@
 
 package controllers.modules;
 
+import java.util.UUID;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
@@ -28,10 +30,16 @@ import play.mvc.Result;
 import models.documentStore.*;
 import views.html.tags.*;
 import controllers.modules.base.Module;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 @Module.Requires({DocumentCorpusModel.class})
 public class SetCoverModule extends Module {
 
+	@Override
+	public UUID getId() {
+		return UuidUtils.create("71d5ff12bb0247f5ace1bc1c0568e926");
+	}
+	
 	@Override
 	public String getDisplayName() {
 		return "Reduce";
@@ -50,6 +58,6 @@ public class SetCoverModule extends Module {
 	}
 	
 	public static Result modulePage(String corpus, boolean partial) {
-		return moduleRender(setcover.render(), partial);
+		return moduleRender(new SetCoverModule(), setcover.render(), partial);
 	}
 }

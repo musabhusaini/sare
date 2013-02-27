@@ -156,10 +156,10 @@ widget =
         @previous() if uid < @_prevState()?.uid
         @_updatePrevState state
     
-    module =
-      url: null
+    module = $.extend {
       name: "Entry module"
       target: @_$(@options.contentContainer).children()
+    }, (@options.entryModule ? {}), { url: null }
     
     @replace module, true
     @_$(@options.nextModulesButtons).on "click", "button", (e) =>
@@ -176,11 +176,12 @@ widget =
             @_$(@options.moduleControlsContainer).show()
             @_$(@options.nextModulesButtons).empty()
             for module in modules
-              $("<button>")
-                .text(module.name)
-                .addClass("btn")
-                .data(@options.moduleKey, module)
-                .appendTo @_$ @options.nextModulesButtons
+            	if module.id isnt @_currentModule.id or @_currentModule.allowSelfOutput
+	              $("<button>")
+	                .text(module.name)
+	                .addClass("btn")
+	                .data(@options.moduleKey, module)
+	                .appendTo @_$ @options.nextModulesButtons
     
     $.Widget.prototype._setOption.apply @, arguments
     

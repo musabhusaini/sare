@@ -52,11 +52,17 @@ import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 @With(SareTransactionalAction.class)
 @Module.Requires
 public class CorpusModule extends Module {
 
+	@Override
+	public UUID getId() {
+		return UuidUtils.create("617bff47465a4a7d8e38cfcb841bccf0");
+	}
+	
 	@Override
 	public String getDisplayName() {
 		return "Corpus selection";
@@ -80,7 +86,7 @@ public class CorpusModule extends Module {
 	}
 		
 	public static Result modulePage(boolean partial) {
-		return moduleRender(storeList.render(getCorpora(), true, "Corpus"), partial);
+		return moduleRender(new CorpusModule(), storeList.render(getCorpora(), true, "Corpus"), partial);
 	}
 		
 	public static Result create() {

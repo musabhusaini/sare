@@ -27,9 +27,13 @@
 <div id="ctr-module-@uid" class="ctr-module" data-lexicon="@lexicon.asJson()">
 	<div class="span5">
 		<div class="row-fluid">
-			<label>Aspects:</label>
+			<div class="widget-header">
+				<label for="ctr-aspects-@uid">Aspects</label>
+			</div>
 		</div>
-		<div id="ctr-aspects-@uid" class="ctr-aspects lexicon-tree row-fluid">
+		<div class="row-fluid">
+			<div id="ctr-aspects-@uid" class="ctr-aspects lexicon-tree">
+			</div>
 		</div>
 		@if(editable) {
 		<div class="row-fluid">
@@ -47,9 +51,13 @@
 	</div>
 	<div class="offset1 span5">
 		<div class="row-fluid">
-			<label>Keywords:</label>
+			<div class="widget-header">
+				<label for="ctr-keywords-@uid">Keywords</label>
+			</div>
 		</div>
-		<div id="ctr-keywords-@uid" class="ctr-keywords lexicon-tree row-fluid">
+		<div class="row-fluid">
+			<div id="ctr-keywords-@uid" class="ctr-keywords lexicon-tree">
+			</div>
 		</div>
 		@if(editable) {
 		<div class="row-fluid">
