@@ -26,6 +26,8 @@ JSON = window.JSON
 plupload = window.plupload
 Sare = window.Sare
 Helpers = Sare.Helpers
+Page = Sare.Page
+Strings = Page.Strings
 
 widget =
 	_form: (option, data) ->
@@ -291,6 +293,12 @@ widget =
 		]
 		
 		@_$(input).tooltip() for input in inputs
+	
+	refresh: ->
+		$(@element).data Strings.widgetKey, @
+		
+	_init: ->
+		@refresh()
 		
 	_destroy: ->
 		inputs = [

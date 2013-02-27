@@ -26,6 +26,7 @@ JSON = window.JSON
 Sare = window.Sare
 Helpers = Sare.Helpers
 Page = Sare.Page
+Strings = Page.Strings
 Widgets = Page.Widgets
 
 widget =
@@ -135,7 +136,7 @@ widget =
 		@_$(@options.list).tooltip()
 		
 	refresh: ->
-		$(@element).data @options.widgetKey, @
+		$(@element).data Strings.widgetKey, @
 		
 		if not @selected().item?.length
 			# select the first store, if any
@@ -172,6 +173,5 @@ widget =
 			detailsFormRoute: jsRoutes.controllers.CollectionsController.detailsForm
 			deleteRoute: jsRoutes.controllers.CollectionsController.delete
 			dataKey: "store"
-			widgetKey: "widget"
 
 $.widget "widgets.storeList", Sare.Widget, widget

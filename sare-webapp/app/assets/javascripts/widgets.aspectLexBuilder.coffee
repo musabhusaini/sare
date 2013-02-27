@@ -12,7 +12,7 @@ the Free Software Foundation, either version 3 of the License, or
 
 SARE is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
@@ -27,53 +27,52 @@ Sare = window.Sare
 Helpers = Sare.Helpers
 Page = Sare.Page
 Selectors = Page.Selectors
-Widgets = Page.Widgets
+Strings = Page.Strings
 
 widget =
-  _create: ->
-    @options.lexicon ?= $(@element).data @options.lexiconKey
-    @options.corpus ?= $(@element).data @options.corpusKey
-    
-    if not @options.lexicon?
-      @_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
-        "storeListSelectionChange": (e, selected) =>
-          @options.lexicon = selected.data
-          @_$(@options.lexiconContainer).empty()
-          if @options.lexicon?
-            if @options.corpus?
-              @_$(@options.documentsContainer)
-                .load @options.documentsViewRoute(@options.corpus.id, @options.lexicon.id).url
-            @_$(@options.lexiconContainer)
-              .load @options.lexiconViewRoute(@options.lexicon.id).url
-      
-      @_$(@options.lexicaContainer).children(Selectors.moduleContainer)
-        .storeList "option",
-          addRoute: =>
-            jsRoutes.controllers.modules.AspectLexBuilder.create(@options.corpus?.id ? "null")
-    
-    if @options.corpus?
-      # TODO: create the documents widget.
-      @_$(@options.documentsContainer)
+	_create: ->
+		@options.lexicon ?= $(@element).data @options.lexiconKey
+		@options.corpus ?= $(@element).data @options.corpusKey
+		
+		if not @options.lexicon?
+			@_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
+				"storeListSelectionChange": (e, selected) =>
+					@options.lexicon = selected.data
+					@_$(@options.lexiconContainer).empty()
+					if @options.lexicon?
+						if @options.corpus?
+							@_$(@options.documentsContainer)
+								.load @options.documentsViewRoute(@options.corpus.id, @options.lexicon.id).url
+						@_$(@options.lexiconContainer)
+							.load @options.lexiconViewRoute(@options.lexicon.id).url
+			
+			@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
+				.storeList "option",
+					addRoute: =>
+						jsRoutes.controllers.modules.AspectLexBuilder.create(@options.corpus?.id ? "null")
+		
+		if @options.corpus?
+			# TODO: create the documents widget.
+			@_$(@options.documentsContainer)
 
-  refresh: ->
-    $(@element).data @options.widgetKey, @
-    
-  _init: ->
-    @refresh()
-    
-  _destroy: ->
-    
-  _setOption: (key, value) ->
-    $.Widget.prototype._setOption.apply @, arguments
-  
-  _getCreateOptions: ->
-      lexicaContainer: ".ctr-lexica"
-      documentsContainer: ".ctr-documents"
-      lexiconContainer: ".ctr-alex"
-      documentsViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.documentsView
-      lexiconViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.lexiconView
-      lexiconKey: "lexicon"
-      corpusKey: "corpus"
-      widgetKey: "widget"
+	refresh: ->
+		$(@element).data Strings.widgetKey, @
+		
+	_init: ->
+		@refresh()
+		
+	_destroy: ->
+		
+	_setOption: (key, value) ->
+		$.Widget.prototype._setOption.apply @, arguments
+	
+	_getCreateOptions: ->
+		lexicaContainer: ".ctr-lexica"
+		documentsContainer: ".ctr-documents"
+		lexiconContainer: ".ctr-alex"
+		documentsViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.documentsView
+		lexiconViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.lexiconView
+		lexiconKey: "lexicon"
+		corpusKey: "corpus"
 
 $.widget "widgets.aspectLexBuilder", Sare.Widget, widget

@@ -12,7 +12,7 @@ the Free Software Foundation, either version 3 of the License, or
 
 SARE is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
@@ -27,7 +27,7 @@ Sare = window.Sare
 Helpers = Sare.Helpers
 Page = Sare.Page
 Selectors = Page.Selectors
-Widgets = Page.Widgets
+Strings = Page.Strings
 
 widget =
 	goPrev: ->
@@ -62,18 +62,18 @@ widget =
 			click: -> @goPrev()
 		
 		@_navigate()
-    
+		
 	refresh: ->
-		$(@element).data @options.widgetKey, @
-    
+		$(@element).data Strings.widgetKey, @
+		
 	_init: ->
 		@refresh()
-    
+		
 	_destroy: ->
-    
+		
 	_setOption: (key, value) ->
 		$.Widget.prototype._setOption.apply @, arguments
-  
+	
 	_getCreateOptions: ->
 		documentContainer: ".ctr-document"
 		prevButton: ".btn-prev-doc"
