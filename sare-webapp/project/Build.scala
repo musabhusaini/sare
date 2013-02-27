@@ -39,9 +39,15 @@ object ApplicationBuild extends Build {
 			.exclude("junit", "junit")
     )
 
+	// Only compile the bootstrap bootstrap.less file and any other *.less file in the stylesheets directory
+	def customLessEntryPoints(base: File): PathFinder = (
+		(base / "app" / "assets" / "stylesheets" / "bootstrap" * "bootstrap.less") +++
+		(base / "app" / "assets" / "stylesheets" * "*.less")
+	)
+
     val main = play.Project(appName, appVersion, appDependencies).settings(
     	// Add your own project settings here
-    	
+    	lessEntryPoints <<= baseDirectory(customLessEntryPoints),
     	resolvers += "Local Maven Respository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository"      
     )
 
