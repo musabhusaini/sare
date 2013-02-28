@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -28,6 +28,7 @@ import javax.persistence.*;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Iterables;
+import com.google.gson.Gson;
 
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 import edu.sabanciuniv.sentilab.utils.extensions.*;
@@ -47,10 +48,7 @@ public abstract class FullTextDocument
 	 * 
 	 */
 	private static final long serialVersionUID = -3501504745659773659L;
-	
-	@Transient
-	private TokenizingOptions tokenizingOptions;
-	
+		
 	/**
 	 * This is the original content that was used for tokenization.
 	 */
@@ -128,11 +126,13 @@ public abstract class FullTextDocument
 	 * @return the {@link TokenizingOptions} object representing a copy of the tokenizing options.
 	 */
 	public TokenizingOptions getTokenizingOptions() {
-		if (this.tokenizingOptions == null) {
-			this.tokenizingOptions = new TokenizingOptions();
+		TokenizingOptions tokenizingOptions = new Gson().fromJson(this.getOtherData().get("tokenizingOptions"),
+			TokenizingOptions.class);
+		if (tokenizingOptions == null) {
+			tokenizingOptions = new TokenizingOptions();
 		}
 		
-		return this.tokenizingOptions.clone();
+		return tokenizingOptions;
 	}
 
 	/**
@@ -141,7 +141,7 @@ public abstract class FullTextDocument
 	 * @return the {@code this} object.
 	 */
 	public FullTextDocument setTokenizingOptions(TokenizingOptions tokenizingOptions) {
-		this.tokenizingOptions = tokenizingOptions.clone();
+		this.getOtherData().add("tokenizingOptions", new Gson().toJsonTree(tokenizingOptions));
 		this.tokenizedContent = null;
 		this.parsedContent = null;
 		return this;

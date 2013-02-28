@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -72,7 +72,7 @@ public class CorpusModule extends Module {
 	public String getRoute() {
 		return controllers.modules.routes.CorpusModule.modulePage(false).url();
 	}
-		
+	
 	public static List<PersistentDocumentStoreModel> getCorpora() {
 		PersistentDocumentStoreController docStoreController = new PersistentDocumentStoreController();
 		return Lists.transform(docStoreController.getAllUuids(em(), getUsername(), DocumentCorpus.class),

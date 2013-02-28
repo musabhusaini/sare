@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
@@ -39,18 +40,19 @@ import play.api.templates.Html;
 import play.libs.Json;
 import play.mvc.*;
 import views.html.tags.*;
+import models.LexiconBuilderDocumentTokenModel;
 import models.document.PersistentDocumentModel;
 import models.documentStore.*;
 import controllers.CollectionsController;
 import controllers.base.*;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconController;
-import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.LexiconBuilderController;
-import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.LexiconController;
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.*;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
-import edu.sabanciuniv.sentilab.sare.models.base.document.LexiconBuilderDocument;
+import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
 
 @With(SareTransactionalAction.class)
 @Module.Requireses({
@@ -174,14 +176,9 @@ public class AspectLexBuilder extends Module {
 		return ok(aspectLexicon.render(lexiconObj, true));
 	}
 	
-	public static Result getDocument(String corpus, String lexicon, Integer index) {
+	private static LexiconBuilderDocumentStore fetchBuilder(String corpus, String lexicon) {
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
-		
-		if (index < 0) {
-			index = null;
-		}
-		
 		LexiconBuilderController controller = new LexiconBuilderController();
 		LexiconBuilderDocumentStore builder = controller.findBuilder(em(), corpusObj, lexiconObj);
 		if (builder == null) {
@@ -191,8 +188,70 @@ public class AspectLexBuilder extends Module {
 			controller.refreshBuilder(em(), builder);
 		}
 		
-		LexiconBuilderDocument document = controller.getDocument(em(), builder, index);
-		return ok(createViewModel(document).asJson());
+		return builder;
+	}
+	
+	private static LexiconBuilderDocument fetchDocument(LexiconBuilderDocumentStore builder, Long index) {
+		if (index < 0) {
+			index = null;
+		}
+		
+		LexiconBuilderDocument document = new LexiconBuilderController().getDocument(em(), builder, index);
+		if (document != null && document.getFullTextDocument() != null) {
+			TokenizingOptions tokenizingOptions = document.getFullTextDocument().getTokenizingOptions();
+			document.getFullTextDocument().setTokenizingOptions(tokenizingOptions.setLemmatized(true));
+		}
+		return document;
+	}
+		
+	public static Result getDocument(String corpus, String lexicon, final String emphasis, Long index) {
+		final LexiconBuilderDocumentStore builder = fetchBuilder(corpus, lexicon);
+		final AspectLexicon lexiconObj = (AspectLexicon)builder.getLexicon();
+		final LexiconBuilderController controller = new LexiconBuilderController();
+		
+		LexiconBuilderDocument document = fetchDocument(builder, index);
+		if (document != null && document.getFullTextDocument() != null) {
+			List<LexiconBuilderDocumentTokenModel> tokens = Lists.newArrayList(Iterables.transform(
+				document.getFullTextDocument().getParsedContent().getTokens(),
+					new Function<LinguisticToken, LexiconBuilderDocumentTokenModel>() {
+						@Override
+						@Nullable
+						public LexiconBuilderDocumentTokenModel apply(@Nullable LinguisticToken input) {
+							LexiconBuilderDocumentTokenModel model = new LexiconBuilderDocumentTokenModel(input);
+							model.emphasized = input.getPosTag().is(emphasis);
+							if (model.emphasized) {
+								model.seen = controller.isSeenToken(em(), builder, input.toString());
+								
+								AspectExpression expression = lexiconObj.findExpression(input.getLemma(), true);
+								if (expression == null) {
+									expression = lexiconObj.findExpression(input.getText(), true);
+								}
+								if (expression != null && expression.getAspect() != null) {
+									model.aspect = (AspectLexiconModel)createViewModel(expression.getAspect());
+								}
+							}
+							return model;
+						}
+					}));
+			ObjectNode json = (ObjectNode)createViewModel(document.getBaseDocument()).asJson();
+			json.put("enhancedContent", enhancedDocument.render(tokens, emphasis).body());
+			json.put("rank", document.getRank());
+			return ok(json);
+		}
+		
+		return notFoundEntity(ObjectUtils.toString(index));
+	}
+	
+	public static Result seeDocument(String corpus, String lexicon, String emphasis, Long index) {
+		LexiconBuilderDocumentStore builder = fetchBuilder(corpus, lexicon);
+		LexiconBuilderDocument document = fetchDocument(builder, index);
+		
+		if (document != null && document.getFullTextDocument() != null) {
+			new LexiconBuilderController().setSeenDocument(em(), document, emphasis);
+			return ok(createViewModel(document.getFullTextDocument()).asJson());
+		}
+		
+		return notFoundEntity(ObjectUtils.toString(index));
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)

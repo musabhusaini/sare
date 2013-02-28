@@ -12,15 +12,30 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import "bootstrap/variables";
 @import "aspectLexBuilder";
 
 .ctr-document {
   .lexbuilder-display
+}
+
+.enhanced-document {
+  font-size: 0;
+  line-height: @baseLineHeight + 10px;
+}
+
+.enhanced-document > .token-text {
+  font-size: @baseFontSize;
+  vertical-align: middle
+}
+
+.emphasized-token {
+  font-weight: bold;
 }

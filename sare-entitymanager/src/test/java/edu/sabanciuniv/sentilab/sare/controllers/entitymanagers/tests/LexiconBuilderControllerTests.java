@@ -193,11 +193,11 @@ public class LexiconBuilderControllerTests
 		em.getTransaction().commit();
 		em.clear();
 		
-		LexiconBuilderDocument actualDocument1 = testController.getDocument(em, testBuilder, 0);
+		LexiconBuilderDocument actualDocument1 = testController.getDocument(em, testBuilder, 0L);
 		assertNotNull(actualDocument1);
 		assertEquals(testLBDocument2, actualDocument1);
 		
-		LexiconBuilderDocument actualDocument2 = testController.getDocument(em, testBuilder, 1);
+		LexiconBuilderDocument actualDocument2 = testController.getDocument(em, testBuilder, 1L);
 		assertNotNull(actualDocument2);
 		assertEquals(testLBDocument1, actualDocument2);
 	}
@@ -251,7 +251,7 @@ public class LexiconBuilderControllerTests
 		assertNotEquals(actualDocument, testController.getNextDocument(em, testBuilder));
 		assertTrue(testController.getDocuments(em, testBuilder, true).contains(actualDocument));
 		for (LinguisticToken token : tokens) {
-			assertTrue(testController.isSeenToken(em, testBuilder, token.getWord()));
+			assertTrue(testController.isSeenToken(em, testBuilder, token.toString()));
 		}
 	}
 	

@@ -56,7 +56,7 @@ public class LexiconBuilderController
 	}
 	
 	private <T> T getSingleResult(TypedQuery<T> query) {
-		return query.getResultList().size() > 0 ? query.getSingleResult() : null;
+		return query.getResultList().size() == 1 ? query.getSingleResult() : null;
 	}
 	
 	/**
@@ -141,7 +141,7 @@ public class LexiconBuilderController
 	 * @param rank the rank of the document. If {@code null}, this returns the same result as {@code getNextDocument}.
 	 * @return the {@link LexiconBuilderDocument} at the given rank.
 	 */
-	public LexiconBuilderDocument getDocument(EntityManager em, LexiconBuilderDocumentStore builder, Integer rank) {
+	public LexiconBuilderDocument getDocument(EntityManager em, LexiconBuilderDocumentStore builder, Long rank) {
 		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
 		Validate.notNull(builder, CannedMessages.NULL_ARGUMENT, "builder");
 		
@@ -150,9 +150,9 @@ public class LexiconBuilderController
 		}
 		
 		TypedQuery<LexiconBuilderDocument> query = this.getDocumentsQuery(em, builder, null);
-		query.setFirstResult(rank);
+		query.setFirstResult(rank.intValue());
 		query.setMaxResults(1);
-		return this.getSingleResult(query);
+		return this.getSingleResult(query).setRank(rank);
 	}
 
 	/**
@@ -205,16 +205,20 @@ public class LexiconBuilderController
 		
 		TypedQuery<LexiconBuilderDocument> query = this.getDocumentsQuery(em, builder, false);
 		query.setMaxResults(1);
-		return query.getSingleResult();
+		LexiconBuilderDocument document = query.getSingleResult();
+		query = this.getDocumentsQuery(em, builder, null);
+		document.setRank((long)query.getResultList().indexOf(document));
+		return document;
 	}
 	
 	/**
 	 * Sets the provided document and all tokens contained therein as having been seen.
 	 * @param em the {@link EntityManager} to use.
 	 * @param document the {@link LexiconBuilderDocument} object to mark as seen.
+	 * @param seenTags a delimited list of POS tags to mark as seen.
 	 * @return the supplied {@link LexiconBuilderDocument}.
 	 */
-	public LexiconBuilderDocument setSeenDocument(EntityManager em, LexiconBuilderDocument document) {
+	public LexiconBuilderDocument setSeenDocument(EntityManager em, LexiconBuilderDocument document, String seenTags) {
 		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
 		Validate.notNull(document, CannedMessages.NULL_ARGUMENT, "document");
 		Validate.notNull(document.getStore(), CannedMessages.NULL_ARGUMENT, "document.store");
@@ -227,16 +231,20 @@ public class LexiconBuilderController
 			FullTextDocument ftDoc = (FullTextDocument)document.getBaseDocument();
 			Set<LinguisticToken> tokens = ftDoc.getTokenWeightMap().keySet();
 			for (final LinguisticToken token : tokens) {
+				if (seenTags != null && !token.getPosTag().is(seenTags)) {
+					continue;
+				}
+				
 				LexiconDocument seenToken = Iterables.find(seenTokens, new Predicate<LexiconDocument>() {
 					@Override
 					public boolean apply(LexiconDocument seenToken) {
-						return seenToken.getContent().equalsIgnoreCase(token.getWord());
+						return seenToken.getContent().equalsIgnoreCase(token.toString());
 					}
 				}, null);
 				
 				if (seenToken == null) {
 					seenToken = (LexiconDocument)new LexiconDocument()
-						.setContent(token.getWord())
+						.setContent(token.toString())
 						.setStore(document.getStore());
 					
 					em.persist(seenToken);
@@ -251,5 +259,15 @@ public class LexiconBuilderController
 		}
 		
 		return document;
+	}
+	
+	/**
+	 * Sets the provided document and all tokens contained therein as having been seen.
+	 * @param em the {@link EntityManager} to use.
+	 * @param document the {@link LexiconBuilderDocument} object to mark as seen.
+	 * @return the supplied {@link LexiconBuilderDocument}.
+	 */
+	public LexiconBuilderDocument setSeenDocument(EntityManager em, LexiconBuilderDocument document) {
+		return this.setSeenDocument(em, document, null);
 	}
 }

@@ -12,7 +12,7 @@
 #
 # SARE is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -24,7 +24,7 @@
 # ~~~~
 
 # Home page
-GET     /                           			controllers.base.Application.homePage()
+GET     /		controllers.base.Application.homePage()
 
 # Authentication
 POST	/api/session				controllers.base.Application.keepAlive()
@@ -64,8 +64,10 @@ POST	/api/modules/corpora/:corpus/lexica				controllers.modules.AspectLexBuilder
 POST	/api/modules/lexica/:lexicon					controllers.modules.AspectLexBuilder.update(corpus = null, lexicon: String)
 POST	/api/modules/corpora/:corpus/lexica/:lexicon	controllers.modules.AspectLexBuilder.update(corpus: String, lexicon: String)
 
-GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, index: Int = -1)
-GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/:index	controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, index: Int)
+GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, emphasis: String ?= null, index: Long = -1)
+GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/:index	controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, emphasis: String ?= null, index: Long)
+POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, index: Long = -1)
+POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/:index	controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, index: Long)
 
 POST	/api/modules/lexica/:lexicon/aspects			controllers.modules.AspectLexBuilder.addAspect(lexicon: String)
 POST	/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.updateAspect(lexicon = null, aspect: String)

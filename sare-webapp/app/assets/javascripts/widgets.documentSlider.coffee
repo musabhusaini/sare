@@ -31,25 +31,37 @@ Strings = Page.Strings
 
 widget =
 	goPrev: ->
-		if @options.index > 0 then @_navigate --@options.index
+		if @options.index > 0
+			@_navigate @options.index - 1
 	
 	goNext: ->
-		if @options.index < @options.corpus.size - 1 then @_navigate ++@options.index
+		if @options.index < @options.corpus.size - 1
+			@_navigate @options.index + 1
 	
 	_fixButtons: ->
 		@_changeInputState @options.prevButton, if @options.index > 0 then "enabled" else "disabled"
 		@_changeInputState @options.nextButton, if @options.index < @options.corpus.size - 1 then "enabled" else "disabled" 
 	
-	_navigate: (index) ->
+	_navigate: (index, tags, silent) ->
 		index ?= @options.index
+		if not tags?
+			tags = ""
+			(tags += (if tags isnt "" then "|" else "") + $(checkbox).val()) for checkbox in @_$(@options.postagCheckbox).filter(":checked")
 		
-		@options.getDocumentRoute(@options.corpus.id, @options.lexicon.id, index).ajax
-			success: (document) =>
-				# TODO: add color to this.
-				@_$(@options.documentContainer)
-					.empty()
-					.html document.content
-				@_fixButtons()
+		getDocument = =>
+			@options.getDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, index).ajax
+				success: (document) =>
+					@_$(@options.documentContainer)
+						.empty()
+						.html(document.enhancedContent ? document.content)
+					if not silent then @options.index = (document.rank ? index)
+					@_fixButtons()
+		
+		if index isnt @options.index and not silent
+			@options.seeDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, @options.index).ajax
+				success: (document) => getDocument()
+		else
+			getDocument()
 	
 	_create: ->
 		@options.corpus ?= $(@element).data @options.corpusKey
@@ -60,6 +72,9 @@ widget =
 		
 		@_on @_$(@options.prevButton),
 			click: -> @goPrev()
+		
+		(events = {})["click #{@options.postagCheckbox}"] = => @_navigate()
+		@_on @element, events
 		
 		@_navigate()
 		
@@ -78,8 +93,10 @@ widget =
 		documentContainer: ".ctr-document"
 		prevButton: ".btn-prev-doc"
 		nextButton: ".btn-next-doc"
-		index: 0
+		postagCheckbox: ".chk-postag"
+		index: -1
 		getDocumentRoute: jsRoutes.controllers.modules.AspectLexBuilder.getDocument
+		seeDocumentRoute: jsRoutes.controllers.modules.AspectLexBuilder.seeDocument
 		corpusKey: "corpus"
 		lexiconKey: "lexicon"
 

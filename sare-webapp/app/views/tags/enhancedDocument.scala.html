@@ -1,4 +1,4 @@
-/*
+@*
  * Sentilab SARE: a Sentiment Analysis Research Environment
  * Copyright (C) 2013 Sabanci University Sentilab
  * http://sentilab.sabanciuniv.edu
@@ -12,31 +12,20 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
- */
+ *@
 
-package edu.sabanciuniv.sentilab.sare.models.base.document;
+@(tokens: List[LexiconBuilderDocumentTokenModel], emphasizedTags: String)
 
-import javax.persistence.*;
-
-/**
- * The basic unit of a lexicon.
- * @author Mus'ab Husaini
- */
-@Entity
-@DiscriminatorValue("lex-doc")
-public class LexiconDocument
-	extends EditablePartialDocument {
-
-	private static final long serialVersionUID = -4658589725445481595L;
-
-	@Override
-	public LexiconDocument setContent(String content) {
-		super.setContent(content == null ? content : content.toLowerCase().trim());
-		return this;
-	}
+<div class="enhanced-document">
+@for(token <- tokens) {
+	<span
+		class="token-text @if(token.emphasized){emphasized-token btn btn-mini @if(token.aspect!=null){btn-success} else{@if(!token.seen){btn-info}}}"
+		data-lemma="@token.lemma" @if(token.aspect != null){data-aspect="@token.aspect.asJson()"}>@token.text</span>
+	<span class="token-text">@Html(token.trailing)</span>
 }
+</div>
