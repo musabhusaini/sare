@@ -38,11 +38,16 @@ widget =
 			@_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
 				"storeListSelectionChange": (e, selected) =>
 					@options.lexicon = selected.data
+					corpus = @options.corpus ? @options.lexicon?.baseCorpus
+					@_$(@options.documentsContainer).empty()
 					@_$(@options.lexiconContainer).empty()
 					if @options.lexicon?
-						if @options.corpus?
+						if corpus?
 							@_$(@options.documentsContainer)
-								.load @options.documentsViewRoute(@options.corpus.id, @options.lexicon.id).url
+								.show()
+								.load @options.documentsViewRoute(corpus.id, @options.lexicon.id).url
+						else
+							@_$(@options.documentsContainer).hide()
 						@_$(@options.lexiconContainer)
 							.load @options.lexiconViewRoute(@options.lexicon.id).url
 			

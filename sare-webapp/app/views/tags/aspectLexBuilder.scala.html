@@ -35,18 +35,16 @@
 	}
 	
 	<div class="row-fluid">
-		@if(corpus != null) {
-			<div id="ctr-documents-@uid" class="ctr-documents span7">
-				@if(lexicon != null) {
-					@AspectLexBuilder.renderDocumentsView(corpus.id, lexicon.id)
-				}
-			</div>
+		<div id="ctr-documents-@uid" class="ctr-documents span7">
+		@if(corpus != null && lexicon != null) {
+			@AspectLexBuilder.renderDocumentsView(corpus.id, lexicon.id)
 		}
+		</div>
 		
 		<div id="ctr-alex-@uid" class="ctr-alex span5">
-			@if(lexicon != null) {
-				@tags.aspectLexicon(lexicon, editable)
-			}
+		@if(lexicon != null) {
+			@tags.aspectLexicon(lexicon, editable)
+		}
 		</div>
 	</div>
 </div>
