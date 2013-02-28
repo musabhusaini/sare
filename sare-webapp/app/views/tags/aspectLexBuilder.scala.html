@@ -30,7 +30,7 @@
 	@if(corpus != null) { data-corpus="@corpus.asJson()" }>
 	@if(lexicon == null) {
 		<div id="ctr-lexica-@uid" class="ctr-lexica row-fluid">
-			@tags.storeList(stores = modules.AspectLexBuilder.getLexica(corpus), editable = true, storeType = "Aspect Lexicon")
+			@tags.storeList(stores = modules.AspectLexBuilder.getLexica(), editable = true, storeType = "Aspect Lexicon")
 		</div>
 	}
 	

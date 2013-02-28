@@ -101,16 +101,20 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	public static Result modulePage(String corpus, String lexicon, boolean partial) {
-		AspectLexiconModel lexiconObj = StringUtils.isNotEmpty(lexicon) ?
-			(AspectLexiconModel)createViewModel(fetchResource(lexicon, AspectLexicon.class)) : null;
-		DocumentCorpusModel corpusObj = StringUtils.isNotEmpty(corpus) ?
-			(DocumentCorpusModel)createViewModel(fetchResource(corpus, DocumentCorpus.class)) : null;
-		
-		if (lexiconObj != null && corpusObj == null) {
-			corpusObj = lexiconObj.baseCorpus;
+		DocumentCorpus corpusObj = StringUtils.isNotEmpty(corpus) ? fetchResource(corpus, DocumentCorpus.class) : null;
+		AspectLexicon lexiconObj = StringUtils.isNotEmpty(lexicon) ? fetchResource(lexicon, AspectLexicon.class) : null;
+		if (lexiconObj == null
+			&& new LexiconController().getAllLexica(em(), SessionedAction.getUsername(), AspectLexicon.class).size() == 0) {
+			create(corpus);
 		}
 		
-		return moduleRender(new AspectLexBuilder(), aspectLexBuilder.render(corpusObj, lexiconObj, true), partial);
+		if (lexiconObj != null && corpusObj == null) {
+			corpusObj = lexiconObj.getBaseCorpus();
+		}
+		
+		DocumentCorpusModel corpusVM = corpusObj != null ? (DocumentCorpusModel)createViewModel(corpusObj) : null;
+		AspectLexiconModel lexiconVM = lexiconObj != null ? (AspectLexiconModel)createViewModel(lexiconObj) : null;
+		return moduleRender(new AspectLexBuilder(), aspectLexBuilder.render(corpusVM, lexiconVM, true), partial);
 	}
 	
 	public static Result create(String corpus) {
@@ -122,26 +126,24 @@ public class AspectLexBuilder extends Module {
 		AspectLexiconFactoryOptions options = null;
 		
 		JsonNode json = request().body().asJson();
-		if (json != null) {
-			AspectLexiconFactoryOptionsModel viewModel = Json.fromJson(json, AspectLexiconFactoryOptionsModel.class);
-			if (viewModel != null) {
-				options = viewModel.toFactoryOptions();
-				
-				if (lexicon != null) {
-					AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
-					if (corpus != null && (lexiconObj.getBaseCorpus() == null
-						|| !ObjectUtils.equals(lexiconObj.getBaseCorpus(), corpusObj))) {
-						throw new IllegalArgumentException();
-					}
-				}
-				
-				options.setBaseStore(corpusObj);
-			} else {
-				throw new IllegalArgumentException();
-			}
+		if (json == null) {
+			json = Json.newObject();
 		}
 		
-		if (options == null) {
+		AspectLexiconFactoryOptionsModel viewModel = Json.fromJson(json, AspectLexiconFactoryOptionsModel.class);
+		if (viewModel != null) {
+			options = viewModel.toFactoryOptions();
+			
+			if (lexicon != null) {
+				AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+				if (corpus != null && (lexiconObj.getBaseCorpus() == null
+					|| !ObjectUtils.equals(lexiconObj.getBaseCorpus(), corpusObj))) {
+					throw new IllegalArgumentException();
+				}
+			}
+			
+			options.setBaseStore(corpusObj);
+		} else {
 			throw new IllegalArgumentException();
 		}
 		
