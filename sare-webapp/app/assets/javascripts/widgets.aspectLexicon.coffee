@@ -91,7 +91,10 @@ widget =
 				superficial: superficial
 			@_$(@options.keywordsContainer).jstree "create",
 				@_$(@options.keywordsContainer), "inside", node, null, skipRename ? false
+		
 		aspect ?= @getSelectedAspect().data
+		return if not aspect?
+		
 		if superficial
 			display content
 		else

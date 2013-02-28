@@ -73,6 +73,19 @@ widget =
 		@_on @_$(@options.prevButton),
 			click: -> @goPrev()
 		
+		(events = {})["click #{@options.emphasizedTokenButton}"] = (e) =>
+			lexiconContainer = $(@element).parent().siblings(@options.lexiconContainer).first().children(".ctr-module").first()
+			lexiconWidget = $(lexiconContainer).data Strings.widgetKey
+			aspect = lexiconWidget?.getSelectedAspect?().data
+			if aspect?
+				lexiconWidget.addKeyword null, $(e.target).data(@options.lemmaKey), false, true
+				$(e.target)
+					.data(@options.aspectKey, aspect)
+					.removeClass(@options.newTokenClass)
+					.addClass @options.keywordTokenClass
+		
+		@_on @_$(@options.documentContainer), events
+		
 		(events = {})["click #{@options.postagCheckbox}"] = => @_navigate()
 		@_on @element, events
 		
@@ -93,11 +106,17 @@ widget =
 		documentContainer: ".ctr-document"
 		prevButton: ".btn-prev-doc"
 		nextButton: ".btn-next-doc"
+		emphasizedTokenButton: ".emphasized-token"
 		postagCheckbox: ".chk-postag"
+		lexiconContainer: ".ctr-alex"
+		newTokenClass: "btn-info"
+		keywordTokenClass: "btn-success"
 		index: -1
 		getDocumentRoute: jsRoutes.controllers.modules.AspectLexBuilder.getDocument
 		seeDocumentRoute: jsRoutes.controllers.modules.AspectLexBuilder.seeDocument
 		corpusKey: "corpus"
 		lexiconKey: "lexicon"
+		aspectKey: "aspect"
+		lemmaKey: "lemma"
 
 $.widget "widgets.documentSlider", Sare.Widget, widget

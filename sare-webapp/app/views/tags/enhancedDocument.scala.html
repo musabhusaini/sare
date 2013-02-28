@@ -25,7 +25,7 @@
 @for(token <- tokens) {
 	<span
 		class="token-text @if(token.emphasized){emphasized-token btn btn-mini @if(token.aspect!=null){btn-success} else{@if(!token.seen){btn-info}}}"
-		data-lemma="@token.lemma" @if(token.aspect != null){data-aspect="@token.aspect.asJson()"}>@token.text</span>
+		data-lemma="@token.lemma" @if(token.aspect != null){data-aspect="@token.aspect.asJson()"}>@Html(token.text)</span>
 	<span class="token-text">@Html(token.trailing)</span>
 }
 </div>
