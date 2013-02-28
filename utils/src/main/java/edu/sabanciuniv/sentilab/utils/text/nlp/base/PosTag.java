@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -20,6 +20,12 @@
  */
 
 package edu.sabanciuniv.sentilab.utils.text.nlp.base;
+
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.base.Splitter;
 
 /**
  * The base class for all classes that describe POS tags. 
@@ -59,11 +65,26 @@ public abstract class PosTag extends LinguisticObject {
 	}
 	
 	/**
+	 * Checks if this POS tag is of the given type or not.
+	 * @param tagString the tag name or a comma/pipe/semicolon-separated list of tag names.
+	 * @return {@code true} if this POS tag is of the given type; {@code false} otherwise.
+	 */
+	public boolean is(String tagString) {
+		Iterable<String> tags = Splitter.on(Pattern.compile("\\||,|;")).split(StringUtils.defaultIfEmpty(tagString, ""));
+		for (String tag : tags) {
+			if (StringUtils.equalsIgnoreCase(tag, this.getSimpleTag()) || StringUtils.equalsIgnoreCase(tag, this.getTag())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Convenience method to check if this POS tag is a noun POS or not.
 	 * @return a {@code boolean} flag indicating whether this POS tag is a noun or not.
 	 */
 	public boolean isNoun() {
-		return NOUN.equalsIgnoreCase(this.getSimpleTag());
+		return this.is(NOUN);
 	}
 	
 	/**
@@ -71,7 +92,7 @@ public abstract class PosTag extends LinguisticObject {
 	 * @return a {@code boolean} flag indicating whether this POS tag is an adjective or not.
 	 */
 	public boolean isAdjective() {
-		return ADJECTIVE.equalsIgnoreCase(this.getSimpleTag());
+		return this.is(ADJECTIVE);
 	}
 	
 	/**
@@ -79,7 +100,7 @@ public abstract class PosTag extends LinguisticObject {
 	 * @return a {@code boolean} flag indicating whether this POS tag is an adverb or not.
 	 */
 	public boolean isAdverb() {
-		return ADVERB.equalsIgnoreCase(this.getSimpleTag());
+		return this.is(ADVERB);
 	}
 	
 	/**
@@ -87,7 +108,7 @@ public abstract class PosTag extends LinguisticObject {
 	 * @return a {@code boolean} flag indicating whether this POS tag is a verb or not.
 	 */
 	public boolean isVerb() {
-		return VERB.equalsIgnoreCase(this.getSimpleTag());
+		return this.is(VERB);
 	}
 	
 	@Override

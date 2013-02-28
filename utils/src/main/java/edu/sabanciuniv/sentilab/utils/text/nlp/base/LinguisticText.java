@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -49,14 +49,14 @@ public abstract class LinguisticText
 	public abstract Iterable<LinguisticToken> getTokens();
 	
 	@Override
-	public String toString(boolean rich) {
-		if (!rich) {
-			return super.toString(rich);
+	public String toString(boolean enhanced) {
+		if (!enhanced) {
+			return super.toString(enhanced);
 		}
 		
 		StringBuilder sb = new StringBuilder();
 		for (LinguisticSentence sentence : this.getSentences()) {
-			sb.append(sentence.toString(rich));
+			sb.append(sentence.toString(enhanced));
 		}
 		return sb.toString();
 	}

@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -50,10 +50,10 @@ public abstract class LinguisticEntity
 	
 	/**
 	 * Gets a string representation of this entity, possibly an information rich version.
-	 * @param rich {@code true} if an information rich version is needed; {@code false} otherwise.
+	 * @param enhanced {@code true} if an NLP-enhanced version is needed; {@code false} otherwise.
 	 * @return the {@link String} representation of this entity.
 	 */
-	public String toString(boolean rich) {
+	public String toString(boolean enhanced) {
 		return this.toString();
 	}
 	

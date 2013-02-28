@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -54,7 +54,12 @@ public class StanfordToken
 	}
 	
 	@Override
-	public String toString(boolean rich) {
-		return super.toString(rich) + (rich ? token.after() : "");
+	public String getTrailingSeparator() {
+		return this.token.after();
+	}
+	
+	@Override
+	public String toString(boolean enhanced) {
+		return super.toString(enhanced) + (enhanced ? token.after() : "");
 	}
 }
