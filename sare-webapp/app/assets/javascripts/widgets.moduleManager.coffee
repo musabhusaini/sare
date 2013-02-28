@@ -87,6 +87,12 @@ widget =
 		return null if not module? or typeof module isnt "object"
 		
 		@_pushBrowserState module
+		
+		# clear previous modules.
+		for module in (@_forwardModules ? [])
+			@_callModule module, "destroy"
+			$(module.target).remove()
+		
 		@_forwardModules = [ module ]
 		@next()
 		

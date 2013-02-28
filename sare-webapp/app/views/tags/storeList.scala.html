@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -29,7 +29,7 @@
 	</div>
 	<form class="form-inline">
 		<label for="lst-store-@uid">@storeType:</label>
-		<select id="lst-store-@uid" class="lst-store span3" autofocus="autofocus" title="List of existing corpora" data-placement="top">
+		<select id="lst-store-@uid" class="lst-store span3" autofocus="autofocus" title="List of existing items" data-placement="top">
 			@for(store <- stores) {
 				<option value="@store.id" data-store="@store.asJson()">
 					@if(store.title != null) {
