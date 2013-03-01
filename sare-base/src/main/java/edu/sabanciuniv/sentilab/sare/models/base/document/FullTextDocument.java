@@ -28,7 +28,6 @@ import javax.persistence.*;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Iterables;
-import com.google.gson.Gson;
 
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 import edu.sabanciuniv.sentilab.utils.extensions.*;
@@ -126,8 +125,7 @@ public abstract class FullTextDocument
 	 * @return the {@link TokenizingOptions} object representing a copy of the tokenizing options.
 	 */
 	public TokenizingOptions getTokenizingOptions() {
-		TokenizingOptions tokenizingOptions = new Gson().fromJson(this.getOtherData().get("tokenizingOptions"),
-			TokenizingOptions.class);
+		TokenizingOptions tokenizingOptions = this.getProperty("tokenizingOptions", TokenizingOptions.class);
 		if (tokenizingOptions == null) {
 			tokenizingOptions = new TokenizingOptions();
 		}
@@ -141,7 +139,7 @@ public abstract class FullTextDocument
 	 * @return the {@code this} object.
 	 */
 	public FullTextDocument setTokenizingOptions(TokenizingOptions tokenizingOptions) {
-		this.getOtherData().add("tokenizingOptions", new Gson().toJsonTree(tokenizingOptions));
+		this.setProperty("tokenizingOptions", tokenizingOptions);
 		this.tokenizedContent = null;
 		this.parsedContent = null;
 		return this;

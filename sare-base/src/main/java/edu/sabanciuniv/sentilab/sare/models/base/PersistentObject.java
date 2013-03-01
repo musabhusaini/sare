@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -26,9 +26,12 @@ import java.util.*;
 import javax.persistence.*;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Lists;
 import com.google.gson.*;
+
+import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**
  * The base class for objects that are to be persisted.
@@ -218,6 +221,52 @@ public abstract class PersistentObject
 	public PersistentObject setOtherData(JsonObject otherData) {
 		this.otherDataJson = otherData;
 		this.otherData = DIRTY_FLAG_STRING;
+		return this;
+	}
+
+	private Gson getGson() {
+		return new GsonBuilder().serializeSpecialFloatingPointValues().create();
+	}
+
+	/**
+	 * Gets a flag indicating whether this object has the given property attached or not.
+	 * @param property the name of the property to look for.
+	 * @return {@code true} if the property exists, {@code false} otherwise.
+	 */
+	public boolean hasProperty(String property) {
+		Validate.notEmpty(property, CannedMessages.EMPTY_ARGUMENT, "property");
+		return this.getOtherData().has(property);
+	}
+
+	/**
+	 * Gets an attached property of this object.
+	 * @param property the name of the property to get.
+	 * @param classOfT the type of object expected.
+	 * @return the retrieved property; {@code null} if not present or if the type is not correct.
+	 */
+	public <T> T getProperty(String property, Class<T> classOfT) {
+		Validate.notEmpty(property, CannedMessages.EMPTY_ARGUMENT, "property");
+		Validate.notNull(classOfT, CannedMessages.NULL_ARGUMENT, "type");
+		
+		try {
+			return this.getGson().fromJson(this.getOtherData().get(property), classOfT);
+		} catch (JsonSyntaxException e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Attaches an extra property to this object.
+	 * @param property the name of the property to attached.
+	 * @param value value of the property to be attached.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObject setProperty(String property, Object value) {
+		if (value == null) {
+			this.getOtherData().remove(property);
+		} else {
+			this.getOtherData().add(property, this.getGson().toJsonTree(value));
+		}
 		return this;
 	}
 	

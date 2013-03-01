@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -127,14 +127,11 @@ public class DocumentSetCover
 	 */
 	public DocumentSetCover setTokenizingTags(Iterable<String> tokenizingTags) {
 		if (tokenizingTags == null) {
-			this.getOtherData().remove(TOKENIZING_TAGS_FIELD);
+			this.setProperty(TOKENIZING_TAGS_FIELD, null);
 		} else {
 			List<String> tokenizingTagsList = Lists.newArrayList(tokenizingTags);
 			this.getOtherData().add(TOKENIZING_TAGS_FIELD, new Gson().toJsonTree(tokenizingTagsList,
 				new TypeToken<List<String>>(){
-					/**
-					 * 
-					 */
 					private static final long serialVersionUID = 1L;
 				}.getType()));
 		}
@@ -165,11 +162,7 @@ public class DocumentSetCover
 	 * @return the weight coverage used.
 	 */
 	public Double getWeightCoverage() {
-		JsonElement field = this.getOtherData().get(WEIGHT_COVERAGE_FIELD);
-		if (field != null && field.isJsonPrimitive() && field.getAsJsonPrimitive().isNumber()) {
-			return field.getAsDouble();
-		}
-		return null;
+		return this.getProperty(WEIGHT_COVERAGE_FIELD, Double.class);
 	}
 	
 	/**
@@ -180,9 +173,9 @@ public class DocumentSetCover
 	 */
 	public DocumentSetCover setWeightCoverage(Double weightCoverage) {
 		if (weightCoverage == null) {
-			this.getOtherData().remove(WEIGHT_COVERAGE_FIELD);
+			this.setProperty(WEIGHT_COVERAGE_FIELD, null);
 		} else {
-			this.getOtherData().addProperty(WEIGHT_COVERAGE_FIELD, weightCoverage);
+			this.setProperty(WEIGHT_COVERAGE_FIELD, weightCoverage);
 		}
 		return this;
 	}
