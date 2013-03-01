@@ -229,8 +229,7 @@ public class LexiconBuilderController
 		if (document.getBaseDocument() instanceof FullTextDocument && document.getStore() instanceof LexiconBuilderDocumentStore) {
 			List<LexiconDocument> seenTokens = this.getSeenTokens(em, (LexiconBuilderDocumentStore)document.getStore());
 			FullTextDocument ftDoc = (FullTextDocument)document.getBaseDocument();
-			Set<LinguisticToken> tokens = ftDoc.getTokenWeightMap().keySet();
-			for (final LinguisticToken token : tokens) {
+			for (final LinguisticToken token : ftDoc.getParsedContent().getTokens()) {
 				if (seenTags != null && !token.getPosTag().is(seenTags)) {
 					continue;
 				}
