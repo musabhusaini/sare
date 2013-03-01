@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -22,8 +22,6 @@
 package edu.sabanciuniv.sentilab.sare.models.opinion;
 
 import javax.persistence.*;
-
-import com.google.gson.JsonElement;
 
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 
@@ -43,11 +41,7 @@ public class OpinionDocument
 	 * @return the opinion polarity of this document.
 	 */
 	public Double getPolarity() {
-		JsonElement polarity = this.getOtherData().get("polarity");
-		if (polarity != null && polarity.isJsonPrimitive() && polarity.getAsJsonPrimitive().isNumber()) {
-			return polarity.getAsDouble();
-		}
-		return null;
+		return this.getProperty("polarity", Double.class);
 	}
 
 	/**
@@ -56,7 +50,7 @@ public class OpinionDocument
 	 * @return the {@code this} object.
 	 */
 	public OpinionDocument setPolarity(Double polarity) {
-		this.getOtherData().addProperty("polarity", polarity);
+		this.setProperty("polarity", polarity);
 		return this;
 	}
 	

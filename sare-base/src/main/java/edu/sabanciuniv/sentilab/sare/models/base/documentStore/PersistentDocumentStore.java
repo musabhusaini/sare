@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -28,7 +28,6 @@ import javax.persistence.*;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.*;
-import com.google.gson.JsonElement;
 
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
@@ -171,8 +170,7 @@ public abstract class PersistentDocumentStore
 	
 	@Override
 	public String getLanguage() {
-		JsonElement language = this.getOtherData().get("language");
-		return language != null ? language.getAsString() : null;
+		return this.getProperty("language", String.class);
 	}
 
 	/**
@@ -181,14 +179,13 @@ public abstract class PersistentDocumentStore
 	 * @return the {@code this} object.
 	 */
 	public PersistentDocumentStore setLanguage(String language) {
-		this.getOtherData().addProperty("language", language);
+		this.setProperty("language", language);
 		return this;
 	}
 
 	@Override
 	public String getDescription() {
-		JsonElement description = this.getOtherData().get("description");
-		return description != null ? description.getAsString() : null;
+		return this.getProperty("description", String.class);
 	}
 	
 	/**
@@ -197,7 +194,7 @@ public abstract class PersistentDocumentStore
 	 * @return the {@code this} object.
 	 */
 	public PersistentDocumentStore setDescription(String description) {
-		this.getOtherData().addProperty("description", description);
+		this.setProperty("description", description);
 		return this;
 	}
 	

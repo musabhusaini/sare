@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -64,8 +64,8 @@ public abstract class PersistentObjectFactory<T extends PersistentObject, O exte
 			if (obj != null && options.getOtherData() != null) {
 				JsonObject otherData = new JsonParser().parse(options.getOtherData()).getAsJsonObject();
 				for (Entry<String, JsonElement> dataEntry : otherData.entrySet()) {
-					if (!obj.getOtherData().has(dataEntry.getKey())) {
-						obj.getOtherData().add(dataEntry.getKey(), dataEntry.getValue());
+					if (!obj.hasProperty(dataEntry.getKey())) {
+						obj.setProperty(dataEntry.getKey(), dataEntry.getValue());
 					}
 				}
 			}
