@@ -38,7 +38,6 @@ import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import play.api.templates.Html;
-import play.libs.F.Tuple;
 import play.libs.Json;
 import play.mvc.*;
 import views.html.tags.*;

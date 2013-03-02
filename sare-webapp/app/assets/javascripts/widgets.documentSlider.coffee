@@ -63,8 +63,11 @@ widget =
 						@_fixRank()
 					@_fixButtons()
 					callback?(document)
+				error: =>
+					# the following means we have no next document, so we go to the last one instead.
+					if rank < 0 and @options.corpus?.size? then @_navigate @options.corpus.size - 1
 		
-		if rank isnt @options.rank and not silent
+		if @options.rank >= 0 and rank isnt @options.rank and not silent
 			@options.seeDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, @options.rank).ajax
 				success: (document) => getDocument()
 		else
@@ -92,7 +95,7 @@ widget =
 					@_fixRank()
 					exit()
 				
-				# handle enter key
+				# handle enter key.
 				if e.which is 13
 					rank = window.parseInt $(e.target).val()
 					if window.isNaN(rank) or rank.toString() isnt $(e.target).val() or rank is @options.rank + 1 or rank < 1 or rank > @options.corpus.size
@@ -103,10 +106,10 @@ widget =
 						@_changeInputState $(e.target), "enabled"
 					return true
 				else if e.which is 27
-					# handle escape key
+					# handle escape key.
 					cancel()
-				else if event.ctrlKey or 112 <= event.which <= 123 or event.which is 46 or event.which is 8 or 35 <= event.which <= 39
-					# allow ctrl+[x], f[x], backspace, delete, home, end, left, right
+				else if event.ctrlKey or 112 <= event.which <= 123 or event.which is 9 or event.which is 46 or event.which is 8 or 35 <= event.which <= 39
+					# allow ctrl+[x], f[x], tab, backspace, delete, home, end, left, right.
         	return true
         else if (event.shiftKey or (event.which < 48 or event.which > 57) and (event.which < 96 or event.which > 105))
         	# if it is not a number, stop the keypress. 

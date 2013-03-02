@@ -205,6 +205,9 @@ public class LexiconBuilderController
 		
 		TypedQuery<LexiconBuilderDocument> query = this.getDocumentsQuery(em, builder, false);
 		query.setMaxResults(1);
+		if (query.getResultList().size() != 1) {
+			return null;
+		}
 		LexiconBuilderDocument document = query.getSingleResult();
 		query = this.getDocumentsQuery(em, builder, null);
 		document.setRank((long)query.getResultList().indexOf(document));
