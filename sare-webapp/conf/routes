@@ -64,10 +64,10 @@ POST	/api/modules/corpora/:corpus/lexica				controllers.modules.AspectLexBuilder
 POST	/api/modules/lexica/:lexicon					controllers.modules.AspectLexBuilder.update(corpus = null, lexicon: String)
 POST	/api/modules/corpora/:corpus/lexica/:lexicon	controllers.modules.AspectLexBuilder.update(corpus: String, lexicon: String)
 
-GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, emphasis: String ?= null, index: Long = -1)
-GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/:index	controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, emphasis: String ?= null, index: Long)
-POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, index: Long = -1)
-POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/:index	controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, index: Long)
+GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, emphasis: String ?= null, rank: Long = -1)
+GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/:rank	controllers.modules.AspectLexBuilder.getDocument(corpus: String, lexicon: String, emphasis: String ?= null, rank: Long)
+POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, rank: Long = -1)
+POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/:rank	controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, rank: Long)
 
 POST	/api/modules/lexica/:lexicon/aspects			controllers.modules.AspectLexBuilder.addAspect(lexicon: String)
 POST	/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.updateAspect(lexicon = null, aspect: String)

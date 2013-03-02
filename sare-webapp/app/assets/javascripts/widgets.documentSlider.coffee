@@ -31,34 +31,41 @@ Strings = Page.Strings
 
 widget =
 	goPrev: ->
-		if @options.index > 0
-			@_navigate @options.index - 1
+		if @options.rank > 0
+			@_navigate @options.rank - 1
 	
 	goNext: ->
-		if @options.index < @options.corpus.size - 1
-			@_navigate @options.index + 1
+		if @options.rank < @options.corpus.size - 1
+			@_navigate @options.rank + 1
 	
 	_fixButtons: ->
-		@_changeInputState @options.prevButton, if @options.index > 0 then "enabled" else "disabled"
-		@_changeInputState @options.nextButton, if @options.index < @options.corpus.size - 1 then "enabled" else "disabled" 
+		@_changeInputState @options.prevButton, if @options.rank > 0 then "enabled" else "disabled"
+		@_changeInputState @options.nextButton, if @options.rank < @options.corpus.size - 1 then "enabled" else "disabled" 
 	
-	_navigate: (index, tags, silent) ->
-		index ?= @options.index
+	_fixRank: ->
+		@_$(@options.rankText).val "#{@options.rank + 1} / #{@options.corpus.size}"
+	
+	_navigate: (rank, tags, silent, callback) ->
+		rank ?= @options.rank
 		if not tags?
 			tags = ""
 			(tags += (if tags isnt "" then "|" else "") + $(checkbox).val()) for checkbox in @_$(@options.postagCheckbox).filter(":checked")
 		
 		getDocument = =>
-			@options.getDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, index).ajax
+			@options.getDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, rank).ajax
 				success: (document) =>
 					@_$(@options.documentContainer)
 						.empty()
 						.html(document.enhancedContent ? document.content)
-					if not silent then @options.index = (document.rank ? index)
+					if not silent
+						@options.rank = (document.rank ? rank)
+						if document.corpus? then @options.corpus = document.corpus
+						@_fixRank()
 					@_fixButtons()
+					callback?(document)
 		
-		if index isnt @options.index and not silent
-			@options.seeDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, @options.index).ajax
+		if rank isnt @options.rank and not silent
+			@options.seeDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, @options.rank).ajax
 				success: (document) => getDocument()
 		else
 			getDocument()
@@ -72,6 +79,37 @@ widget =
 		
 		@_on @_$(@options.prevButton),
 			click: -> @goPrev()
+		
+		@_on @_$(@options.rankText),
+			focus: (e) ->
+				$(e.target).val @options.rank + 1
+			blur: (e) ->
+				@_fixRank()
+			keydown: (e) ->
+				exit = ->
+					$(e.target).blur()
+				cancel = =>
+					@_fixRank()
+					exit()
+				
+				# handle enter key
+				if e.which is 13
+					rank = window.parseInt $(e.target).val()
+					if window.isNaN(rank) or rank.toString() isnt $(e.target).val() or rank is @options.rank + 1 or rank < 1 or rank > @options.corpus.size
+						cancel()
+						return false
+					@_navigate rank - 1
+					exit()
+				else if e.which is 27
+					# handle escape key
+					cancel()
+				else if event.ctrlKey or 112 <= event.which <= 123 or event.which is 46 or event.which is 8 or 35 <= event.which <= 39
+					# allow ctrl+[x], f[x], backspace, delete, home, end, left, right
+        	return true
+        else if (event.shiftKey or (event.which < 48 or event.which > 57) and (event.which < 96 or event.which > 105))
+        	# if it is not a number, stop the keypress. 
+        	return false
+        return true
 		
 		(events = {})["click #{@options.emphasizedTokenButton}"] = (e) =>
 			lexiconContainer = $(@element).parent().siblings(@options.lexiconContainer).first().children(".ctr-module").first()
@@ -89,6 +127,9 @@ widget =
 		(events = {})["click #{@options.postagCheckbox}"] = => @_navigate()
 		@_on @element, events
 		
+		@_$(@options.rankText).tooltip()
+		@_$(@options.postagCheckbox).parent().tooltip()
+		
 		@_navigate()
 		
 	refresh: ->
@@ -103,15 +144,16 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
+		rankText: ".txt-rank"
 		documentContainer: ".ctr-document"
 		prevButton: ".btn-prev-doc"
 		nextButton: ".btn-next-doc"
 		emphasizedTokenButton: ".emphasized-token"
-		postagCheckbox: ".chk-postag"
+		postagCheckbox: ".chk-posTag"
 		lexiconContainer: ".ctr-alex"
 		newTokenClass: "btn-info"
 		keywordTokenClass: "btn-success"
-		index: -1
+		rank: -1
 		getDocumentRoute: jsRoutes.controllers.modules.AspectLexBuilder.getDocument
 		seeDocumentRoute: jsRoutes.controllers.modules.AspectLexBuilder.seeDocument
 		corpusKey: "corpus"

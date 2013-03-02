@@ -30,6 +30,7 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
@@ -37,6 +38,7 @@ import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import play.api.templates.Html;
+import play.libs.F.Tuple;
 import play.libs.Json;
 import play.mvc.*;
 import views.html.tags.*;
@@ -166,8 +168,17 @@ public class AspectLexBuilder extends Module {
 		LexiconBuilderDocumentStore builder = fetchBuilder(corpus, lexicon);
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		
+		@SuppressWarnings("unchecked")
+		List<Pair<String, String>> postags = Lists.newArrayList(
+			Pair.of("noun", "Nouns"),
+			Pair.of("adjective", "Adjectives"),
+			Pair.of("verb", "Verbs"),
+			Pair.of("adverb", "Adverbs")
+		);
 		return documentSlider
 			.render((DocumentCorpusModel)createViewModel(corpusObj), (AspectLexiconModel)createViewModel(lexiconObj),
+				postags,
 				Lists.newArrayList(Splitter.on("|")
 					.split(StringUtils.defaultString(builder.getProperty("emphasizedTags", String.class)))));
 	}
@@ -196,12 +207,12 @@ public class AspectLexBuilder extends Module {
 		return builder;
 	}
 	
-	private static LexiconBuilderDocument fetchDocument(LexiconBuilderDocumentStore builder, Long index) {
-		if (index < 0) {
-			index = null;
+	private static LexiconBuilderDocument fetchDocument(LexiconBuilderDocumentStore builder, Long rank) {
+		if (rank < 0) {
+			rank = null;
 		}
 		
-		LexiconBuilderDocument document = new LexiconBuilderController().getDocument(em(), builder, index);
+		LexiconBuilderDocument document = new LexiconBuilderController().getDocument(em(), builder, rank);
 		if (document != null && document.getFullTextDocument() != null) {
 			TokenizingOptions tokenizingOptions = document.getFullTextDocument().getTokenizingOptions();
 			document.getFullTextDocument().setTokenizingOptions(tokenizingOptions.setLemmatized(true));
@@ -209,12 +220,12 @@ public class AspectLexBuilder extends Module {
 		return document;
 	}
 		
-	public static Result getDocument(String corpus, String lexicon, final String emphasis, Long index) {
+	public static Result getDocument(String corpus, String lexicon, final String emphasis, Long rank) {
 		final LexiconBuilderDocumentStore builder = fetchBuilder(corpus, lexicon);
 		final AspectLexicon lexiconObj = (AspectLexicon)builder.getLexicon();
 		final LexiconBuilderController controller = new LexiconBuilderController();
 		
-		LexiconBuilderDocument document = fetchDocument(builder, index);
+		LexiconBuilderDocument document = fetchDocument(builder, rank);
 		if (document != null && document.getFullTextDocument() != null) {
 			List<LexiconBuilderDocumentTokenModel> tokens = Lists.newArrayList(Iterables.transform(
 				document.getFullTextDocument().getParsedContent().getTokens(),
@@ -244,12 +255,12 @@ public class AspectLexBuilder extends Module {
 			return ok(json);
 		}
 		
-		return notFoundEntity(ObjectUtils.toString(index));
+		return notFoundEntity(ObjectUtils.toString(rank));
 	}
 	
-	public static Result seeDocument(String corpus, String lexicon, String emphasis, Long index) {
+	public static Result seeDocument(String corpus, String lexicon, String emphasis, Long rank) {
 		LexiconBuilderDocumentStore builder = fetchBuilder(corpus, lexicon);
-		LexiconBuilderDocument document = fetchDocument(builder, index);
+		LexiconBuilderDocument document = fetchDocument(builder, rank);
 		
 		if (document != null && document.getFullTextDocument() != null) {
 			new LexiconBuilderController().setSeenDocument(em(), document, emphasis);
@@ -260,7 +271,7 @@ public class AspectLexBuilder extends Module {
 			return ok(createViewModel(document.getFullTextDocument()).asJson());
 		}
 		
-		return notFoundEntity(ObjectUtils.toString(index));
+		return notFoundEntity(ObjectUtils.toString(rank));
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)

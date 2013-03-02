@@ -133,9 +133,7 @@ widget =
 			@_changeInputState @_$(input), "disabled"
 		@_changeInputState @_$(@options.addButton), if @options.editable then "enabled" else "disabled"
 		
-		@_$(@options.list)
-			.tooltip
-				trigger: "hover"
+		@_$(@options.list).tooltip()
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
