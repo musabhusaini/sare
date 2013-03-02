@@ -86,6 +86,9 @@ widget =
 		@_on @_$(@options.rankText),
 			focus: (e) ->
 				$(e.target).val @options.rank + 1
+				window.setTimeout ->
+					$(e.target).select()
+				, 0
 			blur: (e) ->
 				@_fixRank()
 			keydown: (e) ->
@@ -104,6 +107,7 @@ widget =
 					@_changeInputState $(e.target), "disabled"
 					@_navigate rank - 1, null, false, =>
 						@_changeInputState $(e.target), "enabled"
+						exit()
 					return true
 				else if e.which is 27
 					# handle escape key.

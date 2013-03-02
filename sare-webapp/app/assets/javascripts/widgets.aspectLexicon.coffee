@@ -32,9 +32,13 @@ Strings = Page.Strings
 widget =
 	_makeAspectNode: (aspect, metadata) ->
 		metadata = $.extend {}, metadata ? {},
+			id: aspect.id
 			aspect: aspect
 		node =
-			data: aspect.title
+			data:
+				title: aspect.title
+				attr:
+					id: "aspect-node-#{aspect.id}"
 			children: if aspect.children? then (@_makeAspectNode(child) for child in (aspect.children)) else null
 			metadata: metadata
 		node.state = "closed" if node.children?
@@ -42,10 +46,13 @@ widget =
 
 	_makeKeywordNode: (keyword, metadata) ->
 		metadata = $.extend {}, metadata ? {},
+			id: keyword.id
 			keyword: keyword
 		data:
 			title: keyword.content
 			icon: jsRoutes.controllers.Assets.at("/plugins/jstree/themes/misc/file.png").url
+			attr:
+				id: "keyword-node-#{keyword.id}"
 		metadata: metadata
 
 	getSelectedAspect: ->
@@ -84,9 +91,24 @@ widget =
 		node = @_$(@options.keywordsContainer).jstree "get_selected"
 		node: node
 		data: node.data @options.keywordKey
+
+	hasAspect: (lexicon, aspect) ->
+		lexicon ?= @options.lexicon
+		return false if not lexicon or not aspect?
+		response = @options.getAspectRoute(lexicon.id, aspect.title ? aspect).ajax
+			async: false
+		response.status is 200
+	
+	hasKeyword: (aspect, keyword) ->
+		aspect ?= @getSelectedAspect().data
+		return false if not aspect? or not keyword?
+		response = @options.getKeywordRoute(aspect.id, keyword.content ? keyword).ajax
+			async: false
+		response.status is 200
 	
 	addKeyword: (aspect, content, superficial, skipRename) ->
 		display = (keyword) =>
+			if aspect.id isnt @getSelectedAspect().data?.id then return
 			node = @_makeKeywordNode keyword,
 				superficial: superficial
 			@_$(@options.keywordsContainer).jstree "create",
@@ -219,7 +241,7 @@ widget =
 					@_$(@options.keywordsContainer).jstree "delete_node", @_$(@options.keywordsContainer).find("li")
 				else
 					selectNode @_$(@options.aspectsContainer), prev
-		
+
 		@_$(@options.aspectsContainer).jstree
 			ui:
 				select_limit: 1
@@ -243,11 +265,23 @@ widget =
 								if not lexicon?
 									return false;
 								else
-									response = @options.getKeywordRoute(lexicon.id, keyword.content).ajax
-										async: false
-									return response.status isnt 200
+									return not @hasKeyword lexicon, keyword
 						true
-
+			dnd:
+				drag_target: ".lexicon-draggable"
+				drop_target: false
+				drag_check: (data) =>
+					keyword = $(data.o).data(@options.lemmaKey) ? $(data.o).text()
+					aspect = $(data.r).data @options.aspectKey
+					return false if not aspect? or not keyword
+					after: false
+					before: false
+					inside: not @hasKeyword aspect, keyword
+				drag_finish: (data) =>
+					keyword = $(data.o).data(@options.lemmaKey) ? $(data.o).text()
+					aspect = $(data.r).data @options.aspectKey
+					if aspect? and keyword
+						@addKeyword aspect, keyword, false, true
 			hotkeys:
 				insert: => @addAspect()
 				del: => @removeAspect()
@@ -315,9 +349,6 @@ widget =
 				prev = @_$(@options.keywordsContainer).find("li:eq(0)") if not prev?[0]
 				if not not prev?[0] then selectNode @_$(@options.keywordsContainer), prev
 			
-			"move_node.jstree": (e, data) =>
-				debugger
-			
 		@_$(@options.keywordsContainer).jstree
 			crrm:
 				move:
@@ -326,6 +357,20 @@ widget =
 				select_limit: 1
 			json_data:
 				data: []
+			dnd:
+				drag_target: ".lexicon-draggable"
+				drop_target: false
+				drag_check: (data) =>
+					keyword = $(data.o).data(@options.lemmaKey) ? $(data.o).text()
+					return false if not @getSelectedAspect().data? or not keyword
+					possible = not @hasKeyword null, keyword
+					after: possible
+					before: possible
+					inside: not not data.is_root
+				drag_finish: (data) =>
+					keyword = $(data.o).data(@options.lemmaKey) ? $(data.o).text()
+					if @getSelectedAspect().data? and keyword
+						@addKeyword null, keyword, false, true
 			hotkeys:
 				insert: => @addKeyword()
 				del: => @removeKeyword()
@@ -367,6 +412,7 @@ widget =
 		updateKeywordButton: ".btn-update-keyword"
 		deleteKeywordButton: ".btn-delete-keyword"
 		getLexiconRoute: jsRoutes.controllers.CollectionsController.get
+		getAspectRoute: jsRoutes.controllers.modules.AspectLexBuilder.getAspect
 		addAspectRoute: jsRoutes.controllers.modules.AspectLexBuilder.addAspect
 		updateAspectRoute: jsRoutes.controllers.modules.AspectLexBuilder.updateAspect
 		deleteAspectRoute: jsRoutes.controllers.modules.AspectLexBuilder.deleteAspect
@@ -378,5 +424,6 @@ widget =
 		lexiconKey: "lexicon"
 		aspectKey: "aspect"
 		keywordKey: "keyword"
+		lemmaKey: "lemma"
 
 $.widget "widgets.aspectLexicon", Sare.Widget, widget

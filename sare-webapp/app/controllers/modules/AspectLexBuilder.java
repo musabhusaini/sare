@@ -273,6 +273,44 @@ public class AspectLexBuilder extends Module {
 		return notFoundEntity(ObjectUtils.toString(rank));
 	}
 	
+	public static Result getAspects(String lexicon) {
+		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		List<AspectLexiconModel> aspects = Lists.newArrayList(Iterables.transform(lexiconObj.getAspects(),
+			new Function<AspectLexicon, AspectLexiconModel>() {
+				@Override
+				@Nullable
+				public AspectLexiconModel apply(@Nullable AspectLexicon input) {
+					return (AspectLexiconModel)createViewModel(input);
+				}
+			}));
+		
+		return ok(Json.toJson(aspects));
+	}
+
+	public static Result getAspect(String lexicon, String aspect) {
+		AspectLexicon lexiconObj = null;
+		AspectLexicon aspectObj = null;
+		
+		if (UuidUtils.isUuid(lexicon)) {
+			lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		}
+		if (UuidUtils.isUuid(aspect)) {
+			aspectObj = fetchResourceQuietly(aspect, AspectLexicon.class);
+			if (aspectObj != null && lexiconObj != null && !ObjectUtils.equals(aspectObj.getParentAspect(), lexiconObj)) {
+				throw new IllegalArgumentException();
+			}
+		}
+		
+		if (aspectObj == null && lexiconObj != null) {
+			aspectObj = lexiconObj.findAspect(aspect);
+		}
+		
+		if (aspectObj == null) {
+			return notFoundEntity(aspect);
+		}
+		return ok(createViewModel(aspectObj).asJson());
+	}
+	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
 	public static Result addAspect(String lexicon) {
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
@@ -402,10 +440,11 @@ public class AspectLexBuilder extends Module {
 		
 		if (expressionObj == null && aspectObj != null) {
 			expressionObj = aspectObj.findExpression(expression);
-		} else if (expressionObj == null) {
-			return notFoundEntity(expression);
 		}
 		
+		if (expressionObj == null) {
+			return notFoundEntity(expression);
+		}
 		return ok(createViewModel(expressionObj).asJson());
 	}
 	

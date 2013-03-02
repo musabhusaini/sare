@@ -91,6 +91,8 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.AspectLexBuilder.update(),
 			controllers.modules.routes.javascript.AspectLexBuilder.getDocument(),
 			controllers.modules.routes.javascript.AspectLexBuilder.seeDocument(),
+			controllers.modules.routes.javascript.AspectLexBuilder.getAspects(),
+			controllers.modules.routes.javascript.AspectLexBuilder.getAspect(),
 			controllers.modules.routes.javascript.AspectLexBuilder.addAspect(),
 			controllers.modules.routes.javascript.AspectLexBuilder.updateAspect(),
 			controllers.modules.routes.javascript.AspectLexBuilder.deleteAspect(),

@@ -69,9 +69,12 @@ GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/:rank	controllers.mo
 POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, rank: Long = -1)
 POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/:rank	controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, rank: Long)
 
-POST	/api/modules/lexica/:lexicon/aspects			controllers.modules.AspectLexBuilder.addAspect(lexicon: String)
+GET		/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.getAspect(lexicon = null, aspect: String)
+GET		/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.getAspect(lexicon: String, aspect: String)
+GET		/api/modules/lexica/:lexicon/aspects			controllers.modules.AspectLexBuilder.getAspects(lexicon: String)
 POST	/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.updateAspect(lexicon = null, aspect: String)
 POST	/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.updateAspect(lexicon: String, aspect: String)
+POST	/api/modules/lexica/:lexicon/aspects			controllers.modules.AspectLexBuilder.addAspect(lexicon: String)
 DELETE	/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.deleteAspect(lexicon = null, aspect: String)
 DELETE	/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.deleteAspect(lexicon: String, aspect: String)
 
