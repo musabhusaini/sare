@@ -19,9 +19,11 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(corpus: documentStore.DocumentCorpusModel, lexicon: documentStore.AspectLexiconModel)
+@(corpus: documentStore.DocumentCorpusModel, lexicon: documentStore.AspectLexiconModel, emphasizedTags: List[String] = null)
 
+@import scala._
 @import scala.util._
+@import org.apache.commons.lang3._
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-module-@uid" class="ctr-module" data-corpus="@corpus.asJson()" data-lexicon="@lexicon.asJson()">
@@ -45,23 +47,15 @@
 		</div>
 		<div class="span8">
 			<div class="pull-right">
+			@defining(List("noun", "adjective", "verb", "adverb")) { tags =>
+				@for(tag <- tags) {
 				<label class="checkbox inline">
-					<input id="chk-noun-@uid" class="chk-postag" type="checkbox" checked="checked" value="noun" />
-					Nouns
-				</label>
-				<label class="checkbox inline">
-					<input id="chk-adjective-@uid" class="chk-postag" type="checkbox" value="adjective" />
-					Adjectives
-				</label>
-				<label class="checkbox inline">
-					<input id="chk-verb-@uid" class="chk-postag" type="checkbox" value="verb" />
-					Verbs
-				</label>
-				<label class="checkbox inline">
-					<input id="chk-adverb-@uid" class="chk-postag" type="checkbox" value="adverb" />
-					Adverbs
-				</label>
-			</div>
+					<input id="chk-@tag-@uid" class="chk-postag" type="checkbox"
+						@if(emphasizedTags.contains(tag)){checked="checked"} value="@tag" />
+					@StringUtils.capitalize(tag + "s")
+				</label>					
+				}
+			}
 		</div>
 	</div>
 </div>

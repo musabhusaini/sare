@@ -25,8 +25,7 @@ import java.util.*;
 
 import javax.persistence.*;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.*;
 
 import com.google.common.collect.Lists;
 import com.google.gson.*;
@@ -224,10 +223,6 @@ public abstract class PersistentObject
 		return this;
 	}
 
-	private Gson getGson() {
-		return new GsonBuilder().serializeSpecialFloatingPointValues().create();
-	}
-
 	/**
 	 * Gets a flag indicating whether this object has the given property attached or not.
 	 * @param property the name of the property to look for.
@@ -249,7 +244,7 @@ public abstract class PersistentObject
 		Validate.notNull(classOfT, CannedMessages.NULL_ARGUMENT, "type");
 		
 		try {
-			return this.getGson().fromJson(this.getOtherData().get(property), classOfT);
+			return new Gson().fromJson(this.getOtherData().get(property), classOfT);
 		} catch (JsonSyntaxException e) {
 			return null;
 		}
@@ -265,7 +260,7 @@ public abstract class PersistentObject
 		if (value == null) {
 			this.getOtherData().remove(property);
 		} else {
-			this.getOtherData().add(property, this.getGson().toJsonTree(value));
+			this.getOtherData().add(property, new Gson().toJsonTree(value));
 		}
 		return this;
 	}

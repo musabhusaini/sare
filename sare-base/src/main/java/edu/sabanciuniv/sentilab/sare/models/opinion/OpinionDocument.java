@@ -41,7 +41,11 @@ public class OpinionDocument
 	 * @return the opinion polarity of this document.
 	 */
 	public Double getPolarity() {
-		return this.getProperty("polarity", Double.class);
+		Double polarity = this.getProperty("polarity", Double.class);
+		if (polarity != null && polarity.isNaN()) {
+			return null;
+		}
+		return polarity;
 	}
 
 	/**
@@ -50,6 +54,9 @@ public class OpinionDocument
 	 * @return the {@code this} object.
 	 */
 	public OpinionDocument setPolarity(Double polarity) {
+		if (polarity != null && polarity.isNaN()) {
+			polarity = null;
+		}
 		this.setProperty("polarity", polarity);
 		return this;
 	}

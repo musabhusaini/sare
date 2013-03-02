@@ -163,10 +163,13 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	public static Html renderDocumentsView(String corpus, String lexicon) {
+		LexiconBuilderDocumentStore builder = fetchBuilder(corpus, lexicon);
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		return documentSlider
-			.render((DocumentCorpusModel)createViewModel(corpusObj), (AspectLexiconModel)createViewModel(lexiconObj));
+			.render((DocumentCorpusModel)createViewModel(corpusObj), (AspectLexiconModel)createViewModel(lexiconObj),
+				Lists.newArrayList(Splitter.on("|")
+					.split(StringUtils.defaultString(builder.getProperty("emphasizedTags", String.class)))));
 	}
 	
 	public static Result documentsView(String corpus, String lexicon) {
@@ -250,6 +253,10 @@ public class AspectLexBuilder extends Module {
 		
 		if (document != null && document.getFullTextDocument() != null) {
 			new LexiconBuilderController().setSeenDocument(em(), document, emphasis);
+			
+			builder.setProperty("emphasizedTags", emphasis);
+			em().merge(builder);
+			
 			return ok(createViewModel(document.getFullTextDocument()).asJson());
 		}
 		
