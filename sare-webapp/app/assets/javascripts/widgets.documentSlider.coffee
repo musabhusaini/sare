@@ -98,8 +98,10 @@ widget =
 					if window.isNaN(rank) or rank.toString() isnt $(e.target).val() or rank is @options.rank + 1 or rank < 1 or rank > @options.corpus.size
 						cancel()
 						return false
-					@_navigate rank - 1
-					exit()
+					@_changeInputState $(e.target), "disabled"
+					@_navigate rank - 1, null, false, =>
+						@_changeInputState $(e.target), "enabled"
+					return true
 				else if e.which is 27
 					# handle escape key
 					cancel()
