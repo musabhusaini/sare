@@ -122,31 +122,44 @@ widget =
 		
 		lexiconParentContainer = =>
 			$(@element).parent().siblings(@options.lexiconContainer).first()
+		lexiconWidget = =>
+			$(lexiconParentContainer().children(".ctr-module").first()).data Strings.widgetKey
+		
 		findKeywordButton = (keyword) =>
 			lemmaKey = @options.lemmaKey
 			@_$(@options.emphasizedTokenButton).filter ->
 				($(@).data(lemmaKey) ? $(@).text()) is (keyword.content ? keyword)
 		
+		makeKeywordButton = (keyword) =>
+			$(findKeywordButton keyword)
+				.removeClass(@options.newTokenClass)
+				.addClass @options.keywordTokenClass
+		
+		unmakeKeywordButton = (keyword) =>
+			$(findKeywordButton keyword).removeClass @options.keywordTokenClass
+			
 		@_on $(lexiconParentContainer()),
 			aspectLexiconKeywordAdded: (e, keyword) ->
-				$(findKeywordButton keyword)
-					.removeClass(@options.newTokenClass)
-					.addClass @options.keywordTokenClass 
+				makeKeywordButton keyword
+				true
 			aspectLexiconKeywordRemoved: (e, keyword) ->
+				widget = lexiconWidget()
+				if not widget.hasKeyword widget.getLexicon(), keyword, true
+					unmakeKeywordButton keyword
 				true
 			aspectLexiconKeywordRenamed: (e, data) ->
+				widget = lexiconWidget()
 				{ keyword, result } = data
-				$(findKeywordButton result)
-					.removeClass(@options.newTokenClass)
-					.addClass @options.keywordTokenClass 
-
+				if not widget.hasKeyword widget.getLexicon(), keyword, true
+					unmakeKeywordButton keyword
+				makeKeywordButton result
+				true
 		
 		(events = {})["click #{@options.emphasizedTokenButton}"] = (e) ->
-			lexiconContainer = lexiconParentContainer().children(".ctr-module").first()
-			lexiconWidget = $(lexiconContainer).data Strings.widgetKey
-			aspect = lexiconWidget?.getSelectedAspect?().data
+			widget = lexiconWidget()
+			aspect = widget?.getSelectedAspect?().data
 			if aspect?
-				lexiconWidget.addKeyword null, $(e.target).data(@options.lemmaKey), false, true
+				widget.addKeyword null, $(e.target).data(@options.lemmaKey), false, true
 				$(e.target)
 					.data(@options.aspectKey, aspect)
 					.removeClass(@options.newTokenClass)

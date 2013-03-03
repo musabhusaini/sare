@@ -287,7 +287,7 @@ public class AspectLexBuilder extends Module {
 		return ok(Json.toJson(aspects));
 	}
 
-	public static Result getAspect(String lexicon, String aspect) {
+	public static Result getAspect(String lexicon, String aspect, boolean recursive) {
 		AspectLexicon lexiconObj = null;
 		AspectLexicon aspectObj = null;
 		
@@ -302,7 +302,7 @@ public class AspectLexBuilder extends Module {
 		}
 		
 		if (aspectObj == null && lexiconObj != null) {
-			aspectObj = lexiconObj.findAspect(aspect);
+			aspectObj = lexiconObj.findAspect(aspect, recursive);
 		}
 		
 		if (aspectObj == null) {
@@ -424,7 +424,7 @@ public class AspectLexBuilder extends Module {
 		return ok(Json.toJson(expressions));
 	}
 	
-	public static Result getExpression(String aspect, String expression) {
+	public static Result getExpression(String aspect, String expression, boolean recursive) {
 		AspectLexicon aspectObj = null;
 		AspectExpression expressionObj = null;
 		
@@ -439,7 +439,7 @@ public class AspectLexBuilder extends Module {
 		}
 		
 		if (expressionObj == null && aspectObj != null) {
-			expressionObj = aspectObj.findExpression(expression);
+			expressionObj = aspectObj.findExpression(expression, recursive);
 		}
 		
 		if (expressionObj == null) {

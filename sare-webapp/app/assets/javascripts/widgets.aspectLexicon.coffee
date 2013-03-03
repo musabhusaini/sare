@@ -92,17 +92,20 @@ widget =
 		node: node
 		data: node.data @options.keywordKey
 
-	hasAspect: (lexicon, aspect) ->
+	getLexicon: ->
+		@options.lexicon
+	
+	hasAspect: (lexicon, aspect, recursive) ->
 		lexicon ?= @options.lexicon
 		return false if not lexicon or not aspect?
-		response = @options.getAspectRoute(lexicon.id, aspect.title ? aspect).ajax
+		response = @options.getAspectRoute(lexicon.id, aspect.title ? aspect, not not recursive).ajax
 			async: false
 		response.status is 200
 	
-	hasKeyword: (aspect, keyword) ->
+	hasKeyword: (aspect, keyword, recursive) ->
 		aspect ?= @getSelectedAspect().data
 		return false if not aspect? or not keyword?
-		response = @options.getKeywordRoute(aspect.id, keyword.content ? keyword).ajax
+		response = @options.getKeywordRoute(aspect.id, keyword.content ? keyword, not not recursive).ajax
 			async: false
 		response.status is 200
 	
@@ -157,7 +160,7 @@ widget =
 
 		populateKeywords = (aspect, keywords) =>
 			nodes = @_$(@options.keywordsContainer).find "li"
-			if nodes.length then @_$(@options.keywordsContainer).jstree "delete_node", nodes
+			if nodes.length then @_$(@options.keywordsContainer).jstree "delete_node", nodes, true
 			@addKeyword(aspect, keyword, true, true) for keyword in (keywords ? [])
 			window.setTimeout =>
 				selectNode @_$ @options.keywordsContainer
@@ -352,7 +355,8 @@ widget =
 				prev = data.rslt.prev
 				prev = @_$(@options.keywordsContainer).find("li:eq(0)") if not prev?[0]
 				if not not prev?[0] then selectNode @_$(@options.keywordsContainer), prev
-				$(@element).trigger "aspectLexiconKeywordRemoved", $(data.rslt.obj).data @options.keywordKey
+				if not data.args[1]
+					$(@element).trigger "aspectLexiconKeywordRemoved", $(data.rslt.obj).data @options.keywordKey
 			
 		@_$(@options.keywordsContainer).jstree
 			crrm:

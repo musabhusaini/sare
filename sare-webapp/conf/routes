@@ -69,8 +69,8 @@ GET		/api/modules/corpora/:corpus/lexica/:lexicon/documents/:rank	controllers.mo
 POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/next		controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, rank: Long = -1)
 POST	/api/modules/corpora/:corpus/lexica/:lexicon/documents/:rank	controllers.modules.AspectLexBuilder.seeDocument(corpus: String, lexicon: String, emphasis: String ?= null, rank: Long)
 
-GET		/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.getAspect(lexicon = null, aspect: String)
-GET		/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.getAspect(lexicon: String, aspect: String)
+GET		/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.getAspect(lexicon = null, aspect: String, recursive: Boolean ?= false)
+GET		/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.getAspect(lexicon: String, aspect: String, recursive: Boolean ?= false)
 GET		/api/modules/lexica/:lexicon/aspects			controllers.modules.AspectLexBuilder.getAspects(lexicon: String)
 POST	/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.updateAspect(lexicon = null, aspect: String)
 POST	/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.updateAspect(lexicon: String, aspect: String)
@@ -78,8 +78,8 @@ POST	/api/modules/lexica/:lexicon/aspects			controllers.modules.AspectLexBuilder
 DELETE	/api/modules/lexica/aspects/:aspect				controllers.modules.AspectLexBuilder.deleteAspect(lexicon = null, aspect: String)
 DELETE	/api/modules/lexica/:lexicon/aspects/:aspect	controllers.modules.AspectLexBuilder.deleteAspect(lexicon: String, aspect: String)
 
-GET		/api/modules/lexica/aspects/keywords/:expression			controllers.modules.AspectLexBuilder.getExpression(aspect = null, expression: String)
-GET		/api/modules/lexica/aspects/:aspect/keywords/:expression	controllers.modules.AspectLexBuilder.getExpression(aspect: String, expression: String)
+GET		/api/modules/lexica/aspects/keywords/:expression			controllers.modules.AspectLexBuilder.getExpression(aspect = null, expression: String, recursive: Boolean ?= false)
+GET		/api/modules/lexica/aspects/:aspect/keywords/:expression	controllers.modules.AspectLexBuilder.getExpression(aspect: String, expression: String, recursive: Boolean ?= false)
 GET		/api/modules/lexica/aspects/:aspect/keywords				controllers.modules.AspectLexBuilder.getExpressions(aspect: String)
 POST	/api/modules/lexica/aspects/keywords/:expression			controllers.modules.AspectLexBuilder.updateExpression(aspect = null, expression: String)
 POST	/api/modules/lexica/aspects/:aspect/keywords/:expression	controllers.modules.AspectLexBuilder.updateExpression(aspect: String, expression: String)
