@@ -133,10 +133,9 @@ widget =
 					.removeClass(@options.newTokenClass)
 					.addClass @options.keywordTokenClass 
 			aspectLexiconKeywordRemoved: (e, keyword) ->
-				$(findKeywordButton keyword).removeClass @options.keywordTokenClass
+				true
 			aspectLexiconKeywordRenamed: (e, data) ->
 				{ keyword, result } = data
-				$(findKeywordButton keyword).removeClass @options.keywordTokenClass
 				$(findKeywordButton result)
 					.removeClass(@options.newTokenClass)
 					.addClass @options.keywordTokenClass 
