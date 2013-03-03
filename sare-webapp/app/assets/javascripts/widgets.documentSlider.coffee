@@ -54,9 +54,22 @@ widget =
 		getDocument = =>
 			@options.getDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, rank).ajax
 				success: (document) =>
+					options = @options
 					@_$(@options.documentContainer)
 						.empty()
 						.html(document.enhancedContent ? document.content)
+					@_$(@options.documentContainer).find(@options.emphasizedTokenButton)
+						.tooltip
+							title: ->
+								aspect = $(@).data options.aspectKey
+								isNew = $(@).hasClass options.newTokenClass
+								if aspect?
+									return "Already a keyword under '#{aspect.title}'"
+								else if isNew
+									lemma = $(@).data options.lemmaKey
+									return "Click to add '#{lemma.toLowerCase()}' to the current aspect"
+								else
+									return "Already seen and ignored"
 					if not silent
 						@options.rank = (document.rank ? rank)
 						if document.corpus? then @options.corpus = document.corpus
@@ -128,7 +141,7 @@ widget =
 		findKeywordButton = (keyword) =>
 			lemmaKey = @options.lemmaKey
 			@_$(@options.emphasizedTokenButton).filter ->
-				($(@).data(lemmaKey) ? $(@).text()) is (keyword.content ? keyword)
+				($(@).data(lemmaKey) ? $(@).text()).toLowerCase() is (keyword.content ? keyword).toLowerCase()
 		
 		makeKeywordButton = (keyword) =>
 			$(findKeywordButton keyword)
