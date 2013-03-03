@@ -36,7 +36,7 @@ widget =
 		
 		if not @options.lexicon?
 			@_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
-				"storeListSelectionChange": (e, selected) =>
+				storeListSelectionChange: (e, selected) ->
 					@options.lexicon = selected.data
 					corpus = @options.corpus ? @options.lexicon?.baseCorpus
 					@_$(@options.documentsContainer).empty()

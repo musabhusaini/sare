@@ -268,7 +268,7 @@ widget =
 									return not @hasKeyword lexicon, keyword
 						true
 			dnd:
-				drag_target: ".lexicon-draggable"
+				drag_target: @options.draggableObject
 				drop_target: false
 				drag_check: (data) =>
 					keyword = $(data.o).data(@options.lemmaKey) ? $(data.o).text()
@@ -329,6 +329,9 @@ widget =
 						content: data.rslt.name
 					success: (keyword) =>
 						$(data.rslt.obj).data @options.keywordKey, keyword
+						$(@element).trigger "aspectLexiconKeywordRenamed",
+							keyword: state.prevKeyword
+							result: data.rslt.name
 					error: ->
 						$.jstree.rollback data.rlbk
 			
@@ -343,11 +346,13 @@ widget =
 			"create_node.jstree": (e, data) =>
 				if not $(data.rslt.obj).data superficialKey
 					selectNode @_$(@options.keywordsContainer), data.rslt.obj
+				$(@element).trigger "aspectLexiconKeywordAdded", $(data.rslt.obj).data @options.keywordKey
 			
 			"delete_node.jstree": (e, data) =>
 				prev = data.rslt.prev
 				prev = @_$(@options.keywordsContainer).find("li:eq(0)") if not prev?[0]
 				if not not prev?[0] then selectNode @_$(@options.keywordsContainer), prev
+				$(@element).trigger "aspectLexiconKeywordRemoved", $(data.rslt.obj).data @options.keywordKey
 			
 		@_$(@options.keywordsContainer).jstree
 			crrm:
@@ -358,7 +363,7 @@ widget =
 			json_data:
 				data: []
 			dnd:
-				drag_target: ".lexicon-draggable"
+				drag_target: @options.draggableObject
 				drop_target: false
 				drag_check: (data) =>
 					keyword = $(data.o).data(@options.lemmaKey) ? $(data.o).text()
@@ -383,6 +388,7 @@ widget =
 		@_$(@options.updateKeywordButton)
 			.tooltip()
 			.click =>
+				state.prevKeyword = @getSelectedKeyword().data
 				@_$(@options.keywordsContainer).jstree "rename", null
 		
 		@_$(@options.deleteKeywordButton)
@@ -403,6 +409,7 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
+		draggableObject: ".lexicon-draggable"
 		aspectsContainer: ".ctr-aspects"
 		addAspectButton: ".btn-add-aspect"
 		updateAspectButton: ".btn-update-aspect"

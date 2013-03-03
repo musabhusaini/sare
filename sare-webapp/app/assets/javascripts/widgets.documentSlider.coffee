@@ -120,8 +120,30 @@ widget =
         	return false
         return true
 		
-		(events = {})["click #{@options.emphasizedTokenButton}"] = (e) =>
-			lexiconContainer = $(@element).parent().siblings(@options.lexiconContainer).first().children(".ctr-module").first()
+		lexiconParentContainer = =>
+			$(@element).parent().siblings(@options.lexiconContainer).first()
+		findKeywordButton = (keyword) =>
+			lemmaKey = @options.lemmaKey
+			@_$(@options.emphasizedTokenButton).filter ->
+				($(@).data(lemmaKey) ? $(@).text()) is (keyword.content ? keyword)
+		
+		@_on $(lexiconParentContainer()),
+			aspectLexiconKeywordAdded: (e, keyword) ->
+				$(findKeywordButton keyword)
+					.removeClass(@options.newTokenClass)
+					.addClass @options.keywordTokenClass 
+			aspectLexiconKeywordRemoved: (e, keyword) ->
+				$(findKeywordButton keyword).removeClass @options.keywordTokenClass
+			aspectLexiconKeywordRenamed: (e, data) ->
+				{ keyword, result } = data
+				$(findKeywordButton keyword).removeClass @options.keywordTokenClass
+				$(findKeywordButton result)
+					.removeClass(@options.newTokenClass)
+					.addClass @options.keywordTokenClass 
+
+		
+		(events = {})["click #{@options.emphasizedTokenButton}"] = (e) ->
+			lexiconContainer = lexiconParentContainer().children(".ctr-module").first()
 			lexiconWidget = $(lexiconContainer).data Strings.widgetKey
 			aspect = lexiconWidget?.getSelectedAspect?().data
 			if aspect?
