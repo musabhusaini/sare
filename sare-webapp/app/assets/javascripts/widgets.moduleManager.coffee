@@ -33,6 +33,10 @@ history = window.history
 location = window.location
 localStorage = window.localStorage
 
+emptyModule =
+	id: "20e7c8130d0c44dea90f5cc6427add0a"
+	name: "Empty module"
+
 widget =
 	_prevState: ->
 		JSON.parse localStorage["previous"]
@@ -89,9 +93,9 @@ widget =
 		@_pushBrowserState module
 		
 		# clear previous modules.
-		for module in (@_forwardModules ? [])
-			@_callModule module, "destroy"
-			$(module.target).remove()
+		for deletedModule in (@_forwardModules ? [])
+			@_callModule deletedModule, "destroy"
+			$(deletedModule.target).remove()
 		
 		@_forwardModules = [ module ]
 		@next()
@@ -120,7 +124,7 @@ widget =
 		@_currentModule
 	
 	_display: (module) ->
-		if not module.url?
+		if not module.id is emptyModule.id
 			@option "output", []
 		else
 			@option "output", null
@@ -130,8 +134,8 @@ widget =
 			return
 			
 		if module.target? and @_$(@options.contentContainer).has($(module.target)).length
-			@_callModule module, "refresh"
-			return @_callModule module, "enable"
+			@_callModule module, "enable"
+			return @_callModule module, "refresh"
 		module.target ?= $("<div>")
 		$(module.target).empty().hide().appendTo @_$(@options.contentContainer)
 		if module.url?
@@ -163,10 +167,8 @@ widget =
 				@previous() if uid < @_prevState()?.uid
 				@_updatePrevState state
 		
-		module = $.extend {
-			name: "Entry module"
+		module = $.extend {}, emptyModule, (@options.entryModule ? {}),
 			target: @_$(@options.contentContainer).children()
-		}, (@options.entryModule ? {}), { url: null }
 		
 		@replace module, true
 		@_$(@options.nextModulesButtons).on "click", "button", (e) =>

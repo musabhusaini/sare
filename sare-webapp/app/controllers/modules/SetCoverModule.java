@@ -42,7 +42,7 @@ public class SetCoverModule extends Module {
 	
 	@Override
 	public String getDisplayName() {
-		return "Reduce";
+		return "Reduce Corpus";
 	}
 
 	@Override

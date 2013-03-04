@@ -35,7 +35,8 @@ Strings.moduleOutputDataKey = "output"
 Selectors.moduleManagerContainer = "#ctr-module-manager"
 
 $ ->
+	entryModule = $(Selectors.moduleManagerContainer).data "module"
 	Widgets.moduleManager = $.proxy $(Selectors.moduleManagerContainer).moduleManager, $(Selectors.moduleManagerContainer)
 	Widgets.moduleManager
-		entryModule: $(Selectors.moduleManagerContainer).data "module"
-	Widgets.moduleManager "option", "output", []
+		entryModule: entryModule
+	if not entryModule? then Widgets.moduleManager "option", "output", []

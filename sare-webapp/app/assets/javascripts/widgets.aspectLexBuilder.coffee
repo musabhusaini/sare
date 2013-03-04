@@ -28,8 +28,20 @@ Helpers = Sare.Helpers
 Page = Sare.Page
 Selectors = Page.Selectors
 Strings = Page.Strings
+Widgets = Page.Widgets
 
 widget =
+	_currentCorpus: null
+	
+	_sendModuleOutput: (lexicon, corpus) ->
+		lexicon ?= @options.lexicon
+		@_currentCorpus = (corpus ?= @_currentCorpus ? @options.corpus)
+		output = null
+		if lexicon?
+			output = [ @options.lexicon ]
+			output.push(corpus) if corpus?
+		Widgets.moduleManager "option", "output", output
+	
 	_create: ->
 		@options.lexicon ?= $(@element).data @options.lexiconKey
 		@options.corpus ?= $(@element).data @options.corpusKey
@@ -39,8 +51,11 @@ widget =
 				storeListSelectionChange: (e, selected) ->
 					@options.lexicon = selected.data
 					corpus = @options.corpus ? @options.lexicon?.baseCorpus
+					@_sendModuleOutput @options.lexicon, corpus
+					
 					@_$(@options.documentsContainer).empty()
 					@_$(@options.lexiconContainer).empty()
+					
 					if @options.lexicon?
 						if corpus?
 							@_$(@options.documentsContainer)
@@ -53,14 +68,12 @@ widget =
 			
 			@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
 				.storeList "option",
+					suppressOutput: true
 					addRoute: =>
 						jsRoutes.controllers.modules.AspectLexBuilder.create(@options.corpus?.id ? "null")
 		
-		if @options.corpus?
-			# TODO: create the documents widget.
-			@_$(@options.documentsContainer)
-
 	refresh: ->
+		@_sendModuleOutput()
 		$(@element).data Strings.widgetKey, @
 		
 	_init: ->
@@ -69,6 +82,12 @@ widget =
 	_destroy: ->
 		
 	_setOption: (key, value) ->
+		switch key
+			when "disabled"
+				@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
+					.storeList if value then "disable" else "enable"
+				for input in [ @options.documentsContainer, @options.lexiconContainer ]
+					if value then @_$(input).hide() else @_$(input).show()
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->

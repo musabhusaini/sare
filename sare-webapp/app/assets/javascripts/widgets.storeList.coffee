@@ -124,7 +124,8 @@ widget =
 				selected = @selected()
 				for input in [ @options.deleteButton, @options.detailsButton ]
 					@_changeInputState @_$(input), if selected.data? and @options.editable then "enabled" else "disabled"
-				Widgets.moduleManager "option", "output", (selected.data ? null)
+				if not @options.suppressOutput
+					Widgets.moduleManager "option", "output", (selected.data ? null)
 				# for some reason, the second trigger doesn't work in all cases.
 				$(@element).trigger "storeListSelectionChange", selected
 				@_trigger "selectionchange", e, selected
@@ -172,6 +173,7 @@ widget =
 			addRoute: jsRoutes.controllers.modules.CorpusModule.create
 			detailsFormRoute: jsRoutes.controllers.CollectionsController.detailsForm
 			deleteRoute: jsRoutes.controllers.CollectionsController.delete
+			suppressOutput: false
 			dataKey: "store"
 
 $.widget "widgets.storeList", Sare.Widget, widget
