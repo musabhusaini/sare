@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -20,6 +20,8 @@
  */
 
 package edu.sabanciuniv.sentilab.utils.text.nlp.base;
+
+import java.util.Map;
 
 import edu.sabanciuniv.sentilab.core.controllers.IController;
 
@@ -29,6 +31,12 @@ import edu.sabanciuniv.sentilab.core.controllers.IController;
  */
 public interface ILinguisticProcessor
 	extends IController {
+	
+	/**
+	 * Gets the basic POS tags of this language.
+	 * @return a {@link Map} where the keys are internal POS tag names and the values are their respective pluralized display names.
+	 */
+	public Map<String, String> getBasicPosTags();
 	
 	/**
 	 * Decomposes a given text using NLP to its sentences and tokens.
@@ -49,5 +57,5 @@ public interface ILinguisticProcessor
 	 * @param text the text to parse.
 	 * @return a {@link LinguisticText} object containing the parsed text.
 	 */
-	public LinguisticText parse(String text); 
+	public LinguisticText parse(String text);
 }

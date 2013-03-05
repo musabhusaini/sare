@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -22,6 +22,8 @@
 package edu.sabanciuniv.sentilab.utils.text.nlp.factory.tests;
 
 import static org.junit.Assert.*;
+
+import java.util.Map;
 
 import org.junit.*;
 
@@ -52,7 +54,11 @@ public class LinguisticProcessorFactoryTest {
 		public LinguisticText parse(String text) {
 			return null;
 		}
-		
+
+		@Override
+		public Map<String, String> getBasicPosTags() {
+			return null;
+		}
 	}
 	
 	@Before

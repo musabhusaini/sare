@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -43,5 +43,13 @@ public abstract class LinguisticObject
 	 */
 	protected LinguisticObject(ILinguisticProcessor processor) {
 		this.processor = Validate.notNull(processor, "The argument 'processor' must not be null");
+	}
+	
+	/**
+	 * Gets the linguistic processor used to create this object.
+	 * @return the {@link ILinguisticProcessor} used.
+	 */
+	public ILinguisticProcessor getProcessor() {
+		return this.processor;
 	}
 }

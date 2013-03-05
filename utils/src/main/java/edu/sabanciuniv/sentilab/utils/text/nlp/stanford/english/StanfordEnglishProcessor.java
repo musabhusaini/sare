@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -21,9 +21,14 @@
 
 package edu.sabanciuniv.sentilab.utils.text.nlp.stanford.english;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
-import edu.sabanciuniv.sentilab.utils.text.nlp.stanford.StanfordText;
+import edu.sabanciuniv.sentilab.utils.text.nlp.stanford.*;
+import edu.stanford.nlp.util.StringUtils;
 
 /**
  * The Stanford natural language processor for the English language.
@@ -38,6 +43,15 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.stanford.StanfordText;
 )
 public class StanfordEnglishProcessor
 	extends LinguisticProcessor {
+
+	@Override
+	public Map<String, String> getBasicPosTags() {
+		Map<String, String> map = Maps.newHashMap();
+		for (String tag : new String[] { StanfordPosTag.NOUN, StanfordPosTag.ADJECTIVE, StanfordPosTag.VERB, StanfordPosTag.ADVERB }) {
+			map.put(tag, String.format("%ss", StringUtils.capitalize(tag)));
+		}
+		return map;
+	}
 
 	@Override
 	public LinguisticText decompose(String text) {

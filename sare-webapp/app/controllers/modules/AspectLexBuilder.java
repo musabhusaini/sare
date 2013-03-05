@@ -30,7 +30,6 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.*;
-import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
@@ -168,16 +167,9 @@ public class AspectLexBuilder extends Module {
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		
-		@SuppressWarnings("unchecked")
-		List<Pair<String, String>> postags = Lists.newArrayList(
-			Pair.of("noun", "Nouns"),
-			Pair.of("adjective", "Adjectives"),
-			Pair.of("verb", "Verbs"),
-			Pair.of("adverb", "Adverbs")
-		);
 		return documentSlider
 			.render((DocumentCorpusModel)createViewModel(corpusObj), (AspectLexiconModel)createViewModel(lexiconObj),
-				postags,
+				corpusObj.getLinguisticProcessor().getBasicPosTags(),
 				Lists.newArrayList(Splitter.on("|")
 					.split(StringUtils.defaultString(builder.getProperty("emphasizedTags", String.class)))));
 	}

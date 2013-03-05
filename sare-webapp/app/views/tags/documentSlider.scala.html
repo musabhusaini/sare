@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(corpus: documentStore.DocumentCorpusModel, lexicon: documentStore.AspectLexiconModel, posTags: List[org.apache.commons.lang3.tuple.Pair[String, String]] = null, emphasizedTags: List[String] = null)
+@(corpus: documentStore.DocumentCorpusModel, lexicon: documentStore.AspectLexiconModel, posTags: Map[String, String] = null, emphasizedTags: List[String] = null)
 
 @import scala._
 @import scala.util._
@@ -47,12 +47,12 @@
 		</div>
 		<div class="span8">
 			<div id="postags-@uid" class="postags pull-right">
-				@for(tag <- posTags) {
-				<label class="checkbox inline" title="Emphasize all @tag.getValue().toLowerCase()" data-placement="bottom"
+				@for((tag, displayTag) <- posTags) {
+				<label class="checkbox inline" title="Emphasize all @displayTag" data-placement="bottom"
 					data-container="#postags-@uid">
 					<input id="chk-tag-@uid" class="chk-posTag" type="checkbox"
-						@if(emphasizedTags.contains(tag.getKey())){checked="checked"} value="@tag.getKey()" />
-					@tag.getValue()
+						@if(emphasizedTags.contains(tag)){checked="checked"} value="@tag" />
+					@displayTag
 				</label>					
 				}
 		</div>

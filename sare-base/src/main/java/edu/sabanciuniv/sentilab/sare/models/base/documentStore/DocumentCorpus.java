@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -22,6 +22,9 @@
 package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 
 import javax.persistence.Entity;
+
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
+import edu.sabanciuniv.sentilab.utils.text.nlp.factory.*;
 
 /**
  * The base class for all document corpora.
@@ -35,4 +38,14 @@ public abstract class DocumentCorpus
 	 * 
 	 */
 	private static final long serialVersionUID = -6392601190047482976L;
+	
+	/**
+	 * Gets the basic linguistic processor that can be used for this corpus.
+	 * @return the {@link ILinguisticProcessor} object that can be used.
+	 */
+	public ILinguisticProcessor getLinguisticProcessor() {
+		return new LinguisticProcessorFactory()
+			.create(new LinguisticProcessorFactoryOptions()
+			.setLanguage(this.getLanguage()));
+	}
 }
