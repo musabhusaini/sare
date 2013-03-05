@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -95,7 +95,7 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromXmlFile() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create(new OpinionCorpusFactoryOptions()
+			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 				.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath())));
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not open file");
@@ -112,7 +112,7 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromZipFile() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create(new OpinionCorpusFactoryOptions()
+			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 				.setFile(new File(getClass().getResource(testZipCorpusFilename).getPath())));
 		} catch (IllegalFactoryOptionsException e) {
 			fail("error reading input file");
@@ -129,7 +129,7 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromTextFile() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create(new OpinionCorpusFactoryOptions()
+			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 				.setFile(new File(getClass().getResource(testTextCorpusFilename).getPath()))
 				.setTextDelimiter("|"));
 		} catch (IllegalFactoryOptionsException e) {
@@ -144,7 +144,7 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromContent() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create(new OpinionCorpusFactoryOptions()
+			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 				.setContent(testContent)
 				.setFormat("txt")
 				.setTextDelimiter("|"));
@@ -169,7 +169,7 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromNoPolarityContent() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create(new OpinionCorpusFactoryOptions()
+			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 				.setContent(testNoPolarityContent)
 				.setFormat("txt")
 				.setTextDelimiter("|"));
