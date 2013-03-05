@@ -23,27 +23,39 @@ $ = window.jQuery
 Sare = window.Sare
 
 class Sare.Widget extends $.Widget
-  constructor: ->
-    super()
-  
-  _$: (s) ->
-    $(@element).find s
-  
-  _changeInputState: (input, state) ->
-    switch state
-      when "enabled"
-        @_$(input)
-          .tooltip()
-          .removeAttr "disabled"
-      when "disabled"
-        @_$(input)
-          .tooltip("destroy")
-          .attr "disabled", true
-      when "loading"
-        @_$(input)
-          .tooltip("destroy")
-          .button state
-      when "reset"
-        @_$(input)
-          .tooltip()
-          .button state
+	constructor: ->
+		super()
+	
+	_$: (s) ->
+		$(@element).find s
+	
+	_tooltipCache: {}
+	
+	_removeTooltip: (input) ->
+		id = $(input).attr "id"
+		if id?
+			@_tooltipCache[id] = @_$(input).data("tooltip")?.options
+		@_$(input).tooltip "destroy"
+	
+	_restoreTooltip: (input) ->
+		options = {}
+		id = $(input).attr "id"
+		if id?
+			options = @_tooltipCache[id]
+			delete @_tooltipCache[id]
+		$(input).tooltip options
+	
+	_changeInputState: (input, state) ->
+		switch state
+			when "enabled"
+				@_restoreTooltip input
+				@_$(input).removeAttr "disabled"
+			when "disabled"
+				@_removeTooltip input
+				@_$(input).attr "disabled", true
+			when "loading"
+				@_removeTooltip input
+				@_$(input).button state
+			when "reset"
+				@_restoreTooltip input
+				@_$(input).button state

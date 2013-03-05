@@ -28,6 +28,7 @@ Helpers = Sare.Helpers
 Page = Sare.Page
 Selectors = Page.Selectors
 Strings = Page.Strings
+Images = Page.Images
 
 widget =
 	goPrev: ->
@@ -46,20 +47,29 @@ widget =
 		@_$(@options.rankText).val "#{@options.rank + 1} / #{@options.corpus.size}"
 	
 	_navigate: (rank, tags, silent, callback) ->
+		oldRank = @options.rank
 		rank ?= @options.rank
+		if @options.corpus.size < 1 or rank > @options.corpus.size then return
+		
 		if not tags?
 			tags = ""
 			(tags += (if tags isnt "" then "|" else "") + $(checkbox).val()) for checkbox in @_$(@options.postagCheckbox).filter(":checked")
 		
 		getDocument = =>
+			enableControls = =>
+				if not silent
+					for input in [ @options.prevButton, @options.rankText, @options.nextButton ]
+						@_changeInputState @_$(input), "enabled"
+			
 			@options.getDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, rank).ajax
 				success: (document) =>
 					options = @options
 					@_$(@options.documentContainer)
 						.empty()
 						.html(document.enhancedContent ? document.content)
-					@_$(@options.documentContainer).find(@options.emphasizedTokenButton)
+					@_$(@options.documentContainer)
 						.tooltip
+							selector: @options.emphasizedTokenButton
 							title: ->
 								aspect = $(@).data options.aspectKey
 								isNew = $(@).hasClass options.newTokenClass
@@ -75,10 +85,22 @@ widget =
 						if document.corpus? then @options.corpus = document.corpus
 						@_fixRank()
 					@_fixButtons()
+					enableControls()
 					callback?(document)
 				error: =>
-					# the following means we have no next document, so we go to the last one instead.
-					if rank < 0 and @options.corpus?.size? then @_navigate @options.corpus.size - 1
+					if rank < 0 and @options.corpus?.size?
+						# we have no next document, so we go to the last one instead.
+						@_navigate @options.corpus.size - 1
+					else
+						# otherwise navigate to the old rank or 0 if the old rank was also negative
+						@_navigate if oldRank >= 0 then oldRank else 0
+		
+		if not silent
+			@_$(@options.documentContainer)
+				.empty()
+				.html $("<img>").attr "src", Images.wait
+			for input in [ @options.prevButton, @options.rankText, @options.nextButton ]
+				@_changeInputState @_$(input), "disabled"
 		
 		if @options.rank >= 0 and rank isnt @options.rank and not silent
 			@options.seeDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, @options.rank).ajax
@@ -117,10 +139,7 @@ widget =
 					if window.isNaN(rank) or rank.toString() isnt $(e.target).val() or rank is @options.rank + 1 or rank < 1 or rank > @options.corpus.size
 						cancel()
 						return false
-					@_changeInputState $(e.target), "disabled"
-					@_navigate rank - 1, null, false, =>
-						@_changeInputState $(e.target), "enabled"
-						exit()
+					@_navigate rank - 1, null, false, => exit()
 					return true
 				else if e.which is 27
 					# handle escape key.
@@ -183,7 +202,10 @@ widget =
 		(events = {})["click #{@options.postagCheckbox}"] = => @_navigate()
 		@_on @element, events
 		
-		@_$(@options.rankText).tooltip()
+		@_$(@options.rankText).tooltip
+			title: =>
+				return "Document #{@options.rank + 1} of #{@options.corpus.size}"
+		
 		@_$(@options.postagCheckbox).parent().tooltip()
 		
 		@_navigate()
@@ -200,10 +222,10 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
-		rankText: ".txt-rank"
 		documentContainer: ".ctr-document"
 		prevButton: ".btn-prev-doc"
 		nextButton: ".btn-next-doc"
+		rankText: ".txt-rank"
 		emphasizedTokenButton: ".emphasized-token"
 		postagCheckbox: ".chk-posTag"
 		lexiconContainer: ".ctr-alex"

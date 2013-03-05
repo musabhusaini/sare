@@ -31,6 +31,8 @@ Sare = window.Sare = $.extend window.Sare,
     Widgets: {}
     Methods: {}
     Selectors: {}
+    Images:
+    	wait: jsRoutes.controllers.Assets.at("images/throbber.gif").url
   Helpers:
     ContentTypes:
       json: "application/json; charset=utf-8"

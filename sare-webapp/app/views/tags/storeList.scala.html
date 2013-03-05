@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(stores: List[documentStore.PersistentDocumentStoreModel] = modules.CorpusModule.getCorpora(), editable: Boolean = true, storeType: String = "Corpus")
+@(stores: List[documentStore.PersistentDocumentStoreModel] = modules.CorpusModule.getCorpora(), editable: Boolean = true, selectionPrompt: String = "Select a corpus")
 
 @import scala.util._
 
@@ -28,7 +28,7 @@
 	<div id="ctr-store-details-outer-@uid" class="ctr-store-details-outer">
 	</div>
 	<form class="form-inline">
-		<label for="lst-store-@uid">@storeType:</label>
+		<label for="lst-store-@uid"><b>@selectionPrompt:</b></label>
 		<select id="lst-store-@uid" class="lst-store span3" autofocus="autofocus" title="List of existing items" data-placement="top">
 			@for(store <- stores) {
 				<option value="@store.id" data-store="@store.asJson()">
