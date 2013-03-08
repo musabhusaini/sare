@@ -133,7 +133,7 @@ public class AspectLexBuilder extends Module {
 			// if we have a multi-part form with a file.
 			if (formData.getFiles() != null) {
 				// get either the file named "corpus" or the first one.
-				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("lexicon"),
+				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("file"),
 					Iterables.getFirst(formData.getFiles(), null));
 				if (filePart != null) {
 					options = (AspectLexiconFactoryOptions)new AspectLexiconFactoryOptions()

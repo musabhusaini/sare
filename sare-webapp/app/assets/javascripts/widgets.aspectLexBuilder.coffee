@@ -46,25 +46,30 @@ widget =
 		@options.lexicon ?= $(@element).data @options.lexiconKey
 		@options.corpus ?= $(@element).data @options.corpusKey
 		
+		refreshView = (lexicon) =>
+			@options.lexicon = lexicon
+			corpus = @options.corpus ? @options.lexicon?.baseCorpus
+			@_sendModuleOutput @options.lexicon, corpus
+			
+			@_$(@options.documentsContainer).empty()
+			@_$(@options.lexiconContainer).empty()
+			
+			if @options.lexicon?
+				if corpus?
+					@_$(@options.documentsContainer)
+						.show()
+						.load @options.documentsViewRoute(corpus.id, @options.lexicon.id).url
+				else
+					@_$(@options.documentsContainer).hide()
+				@_$(@options.lexiconContainer)
+					.load @options.lexiconViewRoute(@options.lexicon.id).url
+		
 		if not @options.lexicon?
 			@_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
 				storeListSelectionChange: (e, selected) ->
-					@options.lexicon = selected.data
-					corpus = @options.corpus ? @options.lexicon?.baseCorpus
-					@_sendModuleOutput @options.lexicon, corpus
-					
-					@_$(@options.documentsContainer).empty()
-					@_$(@options.lexiconContainer).empty()
-					
-					if @options.lexicon?
-						if corpus?
-							@_$(@options.documentsContainer)
-								.show()
-								.load @options.documentsViewRoute(corpus.id, @options.lexicon.id).url
-						else
-							@_$(@options.documentsContainer).hide()
-						@_$(@options.lexiconContainer)
-							.load @options.lexiconViewRoute(@options.lexicon.id).url
+					refreshView selected.data
+				storeUpdate: (e, data) ->
+					refreshView data.updatedData
 			
 			@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
 				.storeList "option",

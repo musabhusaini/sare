@@ -183,7 +183,7 @@ widget =
 					$(@element).data @options.dataKey, @options.store = updatedStore
 					@_form "populate", updatedStore
 					callback?()
-					@_trigger "update", e,
+					$(@element).trigger "storeUpdate",
 						data: store
 						updatedData: updatedStore
 				
@@ -332,7 +332,7 @@ widget =
 			updateRoute: jsRoutes.controllers.modules.CorpusModule.update
 			uploadFileCount: 1
 			dataKey: "store"
-			filenameKey: "corpus"
+			filenameKey: "file"
 			uploadFileMessage: "Upload file"
 			dropFileMessage: "Drop file or browse"
 			dropFileTip: "A file can be drag and dropped here"

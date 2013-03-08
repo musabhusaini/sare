@@ -81,17 +81,13 @@ widget =
 				@_$(@options.detailsModalOuterContainer).load @options.detailsFormRoute(@selected().data.id).url
 				e.preventDefault()
 
-		# TODO: not working for some reason. fix it!
-		@_on @_$(@options.detailsModalOuterContainer).children(".modal"),
-			storedetailsupdate: (e, data) =>
-				{ updatedStore } = data
-				if updatedStore? then @_updateListItem @selected().item, updatedStore
-			 
 		@_on @_$(@options.detailsModalOuterContainer),
-			"hidden .modal": (e) =>
+			"storeUpdate .modal": (e, data) ->
+				{ updatedData } = data
+				if updatedData?
+					@_updateListItem @selected().item, updatedData
+			"hidden .modal": (e) ->
 				if not $(e.target).is(".modal") then return
-				data = @_$(@options.detailsModalOuterContainer).children(".modal").data @options.dataKey
-				if data? then @_updateListItem @selected().item, data
 				@_$(@options.detailsModalOuterContainer).empty()
 		
 		# handle delete store button click
