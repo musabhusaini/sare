@@ -29,6 +29,7 @@ import java.util.*;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -39,6 +40,8 @@ import com.google.common.collect.*;
 import play.api.templates.Html;
 import play.libs.Json;
 import play.mvc.*;
+import play.mvc.Http.MultipartFormData;
+import play.mvc.Http.MultipartFormData.FilePart;
 import views.html.tags.*;
 import models.LexiconBuilderDocumentTokenModel;
 import models.document.PersistentDocumentModel;
@@ -125,31 +128,52 @@ public class AspectLexBuilder extends Module {
 		DocumentCorpus corpusObj = fetchResourceQuietly(corpus, DocumentCorpus.class);
 		AspectLexiconFactoryOptions options = null;
 		
-		JsonNode json = request().body().asJson();
-		if (json == null) {
-			json = Json.newObject();
-		}
-		
-		AspectLexiconFactoryOptionsModel viewModel = Json.fromJson(json, AspectLexiconFactoryOptionsModel.class);
-		if (viewModel != null) {
-			options = viewModel.toFactoryOptions();
-			
-			if (lexicon != null) {
-				AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
-				if (corpus != null && (lexiconObj.getBaseCorpus() == null
-					|| !ObjectUtils.equals(lexiconObj.getBaseCorpus(), corpusObj))) {
-					throw new IllegalArgumentException();
+		MultipartFormData formData = request().body().asMultipartFormData();
+		if (formData != null) {
+			// if we have a multi-part form with a file.
+			if (formData.getFiles() != null) {
+				// get either the file named "corpus" or the first one.
+				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("lexicon"),
+					Iterables.getFirst(formData.getFiles(), null));
+				if (filePart != null) {
+					options = (AspectLexiconFactoryOptions)new AspectLexiconFactoryOptions()
+						.setFile(filePart.getFile())
+						.setFormat(FilenameUtils.getExtension(filePart.getFilename()));
 				}
 			}
-			
-			options.setBaseStore(corpusObj);
 		} else {
+			JsonNode json = request().body().asJson();
+			if (json != null) {
+				AspectLexiconFactoryOptionsModel viewModel = Json.fromJson(json, AspectLexiconFactoryOptionsModel.class);
+				if (viewModel != null) {
+					options = viewModel.toFactoryOptions();
+					
+					if (lexicon != null) {
+						AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+						if (corpus != null && (lexiconObj.getBaseCorpus() == null
+							|| !ObjectUtils.equals(lexiconObj.getBaseCorpus(), corpusObj))) {
+							throw new IllegalArgumentException();
+						}
+					}
+					
+					options.setBaseStore(corpusObj);
+				} else {
+					throw new IllegalArgumentException();
+				}
+			} else {
+				// if not json, then just create empty options.
+				options = new AspectLexiconFactoryOptions();
+			}
+		}
+		
+		if (options == null) {
 			throw new IllegalArgumentException();
 		}
 		
-		options.setExistingId(lexicon);
-		options.setEm(em());
-		options.setOwnerId(SessionedAction.getUsername(ctx()));
+		options
+			.setOwnerId(SessionedAction.getUsername(ctx()))
+			.setExistingId(lexicon)
+			.setEm(em());
 		
 		AspectLexiconController factory = new AspectLexiconController();
 		AspectLexicon lexiconObj = factory.create(options);

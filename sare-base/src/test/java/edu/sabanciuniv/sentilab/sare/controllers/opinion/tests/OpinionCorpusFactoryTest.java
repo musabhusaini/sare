@@ -87,10 +87,6 @@ public class OpinionCorpusFactoryTest {
 			.addDocument((OpinionDocument)new OpinionDocument().setContent(content));
 	}
 
-	@After
-	public void tearDown() throws Exception {
-	}
-
 	@Test
 	public void testCreateFromXmlFile() {
 		OpinionCorpus actualCorpus = null;

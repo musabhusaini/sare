@@ -23,12 +23,10 @@ package edu.sabanciuniv.sentilab.sare.controllers.opinion;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.*;
 
 import javax.xml.parsers.*;
 import javax.xml.xpath.*;
 
-import org.apache.commons.io.*;
 import org.apache.commons.lang3.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -36,8 +34,7 @@ import org.xml.sax.SAXException;
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
-import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.*;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
@@ -46,10 +43,10 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * @author Mus'ab Husaini
  */
 public final class OpinionCorpusFactory
-	extends PersistentDocumentStoreFactory<OpinionCorpus, OpinionCorpusFactoryOptions>
-	implements IDocumentStoreController {
+	extends NonDerivedStoreFactory<OpinionCorpus, OpinionCorpusFactoryOptions> {
 
-	private OpinionCorpusFactory addXmlPacket(OpinionCorpus corpus, InputStream input, OpinionCorpusFactoryOptions options)
+	@Override
+	protected OpinionCorpusFactory addXmlPacket(OpinionCorpus corpus, InputStream input, OpinionCorpusFactoryOptions options)
 		throws ParserConfigurationException, SAXException, IOException, XPathException {
 		
 		Validate.notNull(corpus, CannedMessages.NULL_ARGUMENT, "corpus");
@@ -105,26 +102,8 @@ public final class OpinionCorpusFactory
 		return this;
 	}
 	
-	private OpinionCorpusFactory addZipPacket(OpinionCorpus corpus, InputStream input, OpinionCorpusFactoryOptions options)
-		throws IOException {
-		
-		Validate.notNull(corpus, CannedMessages.NULL_ARGUMENT, "corpus");
-		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
-		
-		ZipInputStream zipStream = new ZipInputStream(input);
-		ZipEntry zipEntry;
-		while ((zipEntry = zipStream.getNextEntry()) != null) {
-			if (!zipEntry.isDirectory()) {
-				// we create a byte stream so that the input stream is not closed by the underlying methods.
-				this.createSpecific(corpus,
-					new ByteArrayInputStream(IOUtils.toByteArray(zipStream)), FilenameUtils.getExtension(zipEntry.getName()), options);
-			}
-		}
-		
-		return this;
-	}
-	
-	private OpinionCorpusFactory addTextPacket(OpinionCorpus corpus, InputStream input, String delimiter, OpinionCorpusFactoryOptions options)
+	@Override
+	protected OpinionCorpusFactory addTextPacket(OpinionCorpus corpus, InputStream input, String delimiter, OpinionCorpusFactoryOptions options)
 		throws IOException {
 		
 		Validate.notNull(corpus, CannedMessages.NULL_ARGUMENT, "corpus");
@@ -158,97 +137,9 @@ public final class OpinionCorpusFactory
 		
 		return this;
 	}
-	
-	private OpinionCorpus createSpecific(OpinionCorpus corpus, InputStream input, String format, OpinionCorpusFactoryOptions options)
-		throws IOException {
-		
-		Validate.notNull(corpus, CannedMessages.NULL_ARGUMENT, "corpus");
-		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
-		
-		switch(format) {
-		case "text/xml":
-		case "xml":
-			try {
-				this.addXmlPacket(corpus, input, options);
-			} catch (ParserConfigurationException | SAXException | XPathException e) {
-				throw new IOException("error reading input", e);
-			}
-			break;
-		case "application/zip":
-		case "zip":
-			this.addZipPacket(corpus, input, options);
-			break;
-		case "text/plain":
-		case "text":
-		case "txt":
-		case "text/csv":
-		case "csv":
-			this.addTextPacket(corpus, input, options.getTextDelimiter(), options);
-			break;
-		default:
-			throw new IllegalFactoryOptionsException("unsupported format " + format);
-		}
-		
-		return corpus;
-	}
-	
-	private OpinionCorpus createSpecific(OpinionCorpus corpus, byte[] input, String format, OpinionCorpusFactoryOptions options)
-		throws IOException {
-		
-		Validate.notNull(corpus, CannedMessages.NULL_ARGUMENT, "corpus");
-		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
-		
-		try {
-			return this.createSpecific(corpus, new ByteArrayInputStream(input), format, options);
-		} catch (IOException e) {
-			// unlikely that this will ever happen since we're using a byte stream.
-			throw new IOException("error reading input", e);
-		}
-	}
-	
-	private OpinionCorpus createSpecific(OpinionCorpus corpus, File input, String format, OpinionCorpusFactoryOptions options)
-		throws IOException {
-		
-		Validate.notNull(corpus, CannedMessages.NULL_ARGUMENT, "corpus");
-		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
-		
-		InputStream stream = FileUtils.openInputStream(input);
-		this.createSpecific(corpus, stream, format, options);
-		stream.close();
-		return corpus;
-	}
-	
+
 	@Override
-	protected OpinionCorpus createPrivate(OpinionCorpusFactoryOptions options, OpinionCorpus corpus)
-		throws IllegalFactoryOptionsException {
-		
-		if (corpus == null) {
-			corpus = new OpinionCorpus();
-		}
-		
-		String format = StringUtils.isNotEmpty(options.getFormat()) ? options.getFormat() :
-			(options.getFile() != null ? FilenameUtils.getExtension(options.getFile().getPath()) : null);
-		
-		try {
-			if (options.getContent() != null) {
-				Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
-				
-				this.createSpecific(corpus, IOUtils.toInputStream(options.getContent()), options.getFormat(), options);
-			} else if (options.getBytes() != null) {
-				Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
-				
-				this.createSpecific(corpus, options.getBytes(), format, options);
-			} else if (options.getInputStream() != null) {
-				Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
-				
-				this.createSpecific(corpus, options.getInputStream(), format, options);
-			} else if (options.getFile() != null) {
-				this.createSpecific(corpus, options.getFile(), format, options);
-			}
-		} catch (IOException e) {
-			throw new IllegalFactoryOptionsException("there was an error reading the input", e);
-		}
-		
-		return corpus;
+	protected OpinionCorpus createNew() {
+		return new OpinionCorpus();
 	}
 }

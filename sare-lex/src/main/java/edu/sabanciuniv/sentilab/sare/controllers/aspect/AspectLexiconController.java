@@ -21,14 +21,125 @@
 
 package edu.sabanciuniv.sentilab.sare.controllers.aspect;
 
+import java.io.*;
+
+import javax.xml.parsers.*;
+import javax.xml.xpath.*;
+
+import org.apache.commons.lang3.*;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
-import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
+import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
+/**
+ * A controller for creating and manipulating {@link AspectLexicon} objects.
+ * @author Mus'ab Husaini
+ */
 public class AspectLexiconController
-	extends PersistentDocumentStoreFactory<AspectLexicon, AspectLexiconFactoryOptions>
-	implements IDocumentStoreController {
+	extends NonDerivedStoreFactory<AspectLexicon, AspectLexiconFactoryOptions> {
 
+	@Override
+	protected AspectLexiconController addXmlPacket(AspectLexicon lexicon, InputStream input, AspectLexiconFactoryOptions options)
+		throws ParserConfigurationException, SAXException, IOException, XPathException {
+		
+		Validate.notNull(lexicon, CannedMessages.NULL_ARGUMENT, "lexicon");
+		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
+		
+		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+	    domFactory.setNamespaceAware(true);
+	    Document doc = domFactory.newDocumentBuilder().parse(input);
+
+	    XPathFactory factory = XPathFactory.newInstance();
+	    XPath xpath = factory.newXPath();
+	    
+	    if ("aspect".equalsIgnoreCase(doc.getDocumentElement().getLocalName())) {
+	    	return this.addXmlAspect(lexicon, doc.getDocumentElement());
+	    }
+	    
+	    Node lexiconNode = (Node)xpath.compile("/lexicon").evaluate(doc, XPathConstants.NODE);
+	    if (lexiconNode == null) {
+	    	lexiconNode = Validate.notNull(doc.getDocumentElement(), CannedMessages.NULL_ARGUMENT, "/lexicon");
+	    }
+	    
+	    String title = (String)xpath.compile("./@title").evaluate(lexiconNode, XPathConstants.STRING);
+	    String description = (String)xpath.compile("./@description").evaluate(lexiconNode, XPathConstants.STRING);
+	    
+	    if (StringUtils.isNotEmpty(title)) {
+	    	lexicon.setTitle(title);
+	    }
+	    
+	    if (StringUtils.isNotEmpty(description)) {
+	    	lexicon.setDescription(description);
+	    }
+		
+	    return this.addXmlAspect(lexicon, lexiconNode);
+	}
+	
+	protected AspectLexiconController addXmlAspect(AspectLexicon lexicon, Node aspectNode)
+		throws XPathExpressionException {
+		
+		Validate.notNull(lexicon, CannedMessages.NULL_ARGUMENT, "lexicon");
+		Validate.notNull(aspectNode, CannedMessages.NULL_ARGUMENT, "node");
+
+	    XPathFactory factory = XPathFactory.newInstance();
+	    XPath xpath = factory.newXPath();
+	    
+	    // if the node is called "lexicon" then we're at the root, so we won't need to add an aspect and its expressions.
+		AspectLexicon aspect = lexicon;
+		if (!"lexicon".equalsIgnoreCase(aspectNode.getLocalName())) {
+			String title = Validate.notEmpty((String)xpath.compile("./@title").evaluate(aspectNode, XPathConstants.STRING),
+				CannedMessages.EMPTY_ARGUMENT, "./aspect/@title");;
+			
+			// fetch or create aspect.
+			aspect = lexicon.findAspect(title);
+			if (aspect == null) {
+				aspect = lexicon.addAspect(title);
+			}
+			
+			// get all expressions or keywords, whatever they're called.
+		    NodeList expressionNodes = (NodeList)xpath.compile("./expressions/expression").evaluate(aspectNode, XPathConstants.NODESET);
+		    if (expressionNodes == null || expressionNodes.getLength() == 0) {
+		    	expressionNodes = (NodeList)xpath.compile("./keywords/keyword").evaluate(aspectNode, XPathConstants.NODESET);
+		    }
+		    
+		    // add each of them if they don't exist.
+		    if (expressionNodes != null) {
+		    	for (int index=0; index<expressionNodes.getLength(); index++) {
+		    		String expression = expressionNodes.item(index).getTextContent().trim();
+		    		if (!aspect.hasExpression(expression)) {
+		    			aspect.addExpression(expression);
+		    		}
+		    	}
+		    }
+		}
+		
+		// get all sub-aspects and add them recursively.
+		NodeList subAspectNodes = (NodeList)xpath.compile("./aspects/aspect").evaluate(aspectNode, XPathConstants.NODESET);
+	    if (subAspectNodes != null) {
+		    for (int index=0; index<subAspectNodes.getLength(); index++) {
+		    	this.addXmlAspect(aspect, subAspectNodes.item(index));
+		    }
+	    }
+	    
+		return this;
+	}
+	
+	@Override
+	protected AspectLexiconController addTextPacket(AspectLexicon lexicon, InputStream input, String delimiter, AspectLexiconFactoryOptions options)
+		throws IOException {
+		
+		throw new IllegalFactoryOptionsException();
+	}
+
+	@Override
+	protected AspectLexicon createNew() {
+		return new AspectLexicon();
+	}
+	
 	@Override
 	protected AspectLexicon createPrivate(AspectLexiconFactoryOptions options, AspectLexicon lexicon)
 		throws IllegalFactoryOptionsException {
@@ -37,7 +148,7 @@ public class AspectLexiconController
 			lexicon = new AspectLexicon(options.getBaseStore());
 		}
 		
-		// TODO: add support for uploading file.
+		super.createPrivate(options, lexicon);
 		
 		return lexicon;
 	}

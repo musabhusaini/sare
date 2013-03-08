@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lexicon title="test lexicon" description="a text lexicon">
+	<aspects>
+		<aspect title="aspect 1">
+			<aspects>
+				<aspect title="sub-aspect 1.1">
+					<expressions>
+						<expression>
+							expression 1.1.1
+						</expression>
+					</expressions>
+				</aspect>
+				<aspect title="sub-aspect 1.2">
+					<expressions>
+						<expression>
+							expression 1.2.1
+						</expression>
+					</expressions>
+				</aspect>
+			</aspects>
+			<expressions>
+				<expression>
+					expression 1.1
+				</expression>
+				<expression>
+					expression 1.2
+				</expression>
+			</expressions>
+		</aspect>
+		<aspect title="aspect 2">
+			<expressions>
+				<expression>
+					expression 2.1
+				</expression>
+				<expression>
+					expression 2.2
+				</expression>
+			</expressions>
+		</aspect>
+	</aspects>
+</lexicon>

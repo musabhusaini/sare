@@ -104,7 +104,7 @@ public class CorpusModule extends Module {
 				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("corpus"),
 					Iterables.getFirst(formData.getFiles(), null));
 				if (filePart != null) {
-					options = new OpinionCorpusFactoryOptions()
+					options = (OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 						.setFile(filePart.getFile())
 						.setFormat(FilenameUtils.getExtension(filePart.getFilename()));
 				}
@@ -121,7 +121,7 @@ public class CorpusModule extends Module {
 				}
 			} else {
 				// if not json, then treat the whole thing as a file.
-				options = new OpinionCorpusFactoryOptions()
+				options = (OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 					.setFile(request().body().asRaw().asFile())
 					.setFormat(request().getHeader(CONTENT_TYPE));
 			}
@@ -132,11 +132,11 @@ public class CorpusModule extends Module {
 		}
 		
 		options
+			.setOwnerId(SessionedAction.getUsername(ctx()))
 			.setExistingId(corpus)
 			.setEm(em());
 		
 		OpinionCorpusFactory corpusFactory = new OpinionCorpusFactory();
-		options.setOwnerId(SessionedAction.getUsername(ctx()));
 		OpinionCorpus corpusObj = corpusFactory.create(options);
 		if (!em().contains(corpusObj)) {
 			em().persist(corpusObj);
