@@ -28,7 +28,7 @@ import org.apache.commons.lang3.tuple.*;
 
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.core.controllers.ProgressObservable;
+import edu.sabanciuniv.sentilab.core.controllers.*;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
@@ -43,8 +43,12 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
 public class SetCoverController
 	extends PersistentDocumentStoreFactory<DocumentSetCover, SetCoverFactoryOptions>
 	implements IDocumentStoreController, ProgressObservable {
-
-	private double progress;
+	
+	private Set<ProgressObserver> progressObservers;
+	
+	public SetCoverController() {
+		this.progressObservers = Sets.newHashSet();
+	}
 	
 	private DocumentSetCover createSpecific(DocumentSetCover setCover, PersistentDocumentStore store, TokenizingOptions tokenizingOptions, double weightCoverage) {
 		Validate.notNull(store, CannedMessages.NULL_ARGUMENT, "store");
@@ -153,8 +157,6 @@ public class SetCoverController
 			throw new IllegalFactoryOptionsException(e);
 		}
 		
-		this.progress = 0.0;
-		
 		if (setCover == null) {
 			// create a set cover based on this store.
 			setCover = new DocumentSetCover(options.getStore());
@@ -177,7 +179,6 @@ public class SetCoverController
 			setCover.setLanguage(options.getLanguage());
 		}
 		
-		this.progress = 1.0;
 		return setCover;
 	}
 
@@ -250,9 +251,15 @@ public class SetCoverController
 			.setDocuments(null);
 		return this;
 	}
-	
+
 	@Override
-	public double getProgress() {
-		return this.progress;
+	public ProgressObservable addProgessObserver(ProgressObserver observer) {
+		this.progressObservers.add(observer);
+		return this;
+	}
+
+	@Override
+	public boolean removeProgressObserver(ProgressObserver observer) {
+		return this.progressObservers.remove(observer);
 	}
 }
