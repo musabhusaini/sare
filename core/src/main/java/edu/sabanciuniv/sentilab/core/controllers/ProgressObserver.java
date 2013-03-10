@@ -22,22 +22,15 @@
 package edu.sabanciuniv.sentilab.core.controllers;
 
 /**
- * A class that implements this interface allows for observing the progress of the last invoked action.
+ * A class that implements this interface can observe progress from {@link ProgressObservable} objects.
  * @author Mus'ab Husaini
  */
-public interface ProgressObservable {
+public interface ProgressObserver {
 	
 	/**
-	 * Adds a progress observer for this object.
-	 * @param observer the {@link ProgressObserver} to add as a listener.
-	 * @return the {@code this} object.
+	 * Observes progress from the event host.
+	 * @param progress the fractional progress; with {@code 0.0} indicating no progress and {@code 1.0} indicating completion. 
+	 * @param message any message sent from the host.
 	 */
-	public ProgressObservable addProgessObserver(ProgressObserver observer);
-	
-	/**
-	 * Removes a progress observer from this object.
-	 * @param observer the {@link ProgressObserver} to remove.
-	 * @return {@code true} if the observer was removed; {@code false} otherwise.
-	 */
-	public boolean removeProgressObserver(ProgressObserver observer);
+	public void observe(double progress, String message);
 }
