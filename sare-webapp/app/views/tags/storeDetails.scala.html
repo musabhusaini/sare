@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(store: documentStore.PersistentDocumentStoreModel, isDerived: Boolean = false)
+@(store: documentStore.PersistentDocumentStoreModel, isDerived: Boolean = false, isCorpus: Boolean = true)
 
 @import scala.util._
 
@@ -41,9 +41,10 @@
 					<label for="input-store-desc-@uid">Description</label>
 					<input id="input-store-desc-@uid" type="text" class="input-store-desc span8" value="@store.description"
 						placeholder="Describe it" title="Brief description of the corpus" />
+					@if(isCorpus) {
 					<div class="row-fluid">
 						<div class="span6">
-							<label for="lst-store-language-@uid">Corpus language</label>
+							<label for="lst-store-language-@uid">Language</label>
 							<select id="lst-store-language-@uid" class="lst-store-language span6" value="@store.language"
 								title="Language of the corpus">
 								@for(language <- CollectionsController.getSupportedLanguages()) {
@@ -59,6 +60,7 @@
 							</span>
 						</div>
 					</div>
+					}
 					@if(!isDerived) {
 					<div id="ctr-store-upload-@uid" class="ctr-store-upload">
 						<div class="row-fluid">

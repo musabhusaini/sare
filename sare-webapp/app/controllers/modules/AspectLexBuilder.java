@@ -155,8 +155,6 @@ public class AspectLexBuilder extends Module {
 							throw new IllegalArgumentException();
 						}
 					}
-					
-					options.setBaseStore(corpusObj);
 				} else {
 					throw new IllegalArgumentException();
 				}
@@ -171,6 +169,7 @@ public class AspectLexBuilder extends Module {
 		}
 		
 		options
+			.setBaseStore(corpusObj)
 			.setOwnerId(SessionedAction.getUsername(ctx()))
 			.setExistingId(lexicon)
 			.setEm(em());

@@ -83,6 +83,6 @@ public class CollectionsController extends Application {
 		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
 		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)createViewModel(store);
 		
-		return ok(storeDetails.render(viewModel, store instanceof IDerivedStore));
+		return ok(storeDetails.render(viewModel, store instanceof IDerivedStore, store instanceof DocumentCorpus));
 	}
 }
