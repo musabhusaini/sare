@@ -24,7 +24,6 @@ package edu.sabanciuniv.sentilab.sare.controllers.setcover.tests;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.EnumSet;
 
 import org.junit.*;
 
@@ -32,7 +31,6 @@ import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsExcepti
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
-import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
@@ -56,7 +54,7 @@ public class SetCoverControllerTest
 		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
-			.setTags(EnumSet.of(TagCaptureOptions.IGNORE_CASE, TagCaptureOptions.EXACT), PosTag.NOUN);
+			.setTags(PosTag.NOUN);
 		
 		testController = new SetCoverController();
 	}

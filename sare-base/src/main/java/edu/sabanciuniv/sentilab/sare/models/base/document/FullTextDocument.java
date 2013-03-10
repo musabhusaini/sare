@@ -27,11 +27,8 @@ import javax.persistence.*;
 
 import org.apache.commons.lang3.Validate;
 
-import com.google.common.collect.Iterables;
-
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 import edu.sabanciuniv.sentilab.utils.extensions.*;
-import edu.sabanciuniv.sentilab.utils.predicates.StringPredicates;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.factory.*;
 
@@ -183,7 +180,7 @@ public abstract class FullTextDocument
 			// only include token if the pos tag is included in tokenizing options (no tags in the options means we include everything).
 			if (this.getTokenizingOptions().getTags() == null ||
 				this.getTokenizingOptions().getTags().size() == 0 ||
-				Iterables.any(this.getTokenizingOptions().getTags(), StringPredicates.patternContains(nlpToken.getPosTag().getSimpleTag()))) {
+				nlpToken.getPosTag().is(this.getTokenizingOptions().getTags())) {
 				
 				nlpToken.setLemmatized(this.getTokenizingOptions().isLemmatized());
 				MapsExtensions.increment(this.getTokenWeightMap(true, true), nlpToken);

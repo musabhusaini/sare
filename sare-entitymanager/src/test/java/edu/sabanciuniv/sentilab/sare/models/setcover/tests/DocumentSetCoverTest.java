@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -23,14 +23,11 @@ package edu.sabanciuniv.sentilab.sare.models.setcover.tests;
 
 import static org.junit.Assert.*;
 
-import java.util.EnumSet;
-
 import org.junit.*;
 
 import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
-import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
@@ -50,7 +47,7 @@ public class DocumentSetCoverTest extends PersistenceTestsBase {
 	public void setUp() throws Exception {
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
-			.setTags(EnumSet.of(TagCaptureOptions.EXACT, TagCaptureOptions.IGNORE_CASE), PosTag.NOUN);
+			.setTags(PosTag.NOUN);
 			
 		testCorpus = (OpinionCorpus)new OpinionCorpus()
 			.setLanguage("en")

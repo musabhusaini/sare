@@ -34,7 +34,6 @@ import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsExcepti
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
-import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
@@ -56,7 +55,7 @@ public class SetCoverControllerTest {
 		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
-			.setTags(EnumSet.of(TagCaptureOptions.IGNORE_CASE, TagCaptureOptions.EXACT), PosTag.NOUN);
+			.setTags(PosTag.NOUN);
 		
 		testController = new SetCoverController();
 	}
@@ -79,7 +78,7 @@ public class SetCoverControllerTest {
 		assertTrue(Iterables.size(setCover.getDocuments()) > 0);
 		testController.clear(setCover);
 		assertFalse(Iterables.size(setCover.getDocuments()) > 0);
-		assertFalse(Iterables.size(setCover.getTokenizingTags()) > 0);
+		assertNull(setCover.getTokenizingOptions());
 		assertNull(setCover.getWeightCoverage());
 	}
 	
@@ -100,8 +99,8 @@ public class SetCoverControllerTest {
 		int index=0;
 		SetCoverDocument firstDoc = Iterables.get(setCover.wrapGeneric(SetCoverDocument.class).getDocuments(), index);
 		assertNotNull(firstDoc);
-		assertNotNull(setCover.getTokenizingTags());
-		assertTrue(Iterables.size(setCover.getTokenizingTags()) > 0);
+		assertNotNull(setCover.getTokenizingOptions());
+		assertTrue(Iterables.size(setCover.getTokenizingOptions().getTags()) > 0);
 		assertEquals(94.0, firstDoc.getWeight(), 0);
 		
 		for (SetCoverDocument doc : setCover.wrapGeneric(SetCoverDocument.class).getDocuments()) {

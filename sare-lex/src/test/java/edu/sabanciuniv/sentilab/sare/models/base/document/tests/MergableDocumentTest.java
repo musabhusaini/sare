@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -28,10 +28,9 @@ import java.util.Map.Entry;
 
 import org.junit.*;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
-import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
@@ -85,7 +84,7 @@ public class MergableDocumentTest {
 		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
-			.setTags(EnumSet.of(TagCaptureOptions.EXACT, TagCaptureOptions.IGNORE_CASE), PosTag.NOUN, PosTag.ADJECTIVE);
+			.setTags(ImmutableList.of(PosTag.NOUN, PosTag.ADJECTIVE));
 		
 		testContent1 = "The quick brown fox jumps over lazy dogs. Why would a lazy dog take this humiliation?";
 		testDocument1 = (OpinionDocument)new OpinionDocument()

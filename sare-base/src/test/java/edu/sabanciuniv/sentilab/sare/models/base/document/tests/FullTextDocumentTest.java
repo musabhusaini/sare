@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -28,10 +28,9 @@ import java.util.Map.Entry;
 
 import org.junit.*;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
-import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions.TagCaptureOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
 
@@ -64,7 +63,7 @@ public class FullTextDocumentTest {
 		this.testNnjjLemmMap.put("dog/" + PosTag.NOUN, 2.0);
 
 		this.testTokenizingOptions = new TokenizingOptions()
-			.setTags(EnumSet.of(TagCaptureOptions.EXACT, TagCaptureOptions.IGNORE_CASE), PosTag.NOUN, PosTag.ADJECTIVE);
+			.setTags(ImmutableList.of(PosTag.NOUN, PosTag.ADJECTIVE));
 		
 		this.testDocument = (OpinionDocument)new OpinionDocument()
 			.setStore(store);
@@ -136,7 +135,7 @@ public class FullTextDocumentTest {
 		String posTag = PosTag.NOUN;
 		Map<LinguisticToken, Double> weightMap = this.testDocument
 			.setTokenizingOptions(new TokenizingOptions()
-				.setTags(EnumSet.of(TagCaptureOptions.EXACT, TagCaptureOptions.IGNORE_CASE), posTag))
+				.setTags(posTag))
 			.getTokenWeightMap();
 		
 		assertNotNull(weightMap);

@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -21,15 +21,12 @@
 
 package edu.sabanciuniv.sentilab.sare.models.base.document;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.google.common.base.Function;
 import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.core.models.IModel;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
 
 /**
  * An instance of this class represents tokenizing options for a {@link FullTextDocument}.
@@ -37,58 +34,15 @@ import edu.sabanciuniv.sentilab.core.models.IModel;
  */
 public class TokenizingOptions
 	implements IModel {
-
-	/**
-	 * Strips the pattern that was added to a tag to get the original tag.
-	 * @param pattern the pattern string to strip the pattern from.
-	 * @return the stripped tag string.
-	 */
-	public static String stripPattern(String pattern) {
-		if (pattern != null) {
-			Pattern metaPattern = Pattern.compile("\\(\\?i\\)?\\^?(.+?)\\$?");
-			Matcher matcher = metaPattern.matcher(pattern);
-			if (matcher.matches()) {
-				return matcher.group(1);
-			}
-		}		
-		return pattern;
-	}
 	
-	/**
-	 * An {@code enum} of various tag-capture options.
-	 * @author Mus'ab Husaini
-	 */
-	public enum TagCaptureOptions {
-		/**
-		 * Option to ignore case of tags.
-		 */
-		IGNORE_CASE,
-		/**
-		 * Option to match the start of tags.
-		 */
-		STARTS_WITH,
-		/**
-		 * Option to match the end of tags.
-		 */
-		ENDS_WITH,
-		/**
-		 * Option to match the exact tag (a combination of {@code STARTS_WITH} and {@code ENDS_WITH}.
-		 */
-		EXACT,
-		/**
-		 * Option to use the provided pattern strings as regular expression patterns.
-		 */
-		PATTERN
-	}
-	
-	private List<Pattern> tags;
+	private List<String> tags;
 	private boolean isLemmatized;
 	
 	/**
-	 * Gets the POS tag patterns that will be captured.
-	 * @return the {@link List} of {@link Pattern} objects representing the POS tag pattern that will be captured.
+	 * Gets the POS tags that will be captured.
+	 * @return the {@link List} of {@link String} objects representing the POS tag pattern that will be captured.
 	 */
-	public List<Pattern> getTags() {
+	public List<String> getTags() {
 		if (this.tags == null) {
 			this.tags = Lists.newArrayList();
 		}
@@ -97,72 +51,22 @@ public class TokenizingOptions
 	}
 	
 	/**
-	 * Sets the POS tag pattern that need to be captured.
-	 * @param tags an {@link Iterable} of {@link Pattern} objects representing the POS tag patterns to be captured.
+	 * Sets the POS tags that need to be captured.
+	 * @param tags an {@link Iterable} of {@link String} objects representing the POS tag patterns to be captured.
 	 * @return the {@code this} object.
 	 */
-	public TokenizingOptions setTags(Iterable<Pattern> tags) {
+	public TokenizingOptions setTags(Iterable<String> tags) {
 		this.tags = tags == null ? null : Lists.newArrayList(tags);
 		return this;
 	}
 	
 	/**
 	 * Sets the POS tags that need to be captured.
-	 * @param options an {@link EnumSet} of {@link TagCaptureOptions} to use when building paterns.
-	 * @param tags an {@link Iterable} or variable arguments of {@link String} objects representing the POS tags to be captured.
-	 * @return the {@code this} object.
-	 * @throws IllegalArgumentException if an unacceptable combination of options is provided.
-	 */
-	public TokenizingOptions setTags(EnumSet<TagCaptureOptions> options, Iterable<String> tags) {
-		if (tags == null) {
-			return this.setTags(null);
-		}
-		
-		final EnumSet<TagCaptureOptions> finalOptions = EnumSet.copyOf(options);
-		if (finalOptions.contains(TagCaptureOptions.EXACT)) {
-			finalOptions.remove(TagCaptureOptions.EXACT);
-			finalOptions.add(TagCaptureOptions.STARTS_WITH);
-			finalOptions.add(TagCaptureOptions.ENDS_WITH);
-		}
-		
-		return this.setTags(Iterables.transform(tags, new Function<String, Pattern>() {
-			@Override
-			public Pattern apply(String input) {
-				if (finalOptions == null || !finalOptions.contains(TagCaptureOptions.PATTERN)) {
-					input = Pattern.quote(input);
-				}
-				
-				if (finalOptions != null) {
-					if (!finalOptions.contains(TagCaptureOptions.PATTERN)) {
-						if (finalOptions.contains(TagCaptureOptions.STARTS_WITH)) {
-							input = "^" + input;
-						}
-						
-						if (finalOptions.contains(TagCaptureOptions.ENDS_WITH)) {
-							input = input + "$";
-						}
-					} else if (finalOptions.contains(TagCaptureOptions.STARTS_WITH) || finalOptions.contains(TagCaptureOptions.ENDS_WITH)) {
-						throw new IllegalArgumentException("Cannot combine the PATTERN option with the STARTS_WITH or ENDS_WITH options");
-					}
-					
-					if (finalOptions.contains(TagCaptureOptions.IGNORE_CASE)) {
-						input = "(?i)" + input;
-					}
-				}
-				
-				return Pattern.compile(input);
-			}
-		}));
-	}
-	
-	/**
-	 * Sets the POS tags that need to be captured.
-	 * @param options an {@link EnumSet} of {@link TagCaptureOptions} to use when building paterns.
-	 * @param tags an {@link Array} or variable arguments of {@link String} objects representing the POS tags to be captured.
+	 * @param tags a delimited string of tags.
 	 * @return the {@code this} object.
 	 */
-	public TokenizingOptions setTags(final EnumSet<TagCaptureOptions> options, String...tags) {
-		return this.setTags(options, Arrays.asList(tags));
+	public TokenizingOptions setTags(String tags) {
+		return this.setTags(PosTag.splitTagsString(tags));
 	}
 	
 	/**

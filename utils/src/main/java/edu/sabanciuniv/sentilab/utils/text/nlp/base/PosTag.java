@@ -38,6 +38,15 @@ public abstract class PosTag extends LinguisticObject {
 	public static final String ADVERB = "adverb";
 	public static final String VERB = "verb";
 	
+	/**
+	 * Splits a tags string into its constituents.
+	 * @param tagsString the {@code string} containing tags separating by an accepted separator.
+	 * @return an {@link Iterable} of tags.
+	 */
+	public static Iterable<String> splitTagsString(String tagsString) {
+		return Splitter.on(Pattern.compile("\\||,|;|\\s+")).split(StringUtils.defaultIfEmpty(tagsString, ""));
+	}
+	
 	protected String tag;
 	
 	/**
@@ -63,20 +72,32 @@ public abstract class PosTag extends LinguisticObject {
 	public String getTag() {
 		return this.tag;
 	}
-	
+		
 	/**
 	 * Checks if this POS tag is of the given type or not.
-	 * @param tagString the tag name or a comma/pipe/semicolon-separated list of tag names.
+	 * @param tagsString the tag name or a comma/pipe/semicolon-separated list of tags.
 	 * @return {@code true} if this POS tag is of the given type; {@code false} otherwise.
 	 */
-	public boolean is(String tagString) {
-		Iterable<String> tags = Splitter.on(Pattern.compile("\\||,|;")).split(StringUtils.defaultIfEmpty(tagString, ""));
+	public boolean is(String tagsString) {
+		return this.is(splitTagsString(tagsString));
+	}
+	
+	/**
+	 * Checks if this POS tag belongs to one of the given type or not.
+	 * @param tags the {@link Iterable} of tag strings.
+	 * @return {@code true} if this POS tag is one of the given types; {@code false} otherwise.
+	 */
+	public boolean is(Iterable<String> tags) {
+		if (tags == null) {
+			return true;
+		}
+		
 		for (String tag : tags) {
 			if (StringUtils.equalsIgnoreCase(tag, this.getSimpleTag()) || StringUtils.equalsIgnoreCase(tag, this.getTag())) {
 				return true;
 			}
 		}
-		return false;
+		return false;		
 	}
 	
 	/**
