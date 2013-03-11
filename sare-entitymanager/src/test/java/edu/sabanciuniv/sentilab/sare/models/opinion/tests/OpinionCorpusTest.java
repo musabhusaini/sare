@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -64,7 +64,7 @@ public class OpinionCorpusTest
 		assertNotNull(actualCorpus);
 		assertEquals(Iterables.size(testCorpus.getDocuments()), Iterables.size(actualCorpus.getDocuments()));
 		
-		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments(),
+		OpinionDocument actualDocument = Iterables.getFirst(actualCorpus.getDocuments(OpinionDocument.class),
 			null);
 		assertNotNull(actualDocument);
 		assertEquals(testDocument.getIdentifier(), actualDocument.getIdentifier());

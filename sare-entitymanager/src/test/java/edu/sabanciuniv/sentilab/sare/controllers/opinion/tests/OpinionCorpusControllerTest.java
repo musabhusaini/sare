@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -89,13 +89,13 @@ public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 		assertEquals(testCorpus.getIdentifier(), actualCorpus.getIdentifier());
 		assertEquals(2, Iterables.size(actualCorpus.getDocuments()));
 		
-		OpinionDocument document = Iterables.getFirst(actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments(), null);
+		OpinionDocument document = Iterables.getFirst(actualCorpus.getDocuments(OpinionDocument.class), null);
 		assertNotNull(document);
 		assertNotNull(document.getContent());
 		assertNotNull(document.getPolarity());
 		
 		em.getTransaction().begin();
-		for (OpinionDocument doc : actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments()) {
+		for (OpinionDocument doc : actualCorpus.getDocuments(OpinionDocument.class)) {
 			persist(doc);
 		}
 		em.merge(actualCorpus);
@@ -107,7 +107,7 @@ public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 		assertEquals(testCorpus.getIdentifier(), actualCorpus.getIdentifier());
 		assertEquals(2, Iterables.size(actualCorpus.getDocuments()));
 
-		document = Iterables.getFirst(actualCorpus.wrapGeneric(OpinionDocument.class).getDocuments(), null);
+		document = Iterables.getFirst(actualCorpus.getDocuments(OpinionDocument.class), null);
 		assertNotNull(document);
 		assertNotNull(document.getContent());
 		assertNotNull(document.getPolarity());
