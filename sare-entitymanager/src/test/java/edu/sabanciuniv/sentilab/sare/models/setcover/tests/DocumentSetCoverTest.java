@@ -58,11 +58,6 @@ public class DocumentSetCoverTest extends PersistenceTestsBase {
 			.setStore(testCorpus);
 		testCorpus.addDocument(testDocument);
 		
-//		em.getTransaction().begin();
-//		persist(testCorpus);
-//		persist(testDocument);
-//		em.getTransaction().commit();
-		
 		testSetCover = new DocumentSetCover(testCorpus);
 		testSetCoverDocument = (SetCoverDocument)new SetCoverDocument(testDocument)
 			.setTokenizingOptions(testTokenizingOptions)

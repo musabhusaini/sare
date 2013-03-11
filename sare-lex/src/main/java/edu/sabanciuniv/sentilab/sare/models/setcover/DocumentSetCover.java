@@ -25,6 +25,10 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
+import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 
@@ -63,6 +67,27 @@ public class DocumentSetCover
 	}
 	
 	/**
+	 * Gets all of the documents including non-covered documents.
+	 * @return the {@link Iterable} of all {@link SetCoverDocument} objects that are part of this set cover.
+	 */
+	public Iterable<SetCoverDocument> getAllDocuments() {
+		return Iterables.filter(super.getDocuments(), SetCoverDocument.class);
+	}
+	
+	@Override
+	public Iterable<PersistentDocument> getDocuments() {
+		return Iterables.filter(super.getDocuments(), new Predicate<PersistentDocument>() {
+			@Override
+			public boolean apply(PersistentDocument input) {
+				if (input instanceof SetCoverDocument) {
+					return ((SetCoverDocument)input).isCovered();
+				}
+				return false;
+			}
+		});
+	}
+
+	/**
 	 * Replaces a given document with another document.
 	 * @param original the original document to replace.
 	 * @param replacement the new document to replace with.
@@ -82,10 +107,23 @@ public class DocumentSetCover
 	}
 
 	/**
-	 * Gets the total weight of this set cover.
+	 * Gets the total weight of this set cover (including uncovered documents).
+	 * @return the weight of the set cover including uncovered documents.
+	 */
+	public double getTotalWeight() {
+		double weight = 0;
+		for (SetCoverDocument document : this.getAllDocuments()) {
+			weight += document.getWeight();
+		}
+		
+		return weight;
+	}
+	
+	/**
+	 * Gets the total weight the covered documents in this set cover.
 	 * @return the weight of the set cover.
 	 */
-	public double totalWeight() {
+	public double getTotalCoveredWeight() {
 		double weight = 0;
 		for (SetCoverDocument document : this.getDocuments(SetCoverDocument.class)) {
 			weight += document.getWeight();

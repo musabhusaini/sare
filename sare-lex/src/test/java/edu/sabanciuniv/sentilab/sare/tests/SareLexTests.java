@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import edu.sabanciuniv.sentilab.sare.controllers.setcover.tests.SetCoverControllerTest;
+import edu.sabanciuniv.sentilab.sare.controllers.setcover.tests.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.tests.MergableDocumentTest;
 
 @RunWith(Suite.class)

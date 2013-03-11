@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -72,7 +72,7 @@ public class SetCoverDocument
 	 * Creates a new instance of {@link SetCoverDocument}.
 	 */
 	public SetCoverDocument() {
-		//
+		this.setCovered(true);
 	}
 	
 	/**
@@ -99,11 +99,11 @@ public class SetCoverDocument
 	
 	/**
 	 * Gets the (possibly NLP-enriched) content of this document.
-	 * @param enriched {@code true} if NLP-enriched content is desired, {@code false} otherwise.
-	 * @return the (possibly NLP-enriched) content of this document.
+	 * @param enhanced {@code true} if NLP-enhanced content is desired, {@code false} otherwise.
+	 * @return the (possibly NLP-enhanced) content of this document.
 	 */
-	public String getContent(boolean enriched) {
-		if (enriched) {
+	public String getContent(boolean enhanced) {
+		if (enhanced) {
 			if (this.getBaseDocument() != null && this.getBaseDocument() instanceof FullTextDocument &&
 				(this.title == null
 				|| (this.getLastUpdatedDate() != null && this.getBaseDocument().getLastUpdatedDate() != null
@@ -136,6 +136,24 @@ public class SetCoverDocument
 	 */
 	public SetCoverDocument resetWeight() {
 		this.setWeight(null);
+		return this;
+	}
+	
+	/**
+	 * Gets a flag indicating whether this document is covered or not.
+	 * @return {@code true} if covered; {@code false} otherwise.
+	 */
+	public boolean isCovered() {
+		return this.flag;
+	}
+	
+	/**
+	 * Sets a flag indicating whether this document is covered or not.
+	 * @param covered {@code true} if covered; {@code false} otherwise.
+	 * @return the {@code this} object.
+	 */
+	public SetCoverDocument setCovered(boolean covered) {
+		this.flag = covered;
 		return this;
 	}
 

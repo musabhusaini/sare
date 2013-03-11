@@ -61,14 +61,14 @@ public class SetCoverController
 		DocumentSetCover dummySetCover = new DocumentSetCover(store);
 		
 		// for each store document.
-		for (PersistentDocument document : Iterables.filter(store.getDocuments(), PersistentDocument.class)) {
+		for (PersistentDocument document : store.getDocuments()) {
 			// create a copy of the current document as a set cover document.
 			SetCoverDocument workingDocument = (SetCoverDocument)new SetCoverDocument(document)
 				.setTokenizingOptions(tokenizingOptions)
 				.setStore(dummySetCover);
 			
 			// loop through all set cover documents.
-			Iterable<SetCoverDocument> setCoverDocuments = setCover.getDocuments(SetCoverDocument.class);
+			Iterable<SetCoverDocument> setCoverDocuments = setCover.getAllDocuments();
 			for (int scIndex=0; scIndex<Iterables.size(setCoverDocuments); scIndex++) {
 				SetCoverDocument setCoverDocument = Iterables.get(setCoverDocuments, scIndex);
 				
@@ -97,30 +97,29 @@ public class SetCoverController
 				}
 			}
 			
-			// if the document was not completely consumed, we create another entry for it.
-			if (workingDocument.getTotalTokenWeight() > 0) {
-				workingDocument.setStore(setCover);
-			} else {
-				workingDocument.setStore(null);
+			workingDocument.setStore(setCover);
+			// if the document was completely consumed, then we mark it as uncovered.
+			if (workingDocument.getTotalTokenWeight() == 0) {
+				workingDocument.setCovered(false);
 			}
 		}
 		
 		// get rid of the dummy.
 		dummySetCover.setBaseStore(null);
 		
-		return this.reduceCoverage(setCover, weightCoverage)
+		return this.adjustCoverage(setCover, weightCoverage)
 			.setTokenizingTags(tokenizingOptions);
 	}
 	
 	private Pair<List<SetCoverDocument>, List<SetCoverDocument>> splitByCoverage(DocumentSetCover setCover, double weightCoverage) {
 		List<SetCoverDocument> covered = Lists.newArrayList();
-		List<SetCoverDocument> discarded = Lists.newArrayList();
+		List<SetCoverDocument> uncovered = Lists.newArrayList();
 		
-		double totalWeight=setCover.totalWeight();
+		double totalWeight=setCover.getTotalWeight();
 		double accumulatedWeight=0;
 		
 		// sort set cover.
-		List<SetCoverDocument> setCoverDocuments = Lists.newArrayList(setCover.getDocuments(SetCoverDocument.class));
+		List<SetCoverDocument> setCoverDocuments = Lists.newArrayList(setCover.getAllDocuments());
 		Collections.sort(setCoverDocuments, new Comparator<SetCoverDocument>() {
 			@Override
 			public int compare(SetCoverDocument o1, SetCoverDocument o2) {
@@ -141,10 +140,10 @@ public class SetCoverController
 		}
 		
 		while (iterator.hasNext()) {
-			discarded.add(iterator.next());
+			uncovered.add(iterator.next());
 		}
 		
-		return new ImmutablePair<List<SetCoverDocument>, List<SetCoverDocument>>(covered, discarded);
+		return new ImmutablePair<List<SetCoverDocument>, List<SetCoverDocument>>(covered, uncovered);
 	}
 	
 	@Override
@@ -183,26 +182,28 @@ public class SetCoverController
 	}
 
 	/**
-	 * Reduces the coverage of a set cover.
-	 * @param setCover the {@link DocumentSetCover} to reduce.
+	 * Adjusts the coverage of a set cover.
+	 * @param setCover the {@link DocumentSetCover} to adjust.
 	 * @param weightCoverage the desired minimum weight coverage.
 	 * @return the reduced {@link DocumentSetCover} object.
 	 */
-	public DocumentSetCover reduceCoverage(DocumentSetCover setCover, double weightCoverage) {
+	public DocumentSetCover adjustCoverage(DocumentSetCover setCover, double weightCoverage) {
 		Validate.notNull(setCover, CannedMessages.NULL_ARGUMENT, "setCover");
 		
 		// a quick way of checking if the weight coverage is valid or not. the setter will throw an exception if not.
 		new SetCoverFactoryOptions()
 			.setWeightCoverage(weightCoverage);
 		
-		// apply the weight ratio, if any.
-		if (weightCoverage < 1.0) {
-			List<SetCoverDocument> discarded = this.splitByCoverage(setCover, weightCoverage).getRight();
-			
-			// eliminate the extras.
-			for (SetCoverDocument document : discarded) {
-				setCover.removeDocument(document);
-			}
+		// apply the weight ratio.
+		Pair<List<SetCoverDocument>, List<SetCoverDocument>> coverageSplit = this.splitByCoverage(setCover, weightCoverage);
+		
+		// mark covered and uncovered.
+		for (SetCoverDocument document : coverageSplit.getLeft()) {
+			document.setCovered(true);
+		}
+		
+		for (SetCoverDocument document : coverageSplit.getRight()) {
+			document.setCovered(false);
 		}
 		
 		return setCover.setWeightCoverage(weightCoverage);
@@ -219,7 +220,7 @@ public class SetCoverController
 		Validate.isTrue(coverageGranularity > 0 && coverageGranularity <= 100, "parameter 'coverageGranularity' must fall within (0, 100]");
 		
 		double totalSize = Iterables.size(setCover.getBaseStore() != null ?
-			setCover.getBaseStore().getDocuments() : setCover.getDocuments());
+			setCover.getBaseStore().getDocuments() : setCover.getAllDocuments());
 		Map<Integer, Double> matrix = Maps.newHashMap();
 		for (int coverage=100; coverage>=0; coverage-=coverageGranularity) {
 			List<SetCoverDocument> covered = this.splitByCoverage(setCover, coverage/100.0).getLeft();

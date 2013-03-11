@@ -139,6 +139,43 @@ public class SetCoverControllerTest {
 	}
 	
 	@Test
+	public void testAdjustCoverage() {
+		double weightCoverage = 0.5;
+		DocumentSetCover setCover;
+		try {
+			setCover = testController.create(new SetCoverFactoryOptions()
+				.setStore(testCorpus)
+				.setTokenizingOptions(testTokenizingOptions)
+				.setWeightCoverage(weightCoverage));
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not create set cover");
+			return;
+		}
+
+		assertNotNull(setCover);
+		assertEquals(2, Iterables.size(setCover.getDocuments()));
+		assertEquals(weightCoverage, setCover.getWeightCoverage(), 0);
+		
+		weightCoverage = 0.8;
+		setCover = testController.adjustCoverage(setCover, weightCoverage);
+		
+		assertNotNull(setCover);
+		assertEquals(5, Iterables.size(setCover.getDocuments()));
+		assertEquals(weightCoverage, setCover.getWeightCoverage(), 0);
+		
+		int index=0;
+		SetCoverDocument firstDoc = Iterables.get(setCover.getDocuments(SetCoverDocument.class), index);
+		assertNotNull(firstDoc);
+		
+		double firstWeight = 94.0;
+		assertEquals(firstWeight, firstDoc.getWeight(), 0);
+		
+		for (SetCoverDocument doc : setCover.getDocuments(SetCoverDocument.class)) {
+			assertFalse(doc.getContent().equals("This hotel was great; I loved the bathroom!"));
+		}
+	}
+	
+	@Test
 	public void testCalculateCoverageMatrix() {
 		DocumentSetCover setCover;
 		try {
