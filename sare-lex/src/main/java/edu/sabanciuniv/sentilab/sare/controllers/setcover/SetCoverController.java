@@ -57,7 +57,11 @@ public class SetCoverController
 			tokenizingOptions = new TokenizingOptions();
 		}
 		
-		// create a dummy set cover to keep the refuse in.
+		
+		double progress = 0.0;
+		int storeSize = Iterables.size(store.getDocuments());
+		
+		// create a dummy set cover to keep the extra stuff in.
 		DocumentSetCover dummySetCover = new DocumentSetCover(store);
 		
 		// for each store document.
@@ -69,7 +73,7 @@ public class SetCoverController
 			
 			// loop through all set cover documents.
 			Iterable<SetCoverDocument> setCoverDocuments = setCover.getAllDocuments();
-			for (int scIndex=0; scIndex<Iterables.size(setCoverDocuments); scIndex++) {
+			for (int scIndex=0; scIndex < Iterables.size(setCoverDocuments); scIndex++) {
 				SetCoverDocument setCoverDocument = Iterables.get(setCoverDocuments, scIndex);
 				
 				// create a working reference to the set cover document.
@@ -101,6 +105,11 @@ public class SetCoverController
 			// if the document was completely consumed, then we mark it as uncovered.
 			if (workingDocument.getTotalTokenWeight() == 0) {
 				workingDocument.setCovered(false);
+			}
+			
+			progress += 1.0 / storeSize;
+			for (ProgressObserver progressObserver : this.progressObservers) {
+				progressObserver.observe(progress, "create");
 			}
 		}
 		
