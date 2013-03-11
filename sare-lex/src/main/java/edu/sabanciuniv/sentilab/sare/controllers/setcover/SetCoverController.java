@@ -68,7 +68,7 @@ public class SetCoverController
 				.setStore(dummySetCover);
 			
 			// loop through all set cover documents.
-			Iterable<SetCoverDocument> setCoverDocuments = setCover.wrapGeneric(SetCoverDocument.class).getDocuments();
+			Iterable<SetCoverDocument> setCoverDocuments = setCover.getDocuments(SetCoverDocument.class);
 			for (int scIndex=0; scIndex<Iterables.size(setCoverDocuments); scIndex++) {
 				SetCoverDocument setCoverDocument = Iterables.get(setCoverDocuments, scIndex);
 				
@@ -120,7 +120,7 @@ public class SetCoverController
 		double accumulatedWeight=0;
 		
 		// sort set cover.
-		List<SetCoverDocument> setCoverDocuments = Lists.newArrayList(setCover.wrapGeneric(SetCoverDocument.class).getDocuments());
+		List<SetCoverDocument> setCoverDocuments = Lists.newArrayList(setCover.getDocuments(SetCoverDocument.class));
 		Collections.sort(setCoverDocuments, new Comparator<SetCoverDocument>() {
 			@Override
 			public int compare(SetCoverDocument o1, SetCoverDocument o2) {

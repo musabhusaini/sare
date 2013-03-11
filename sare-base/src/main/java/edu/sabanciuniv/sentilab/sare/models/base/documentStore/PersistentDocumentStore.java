@@ -222,6 +222,15 @@ public abstract class PersistentDocumentStore
 		
 		return Collections.unmodifiableList(this.documents);
 	}
+	
+	/**
+	 * Gets documents of a given type.
+	 * @param ofType the type of documents to get.
+	 * @return an {@link Iterable} of {@code T} type documents.
+	 */
+	public <T> Iterable<T> getDocuments(Class<T> ofType) {
+		return Iterables.filter(this.getDocuments(), ofType);
+	}
 
 	/**
 	 * Sets the documents in this store.
@@ -336,14 +345,5 @@ public abstract class PersistentDocumentStore
 		}
 		
 		return this;
-	}
-	
-	/**
-	 * Wraps a {@link GenericizedDocumentStore} around this store for easier access.
-	 * @param clazz the type of documents to assume.
-	 * @return the {@link GenericizedDocumentStore} version of this store.
-	 */
-	public <T extends PersistentDocument> GenericizedDocumentStore<T> wrapGeneric(Class<T> clazz) {
-		return GenericizedDocumentStore.create(this, clazz);
 	}
 }

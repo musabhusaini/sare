@@ -93,7 +93,7 @@ public class DocumentSetCover
 	 */
 	public double totalWeight() {
 		double weight = 0;
-		for (SetCoverDocument document : this.wrapGeneric(SetCoverDocument.class).getDocuments()) {
+		for (SetCoverDocument document : this.getDocuments(SetCoverDocument.class)) {
 			weight += document.getWeight();
 		}
 		
