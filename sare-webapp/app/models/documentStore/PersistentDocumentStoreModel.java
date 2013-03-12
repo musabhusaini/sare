@@ -40,21 +40,27 @@ public class PersistentDocumentStoreModel
 	public String language;
 	public long size;
 	
-	public PersistentDocumentStoreModel(PersistentDocumentStore documentStore) {
+	public PersistentDocumentStoreModel(PersistentDocumentStore documentStore, boolean skipSize) {
 		super(documentStore);
 		
 		if (documentStore != null) {
 			this.title = documentStore.getTitle();
 			this.description = documentStore.getDescription();
 			this.language = documentStore.getLanguage();
-			EntityManager em = SareTransactionalAction.em();
-			if (em != null) {
-				// TODO: perhaps there is a better way to do this than to put controller code in the view model.
-				this.size = new PersistentDocumentStoreController().getSize(em, this.id);
-			} else {
-				this.size = Iterables.size(documentStore.getDocuments());
+			if (!skipSize) {
+				EntityManager em = SareTransactionalAction.em();
+				if (em != null) {
+					// TODO: perhaps there is a better way to do this than to put controller code in the view model.
+					this.size = new PersistentDocumentStoreController().getSize(em, documentStore);
+				} else {
+					this.size = Iterables.size(documentStore.getDocuments());
+				}
 			}
 		}
+	}
+	
+	public PersistentDocumentStoreModel(PersistentDocumentStore documentStore) {
+		this(documentStore, false);
 	}
 	
 	public PersistentDocumentStoreModel() {

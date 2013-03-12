@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -31,7 +31,6 @@ import org.apache.commons.lang3.Validate;
 import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.controllers.base.ControllerBase;
-import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.utils.*;
 
@@ -76,22 +75,17 @@ public class PersistentDocumentStoreController
 	/**
 	 * Gets the size of a document store (number of documents contained therein).
 	 * @param em the {@link EntityManager} to use.
-	 * @param storeId the ID of the store to look for.
+	 * @param store the {@link PersistentDocumentStore} whose size is desired.
 	 * @return the {@link Long} count of documents.
 	 */
-	public long getSize(EntityManager em, String storeId) {
+	public long getSize(EntityManager em, PersistentDocumentStore store) {
 		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
-		Validate.notNull(storeId, CannedMessages.NULL_ARGUMENT, "id");
+		Validate.notNull(store, CannedMessages.NULL_ARGUMENT, "store");
 		
-		byte[] uuidBytes = UuidUtils.toBytes(storeId);
-		PersistentDocumentStore store = em.find(PersistentDocumentStore.class, uuidBytes);
+		TypedQuery<byte[]> query = em.createQuery("SELECT doc.id FROM PersistentDocument doc " +
+			"WHERE doc.store=:store", byte[].class);
+		query.setParameter("store", store);
 		
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		Root<PersistentDocument> doc = cq.from(PersistentDocument.class);
-		cq.select(cb.count(doc)).where(cb.equal(doc.get("store"), cb.parameter(PersistentDocumentStore.class, "store")));
-		TypedQuery<Long> tq = em.createQuery(cq);
-		tq.setParameter("store", store);
-		return tq.getSingleResult();
+		return query.getResultList().size();
 	}
 }

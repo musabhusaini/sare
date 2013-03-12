@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -47,7 +47,7 @@ public class SareTransactionalAction extends Action.Simple {
 		EntityManager em = currentEntityManager.get();
 		if (em == null) {
 			throw new RuntimeException("No EntityManager bound to this thread. " +
-				"Try annotating your action method with @controllers.base.SareTransactionalAction");
+				"Try annotating your action method with @With(controllers.base.SareTransactionalAction)");
 		}
 		return em;
 	}

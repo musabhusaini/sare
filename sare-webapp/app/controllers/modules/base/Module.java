@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -24,7 +24,8 @@ package controllers.modules.base;
 import java.lang.annotation.*;
 import java.util.UUID;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Predicates;
+import com.google.common.collect.*;
 
 import play.api.templates.Html;
 import play.mvc.Result;
@@ -67,8 +68,16 @@ public abstract class Module
 		if (viewModels == null) {
 			viewModels = Lists.newArrayList();
 		}
-		this.viewModels = viewModels;
+		this.viewModels = Iterables.filter(viewModels, Predicates.notNull());
 		return this;
+	}
+	
+	public <T extends ViewModel> T findViewModel(Class<T> viewModelClass, T defaultViewModel) {
+		return Iterables.getFirst(Iterables.filter(this.viewModels, viewModelClass), defaultViewModel);
+	}
+	
+	public <T extends ViewModel> T findViewModel(Class<T> viewModelClass) {
+		return this.findViewModel(viewModelClass, null);
 	}
 	
 	public abstract UUID getId();

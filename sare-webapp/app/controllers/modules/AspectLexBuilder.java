@@ -44,6 +44,7 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import views.html.tags.*;
 import models.LexiconBuilderDocumentTokenModel;
+import models.base.ViewModel;
 import models.document.PersistentDocumentModel;
 import models.documentStore.*;
 import controllers.CollectionsController;
@@ -117,7 +118,9 @@ public class AspectLexBuilder extends Module {
 		
 		DocumentCorpusModel corpusVM = corpusObj != null ? (DocumentCorpusModel)createViewModel(corpusObj) : null;
 		AspectLexiconModel lexiconVM = lexiconObj != null ? (AspectLexiconModel)createViewModel(lexiconObj) : null;
-		return moduleRender(new AspectLexBuilder(), aspectLexBuilder.render(corpusVM, lexiconVM, true), partial);
+		
+		return moduleRender(new AspectLexBuilder().setViewModels(Lists.<ViewModel>newArrayList(corpusVM, lexiconVM)),
+			aspectLexBuilder.render(corpusVM, lexiconVM, true), partial);
 	}
 	
 	public static Result create(String corpus) {

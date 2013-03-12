@@ -12,13 +12,27 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-<div>
-	Hello world!
+@(corpus: documentStore.DocumentCorpusModel, setcover: documentStore.DocumentSetCoverModel)
+
+@import scala.util._
+
+@import controllers.modules._
+
+@defining(Random.nextInt(1000)) { uid =>
+<div id="ctr-module-@uid" class="ctr-module" @if(corpus != null) { data-corpus="@corpus.asJson()" }
+	@if(setcover != null) { data-setcover="@setcover.asJson()" }>
+	
+	@if(setcover == null) {
+	<div id="ctr-setcovers-@uid" class="ctr-setcovers row-fluid">
+		@tags.storeList(stores = SetCoverModule.getSetCovers(corpus), editable = true, selectionPrompt = "Select a reduction")
+	</div>
+	}
 </div>
+}

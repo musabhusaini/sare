@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -52,16 +52,15 @@ public class LexiconController
 		Validate.notNull(ownerId, CannedMessages.NULL_ARGUMENT, "ownerId");
 		Validate.notNull(entityClass, CannedMessages.NULL_ARGUMENT, "entityClass");
 		
-		Query query = em.createQuery("SELECT lex.id FROM Lexicon lex " +
+		TypedQuery<byte[]> query = em.createQuery("SELECT lex.id FROM Lexicon lex " +
 			"WHERE lex.ownerId=:ownerId " +
 			"AND TYPE(lex)=:type AND (lex.baseStore IS NULL " +
-			"OR lex.baseStore IN (SELECT d FROM DocumentCorpus d))");
+			"OR lex.baseStore IN (SELECT d FROM DocumentCorpus d))", byte[].class);
 		query
 			.setParameter("ownerId", ownerId)
 			.setParameter("type", entityClass);
 		
-		@SuppressWarnings("unchecked")
-		List<byte[]> results = (List<byte[]>)query.getResultList();
+		List<byte[]> results = query.getResultList();
 		return Lists.newArrayList(Iterables.transform(results, UuidUtils.uuidBytesToStringFunction()));
 	}
 	

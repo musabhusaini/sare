@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -84,7 +84,7 @@ public class PersistentDocumentStoreControllerTest extends PersistenceTestsBase 
 	@Test
 	public void testGetSize() {
 		for (OpinionCorpus testCorpus : testCorpora) {
-			long actualSize = testController.getSize(em, testCorpus.getIdentifier().toString());
+			long actualSize = testController.getSize(em, testCorpus);
 			assertEquals(size(testCorpus.getDocuments()), actualSize);
 		}
 	}

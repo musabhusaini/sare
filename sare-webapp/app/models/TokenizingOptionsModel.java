@@ -19,22 +19,35 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package models.documentStore;
+package models;
 
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
+import java.util.List;
 
-public class DocumentCorpusModel
-	extends PersistentDocumentStoreModel {
+import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
+import models.base.ViewModel;
+
+public class TokenizingOptionsModel
+	extends ViewModel {
+
+	public List<String> tags;
+	public boolean isLemmatized;
 	
-	public DocumentCorpusModel(DocumentCorpus corpus, boolean skipSize) {
-		super(corpus, skipSize);
+	public TokenizingOptionsModel(TokenizingOptions tokenizingOptions) {
+		super(tokenizingOptions);
+		
+		if (tokenizingOptions != null) {
+			this.tags = tokenizingOptions.getTags();
+			this.isLemmatized = tokenizingOptions.isLemmatized();
+		}
 	}
 	
-	public DocumentCorpusModel(DocumentCorpus corpus) {
-		this(corpus, false);
-	}
-	
-	public DocumentCorpusModel() {
+	public TokenizingOptionsModel() {
 		this(null);
+	}
+	
+	public TokenizingOptions toTokenizingOptions() {
+		return new TokenizingOptions()
+			.setLemmatized(this.isLemmatized)
+			.setTags(this.tags);
 	}
 }

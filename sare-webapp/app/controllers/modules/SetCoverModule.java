@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -21,18 +21,33 @@
 
 package controllers.modules;
 
-import java.util.UUID;
+import static controllers.base.SareTransactionalAction.*;
+import static controllers.base.SessionedAction.*;
+import static models.base.ViewModel.*;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
+import java.util.*;
+
+import javax.annotation.Nullable;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 import play.mvc.Result;
+import play.mvc.With;
+import models.base.ViewModel;
 import models.documentStore.*;
-import views.html.tags.*;
+import controllers.base.SareTransactionalAction;
 import controllers.modules.base.Module;
+import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.DocumentSetCoverController;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
+import edu.sabanciuniv.sentilab.sare.models.setcover.DocumentSetCover;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
-@Module.Requires({DocumentCorpusModel.class})
+@With(SareTransactionalAction.class)
+@Module.Requireses({
+	@Module.Requires({DocumentCorpusModel.class}),
+	@Module.Requires({DocumentCorpusModel.class, DocumentSetCoverModel.class}),
+})
 public class SetCoverModule extends Module {
 
 	@Override
@@ -47,17 +62,39 @@ public class SetCoverModule extends Module {
 
 	@Override
 	public String getRoute() {
-		DocumentCorpusModel viewModel = (DocumentCorpusModel)Iterables.find(this.viewModels,
-			Predicates.instanceOf(DocumentCorpusModel.class), null);
+		DocumentCorpusModel corpusVM = this.findViewModel(DocumentCorpusModel.class, new DocumentCorpusModel());
+		DocumentSetCoverModel setcoverVM = this.findViewModel(DocumentSetCoverModel.class, new DocumentSetCoverModel());
 		
-		if (viewModel == null) {
-			throw new IllegalArgumentException();
-		}
-		
-		return controllers.modules.routes.SetCoverModule.modulePage(viewModel.id, false).url();
+		return controllers.modules.routes.SetCoverModule.modulePage(corpusVM.id, setcoverVM.id, false).url();
 	}
 	
-	public static Result modulePage(String corpus, boolean partial) {
-		return moduleRender(new SetCoverModule(), setcover.render(), partial);
+	public static List<PersistentDocumentStoreModel> getSetCovers(DocumentCorpusModel corpus) {
+		if (corpus == null) {
+			return Lists.newArrayList();
+		}
+		
+		DocumentCorpus corpusObj = fetchResource(corpus.id, DocumentCorpus.class);
+		return Lists.transform(new DocumentSetCoverController().getAllSetCovers(em(), getUsername(), corpusObj),
+			new Function<String, PersistentDocumentStoreModel>() {
+				@Override
+				@Nullable
+				public PersistentDocumentStoreModel apply(@Nullable String input) {
+					return (PersistentDocumentStoreModel)createViewModel(fetchResource(input, DocumentSetCover.class));
+				}
+			});
+	}
+	
+	public static Result modulePage(String corpus, String setcover, boolean partial) {
+		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
+		DocumentCorpusModel corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
+		DocumentSetCoverModel setcoverVM = setcover != null ?
+			(DocumentSetCoverModel)createViewModel(fetchResource(setcover, DocumentSetCover.class)) : null;
+		
+		if (setcoverVM == null && new DocumentSetCoverController().getAllSetCovers(em(), getUsername(), corpusObj).size() == 0) {
+			em().persist(new DocumentSetCover(corpusObj).setOwnerId(getUsername()));
+		}
+		
+		return moduleRender(new SetCoverModule().setViewModels(Lists.<ViewModel>newArrayList(corpusVM, setcoverVM)),
+			views.html.tags.setcover.render(corpusVM, setcoverVM), partial);
 	}
 }

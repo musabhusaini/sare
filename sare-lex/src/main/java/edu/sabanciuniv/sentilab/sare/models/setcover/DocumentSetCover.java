@@ -28,8 +28,7 @@ import javax.persistence.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
-import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
+import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 
 /**
@@ -64,6 +63,17 @@ public class DocumentSetCover
 	public DocumentSetCover(PersistentDocumentStore baseStore) {
 		this();
 		this.setBaseStore(baseStore);
+	}
+	
+	/**
+	 * Gets the corpus from which this set cover is derived.
+	 * @return the {@link DocumentCorpus} which is the source of this set cover.
+	 */
+	public DocumentCorpus getBaseCorpus() {
+		if (this.getBaseStore() instanceof DocumentCorpus) {
+			return (DocumentCorpus)this.getBaseStore();
+		}
+		return null;
 	}
 	
 	/**
