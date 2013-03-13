@@ -59,6 +59,7 @@ widget =
 			@_changeInputState @options.detailsButton, "disabled"
 			if initial
 				@_$(@options.detailsModalOuterContainer).hide duration, =>
+					(@_$(@options.detailsModalOuterContainer).children().first().data Strings.widgetKey)?.destroy()
 					@_$(@options.detailsModalOuterContainer).empty()
 					@options.detailsShown = false
 					@_$(@options.innerContainer).removeClass @options.withDetailsClass, duration/2
