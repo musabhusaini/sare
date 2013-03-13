@@ -50,7 +50,7 @@ public class PersistentDocumentStoreModel
 			EntityManager em = SareTransactionalAction.em();
 			if (em != null) {
 				// TODO: perhaps there is a better way to do this than to put controller code in the view model.
-				this.size = new PersistentDocumentStoreController().getSize(em, documentStore);
+				this.size = new PersistentDocumentStoreController().getSize(em, this.id);
 			} else {
 				this.size = Iterables.size(documentStore.getDocuments());
 			}

@@ -60,6 +60,9 @@
 				<div id="ctr-store-upload-@uid" class="ctr-store-upload">
 					<div class="row-fluid">
 						<div id="ctr-store-dropfile-@uid" class="ctr-store-dropfile span8 well well-small"></div>
+						@if(isCorpus) {
+						<div id="ctr-alt-grab-@uid" class="ctr-alt-grab"></div>
+						}
 						<div id="ctr-upload-controls-@uid" class="ctr-upload-controls span2 @if(isCorpus){btn-group}">
 							<button id="btn-store-browse-@uid" class="btn-store-browse btn @if(isCorpus){span7}"
 								title="Look for a file to upload" data-placement="bottom" data-container="#ctr-upload-controls-@uid">
@@ -72,7 +75,7 @@
 							<ul class="dropdown-menu alt-grab-menu">
 								<li>
 									<a class="btn-twitter-grab">
-										Get from Twitter <i class="icon-twitter-bird"></i>
+										Get data from Twitter <i class="icon-twitter-bird"></i>
 									</a>
 								</li>
 							</ul>

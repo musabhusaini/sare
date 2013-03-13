@@ -239,7 +239,14 @@ widget =
 				@_form "populate", @options.store
 				@_fixButtons()
 				false
-				
+		
+		# handle twitter grabber
+		@_on @_$(@options.twitterButton),
+			click: (e) ->
+				@_$(@options.alternateGrabberContainer)
+					.empty()
+					.load @options.twitterGrabberViewRoute(@options.store.id).url
+		
 		# we want to make sure the right buttons are enabled.
 		@_on @_$("input"),
 			keyup: ->
@@ -307,12 +314,15 @@ widget =
 			languageList: ".lst-store-language"
 			sizeText: ".txt-store-size"
 			uploadContainer: ".ctr-store-upload"
+			alternateGrabberContainer: ".ctr-alt-grab"
 			dropFileContainer: ".ctr-store-dropfile"
 			browseButton: ".btn-store-browse"
+			twitterButton: ".btn-twitter-grab"
 			updateButton: ".btn-apply"
 			resetButton: ".btn-reset"
 			acceptingFilesClass: "accepting-files"
 			updateRoute: jsRoutes.controllers.modules.CorpusModule.update
+			twitterGrabberViewRoute: jsRoutes.controllers.modules.CorpusModule.twitterGrabberView
 			uploadFileCount: 1
 			dataKey: "store"
 			filenameKey: "file"

@@ -25,10 +25,18 @@
   border: 1px dashed lighten(black, 70%);
 }
 
-.icon-twitter-bird {
+.icon-twitter-bird(@size: 14px) {
   background-image: url("@{imagesPath}/twitter-bird.png");
-  background-size: 14px 14px;
+  background-size: @size;
   background-position: 0 0;
+}
+
+.icon-twitter-bird {
+  .icon-twitter-bird(14px);
+}
+
+.icon-twitter-bird-large {
+  .icon-twitter-bird(20px);
 }
 
 .alt-grab-menu > li > a:hover > .icon-twitter-bird {

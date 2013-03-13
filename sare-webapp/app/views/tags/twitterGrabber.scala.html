@@ -1,0 +1,54 @@
+@*
+ * Sentilab SARE: a Sentiment Analysis Research Environment
+ * Copyright (C) 2013 Sabanci University Sentilab
+ * http://sentilab.sabanciuniv.edu
+ * 
+ * This file is part of SARE.
+ * 
+ * SARE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *  
+ * SARE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with SARE. If not, see <http://www.gnu.org/licenses/>.
+ *@
+
+@(corpus: documentStore.DocumentCorpusModel)
+
+@import scala.util._
+
+@import controllers.modules._
+
+@defining(Random.nextInt(1000)) { uid =>
+<div id="ctr-twitter-grabber-@uid" class="ctr-twitter-grabber modal hide fade">
+	<div class="modal-header">
+		<button class="close" data-dismiss="modal">&times;</button>
+		<h3>Get data from Twitter <i class="icon-twitter-bird-large"></i></h3>
+	</div>
+	<div class="modal-body">
+	</div>
+	<div class="modal-footer">
+		<button class="btn-retrieve btn">
+			Retrieve
+		</button>
+		<button class="btn-close btn" data-dismiss="modal">
+			Close
+		</button>
+	</div>
+	
+	<script src="@controllers.routes.Assets.at("javascripts/widgets.twitterGrabber.js")" type="text/javascript"></script>
+		<script type="text/javascript">
+		(function(window, $) {
+			$(function() {
+				$("#ctr-twitter-grabber-@uid").twitterGrabber();
+			});
+		})(window, window.jQuery);
+	</script>
+</div>
+}

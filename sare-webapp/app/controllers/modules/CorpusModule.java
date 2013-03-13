@@ -190,4 +190,9 @@ public class CorpusModule extends Module {
 		em().remove(documentObj);
 		return ok(createViewModel(documentObj).asJson());
 	}
+	
+	public static Result twitterGrabberView(String corpus) {
+		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
+		return ok(twitterGrabber.render((DocumentCorpusModel)createViewModel(corpusObj)));
+	}
 }
