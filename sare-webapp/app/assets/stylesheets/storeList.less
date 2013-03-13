@@ -19,21 +19,22 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import "bootstrap/mixins";
 @import "main";
 
-.lexbuilder-display {
-  height: 250px;
-  padding: 5px;
-  margin-bottom: 10px;
+.with-details {
   border: @nice-border;
-  overflow: auto;
+  background-color: lighten(yellow, 45%);
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
-.widget-header {
-  height: 100%;
-  padding-top: 5px;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  background-color: darken(gray, 20%);
-  color: white;
+.with-details > .details-wrapper {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: @nice-border;
+}
+
+.btn-store-details {
+  .border-radius(20px);
 }

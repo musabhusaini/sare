@@ -25,7 +25,7 @@
 @import scala.util._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-module-@uid" class="ctr-module" data-corpus="@corpus.asJson()" data-lexicon="@lexicon.asJson()">
+<div id="ctr-doc-slider-@uid" class="ctr-doc-slider" data-corpus="@corpus.asJson()" data-lexicon="@lexicon.asJson()">
 	<div class="row-fluid">
 		<div class="widget-header">
 			<b>Document</b>
@@ -57,15 +57,15 @@
 				}
 		</div>
 	</div>
+	
+	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/documentSlider.css")">
+	<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.documentSlider.js")"></script>
+	<script type="text/javascript">
+		(function(window, $) {
+			$(function() {
+				$("#ctr-doc-slider-@uid").documentSlider();
+			});
+		})(window, window.jQuery);
+	</script>
 </div>
-
-<link rel="stylesheet" href="@routes.Assets.at("stylesheets/documentSlider.css")">
-<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.documentSlider.js")"></script>
-<script type="text/javascript">
-	(function(window, $) {
-		$(function() {
-			$("#ctr-module-@uid").documentSlider();
-		});
-	})(window, window.jQuery);
-</script>
 }

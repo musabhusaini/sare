@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -23,9 +23,7 @@
 
 @contentHtml = {
 	<div id="ctr-module-manager" @if(module != null) { data-module="@module.asJson()" }>
-		<div class="ctr-module-content">
-			@content
-		</div>
+		<div class="ctr-module-content">@content</div>
 		<div class="page-footer">
 			<div class="ctr-module-controls row-fluid">
 				<p class="lead">

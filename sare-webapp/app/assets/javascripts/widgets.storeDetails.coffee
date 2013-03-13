@@ -173,9 +173,6 @@ widget =
 		@options.store ?= $(@element).data @options.dataKey
 		@options.isDerived ?= not @_$(@options.browseButton).length
 		
-		# create the modal.
-		$(@element).modal()
-				
 		# applies changes to the store.
 		applyStoreChanges = (e, callback) =>
 			updateStore = (store, updatedStore) =>
@@ -222,27 +219,15 @@ widget =
 				@_uploader.start()
 			else updateStore @options.store
 		
-		# ok button just applies and closes.
-		@_on @_$(@options.okButton),
-			click: (e) =>
-				if not @_getUpdated()
-					@_$(@options.closeButton).click()
-				else
-					@_changeInputState @_$(@options.okButton), "loading"
-					applyStoreChanges e, =>
-						@_changeInputState @_$(@options.okButton), "reset"
-						@_$(@options.closeButton).click()
-				false
-		
 		# handle update button click
 		@_on @_$(@options.updateButton),
-			click: (e) =>
+			click: (e) ->
 				applyStoreChanges e
 				false
 		
 		# handle reset
 		@_on @_$(@options.resetButton),
-			click: (e) =>
+			click: (e) ->
 				if not @options.isDerived and @_uploader?
 					@_uploader.removeFile file for file in @_uploader.files
 					@_$(@options.dropFileContainer)
@@ -257,34 +242,21 @@ widget =
 				
 		# we want to make sure the right buttons are enabled.
 		@_on @_$("input"),
-			keyup: =>
+			keyup: ->
 				@_fixButtons()
 		
 		# we want to make sure the right buttons are enabled.
 		@_on @_$("select"),
-			change: =>
+			change: ->
 				@_fixButtons()
-		
-		# destroy this widget when the modal is hidden.
-		$(@element).parent().on "hidden", ".modal", (e) =>
-			if not $(e.target).is(".modal") then return
-			@destroy()
 		
 		# do the inits.
 		@_form (if @options.store? then "enabled" else "disabled")
 		@_changeInputState @_$(@options.updateButton), (if @options.store? then "enabled" else "disabled")
 		
-		if @options.store?
-			@_form "populate", @options.store
-		
-		# enable/disable all the right buttons.
-		@_fixButtons()
-		
 		inputs = [
-			@options.okButton
 			@options.updateButton
 			@options.resetButton
-			@options.closeButton
 			@options.titleInput
 			@options.descriptionInput
 			@options.languageList
@@ -297,15 +269,19 @@ widget =
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
 		
+		if @options.store?
+			@_form "populate", @options.store
+		
+		# enable/disable all the right buttons.
+		@_fixButtons()
+		
 	_init: ->
 		@refresh()
 		
 	_destroy: ->
 		inputs = [
-			@options.okButton
 			@options.updateButton
 			@options.resetButton
-			@options.closeButton
 			@options.titleInput
 			@options.descriptionInput
 			@options.languageList
@@ -316,6 +292,14 @@ widget =
 		@_$(input).tooltip("destroy") for input in inputs
 		@_destroyUploader()
 		
+	_setOption: (key, value) ->
+		switch key
+			when "store"
+				@refresh()
+			when "disabled"
+				@_form if value then "disabled" else "enabled"
+		$.Widget.prototype._setOption.apply @, arguments
+
 	_getCreateOptions: ->
 			detailsForm: ".frm-details"
 			titleInput: ".input-store-title"
@@ -325,20 +309,18 @@ widget =
 			uploadContainer: ".ctr-store-upload"
 			dropFileContainer: ".ctr-store-dropfile"
 			browseButton: ".btn-store-browse"
-			okButton: ".btn-ok"
 			updateButton: ".btn-apply"
 			resetButton: ".btn-reset"
-			closeButton: ".btn-close"
+			acceptingFilesClass: "accepting-files"
 			updateRoute: jsRoutes.controllers.modules.CorpusModule.update
 			uploadFileCount: 1
 			dataKey: "store"
 			filenameKey: "file"
 			uploadFileMessage: "Upload file"
 			dropFileMessage: "Drop file or browse"
-			dropFileTip: "A file can be drag and dropped here"
+			dropFileTip: "A file can be dragged and dropped here"
 			filenameTip: "Name of the file to be uploaded"
 			dragFileMessage: "Almost there, just let go now!"
 			uploadFailedMessage: "Something's amiss! Let's try again"
-			acceptingFilesClass: "accepting-files"
 
 $.widget "widgets.storeDetails", Sare.Widget, widget
