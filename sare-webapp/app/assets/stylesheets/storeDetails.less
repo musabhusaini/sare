@@ -12,13 +12,25 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import "main";
+
 .accepting-files {
   border: 1px dashed lighten(black, 70%);
+}
+
+.icon-twitter-bird {
+  background-image: url("@{imagesPath}/twitter-bird.png");
+  background-size: 14px 14px;
+  background-position: 0 0;
+}
+
+.alt-grab-menu > li > a:hover > .icon-twitter-bird {
+  background-image: url("@{imagesPath}/twitter-bird-white.png");
 }
