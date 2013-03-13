@@ -26,94 +26,80 @@
 @import controllers.modules._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-store-details-@uid" class="ctr-store-details modal hide fade" data-store="@store.asJson()">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal">×</button>
-		<h3>More details</h3>
-	</div>
-	<div class="modal-body">
-		<div class="row-fluid">
-			<form class="frm-details">
-				<fieldset>
-					<label for="input-store-title-@uid">Title</label>
-					<input id="input-store-title-@uid" type="text" class="input-store-title span5" value="@store.title"
-						placeholder="Give this corpus a title" title="Title of the corpus" />
-					<label for="input-store-desc-@uid">Description</label>
-					<input id="input-store-desc-@uid" type="text" class="input-store-desc span8" value="@store.description"
-						placeholder="Describe it" title="Brief description of the corpus" />
-					@if(isCorpus) {
+<div id="ctr-store-details-@uid" class="ctr-store-details" data-store="@store.asJson()">
+	<div class="row-fluid">
+		<form class="frm-details">
+			<fieldset>
+				<label for="input-store-title-@uid">Title</label>
+				<input id="input-store-title-@uid" type="text" class="input-store-title span6" value="@store.title"
+					placeholder="Give it a title" title="Title" />
+				<label for="input-store-desc-@uid">Description</label>
+				<input id="input-store-desc-@uid" type="text" class="input-store-desc span10" value="@store.description"
+					placeholder="Describe it" title="Brief description" />
+				@if(isCorpus) {
+				<div class="row-fluid">
+					<div class="span3">
+						<label for="lst-store-language-@uid">Language</label>
+						<select id="lst-store-language-@uid" class="lst-store-language span12" value="@store.language"
+							title="Language of the corpus">
+							@for(language <- CollectionsController.getSupportedLanguages()) {
+							<option value="@language.languageCode()">@language.languageName()</option>
+							}
+						</select>
+					</div>
+					<div class="offset5 span2">
+						<label for="txt-store-size-@uid">Size</label>
+						<span id="txt-store-size-@uid" class="txt-store-size input-block-level uneditable-input"
+							title="Number of documents in this corpus">
+							@store.size
+						</span>
+					</div>
+				</div>
+				}
+				@if(!isDerived) {
+				<div id="ctr-store-upload-@uid" class="ctr-store-upload">
 					<div class="row-fluid">
-						<div class="span6">
-							<label for="lst-store-language-@uid">Language</label>
-							<select id="lst-store-language-@uid" class="lst-store-language span6" value="@store.language"
-								title="Language of the corpus">
-								@for(language <- CollectionsController.getSupportedLanguages()) {
-								<option value="@language.languageCode()">@language.languageName()</option>
-								}
-							</select>
-						</div>
+						<div id="ctr-store-dropfile-@uid" class="ctr-store-dropfile span8 well well-small"></div>
 						<div class="span2">
-							<label for="txt-store-size-@uid">Size</label>
-							<span id="txt-store-size-@uid" class="txt-store-size input-block-level uneditable-input"
-								title="Number of documents in this corpus">
-								@store.size
-							</span>
+							<button id="btn-store-browse-@uid" class="btn-store-browse btn input-block-level"
+								title="Look for a file to upload" data-placement="bottom">
+								<i class="icon-folder-open"></i>
+							</button>
 						</div>
 					</div>
-					}
-					@if(!isDerived) {
-					<div id="ctr-store-upload-@uid" class="ctr-store-upload">
-						<div class="row-fluid">
-							<div id="ctr-store-dropfile-@uid" class="ctr-store-dropfile span8 well well-small"></div>
-							<div class="span4">
-								<button id="btn-store-browse-@uid" class="btn-store-browse btn"
-									title="Look for a file to upload" data-placement="bottom">
-									<i class="icon-folder-open"></i> Browse
-								</button>
-							</div>
-						</div>
-					</div>
-					}
-				</fieldset>
-			</form>
-		</div>
+				</div>
+				}
+			</fieldset>
+		</form>
 	</div>
-	<div id="modal-footer-@uid" class="modal-footer">
-		<button id="btn-ok-@uid" class="btn-ok btn btn-primary" data-loading-text="Updating..." title="Save and close"
-			data-container="#modal-footer-@uid">
-			<i class="icon-ok"></i> OK
-		</button>
+	<div id="details-footer-@uid" class="row-fluid">
 		<button id="btn-apply-@uid" class="btn-apply btn btn-primary" data-loading-text="Updating..." title="Save changes"
-			data-container="#modal-footer-@uid">
+			data-container="#details-footer-@uid">
 			<i class="icon-pencil"></i> Apply
 		</button>
 		<button id="btn-reset-@uid" class="btn-reset btn" title="Revert changes"
-			data-container="#modal-footer-@uid">
+			data-container="#details-footer-@uid">
 			<i class="icon-repeat"></i> Reset
 		</button>
-    	<button id="btn-close-@uid" class="btn-close btn" data-dismiss="modal" title="Close this dialog"
-    		data-container="#modal-footer-@uid">
-    		<i class="icon-remove"></i> Close
-    	</button>
 	</div>
-</div>
-
-<link rel="stylesheet" href="@controllers.routes.Assets.at("stylesheets/storeDetails.css")">
-<script src="@controllers.routes.Assets.at("plugins/plupload/js/plupload.full.js")" type="text/javascript"></script>
-<script src="@controllers.routes.Assets.at("javascripts/widgets.storeDetails.js")" type="text/javascript"></script>
-<script type="text/javascript">
-	(function(window, $) {
-		$(function() {
-			$("#ctr-store-details-@uid").storeDetails({
-				updateRoute: @store match {
-					case _:documentStore.AspectLexiconModel => { function(lexicon) {
-						return jsRoutes.controllers.modules.AspectLexBuilder.update("null", lexicon);
-					} }
-					case _ => { jsRoutes.controllers.modules.CorpusModule.update }
-				},
-				isDerived: @isDerived
+	
+	<link rel="stylesheet" href="@controllers.routes.Assets.at("stylesheets/storeDetails.css")">
+	<script src="@controllers.routes.Assets.at("plugins/plupload/js/plupload.full.js")" type="text/javascript"></script>
+	<script src="@controllers.routes.Assets.at("javascripts/widgets.storeDetails.js")" type="text/javascript"></script>
+	<script type="text/javascript">
+		(function(window, $) {
+			$(function() {
+				$("#ctr-store-details-@uid").storeDetails({
+					updateRoute: @store match {
+						case _:documentStore.AspectLexiconModel => { function(lexicon) {
+							return jsRoutes.controllers.modules.AspectLexBuilder.update("null", lexicon);
+						} }
+						case _ => { jsRoutes.controllers.modules.CorpusModule.update }
+					},
+					isDerived: @isDerived
+				});
 			});
-		});
-	})(window, window.jQuery);
-</script>
+		})(window, window.jQuery);
+	</script>
+</div>
 }

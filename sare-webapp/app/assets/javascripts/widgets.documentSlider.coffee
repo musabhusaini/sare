@@ -153,9 +153,9 @@ widget =
         return true
 		
 		lexiconParentContainer = =>
-			$(@element).parent().siblings(@options.lexiconContainer).first()
+			$(@element).parent().siblings(@options.lexiconParentContainer).first()
 		lexiconWidget = =>
-			$(lexiconParentContainer().children(".ctr-module").first()).data Strings.widgetKey
+			$(lexiconParentContainer().children(@options.lexiconContainer).first()).data Strings.widgetKey
 		
 		findKeywordButton = (keyword) =>
 			lemmaKey = @options.lemmaKey
@@ -176,13 +176,13 @@ widget =
 				true
 			aspectLexiconKeywordRemoved: (e, keyword) ->
 				widget = lexiconWidget()
-				if not widget.hasKeyword widget.getLexicon(), keyword, true
+				if not widget?.hasKeyword widget?.getLexicon(), keyword, true
 					unmakeKeywordButton keyword
 				true
 			aspectLexiconKeywordRenamed: (e, data) ->
 				widget = lexiconWidget()
 				{ keyword, result } = data
-				if not widget.hasKeyword widget.getLexicon(), keyword, true
+				if not widget?.hasKeyword widget?.getLexicon(), keyword, true
 					unmakeKeywordButton keyword
 				makeKeywordButton result
 				true
@@ -222,13 +222,14 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
+		lexiconParentContainer: ".ctr-alex"
+		lexiconContainer: ".ctr-lexicon"
 		documentContainer: ".ctr-document"
 		prevButton: ".btn-prev-doc"
 		nextButton: ".btn-next-doc"
 		rankText: ".txt-rank"
 		emphasizedTokenButton: ".emphasized-token"
 		postagCheckbox: ".chk-posTag"
-		lexiconContainer: ".ctr-alex"
 		newTokenClass: "btn-info"
 		keywordTokenClass: "btn-success"
 		rank: -1

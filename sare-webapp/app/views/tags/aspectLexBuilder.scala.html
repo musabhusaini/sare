@@ -47,14 +47,14 @@
 		}
 		</div>
 	</div>
+	
+	<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.aspectLexBuilder.js")"></script>
+	<script type="text/javascript">
+		(function(window, $) {
+			$(function() {
+				$("#ctr-module-@uid").aspectLexBuilder();
+			});
+		})(window, window.jQuery);
+	</script>
 </div>
-
-<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.aspectLexBuilder.js")"></script>
-<script type="text/javascript">
-	(function(window, $) {
-		$(function() {
-			$("#ctr-module-@uid").aspectLexBuilder();
-		});
-	})(window, window.jQuery);
-</script>
 }

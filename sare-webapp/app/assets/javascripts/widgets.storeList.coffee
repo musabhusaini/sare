@@ -53,9 +53,34 @@ widget =
 	_create: ->
 		@options.editable ?= not not @_$(@options.addButton).length
 		
+		toggleDetails = (duration, initial, callback) =>
+			initial ?= @options.detailsShown
+			duration ?= 200
+			@_changeInputState @options.detailsButton, "disabled"
+			if initial
+				@_$(@options.detailsModalOuterContainer).hide duration, =>
+					@_$(@options.detailsModalOuterContainer).empty()
+					@options.detailsShown = false
+					@_$(@options.innerContainer).removeClass @options.withDetailsClass, duration/2
+					@_$(@options.detailsButton)
+						.empty()
+						.append "<i class=\"icon-chevron-down\"></i>"
+					@_changeInputState @options.detailsButton, "enabled"
+					callback?()
+			else
+				@_$(@options.detailsModalOuterContainer).load @options.detailsFormRoute(@selected().data.id).url, =>
+					@_$(@options.detailsModalOuterContainer).show duration
+					@options.detailsShown = true
+					@_$(@options.innerContainer).addClass @options.withDetailsClass, duration/2
+					@_$(@options.detailsButton)
+						.empty()
+						.append "<i class=\"icon-chevron-up\"></i>"
+					@_changeInputState @options.detailsButton, "enabled"
+					callback?()
+
 		# handle add button click
 		if @options.editable then @_on @_$(@options.addButton),
-			click: (e) =>
+			click: (e) ->
 				e.preventDefault()
 				@_changeInputState @_$(@options.addButton), "loading"
 				@options.addRoute().ajax
@@ -77,22 +102,19 @@ widget =
 						@_changeInputState @_$(@options.addButton), "reset"
 		
 		@_on @_$(@options.detailsButton),
-			click: (e) =>
-				@_$(@options.detailsModalOuterContainer).load @options.detailsFormRoute(@selected().data.id).url
+			click: (e) ->
+				toggleDetails()
 				e.preventDefault()
-
+		
 		@_on @_$(@options.detailsModalOuterContainer),
-			"storeUpdate .modal": (e, data) ->
+			"storeUpdate": (e, data) ->
 				{ updatedData } = data
 				if updatedData?
 					@_updateListItem @selected().item, updatedData
-			"hidden .modal": (e) ->
-				if not $(e.target).is(".modal") then return
-				@_$(@options.detailsModalOuterContainer).empty()
 		
 		# handle delete store button click
 		if @options.editable then @_on @_$(@options.deleteButton),
-			click: (e) =>
+			click: (e) ->
 				e.preventDefault()
 				selected = @selected()
 				@_changeInputState @_$(@options.deleteButton), "loading"
@@ -113,15 +135,21 @@ widget =
 						window.setTimeout(=>
 							@_$(@options.list).change()
 						, 0)
+		
+		@_$(@options.detailsModalOuterContainer).hide()
+		if @options.detailsShown
+			toggleDetails 0, false
 			
 		# handle store list selection change
 		@_on @_$(@options.list),
-			change: (e) =>
+			change: (e) ->
 				selected = @selected()
 				for input in [ @options.deleteButton, @options.detailsButton ]
 					@_changeInputState @_$(input), if selected.data? and @options.editable then "enabled" else "disabled"
 				if not @options.suppressOutput
 					Widgets.moduleManager "option", "output", (selected.data ? null)
+				if @options.detailsShown
+					toggleDetails 0, false
 				# for some reason, the second trigger doesn't work in all cases.
 				$(@element).trigger "storeListSelectionChange", selected
 				@_trigger "selectionchange", e, selected
@@ -142,9 +170,9 @@ widget =
 				@_$(@options.list)
 					.val($(firstItem).data @options.dataKey)?.id
 		
-		change = =>
+		window.setTimeout =>
 			@_$(@options.list).change()
-		window.setTimeout(change, 0)
+		, 0
 		
 	_init: ->
 		@refresh()
@@ -161,14 +189,17 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
+			innerContainer: ".ctr-store-list-inner"
 			list: ".lst-store"
 			addButton: ".btn-add-store"
 			detailsButton: ".btn-store-details"
 			detailsModalOuterContainer: ".ctr-store-details-outer"
 			deleteButton: ".btn-delete-store"
+			withDetailsClass: "with-details"
 			addRoute: jsRoutes.controllers.modules.CorpusModule.create
 			detailsFormRoute: jsRoutes.controllers.CollectionsController.detailsForm
 			deleteRoute: jsRoutes.controllers.CollectionsController.delete
+			detailsShown: false
 			suppressOutput: false
 			dataKey: "store"
 

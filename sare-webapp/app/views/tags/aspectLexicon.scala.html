@@ -24,7 +24,7 @@
 @import scala.util._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-module-@uid" class="ctr-module" data-lexicon="@lexicon.asJson()">
+<div id="ctr-lexicon-@uid" class="ctr-lexicon" data-lexicon="@lexicon.asJson()">
 	<div class="span5">
 		<div class="row-fluid">
 			<div class="widget-header">
@@ -73,19 +73,19 @@
 		</div>
 		}
 	</div>
-</div>
-
-<link rel="stylesheet" href="@routes.Assets.at("stylesheets/aspectLexicon.css")">
-<script type="text/javascript" src="@controllers.routes.Assets.at("plugins/jstree/jquery.jstree.js")"></script>
-<script type="text/javascript" src="@controllers.routes.Assets.at("plugins/jstree/_lib/jquery.hotkeys.js")"></script>
-<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.aspectLexicon.js")"></script>
-<script type="text/javascript">
-	(function(window, $) {
-		$(function() {
-			$("#ctr-module-@uid").aspectLexicon({
-				editable: @editable
+	
+	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/aspectLexicon.css")">
+	<script type="text/javascript" src="@controllers.routes.Assets.at("plugins/jstree/jquery.jstree.js")"></script>
+	<script type="text/javascript" src="@controllers.routes.Assets.at("plugins/jstree/_lib/jquery.hotkeys.js")"></script>
+	<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.aspectLexicon.js")"></script>
+	<script type="text/javascript">
+		(function(window, $) {
+			$(function() {
+				$("#ctr-lexicon-@uid").aspectLexicon({
+					editable: @editable
+				});
 			});
-		});
-	})(window, window.jQuery);
-</script>
+		})(window, window.jQuery);
+	</script>
+</div>
 }
