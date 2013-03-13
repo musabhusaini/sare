@@ -31,7 +31,7 @@
 	
 	@if(setcover == null) {
 	<div id="ctr-setcovers-@uid" class="ctr-setcovers row-fluid">
-		@tags.storeList(stores = SetCoverModule.getSetCovers(corpus), editable = true, selectionPrompt = "Select a reduction")
+		@tags.storeList(stores = SetCoverBuilder.getSetCovers(corpus), editable = true, selectionPrompt = "Select a reduction")
 	</div>
 	}
 </div>

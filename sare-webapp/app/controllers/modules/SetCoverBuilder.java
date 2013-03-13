@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 
 import play.mvc.Result;
 import play.mvc.With;
+import views.html.tags.*;
 import models.base.ViewModel;
 import models.documentStore.*;
 import controllers.base.SareTransactionalAction;
@@ -48,7 +49,7 @@ import edu.sabanciuniv.sentilab.utils.UuidUtils;
 	@Module.Requires({DocumentCorpusModel.class}),
 	@Module.Requires({DocumentCorpusModel.class, DocumentSetCoverModel.class}),
 })
-public class SetCoverModule extends Module {
+public class SetCoverBuilder extends Module {
 
 	@Override
 	public UUID getId() {
@@ -65,7 +66,7 @@ public class SetCoverModule extends Module {
 		DocumentCorpusModel corpusVM = this.findViewModel(DocumentCorpusModel.class, new DocumentCorpusModel());
 		DocumentSetCoverModel setcoverVM = this.findViewModel(DocumentSetCoverModel.class, new DocumentSetCoverModel());
 		
-		return controllers.modules.routes.SetCoverModule.modulePage(corpusVM.id, setcoverVM.id, false).url();
+		return controllers.modules.routes.SetCoverBuilder.modulePage(corpusVM.id, setcoverVM.id, false).url();
 	}
 	
 	public static List<PersistentDocumentStoreModel> getSetCovers(DocumentCorpusModel corpus) {
@@ -94,7 +95,7 @@ public class SetCoverModule extends Module {
 			em().persist(new DocumentSetCover(corpusObj).setOwnerId(getUsername()));
 		}
 		
-		return moduleRender(new SetCoverModule().setViewModels(Lists.<ViewModel>newArrayList(corpusVM, setcoverVM)),
-			views.html.tags.setcover.render(corpusVM, setcoverVM), partial);
+		return moduleRender(new SetCoverBuilder().setViewModels(Lists.<ViewModel>newArrayList(corpusVM, setcoverVM)),
+			setCoverBuilder.render(corpusVM, setcoverVM), partial);
 	}
 }

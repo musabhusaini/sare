@@ -96,8 +96,8 @@ GET		/view/modules/corpora/:corpus/lexica/:lexicon/documents	controllers.modules
 GET		/view/modules/lexica/:lexicon							controllers.modules.AspectLexBuilder.lexiconView(lexicon: String)
 
 # Corpus reduction module
-GET		/view/modules/corpora/:corpus/reduction				controllers.modules.SetCoverModule.modulePage(corpus: String, setcover = null, partial: Boolean ?= false)
-GET		/view/modules/corpora/:corpus/reduction/:setcover	controllers.modules.SetCoverModule.modulePage(corpus: String, setcover: String, partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/reduction				controllers.modules.SetCoverBuilder.modulePage(corpus: String, setcover = null, partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/reduction/:setcover	controllers.modules.SetCoverBuilder.modulePage(corpus: String, setcover: String, partial: Boolean ?= false)
 
 # Support queries
 GET		/api/support/languages		controllers.CollectionsController.supportedLanguages()
