@@ -160,7 +160,7 @@ widget =
 		findKeywordButton = (keyword) =>
 			lemmaKey = @options.lemmaKey
 			@_$(@options.emphasizedTokenButton).filter ->
-				($(@).data(lemmaKey) ? $(@).text()).toLowerCase() is (keyword.content ? keyword).toLowerCase()
+				($(@).data(lemmaKey) ? $(@).text()).toLowerCase() is (keyword?.content ? keyword ? "").toLowerCase()
 		
 		makeKeywordButton = (keyword) =>
 			$(findKeywordButton keyword)
@@ -182,7 +182,7 @@ widget =
 			aspectLexiconKeywordRenamed: (e, data) ->
 				widget = lexiconWidget()
 				{ keyword, result } = data
-				if not widget?.hasKeyword widget?.getLexicon(), keyword, true
+				if keyword? and not widget?.hasKeyword widget?.getLexicon(), keyword, true
 					unmakeKeywordButton keyword
 				makeKeywordButton result
 				true
