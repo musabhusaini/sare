@@ -95,7 +95,7 @@ widget =
 							.append(option)
 							.val(store.id)
 							.change()
-						@_$(@options.detailsButton).click()
+						@_toggleDetails null, false
 						@_trigger "itemAdd", e,
 							item: option
 							data: store
@@ -133,9 +133,9 @@ widget =
 					complete: =>
 						@_changeInputState @_$(@options.deleteButton), "reset"
 						# button reset sets a timeout to enables the button, so this makes sure it's disabled, if necessary
-						window.setTimeout(=>
+						window.setTimeout =>
 							@_$(@options.list).change()
-						, 0)
+						, 0
 		
 		@_$(@options.detailsOuterContainer).hide()
 		if @options.detailsShown
@@ -150,7 +150,10 @@ widget =
 				if not @options.suppressOutput
 					Widgets.moduleManager "option", "output", (selected.data ? null)
 				if @options.detailsShown
-					@_toggleDetails 0, false
+					if selected.data?
+						@_toggleDetails 0, false
+					else
+						@_toggleDetails null, true
 				# for some reason, the second trigger doesn't work in all cases.
 				$(@element).trigger "storeListSelectionChange", selected
 				@_trigger "selectionchange", e, selected

@@ -67,13 +67,19 @@ widget =
 			language: @_$(@options.languageList).val()
 		}
 		
+		grabbers = null
+		for grabber in @_$(@options.alternateGrabberContainer).children()
+			grabber = ($(grabber).data Strings.widgetKey)?.getData?()
+			if grabber then grabbers = $.extend {}, grabbers, grabber
+		
 		updated = no
 		updated = yes if title and title isnt store?.title
 		updated = yes if description and description isnt store?.description
 		updated = yes if language and language isnt store?.language
 		updated = yes if not @options.isDerived and @_uploader?.files?.length
+		updated = yes if grabbers?
 
-		return if updated then $.extend({}, store, updatedStore) else updated
+		return if updated then $.extend(grabbers: grabbers, store, updatedStore) else updated
 		
 	# function to set up the uploader and start it
 	_createUploader: ->
@@ -160,7 +166,13 @@ widget =
 		@_uploader?.stop()
 		@_uploader?.destroy?()
 		@_uploader = null
-
+		
+	_destroyGrabbers: ->
+		@_$(@options.alternateGrabberContainer).children()
+			.each ->
+				($(@).data Strings.widgetKey)?.destroy?()
+		@_$(@options.alternateGrabberContainer).empty()
+				
 	_fixButtons: ->
 		# delay execution so that this happens at the end.
 		window.setTimeout =>
@@ -193,12 +205,13 @@ widget =
 					updateOptions.language = updated.language
 					updateOptions =
 						details: updateOptions
+						grabbers: updated.grabbers ? null
 	
 					@options.updateRoute(updatedStore.id).ajax
 						contentType: Helpers.MimeTypes.json
 						data: JSON.stringify updateOptions
 						success: (updatedStore) =>
-							finalizeUpdate(updatedStore)
+							finalizeUpdate updatedStore
 						complete: =>
 							@_changeInputState @_$(@options.updateButton), "reset"
 							@_fixButtons()
@@ -222,7 +235,8 @@ widget =
 		# handle update button click
 		@_on @_$(@options.updateButton),
 			click: (e) ->
-				applyStoreChanges e
+				applyStoreChanges e, =>
+					@_destroyGrabbers()
 				false
 		
 		# handle reset
@@ -237,24 +251,23 @@ widget =
 							title: @options.dropFileTip
 
 				@_form "populate", @options.store
+				@_destroyGrabbers()
 				@_fixButtons()
 				false
 		
 		# handle twitter grabber
 		@_on @_$(@options.twitterButton),
 			click: (e) ->
+				@_destroyGrabbers()
 				@_$(@options.alternateGrabberContainer)
-					.empty()
-					.load @options.twitterGrabberViewRoute(@options.store.id).url
+					.load @options.twitterGrabberViewRoute(@options.store.id).url, =>
+						@_$(@options.alternateGrabberContainer).parent().show()
 		
 		# we want to make sure the right buttons are enabled.
-		@_on @_$("input"),
-			keyup: ->
+		@_on @element,
+			"keyup input": ->
 				@_fixButtons()
-		
-		# we want to make sure the right buttons are enabled.
-		@_on @_$("select"),
-			change: ->
+			"change select": ->
 				@_fixButtons()
 		
 		# do the inits.
@@ -282,6 +295,8 @@ widget =
 		# enable/disable all the right buttons.
 		@_fixButtons()
 		
+		@_destroyGrabbers()
+		
 	_init: ->
 		@refresh()
 		
@@ -297,6 +312,7 @@ widget =
 		]
 		
 		@_$(input).tooltip("destroy") for input in inputs
+		@_destroyGrabbers()
 		@_destroyUploader()
 		
 	_setOption: (key, value) ->
@@ -305,6 +321,7 @@ widget =
 				@refresh()
 			when "disabled"
 				@_form if value then "disabled" else "enabled"
+				@_destroyGrabbers()
 		$.Widget.prototype._setOption.apply @, arguments
 
 	_getCreateOptions: ->

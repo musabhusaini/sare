@@ -30,19 +30,24 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
 
 import com.google.common.base.Function;
 import com.google.common.collect.*;
 
+import play.Logger;
+import play.Play;
 import play.libs.Json;
 import play.mvc.*;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
+import twitter4j.*;
+import twitter4j.auth.AccessToken;
 import views.html.tags.*;
 import models.document.OpinionDocumentModel;
 import models.documentStore.*;
+import models.grabbers.TwitterGrabberModel;
 import controllers.DocumentsController;
 import controllers.base.*;
 import controllers.modules.base.Module;
@@ -118,6 +123,44 @@ public class CorpusModule extends Module {
 					options = viewModel.toFactoryOptions();
 				} else {
 					throw new IllegalArgumentException();
+				}
+				
+				JsonNode grabbers = json.get("grabbers");
+				if (grabbers != null) {
+					JsonNode twitterGrabberNode = grabbers.get("twitter");
+					if (twitterGrabberNode != null) {
+						TwitterGrabberModel twitterGrabber = Json.fromJson(twitterGrabberNode, TwitterGrabberModel.class);
+						
+						if (StringUtils.isNotBlank(twitterGrabber.query) || StringUtils.isNotBlank(twitterGrabber.username)) {
+							Twitter twitter = TwitterFactory.getSingleton();
+							twitter.setOAuthAccessToken(
+								new AccessToken(Play.application().configuration().getString("twitter4j.oauth.accessToken"),
+									Play.application().configuration().getString("twitter4j.oauth.accessTokenSecret")));
+							
+							String qs = StringUtils.defaultString(twitterGrabber.query);
+							if (StringUtils.isNotBlank(twitterGrabber.username)) {
+								qs += String.format(" from:%s", twitterGrabber.username);
+							}
+							Query query = new Query(qs.trim());
+							query.setCount(ObjectUtils.defaultIfNull(twitterGrabber.limit, 10));
+							Logger.debug("registering tweet: " + query.getQuery());
+							
+							QueryResult qr;
+							try {
+								qr = twitter.search(query);
+							} catch (TwitterException e) {
+								throw new IllegalArgumentException();
+							}
+							
+							StringBuilder tweets = new StringBuilder();
+							for (twitter4j.Status status : qr.getTweets()) {
+								tweets.append(status.getText() + System.lineSeparator());
+							}
+							
+							options.setContent(tweets.toString());
+							options.setFormat("txt");
+						}
+					}
 				}
 			} else {
 				// if not json, then treat the whole thing as a file.

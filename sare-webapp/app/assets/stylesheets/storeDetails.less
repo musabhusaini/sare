@@ -25,20 +25,43 @@
   border: 1px dashed lighten(black, 70%);
 }
 
-.icon-twitter-bird(@size: 14px) {
+.icon-twitter-bird(@_) {
+  .icon-twitter-bird(@_, 14px);
+} 
+
+.icon-twitter-bird(white, @size) {
+  background-image: url("@{imagesPath}/twitter-bird-white.png");
+}
+
+.icon-twitter-bird(black, @size) {
   background-image: url("@{imagesPath}/twitter-bird.png");
+}
+
+.icon-twitter-bird(@_, @size) {
   background-size: @size;
   background-position: 0 0;
 }
 
 .icon-twitter-bird {
-  .icon-twitter-bird(14px);
+  .icon-twitter-bird(black);
+}
+
+.icon-twitter-bird-white {
+  .icon-twitter-bird(white);
+}
+
+.icon-twitter-bird-large(@color) {
+  .icon-twitter-bird(@color, 20px);
 }
 
 .icon-twitter-bird-large {
-  .icon-twitter-bird(20px);
+  .icon-twitter-bird-large(black);
+}
+
+.icon-twitter-bird-large-white {
+  .icon-twitter-bird-large(white);
 }
 
 .alt-grab-menu > li > a:hover > .icon-twitter-bird {
-  background-image: url("@{imagesPath}/twitter-bird-white.png");
+  .icon-twitter-bird(white);
 }

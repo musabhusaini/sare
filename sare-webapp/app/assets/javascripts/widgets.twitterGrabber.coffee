@@ -30,8 +30,18 @@ Selectors = Page.Selectors
 Strings = Page.Strings
 
 widget =
+	getData: ->
+		username = @_$(@options.usernameInput).val()
+		query = @_$(@options.queryInput).val()
+		limit = @_$(@options.limitInput).val()
+		limit = if window.isNaN(limit) then null else window.parseInt limit, 10
+		if not username and not query and not limit then return false
+		twitter:
+			username: username
+			query: query
+			limit: limit 
+
 	_create: ->
-		$(@element).modal()
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
@@ -45,5 +55,8 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
+		usernameInput: ".input-username"
+		queryInput: ".input-query"
+		limitInput: ".input-limit"
 
 $.widget "widgets.twitterGrabber", Sare.Widget, widget
