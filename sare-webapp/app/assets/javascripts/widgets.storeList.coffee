@@ -50,35 +50,35 @@ widget =
 			.text(data.title ? data.id)
 			.data @options.dataKey, data
 
+	_toggleDetails: (duration, initial, callback) ->
+		initial ?= @options.detailsShown
+		duration ?= 200
+		@_changeInputState @options.detailsButton, "disabled"
+		if initial
+			@_$(@options.detailsOuterContainer).hide duration, =>
+				(@_$(@options.detailsOuterContainer).children().first().data Strings.widgetKey)?.destroy()
+				@_$(@options.detailsOuterContainer).empty()
+				@options.detailsShown = false
+				@_$(@options.innerContainer).removeClass @options.withDetailsClass, duration/2
+				@_$(@options.detailsButton)
+					.empty()
+					.append "<i class=\"icon-chevron-down\"></i>"
+				@_changeInputState @options.detailsButton, "enabled"
+				callback?()
+		else
+			@_$(@options.detailsOuterContainer).load @options.detailsFormRoute(@selected().data.id).url, =>
+				@_$(@options.detailsOuterContainer).show duration
+				@options.detailsShown = true
+				@_$(@options.innerContainer).addClass @options.withDetailsClass, duration/2
+				@_$(@options.detailsButton)
+					.empty()
+					.append "<i class=\"icon-chevron-up\"></i>"
+				@_changeInputState @options.detailsButton, "enabled"
+				callback?()
+
 	_create: ->
 		@options.editable ?= not not @_$(@options.addButton).length
 		
-		toggleDetails = (duration, initial, callback) =>
-			initial ?= @options.detailsShown
-			duration ?= 200
-			@_changeInputState @options.detailsButton, "disabled"
-			if initial
-				@_$(@options.detailsModalOuterContainer).hide duration, =>
-					(@_$(@options.detailsModalOuterContainer).children().first().data Strings.widgetKey)?.destroy()
-					@_$(@options.detailsModalOuterContainer).empty()
-					@options.detailsShown = false
-					@_$(@options.innerContainer).removeClass @options.withDetailsClass, duration/2
-					@_$(@options.detailsButton)
-						.empty()
-						.append "<i class=\"icon-chevron-down\"></i>"
-					@_changeInputState @options.detailsButton, "enabled"
-					callback?()
-			else
-				@_$(@options.detailsModalOuterContainer).load @options.detailsFormRoute(@selected().data.id).url, =>
-					@_$(@options.detailsModalOuterContainer).show duration
-					@options.detailsShown = true
-					@_$(@options.innerContainer).addClass @options.withDetailsClass, duration/2
-					@_$(@options.detailsButton)
-						.empty()
-						.append "<i class=\"icon-chevron-up\"></i>"
-					@_changeInputState @options.detailsButton, "enabled"
-					callback?()
-
 		# handle add button click
 		if @options.editable then @_on @_$(@options.addButton),
 			click: (e) ->
@@ -104,10 +104,10 @@ widget =
 		
 		@_on @_$(@options.detailsButton),
 			click: (e) ->
-				toggleDetails()
+				@_toggleDetails()
 				e.preventDefault()
 		
-		@_on @_$(@options.detailsModalOuterContainer),
+		@_on @_$(@options.detailsOuterContainer),
 			"storeUpdate": (e, data) ->
 				{ updatedData } = data
 				if updatedData?
@@ -137,9 +137,9 @@ widget =
 							@_$(@options.list).change()
 						, 0)
 		
-		@_$(@options.detailsModalOuterContainer).hide()
+		@_$(@options.detailsOuterContainer).hide()
 		if @options.detailsShown
-			toggleDetails 0, false
+			@_toggleDetails 0, false
 			
 		# handle store list selection change
 		@_on @_$(@options.list),
@@ -150,7 +150,7 @@ widget =
 				if not @options.suppressOutput
 					Widgets.moduleManager "option", "output", (selected.data ? null)
 				if @options.detailsShown
-					toggleDetails 0, false
+					@_toggleDetails 0, false
 				# for some reason, the second trigger doesn't work in all cases.
 				$(@element).trigger "storeListSelectionChange", selected
 				@_trigger "selectionchange", e, selected
@@ -185,6 +185,8 @@ widget =
 	_setOption: (key, value) ->
 		switch key
 			when "disabled"
+				if value and @options.detailsShown
+					@_toggleDetails 0
 				for input in [ @options.list, @options.addButton, @options.detailsButton, @options.deleteButton ]
 					@_changeInputState input, if value then "disabled" else "enabled"
 		$.Widget.prototype._setOption.apply @, arguments
@@ -194,7 +196,7 @@ widget =
 			list: ".lst-store"
 			addButton: ".btn-add-store"
 			detailsButton: ".btn-store-details"
-			detailsModalOuterContainer: ".ctr-store-details-outer"
+			detailsOuterContainer: ".ctr-store-details-outer"
 			deleteButton: ".btn-delete-store"
 			withDetailsClass: "with-details"
 			addRoute: jsRoutes.controllers.modules.CorpusModule.create
