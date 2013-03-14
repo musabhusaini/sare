@@ -35,13 +35,13 @@
 	}
 	
 	<div class="row-fluid">
-		<div id="ctr-documents-@uid" class="ctr-documents span7">
+		<div id="ctr-documents-@uid" class="ctr-documents span8">
 		@if(corpus != null && lexicon != null) {
 			@AspectLexBuilder.renderDocumentsView(corpus.id, lexicon.id)
 		}
 		</div>
 		
-		<div id="ctr-alex-@uid" class="ctr-alex span5">
+		<div id="ctr-alex-@uid" class="ctr-alex span4">
 		@if(lexicon != null) {
 			@tags.aspectLexicon(lexicon, editable)
 		}
