@@ -56,36 +56,17 @@ widget =
 			(tags += (if tags isnt "" then "|" else "") + $(checkbox).val()) for checkbox in @_$(@options.postagCheckbox).filter(":checked")
 		
 		getDocument = =>
-			enableControls = =>
-				if not silent
-					for input in [ @options.prevButton, @options.rankText, @options.nextButton ]
-						@_changeInputState @_$(input), "enabled"
-			
 			@options.getDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, rank).ajax
 				success: (document) =>
-					options = @options
 					@_$(@options.documentContainer)
 						.empty()
 						.html(document.enhancedContent ? document.content)
-					@_$(@options.documentContainer)
-						.tooltip
-							selector: @options.emphasizedTokenButton
-							title: ->
-								aspect = $(@).data options.aspectKey
-								isNew = $(@).hasClass options.newTokenClass
-								if aspect?
-									return "Already a keyword under '#{aspect.title}'"
-								else if isNew
-									lemma = $(@).data options.lemmaKey
-									return "Click to add '#{lemma.toLowerCase()}' to the current aspect"
-								else
-									return "Already seen and ignored"
 					if not silent
 						@options.rank = (document.rank ? rank)
 						if document.corpus? then @options.corpus = document.corpus
 						@_fixRank()
+					@_changeInputState @options.rankText, "enabled"
 					@_fixButtons()
-					enableControls()
 					callback?(document)
 				error: =>
 					if rank < 0 and @options.corpus?.size?
@@ -100,7 +81,7 @@ widget =
 				.empty()
 				.html $("<img>").attr "src", Images.wait
 			for input in [ @options.prevButton, @options.rankText, @options.nextButton ]
-				@_changeInputState @_$(input), "disabled"
+				@_changeInputState input, "disabled"
 		
 		if @options.rank >= 0 and rank isnt @options.rank and not silent
 			@options.seeDocumentRoute(@options.corpus.id, @options.lexicon.id, tags, @options.rank).ajax
@@ -201,6 +182,21 @@ widget =
 		
 		(events = {})["click #{@options.postagCheckbox}"] = => @_navigate()
 		@_on @element, events
+		
+		options = @options
+		@_$(@options.documentContainer)
+			.tooltip
+				selector: @options.emphasizedTokenButton
+				title: ->
+					aspect = $(@).data options.aspectKey
+					isNew = $(@).hasClass options.newTokenClass
+					if aspect?
+						return "Already a keyword under '#{aspect.title}'"
+					else if isNew
+						lemma = $(@).data options.lemmaKey
+						return "Click to add '#{lemma.toLowerCase()}' to the current aspect"
+					else
+						return "Already seen and ignored"
 		
 		@_$(@options.rankText).tooltip
 			title: =>
