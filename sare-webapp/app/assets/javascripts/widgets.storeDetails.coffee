@@ -67,13 +67,19 @@ widget =
 			language: @_$(@options.languageList).val()
 		}
 		
+		grabbers = null
+		for grabber in @_$(@options.alternateGrabberContainer).children()
+			grabber = ($(grabber).data Strings.widgetKey)?.getData?()
+			if grabber then grabbers = $.extend {}, grabbers, grabber
+		
 		updated = no
 		updated = yes if title and title isnt store?.title
 		updated = yes if description and description isnt store?.description
 		updated = yes if language and language isnt store?.language
 		updated = yes if not @options.isDerived and @_uploader?.files?.length
+		updated = yes if grabbers?
 
-		return if updated then $.extend({}, store, updatedStore) else updated
+		return if updated then $.extend(grabbers: grabbers, store, updatedStore) else updated
 		
 	# function to set up the uploader and start it
 	_createUploader: ->
@@ -160,7 +166,15 @@ widget =
 		@_uploader?.stop()
 		@_uploader?.destroy?()
 		@_uploader = null
-
+		
+	_destroyGrabbers: ->
+		@_$(@options.alternateGrabberContainer).children()
+			.each ->
+				($(@).data Strings.widgetKey)?.destroy?()
+		@_$(@options.alternateGrabberContainer).empty()
+		if @_$(@options.twitterButton).is ".active"
+			@_$(@options.twitterButton).button "toggle"
+				
 	_fixButtons: ->
 		# delay execution so that this happens at the end.
 		window.setTimeout =>
@@ -193,12 +207,13 @@ widget =
 					updateOptions.language = updated.language
 					updateOptions =
 						details: updateOptions
+						grabbers: updated.grabbers ? null
 	
 					@options.updateRoute(updatedStore.id).ajax
 						contentType: Helpers.MimeTypes.json
 						data: JSON.stringify updateOptions
 						success: (updatedStore) =>
-							finalizeUpdate(updatedStore)
+							finalizeUpdate updatedStore
 						complete: =>
 							@_changeInputState @_$(@options.updateButton), "reset"
 							@_fixButtons()
@@ -222,7 +237,8 @@ widget =
 		# handle update button click
 		@_on @_$(@options.updateButton),
 			click: (e) ->
-				applyStoreChanges e
+				applyStoreChanges e, =>
+					@_destroyGrabbers()
 				false
 		
 		# handle reset
@@ -237,17 +253,33 @@ widget =
 							title: @options.dropFileTip
 
 				@_form "populate", @options.store
+				@_destroyGrabbers()
 				@_fixButtons()
 				false
-				
-		# we want to make sure the right buttons are enabled.
-		@_on @_$("input"),
-			keyup: ->
-				@_fixButtons()
+		
+		# handle twitter grabber
+		@_on @_$(@options.twitterButton),
+			click: (e) ->
+				active = $(e.target).is ".active"
+				@_destroyGrabbers()
+				if active
+					# the last call will toggle in this case, so toggle again.
+					$(e.target).button "toggle"
+				else
+					@_$(@options.alternateGrabberContainer)
+						.load @options.twitterGrabberViewRoute(@options.store.id).url, =>
+							@_$(@options.alternateGrabberContainer).parent().show()
+				e.preventDefault()
+		
+		@_on @_$(@options.alternateGrabberContainer),
+			"closed .alert": ->
+				@_destroyGrabbers()
 		
 		# we want to make sure the right buttons are enabled.
-		@_on @_$("select"),
-			change: ->
+		@_on @element,
+			"keyup input": ->
+				@_fixButtons()
+			"change select": ->
 				@_fixButtons()
 		
 		# do the inits.
@@ -275,6 +307,8 @@ widget =
 		# enable/disable all the right buttons.
 		@_fixButtons()
 		
+		@_destroyGrabbers()
+		
 	_init: ->
 		@refresh()
 		
@@ -290,6 +324,7 @@ widget =
 		]
 		
 		@_$(input).tooltip("destroy") for input in inputs
+		@_destroyGrabbers()
 		@_destroyUploader()
 		
 	_setOption: (key, value) ->
@@ -298,6 +333,7 @@ widget =
 				@refresh()
 			when "disabled"
 				@_form if value then "disabled" else "enabled"
+				@_destroyGrabbers()
 		$.Widget.prototype._setOption.apply @, arguments
 
 	_getCreateOptions: ->
@@ -307,12 +343,15 @@ widget =
 			languageList: ".lst-store-language"
 			sizeText: ".txt-store-size"
 			uploadContainer: ".ctr-store-upload"
+			alternateGrabberContainer: ".ctr-alt-grab"
 			dropFileContainer: ".ctr-store-dropfile"
 			browseButton: ".btn-store-browse"
+			twitterButton: ".btn-twitter-grab"
 			updateButton: ".btn-apply"
 			resetButton: ".btn-reset"
 			acceptingFilesClass: "accepting-files"
 			updateRoute: jsRoutes.controllers.modules.CorpusModule.update
+			twitterGrabberViewRoute: jsRoutes.controllers.modules.CorpusModule.twitterGrabberView
 			uploadFileCount: 1
 			dataKey: "store"
 			filenameKey: "file"

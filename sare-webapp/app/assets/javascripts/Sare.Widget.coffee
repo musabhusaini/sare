@@ -32,18 +32,18 @@ class Sare.Widget extends $.Widget
 	_tooltipCache: {}
 	
 	_removeTooltip: (input) ->
-		id = $(input).attr "id"
+		id = @_$(input).attr "id"
 		if id?
 			@_tooltipCache[id] = @_$(input).data("tooltip")?.options
 		@_$(input).tooltip "destroy"
 	
 	_restoreTooltip: (input) ->
 		options = {}
-		id = $(input).attr "id"
+		id = @_$(input).attr "id"
 		if id?
 			options = @_tooltipCache[id]
 			delete @_tooltipCache[id]
-		$(input).tooltip options
+		@_$(input).tooltip options
 	
 	_changeInputState: (input, state) ->
 		switch state

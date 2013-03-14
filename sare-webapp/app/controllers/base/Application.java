@@ -87,6 +87,7 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.CorpusModule.addDocument(),
 			controllers.modules.routes.javascript.CorpusModule.updateDocument(),
 			controllers.modules.routes.javascript.CorpusModule.deleteDocument(),
+			controllers.modules.routes.javascript.CorpusModule.twitterGrabberView(),
 			controllers.modules.routes.javascript.AspectLexBuilder.create(),
 			controllers.modules.routes.javascript.AspectLexBuilder.update(),
 			controllers.modules.routes.javascript.AspectLexBuilder.getDocument(),

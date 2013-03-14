@@ -49,7 +49,8 @@ GET		/api/modules/options/:input			controllers.ModuleController.options(input: S
 GET		/view/modules						controllers.ModuleController.landingPage()
 
 # Corpus module
-GET		/view/modules/corpora					controllers.modules.CorpusModule.modulePage(partial: Boolean ?= false)
+GET		/view/modules/corpora							controllers.modules.CorpusModule.modulePage(partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/twitterGrabber	controllers.modules.CorpusModule.twitterGrabberView(corpus: String)
 
 # Opinions (special corpus)
 POST	/api/modules/opinions								controllers.modules.CorpusModule.create()

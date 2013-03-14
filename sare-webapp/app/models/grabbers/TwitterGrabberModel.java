@@ -19,18 +19,13 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "main";
+package models.grabbers;
 
-#ctr-module-manager {
-  margin-top: 20px;
-}
+import models.base.ViewModel;
 
-.ctr-module-content:not(:empty) {
-  border-bottom: @nice-border;
-  padding-bottom: 25px;
-  margin-bottom: 10px;
-}
+public class TwitterGrabberModel
+	extends ViewModel {
 
-.ctr-module-controls {
-  margin-top: 20px;
+	public String query;
+	public Integer limit;
 }

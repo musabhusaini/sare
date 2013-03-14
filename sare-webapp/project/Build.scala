@@ -36,7 +36,8 @@ object ApplicationBuild extends Build {
 			.exclude("com.google.guava", "guava")
 			.exclude("org.reflections", "reflections")
 			.exclude("joda-time", "joda-time")
-			.exclude("junit", "junit")
+			.exclude("junit", "junit"),
+		"org.twitter4j" % "twitter4j-core" % "[3.0,)"
     )
 
 	// Only compile the bootstrap bootstrap.less file and any other *.less file in the stylesheets directory
