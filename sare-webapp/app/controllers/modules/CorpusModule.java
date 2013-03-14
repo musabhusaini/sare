@@ -130,21 +130,21 @@ public class CorpusModule extends Module {
 				
 				JsonNode grabbers = json.get("grabbers");
 				if (grabbers != null) {
-					JsonNode twitterGrabberNode = grabbers.get("twitter");
-					if (twitterGrabberNode != null) {
-						TwitterGrabberModel twitterGrabber = Json.fromJson(twitterGrabberNode, TwitterGrabberModel.class);
+					if (grabbers.has("twitter")) {
+						TwitterGrabberModel twitterGrabber = Json.fromJson(grabbers.get("twitter"),
+							TwitterGrabberModel.class);
 						
-						if (StringUtils.isNotBlank(twitterGrabber.query) || StringUtils.isNotBlank(twitterGrabber.username)) {
-							Twitter twitter = TwitterFactory.getSingleton();
+						if (StringUtils.isNotBlank(twitterGrabber.query)) {
+							TwitterFactory tFactory = new TwitterFactory();
+							Twitter twitter = tFactory.getInstance();
+							twitter.setOAuthConsumer(
+								Play.application().configuration().getString("twitter4j.oauth.consumerKey"),
+								Play.application().configuration().getString("twitter4j.oauth.consumerSecret"));
 							twitter.setOAuthAccessToken(
 								new AccessToken(Play.application().configuration().getString("twitter4j.oauth.accessToken"),
 									Play.application().configuration().getString("twitter4j.oauth.accessTokenSecret")));
 							
-							String qs = StringUtils.defaultString(twitterGrabber.query);
-							if (StringUtils.isNotBlank(twitterGrabber.username)) {
-								qs += String.format(" from:%s", twitterGrabber.username);
-							}
-							Query query = new Query(qs.trim());
+							Query query = new Query(twitterGrabber.query);
 							query.count(ObjectUtils.defaultIfNull(twitterGrabber.limit, 10));
 							query.resultType(Query.RECENT);
 							if (StringUtils.isNotEmpty(options.getLanguage())) {

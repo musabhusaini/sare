@@ -26,7 +26,6 @@ import models.base.ViewModel;
 public class TwitterGrabberModel
 	extends ViewModel {
 
-	public String username;
 	public String query;
 	public Integer limit;
 }

@@ -26,12 +26,8 @@
 @import controllers.modules._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-twitter-grabber-@uid" class="ctr-twitter-grabber alert alert-info" data-corpus="@corpus.asJson()">
-	<a class="close" data-dismiss="alert" href="#">&times;</a>
-	<h3>Get from Twitter <i class="icon-twitter-bird-white"></i></h3>
-	<label for="input-username-@uid">Username</label>
-	<input id="input-username-@uid" type="text" class="input-username span8" placeholder="Username"
-		title="Enter username" />
+<div id="ctr-twitter-grabber-@uid" class="ctr-twitter-grabber alert alert-info offset4 span8" data-corpus="@corpus.asJson()">
+	<a class="close" data-dismiss="alert" href="#"><i class="icon-twitter-bird-white pull-right"></i></a>
 	<label for="input-query-@uid">Query</label>
 	<input id="input-query-@uid" type="text" class="input-query span10" placeholder="Search query"
 	  	title="Enter search query" />

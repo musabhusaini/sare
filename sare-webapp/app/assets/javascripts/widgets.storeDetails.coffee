@@ -172,6 +172,8 @@ widget =
 			.each ->
 				($(@).data Strings.widgetKey)?.destroy?()
 		@_$(@options.alternateGrabberContainer).empty()
+		if @_$(@options.twitterButton).is ".active"
+			@_$(@options.twitterButton).button "toggle"
 				
 	_fixButtons: ->
 		# delay execution so that this happens at the end.
@@ -258,10 +260,20 @@ widget =
 		# handle twitter grabber
 		@_on @_$(@options.twitterButton),
 			click: (e) ->
+				active = $(e.target).is ".active"
 				@_destroyGrabbers()
-				@_$(@options.alternateGrabberContainer)
-					.load @options.twitterGrabberViewRoute(@options.store.id).url, =>
-						@_$(@options.alternateGrabberContainer).parent().show()
+				if active
+					# the last call will toggle in this case, so toggle again.
+					$(e.target).button "toggle"
+				else
+					@_$(@options.alternateGrabberContainer)
+						.load @options.twitterGrabberViewRoute(@options.store.id).url, =>
+							@_$(@options.alternateGrabberContainer).parent().show()
+				e.preventDefault()
+		
+		@_on @_$(@options.alternateGrabberContainer),
+			"closed .alert": ->
+				@_destroyGrabbers()
 		
 		# we want to make sure the right buttons are enabled.
 		@_on @element,
