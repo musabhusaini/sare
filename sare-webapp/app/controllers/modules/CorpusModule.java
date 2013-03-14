@@ -36,8 +36,7 @@ import org.codehaus.jackson.JsonNode;
 import com.google.common.base.Function;
 import com.google.common.collect.*;
 
-import play.Logger;
-import play.Play;
+import play.*;
 import play.libs.Json;
 import play.mvc.*;
 import play.mvc.Http.MultipartFormData;
@@ -99,6 +98,10 @@ public class CorpusModule extends Module {
 	}
 	
 	public static Result update(String corpus) {
+		OpinionCorpus corpusObj = null;
+		if (corpus != null) {
+			corpusObj = fetchResource(corpus, OpinionCorpus.class);
+		}
 		OpinionCorpusFactoryOptions options = null;
 		
 		MultipartFormData formData = request().body().asMultipartFormData();
@@ -142,8 +145,13 @@ public class CorpusModule extends Module {
 								qs += String.format(" from:%s", twitterGrabber.username);
 							}
 							Query query = new Query(qs.trim());
-							query.setCount(ObjectUtils.defaultIfNull(twitterGrabber.limit, 10));
-							Logger.debug("registering tweet: " + query.getQuery());
+							query.count(ObjectUtils.defaultIfNull(twitterGrabber.limit, 10));
+							query.resultType(Query.RECENT);
+							if (StringUtils.isNotEmpty(options.getLanguage())) {
+								query.lang(options.getLanguage());
+							} else if (corpusObj != null) {
+								query.lang(corpusObj.getLanguage());
+							}
 							
 							QueryResult qr;
 							try {
@@ -180,7 +188,7 @@ public class CorpusModule extends Module {
 			.setEm(em());
 		
 		OpinionCorpusFactory corpusFactory = new OpinionCorpusFactory();
-		OpinionCorpus corpusObj = corpusFactory.create(options);
+		corpusObj = corpusFactory.create(options);
 		if (!em().contains(corpusObj)) {
 			em().persist(corpusObj);
 			return created(createViewModel(corpusObj).asJson());
