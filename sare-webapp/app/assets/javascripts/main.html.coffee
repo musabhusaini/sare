@@ -62,7 +62,7 @@ if Sare.Configuration.pingTimeout isnt 0
 fixWindowHeight = ->
   $("body")
     .css("height", "100%")
-    .height($("body").height() - 82)
+    .height($("body").height() - 111)
 
 $(window).resize ->
   fixWindowHeight()
