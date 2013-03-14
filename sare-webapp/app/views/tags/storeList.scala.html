@@ -25,46 +25,48 @@
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-module-@uid" class="ctr-module">
-	<div class="ctr-store-list-inner row-fluid">
-		<div class="row-fluid">
-			<label for="lst-store-@uid"><b>@selectionPrompt</b></label>
-			<form class="form-inline">
-				<div class="span6">
-					<select id="lst-store-@uid" class="lst-store span6" autofocus="autofocus" title="List of existing items" data-placement="top">
-						@for(store <- stores) {
-							<option value="@store.id" data-store="@store.asJson()">
-								@if(store.title != null) {
-									@store.title
-								} else {
-									@store.id
-								}
-							</option>
+	<div class="row-fluid">
+		<div class="ctr-store-list-inner">
+			<div class="row-fluid">
+				<label for="lst-store-@uid"><b>@selectionPrompt</b></label>
+				<form class="form-inline">
+					<div class="span6">
+						<select id="lst-store-@uid" class="lst-store span6" autofocus="autofocus" title="List of existing items" data-placement="top">
+							@for(store <- stores) {
+								<option value="@store.id" data-store="@store.asJson()">
+									@if(store.title != null) {
+										@store.title
+									} else {
+										@store.id
+									}
+								</option>
+							}
+						</select>
+						@if(editable) {
+							<button id="btn-add-store-@uid" class="btn-add-store btn btn-primary" title="Create a new one" data-placement="bottom" data-loading-text="Adding...">
+								<i class="icon-plus"></i> Add
+							</button>
 						}
-					</select>
-					@if(editable) {
-						<button id="btn-add-store-@uid" class="btn-add-store btn btn-primary" title="Create a new one" data-placement="bottom" data-loading-text="Adding...">
-							<i class="icon-plus"></i> Add
+						@if(editable) {
+							<button id="btn-delete-store-@uid" class="btn-delete-store btn btn-warning" title="Delete this one" data-placement="bottom" data-loading-text="Deleting...">
+								<i class="icon-trash"></i> Delete
+							</button>
+						}
+					</div>
+					<div class="span6">
+						<button id="btn-store-details-@uid" class="btn-store-details btn pull-right" title="View details" data-placement="bottom">
+							<i class="icon-chevron-down"></i>
 						</button>
-					}
-					@if(editable) {
-						<button id="btn-delete-store-@uid" class="btn-delete-store btn btn-warning" title="Delete this one" data-placement="bottom" data-loading-text="Deleting...">
-							<i class="icon-trash"></i> Delete
-						</button>
-					}
+					</div>
+				</form>
+			</div>
+			<div class="row-fluid details-wrapper">
+				<div id="ctr-store-details-outer-@uid" class="ctr-store-details-outer">
 				</div>
-				<div class="span6">
-					<button id="btn-store-details-@uid" class="btn-store-details btn pull-right" title="View details" data-placement="bottom">
-						<i class="icon-chevron-down"></i>
-					</button>
-				</div>
-			</form>
-		</div>
-		<div class="row-fluid details-wrapper">
-			<div id="ctr-store-details-outer-@uid" class="ctr-store-details-outer">
 			</div>
 		</div>
 	</div>
-
+		
 	<link rel="stylesheet" href="@controllers.routes.Assets.at("stylesheets/storeList.css")">
 	<script src="@controllers.routes.Assets.at("javascripts/widgets.storeList.js")" type="text/javascript"></script>
 	<script type="text/javascript">
