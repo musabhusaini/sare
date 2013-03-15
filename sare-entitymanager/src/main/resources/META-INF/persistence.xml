@@ -60,10 +60,6 @@
             <property name="javax.persistence.jdbc.user" value="java_user" />
             <property name="javax.persistence.jdbc.password" value="java_user_pwd" />
 
-	        <property name="hibernate.connection.CharSet" value="utf8mb4" />
-	        <property name="hibernate.connection.characterEncoding" value="utf8mb4" />
-	        <property name="hibernate.connection.useUnicode" value="true" />
-        
             <property name="hibernate.hbm2ddl.auto" value="update" />
         </properties>
     </persistence-unit>
@@ -105,10 +101,6 @@
             <property name="javax.persistence.jdbc.user" value="java_user" />
             <property name="javax.persistence.jdbc.password" value="java_user_pwd" />
 
-	        <property name="hibernate.connection.CharSet" value="utf8mb4" />
-	        <property name="hibernate.connection.characterEncoding" value="utf8mb4" />
-	        <property name="hibernate.connection.useUnicode" value="true" />
-
             <property name="hibernate.show_sql" value="true" />
             <property name="hibernate.hbm2ddl.auto" value="update" />
         </properties>
@@ -149,10 +141,6 @@
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/sare_test_db" />
             <property name="javax.persistence.jdbc.user" value="java_user" />
             <property name="javax.persistence.jdbc.password" value="java_user_pwd" />
-
-	        <property name="hibernate.connection.CharSet" value="utf8mb4" />
-	        <property name="hibernate.connection.characterEncoding" value="utf8mb4" />
-	        <property name="hibernate.connection.useUnicode" value="true" />
 
             <property name="hibernate.show_sql" value="true" />
             <property name="hibernate.hbm2ddl.auto" value="create-drop" />
