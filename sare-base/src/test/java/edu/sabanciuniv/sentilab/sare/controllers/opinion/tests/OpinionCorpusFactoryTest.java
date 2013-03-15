@@ -25,6 +25,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.*;
 
 import com.google.common.collect.*;
@@ -73,7 +75,9 @@ public class OpinionCorpusFactoryTest {
 		
 		testTextCorpusFilename = "/test-corpus.txt";
 		expectedTextCorpus = (OpinionCorpus)new OpinionCorpus()
-			.setDocuments(Lists.newArrayList(new OpinionDocument(), new OpinionDocument()));
+			.setDocuments(Lists.newArrayList(
+				new OpinionDocument().setPolarity(0.7).setContent("nice hotel"),
+				new OpinionDocument().setPolarity(-0.8).setContent("terrible, hotel")));
 		
 		String content = "this is a great test document";
 		double polarity = 0.9;
@@ -127,13 +131,26 @@ public class OpinionCorpusFactoryTest {
 		try {
 			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
 				.setFile(new File(getClass().getResource(testTextCorpusFilename).getPath()))
-				.setTextDelimiter("|"));
+				.setTextDelimiter(","));
 		} catch (IllegalFactoryOptionsException e) {
 			fail("error reading input file");
 		}
 		
 		assertNotNull(actualCorpus);
 		assertEquals(Iterables.size(expectedTextCorpus.getDocuments()), Iterables.size(actualCorpus.getDocuments()));
+		
+		for (OpinionDocument expectedDocument : expectedTextCorpus.getDocuments(OpinionDocument.class)) {
+			boolean found = false;
+			for (OpinionDocument actualDocument : actualCorpus.getDocuments(OpinionDocument.class)) {
+				if (StringUtils.equals(expectedDocument.getContent(), actualDocument.getContent())
+					&& ObjectUtils.equals(expectedDocument.getPolarity(), actualDocument.getPolarity())) {
+					found = true;
+					break;
+				}
+			}
+			
+			assertTrue(found);
+		}
 	}
 	
 	@Test

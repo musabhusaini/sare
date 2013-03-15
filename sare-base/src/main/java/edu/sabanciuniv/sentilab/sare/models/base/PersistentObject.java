@@ -69,7 +69,7 @@ public abstract class PersistentObject
 	@ManyToMany(mappedBy="referencedObjects", cascade=CascadeType.ALL)
 	protected List<PersistentObject> refererObjects;
 
-	@Column(columnDefinition="TEXT")
+	@Column(columnDefinition="LONGTEXT")
 	protected String title;
 	
 	@Basic(fetch=FetchType.LAZY)

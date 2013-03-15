@@ -143,7 +143,7 @@ public abstract class NonDerivedStoreFactory<T extends PersistentDocumentStore, 
 			if (options.getContent() != null) {
 				Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
 				
-				this.createSpecific(store, IOUtils.toInputStream(options.getContent()), options.getFormat(), options);
+				this.createSpecific(store, options.getContent().getBytes(CharEncoding.UTF_8), options.getFormat(), options);
 			} else if (options.getBytes() != null) {
 				Validate.notNull(format, CannedMessages.EMPTY_ARGUMENT, "options.format");
 				
