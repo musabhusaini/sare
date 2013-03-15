@@ -162,7 +162,11 @@ public class CorpusModule extends Module {
 							
 							StringBuilder tweets = new StringBuilder();
 							for (twitter4j.Status status : qr.getTweets()) {
-								tweets.append(status.getText() + System.lineSeparator());
+								// quote for csv, normalize space, and remove higher unicode characters. 
+								String text = StringEscapeUtils.escapeCsv(
+									StringUtils.normalizeSpace(
+										status.getText().replaceAll("[^\\u0000-\uFFFF]", "�")));
+								tweets.append(text + System.lineSeparator());
 							}
 							
 							options.setContent(tweets.toString());

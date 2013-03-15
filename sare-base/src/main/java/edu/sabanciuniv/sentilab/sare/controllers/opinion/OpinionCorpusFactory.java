@@ -28,11 +28,9 @@ import javax.xml.parsers.*;
 import javax.xml.xpath.*;
 
 import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.text.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-
-import com.google.common.base.*;
-import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
@@ -114,8 +112,8 @@ public final class OpinionCorpusFactory
 		String line;
 		
 		while ((line = reader.readLine()) != null) {
-			List<String> columns = StringUtils.isNotEmpty(delimiter) ?
-				Lists.newArrayList(Splitter.on(delimiter).split(line)) : Lists.newArrayList(line);
+			StrTokenizer tokenizer = new StrTokenizer(line, StrMatcher.stringMatcher(delimiter), StrMatcher.quoteMatcher());
+			List<String> columns = tokenizer.getTokenList();
 			if (columns.size() < 1) {
 				continue;
 			}
