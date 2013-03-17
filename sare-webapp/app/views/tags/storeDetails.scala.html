@@ -23,6 +23,7 @@
 
 @import scala.util._
 
+@import controllers.base.Application._
 @import controllers.modules._
 
 @defining(Random.nextInt(1000)) { uid =>
@@ -99,9 +100,9 @@
 		</button>
 	</div>
 	
-	<link rel="stylesheet" href="@controllers.routes.Assets.at("stylesheets/storeDetails.css")">
+	<link rel="stylesheet" href="@controllers.routes.Assets.at(minifyInProd("stylesheets/storeDetails.css"))">
 	<script src="@controllers.routes.Assets.at("plugins/plupload/js/plupload.full.js")" type="text/javascript"></script>
-	<script src="@controllers.routes.Assets.at("javascripts/widgets.storeDetails.js")" type="text/javascript"></script>
+	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.storeDetails.js"))" type="text/javascript"></script>
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {
