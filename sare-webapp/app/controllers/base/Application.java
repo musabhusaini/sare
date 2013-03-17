@@ -21,6 +21,8 @@
 
 package controllers.base;
 
+import org.apache.commons.io.FilenameUtils;
+
 import actors.*;
 import models.*;
 import play.*;
@@ -32,6 +34,20 @@ import views.html.*;
 @Transactional
 @With({ SessionedAction.class, ErrorHandledAction.class, LoggedAction.class })
 public class Application extends Controller {
+	
+	public static String minifyInProd(String file) {
+		if (Play.isProd()) {
+			String path = FilenameUtils.getFullPath(file);
+			String name = FilenameUtils.getBaseName(file);
+			String ext = FilenameUtils.getExtension(file);
+			
+			if (!name.toLowerCase().endsWith(".min")) {
+				return String.format("%s%s.min.%s", path, name, ext);
+			}
+		}
+		
+		return file;
+	}
 	
 	public static Result homePage() {
 		return ok(home.render());

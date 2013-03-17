@@ -24,6 +24,8 @@
 @import scala._
 @import scala.util._
 
+@import controllers.base.Application._
+
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-doc-slider-@uid" class="ctr-doc-slider" data-corpus="@corpus.asJson()" data-lexicon="@lexicon.asJson()">
 	<div class="row-fluid">
@@ -58,8 +60,8 @@
 		</div>
 	</div>
 	
-	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/documentSlider.css")">
-	<script type="text/javascript" src="@controllers.routes.Assets.at("javascripts/widgets.documentSlider.js")"></script>
+	<link rel="stylesheet" href="@routes.Assets.at(minifyInProd("stylesheets/documentSlider.css"))">
+	<script src="@routes.Assets.at(minifyInProd("javascripts/widgets.documentSlider.js"))" type="text/javascript"></script>
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {

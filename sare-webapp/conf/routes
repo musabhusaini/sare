@@ -103,5 +103,5 @@ GET		/view/modules/reduction/:corpus		controllers.modules.SetCoverModule.moduleP
 GET		/api/support/languages		controllers.CollectionsController.supportedLanguages()
 
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/javascripts/routes      			controllers.base.Application.javascriptRoutes()
-GET     /assets/*file               			controllers.Assets.at(path="/public", file)
+GET		/assets/javascripts/routes      		controllers.base.Application.javascriptRoutes()
+GET		/assets/*file               			controllers.Assets.at(path="/public", file)
