@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -21,6 +21,7 @@
 
 package controllers;
 
+import static controllers.base.SareTransactionalAction.*;
 import static models.base.ViewModel.*;
 
 import java.util.*;
@@ -43,6 +44,7 @@ import play.mvc.*;
 import views.html.moduleView;
 import controllers.base.*;
 import controllers.modules.base.Module;
+import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 
 public class ModuleController extends Application {
 
@@ -58,7 +60,11 @@ public class ModuleController extends Application {
 					@Override
 					@Nullable
 					public ViewModel apply(@Nullable JsonNode input) {
-						return createViewModelQuietly(input, null);
+						if (!input.isTextual()) {
+							return null;
+						}
+						return createViewModelQuietly(fetchResource(input.asText(), PersistentObject.class), null);
+							
 					}
 				}));
 		} else if (inputJson != null && inputJson.isObject()) {
@@ -163,6 +169,7 @@ public class ModuleController extends Application {
 		}).sortedCopy(modules);
 	}
 	
+	@With(SareTransactionalAction.class)
 	public static Result options(String input) {
 		return ok(play.libs.Json.toJson(getNextModules(input)));
 	}

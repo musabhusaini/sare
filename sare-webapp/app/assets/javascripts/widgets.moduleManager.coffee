@@ -179,8 +179,9 @@ widget =
 			when "output"
 				@_$(@options.moduleControlsContainer).hide()
 				if not value? then return
-				if typeof value is "object" then value = JSON.stringify(value) 
-				@options.moduleOptionsRoute(value).ajax
+				if not $.isArray(value) then value = [ value ]
+				value = ((val.id ? val) for val in value)
+				@options.moduleOptionsRoute(JSON.stringify value).ajax
 					success: (modules) =>
 						@_$(@options.moduleControlsContainer).hide()
 						@_$(@options.nextModulesButtons).empty()
