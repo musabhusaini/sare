@@ -46,7 +46,6 @@ import twitter4j.auth.AccessToken;
 import views.html.tags.*;
 import models.document.OpinionDocumentModel;
 import models.documentStore.*;
-import models.grabbers.TwitterGrabberModel;
 import controllers.DocumentsController;
 import controllers.base.*;
 import controllers.modules.base.Module;
@@ -121,20 +120,16 @@ public class CorpusModule extends Module {
 			// otherwise try as a json body.
 			JsonNode json = request().body().asJson();
 			if (json != null) {
-				OpinionCorpusFactoryOptionsModel viewModel = Json.fromJson(json, OpinionCorpusFactoryOptionsModel.class);
-				if (viewModel != null) {
-					options = viewModel.toFactoryOptions();
+				OpinionCorpusFactoryOptionsModel optionsVM = Json.fromJson(json, OpinionCorpusFactoryOptionsModel.class);
+				if (optionsVM != null) {
+					options = optionsVM.toFactoryOptions();
 				} else {
 					throw new IllegalArgumentException();
 				}
 				
-				JsonNode grabbers = json.get("grabbers");
-				if (grabbers != null) {
-					if (grabbers.has("twitter")) {
-						TwitterGrabberModel twitterGrabber = Json.fromJson(grabbers.get("twitter"),
-							TwitterGrabberModel.class);
-						
-						if (StringUtils.isNotBlank(twitterGrabber.query)) {
+				if (optionsVM.grabbers != null) {
+					if (optionsVM.grabbers.twitter != null) {
+						if (StringUtils.isNotBlank(optionsVM.grabbers.twitter.query)) {
 							TwitterFactory tFactory = new TwitterFactory();
 							Twitter twitter = tFactory.getInstance();
 							twitter.setOAuthConsumer(
@@ -144,8 +139,8 @@ public class CorpusModule extends Module {
 								new AccessToken(Play.application().configuration().getString("twitter4j.oauth.accessToken"),
 									Play.application().configuration().getString("twitter4j.oauth.accessTokenSecret")));
 							
-							Query query = new Query(twitterGrabber.query);
-							query.count(ObjectUtils.defaultIfNull(twitterGrabber.limit, 10));
+							Query query = new Query(optionsVM.grabbers.twitter.query);
+							query.count(ObjectUtils.defaultIfNull(optionsVM.grabbers.twitter.limit, 10));
 							query.resultType(Query.RECENT);
 							if (StringUtils.isNotEmpty(options.getLanguage())) {
 								query.lang(options.getLanguage());

@@ -19,25 +19,12 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package models.documentStore;
+package models.grabbers;
 
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStoreFactoryOptions;
+import models.base.ViewModel;
 
-public class PersistentDocumentStoreFactoryOptionsModel extends PersistentDocumentStoreModel {
+public class GrabbersModel
+	extends ViewModel {
 
-	public String title;
-	public String description;
-	public String language;
-	
-	public PersistentDocumentStoreFactoryOptionsModel(PersistentDocumentStoreFactoryOptions<?> options) {
-		if (options != null) {
-			title = options.getTitle();
-			description = options.getDescription();
-			language = options.getLanguage();
-		}
-	}
-	
-	public PersistentDocumentStoreFactoryOptionsModel() {
-		this(null);
-	}
+	public TwitterGrabberModel twitter;
 }

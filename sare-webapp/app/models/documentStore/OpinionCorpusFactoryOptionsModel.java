@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -21,8 +21,7 @@
 
 package models.documentStore;
 
-import org.apache.commons.lang3.*;
-
+import models.grabbers.GrabbersModel;
 import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpusFactoryOptions;
 
 public class OpinionCorpusFactoryOptionsModel
@@ -31,6 +30,7 @@ public class OpinionCorpusFactoryOptionsModel
 	public String content;
 	public String format;
 	public String delimiter;
+	public GrabbersModel grabbers;
 	
 	public OpinionCorpusFactoryOptionsModel(OpinionCorpusFactoryOptions options) {
 		super(options);
@@ -47,14 +47,12 @@ public class OpinionCorpusFactoryOptionsModel
 	}
 	
 	public OpinionCorpusFactoryOptions toFactoryOptions() {
-		PersistentDocumentStoreModel corpusView = ObjectUtils.defaultIfNull(details, new PersistentDocumentStoreModel());
-		
 		return (OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
-			.setContent(content)
-			.setFormat(format)
-			.setTextDelimiter(delimiter)
-			.setTitle(corpusView.title)
-			.setDescription(corpusView.description)
-			.setLanguage(corpusView.language);
+			.setContent(this.content)
+			.setFormat(this.format)
+			.setTextDelimiter(this.delimiter)
+			.setTitle(this.title)
+			.setDescription(this.description)
+			.setLanguage(this.language);
 	}
 }
