@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -38,9 +38,6 @@ public class SetCoverFactoryOptions
 	private PersistentDocumentStore store;
 	private TokenizingOptions tokenizingOptions;
 	private double weightCoverage;
-	private String title;
-	private String description;
-	private String language;
 	
 	public SetCoverFactoryOptions() {
 		this.weightCoverage = 1.0;
@@ -82,60 +79,6 @@ public class SetCoverFactoryOptions
 		return this;
 	}
 	
-	/**
-	 * Gets the title of the set cover to be created.
-	 * @return the title.
-	 */
-	public String getTitle() {
-		return this.title;
-	}
-	
-	/**
-	 * Sets the title to be set for the set cover.
-	 * @param title the title to be set.
-	 * @return the {@code this} object.
-	 */
-	public SetCoverFactoryOptions setTitle(String title) {
-		this.title = title;
-		return this;
-	}
-	
-	/**
-	 * Gets the description of the set cover to be created.
-	 * @return the description.
-	 */
-	public String getDescription() {
-		return this.description;
-	}
-	
-	/**
-	 * Sets the description to be set for the set cover.
-	 * @param description the description to be set.
-	 * @return the {@code this} object.
-	 */
-	public SetCoverFactoryOptions setDescription(String description) {
-		this.description = description;
-		return this;
-	}
-
-	/**
-	 * Gets the language of the set cover to be created.
-	 * @return the language.
-	 */
-	public String getLanguage() {
-		return this.language;
-	}
-
-	/**
-	 * Sets the language to set for the set cover.
-	 * @param language the language to be set.
-	 * @return the {@code this} object.
-	 */
-	public SetCoverFactoryOptions setLanguage(String language) {
-		this.language = language;
-		return this;
-	}
-
 	/**
 	 * Gets the token weight coverage to be maintained in the final set cover.
 	 * @return the token weight coverage; must be in [0.0, 1.0].

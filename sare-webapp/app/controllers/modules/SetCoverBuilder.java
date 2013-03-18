@@ -50,6 +50,7 @@ import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.core.controllers.ProgressObserver;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.DocumentSetCoverController;
 import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
+import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
@@ -74,14 +75,17 @@ public class SetCoverBuilder extends Module {
 	@Override
 	public String getRoute() {
 		DocumentSetCoverModel setCoverVM = this.findViewModel(DocumentSetCoverModel.class, new DocumentSetCoverModel());
-		DocumentCorpusModel corpusVM = this.findViewModel(DocumentCorpusModel.class, Lists.<ViewModel>newArrayList(setCoverVM), new DocumentCorpusModel());
+		DocumentCorpusModel corpusVM = this.findViewModel(DocumentCorpusModel.class, Lists.<ViewModel>newArrayList(setCoverVM));
 		
 		if (corpusVM instanceof DocumentSetCoverModel) {
-			DocumentSetCoverModel vm = (DocumentSetCoverModel)corpusVM;
-			if (vm.baseCorpus != null && setCoverVM.id != null && StringUtils.equals(vm.baseCorpus.id, setCoverVM.id)) {
+			DocumentSetCoverModel tmpVM = (DocumentSetCoverModel)corpusVM;
+			if (tmpVM.baseCorpus != null && setCoverVM.id != null && StringUtils.equals(tmpVM.baseCorpus.id, setCoverVM.id)) {
 				corpusVM = new DocumentCorpusModel();
-				setCoverVM = vm;
+				setCoverVM = tmpVM;
 			}
+		} else if (corpusVM == null) {
+			corpusVM = this.findViewModel(DocumentCorpusModel.class);
+			setCoverVM = new DocumentSetCoverModel();
 		}
 		
 		return controllers.modules.routes.SetCoverBuilder.modulePage(corpusVM.id, setCoverVM.id, false).url();
@@ -166,6 +170,7 @@ public class SetCoverBuilder extends Module {
 			throw new IllegalArgumentException();
 		} else if (setcover == null) {
 			setCoverObj = (DocumentSetCover)new DocumentSetCover(corpusObj)
+				.setTitle(corpusObj.getTitle() + " untitled reduction")
 				.setOwnerId(getUsername());
 			em().persist(setCoverObj);
 		}
@@ -181,20 +186,24 @@ public class SetCoverBuilder extends Module {
 			.setEm(em());
 		
 		final SetCoverController controller = new SetCoverController();
-
+		
+		ProgressObserverToken tmpPoToken = ProgressObserverToken.find.byId(setCoverObj.getId());
+		if (tmpPoToken != null) {
+			tmpPoToken.delete();
+		}
 		final ProgressObserverToken poToken = new ProgressObserverToken()
 			.setId(setCoverObj.getId())
 			.setSession(getWebSession());
 
 		// if it's a simple change, no need to do anything complicated.
-		if (ObjectUtils.equals(factoryOptions.getTokenizingOptions(), setCoverObj.getTokenizingOptions())
+		if (ObjectUtils.equals(factoryOptions.getTokenizingOptions(), ObjectUtils.defaultIfNull(setCoverObj.getTokenizingOptions(), new TokenizingOptions()))
 			// using view model weight coverage as it allows for nulls.
 			&& ObjectUtils.equals(viewModel.weightCoverage, setCoverObj.getWeightCoverage())) {
 			
 			// TODO: this should happen through the factory as well, but shortcutting for now.
 			setCoverObj.setTitle(factoryOptions.getTitle());
 			setCoverObj.setDescription(factoryOptions.getDescription());
-			em().refresh(setCoverObj);
+			em().merge(setCoverObj);
 			
 			poToken.progress = 1.0;
 			poToken.save();
@@ -214,7 +223,7 @@ public class SetCoverBuilder extends Module {
 					public void run() {
 						ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(poToken.id);
 						updatedToken.progress = progress;
-						updatedToken.save();
+						updatedToken.update();
 					}
 				});
 			}
@@ -228,10 +237,10 @@ public class SetCoverBuilder extends Module {
 						@Override
 						public DocumentSetCover run(EntityManager em) throws Throwable {
 							DocumentSetCover setcover = controller.create(factoryOptions);
-							em.refresh(setcover);
+							em.merge(setcover);
 							for (SetCoverDocument document : setcover.getAllDocuments()) {
 								if (em.contains(document)) {
-									em.refresh(document);
+									em.merge(document);
 								} else {
 									em.persist(document);
 								}
