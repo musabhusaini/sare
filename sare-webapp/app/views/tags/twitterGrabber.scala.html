@@ -31,13 +31,13 @@
 	<a class="close" data-dismiss="alert" href="#"><i class="icon-twitter-bird-white pull-right"></i></a>
 	<label for="input-query-@uid">Query</label>
 	<input id="input-query-@uid" type="text" class="input-query span10" placeholder="Search query"
-	  	title="Enter search query" />
+		title="Enter search query" />
 	<label for="input-limit-@uid">Limit</label>
 	<input id="input-limit-@uid" type="text" class="input-limit span3" placeholder="Limit"
-	  	title="Enter maximum number of results to retrieve" />
+		title="Enter maximum number of results to retrieve" />
 	
-	<script src="@controllers.routes.Assets.at(("javascripts/widgets.twitterGrabber.js"))" type="text/javascript"></script>
-		<script type="text/javascript">
+	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.twitterGrabber.js"))" type="text/javascript"></script>
+	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {
 				$("#ctr-twitter-grabber-@uid").twitterGrabber();
