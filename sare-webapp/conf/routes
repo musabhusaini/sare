@@ -97,8 +97,12 @@ GET		/view/modules/corpora/:corpus/lexica/:lexicon/documents	controllers.modules
 GET		/view/modules/lexica/:lexicon							controllers.modules.AspectLexBuilder.lexiconView(lexicon: String)
 
 # Corpus reduction module
-GET		/view/modules/corpora/:corpus/reduction				controllers.modules.SetCoverBuilder.modulePage(corpus: String, setcover = null, partial: Boolean ?= false)
-GET		/view/modules/corpora/:corpus/reduction/:setcover	controllers.modules.SetCoverBuilder.modulePage(corpus: String, setcover: String, partial: Boolean ?= false)
+GET		/view/modules/corpora/reduction/:setcover						controllers.modules.SetCoverBuilder.modulePage(corpus = null, setcover: String, partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/reduction							controllers.modules.SetCoverBuilder.modulePage(corpus: String, setcover = null, partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/reduction/:setcover		controllers.modules.SetCoverBuilder.modulePage(corpus: String, setcover: String, partial: Boolean ?= false)
+POST	/view/modules/corpora/reduction/:setcover						controllers.modules.SetCoverBuilder.update(corpus = null, setcover: String)
+POST	/view/modules/corpora/:corpus/reduction/:setcover		controllers.modules.SetCoverBuilder.update(corpus: String, setcover: String)
+POST	/view/modules/corpora/:corpus/reduction							controllers.modules.SetCoverBuilder.create(corpus: String)
 
 # Support queries
 GET		/api/support/languages		controllers.CollectionsController.supportedLanguages()

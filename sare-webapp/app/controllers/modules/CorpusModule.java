@@ -186,6 +186,10 @@ public class CorpusModule extends Module {
 			throw new IllegalArgumentException();
 		}
 		
+		if (corpus == null && StringUtils.isEmpty(options.getTitle())) {
+			options.setTitle("Untitled corpus");
+		}
+		
 		options
 			.setOwnerId(SessionedAction.getUsername(ctx()))
 			.setExistingId(corpus)

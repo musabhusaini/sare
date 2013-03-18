@@ -26,22 +26,32 @@ import static controllers.base.SessionedAction.*;
 import static models.base.ViewModel.*;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 
 import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.*;
+import org.codehaus.jackson.JsonNode;
+
+import com.avaje.ebean.*;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-import play.mvc.Result;
-import play.mvc.With;
+import play.db.ebean.Transactional;
+import play.libs.*;
+import play.mvc.*;
 import views.html.tags.*;
+import models.ProgressObserverToken;
 import models.base.ViewModel;
 import models.documentStore.*;
 import controllers.base.SareTransactionalAction;
 import controllers.modules.base.Module;
+import edu.sabanciuniv.sentilab.core.controllers.ProgressObserver;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.DocumentSetCoverController;
+import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
-import edu.sabanciuniv.sentilab.sare.models.setcover.DocumentSetCover;
+import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 @With(SareTransactionalAction.class)
@@ -63,10 +73,18 @@ public class SetCoverBuilder extends Module {
 
 	@Override
 	public String getRoute() {
-		DocumentCorpusModel corpusVM = this.findViewModel(DocumentCorpusModel.class, new DocumentCorpusModel());
-		DocumentSetCoverModel setcoverVM = this.findViewModel(DocumentSetCoverModel.class, new DocumentSetCoverModel());
+		DocumentSetCoverModel setCoverVM = this.findViewModel(DocumentSetCoverModel.class, new DocumentSetCoverModel());
+		DocumentCorpusModel corpusVM = this.findViewModel(DocumentCorpusModel.class, Lists.<ViewModel>newArrayList(setCoverVM), new DocumentCorpusModel());
 		
-		return controllers.modules.routes.SetCoverBuilder.modulePage(corpusVM.id, setcoverVM.id, false).url();
+		if (corpusVM instanceof DocumentSetCoverModel) {
+			DocumentSetCoverModel vm = (DocumentSetCoverModel)corpusVM;
+			if (vm.baseCorpus != null && setCoverVM.id != null && StringUtils.equals(vm.baseCorpus.id, setCoverVM.id)) {
+				corpusVM = new DocumentCorpusModel();
+				setCoverVM = vm;
+			}
+		}
+		
+		return controllers.modules.routes.SetCoverBuilder.modulePage(corpusVM.id, setCoverVM.id, false).url();
 	}
 	
 	public static List<PersistentDocumentStoreModel> getSetCovers(DocumentCorpusModel corpus) {
@@ -86,16 +104,148 @@ public class SetCoverBuilder extends Module {
 	}
 	
 	public static Result modulePage(String corpus, String setcover, boolean partial) {
-		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
-		DocumentCorpusModel corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
-		DocumentSetCoverModel setcoverVM = setcover != null ?
-			(DocumentSetCoverModel)createViewModel(fetchResource(setcover, DocumentSetCover.class)) : null;
-		
-		if (setcoverVM == null && new DocumentSetCoverController().getAllSetCovers(em(), getUsername(), corpusObj).size() == 0) {
-			em().persist(new DocumentSetCover(corpusObj).setOwnerId(getUsername()));
+		DocumentCorpus corpusObj = null;
+		DocumentCorpusModel corpusVM = null;
+		if (corpus != null) {
+			corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		}
 		
-		return moduleRender(new SetCoverBuilder().setViewModels(Lists.<ViewModel>newArrayList(corpusVM, setcoverVM)),
-			setCoverBuilder.render(corpusVM, setcoverVM), partial);
+		DocumentSetCover setCoverObj = null;
+		DocumentSetCoverModel setCoverVM = null;
+		if (setcover != null) {
+			setCoverObj = fetchResource(setcover, DocumentSetCover.class);
+			setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
+		}
+			
+		if (corpusObj == null && setCoverObj == null) {
+			throw new IllegalArgumentException();
+		} else if (corpusObj == null) {
+			corpusObj = setCoverObj.getBaseCorpus();
+		} else if (setCoverObj != null && ObjectUtils.notEqual(corpusObj, setCoverObj.getBaseCorpus())) {
+			throw new IllegalArgumentException();
+		}
+		if (corpusObj == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (setCoverObj == null && new DocumentSetCoverController().getAllSetCovers(em(), getUsername(), corpusObj).size() == 0) {
+			create(corpus);
+		}
+		
+		corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
+		return moduleRender(new SetCoverBuilder().setViewModels(Lists.<ViewModel>newArrayList(corpusVM, setCoverVM)),
+			setCoverBuilder.render(corpusVM, setCoverVM), partial);
+	}
+	
+	public static Result create(String corpus) {
+		return update(corpus, null);
+	}
+	
+	@Transactional
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	public static Result update(String corpus, String setcover) {
+		DocumentCorpus corpusObj = null;
+		if (corpus != null) {
+			corpusObj = fetchResource(corpus, DocumentCorpus.class);
+		}
+		
+		DocumentSetCover setCoverObj = null;
+		if (setcover != null) {
+			setCoverObj = fetchResource(setcover, DocumentSetCover.class);
+			if (corpusObj == null) {
+				corpusObj = setCoverObj.getBaseCorpus();
+			} else if (ObjectUtils.notEqual(corpusObj, setCoverObj.getBaseCorpus())) {
+				throw new IllegalArgumentException();
+			}
+		} else if (corpusObj == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		JsonNode jsonBody = request().body().asJson();
+		if (jsonBody == null && setcover != null) {
+			throw new IllegalArgumentException();
+		} else if (setcover == null) {
+			setCoverObj = (DocumentSetCover)new DocumentSetCover(corpusObj)
+				.setOwnerId(getUsername());
+			em().persist(setCoverObj);
+		}
+		
+		if (jsonBody == null) {
+			return ok(createViewModel(setCoverObj).asJson());
+		}
+		
+		DocumentSetCoverModel viewModel = Json.fromJson(jsonBody, DocumentSetCoverModel.class);
+		final SetCoverFactoryOptions factoryOptions = (SetCoverFactoryOptions)viewModel.toFactoryOptions()
+			.setStore(corpusObj)
+			.setOwnerId(getUsername())
+			.setEm(em());
+		
+		final SetCoverController controller = new SetCoverController();
+
+		final ProgressObserverToken poToken = new ProgressObserverToken()
+			.setId(setCoverObj.getId())
+			.setSession(getWebSession());
+
+		// if it's a simple change, no need to do anything complicated.
+		if (ObjectUtils.equals(factoryOptions.getTokenizingOptions(), setCoverObj.getTokenizingOptions())
+			// using view model weight coverage as it allows for nulls.
+			&& ObjectUtils.equals(viewModel.weightCoverage, setCoverObj.getWeightCoverage())) {
+			
+			// TODO: this should happen through the factory as well, but shortcutting for now.
+			setCoverObj.setTitle(factoryOptions.getTitle());
+			setCoverObj.setDescription(factoryOptions.getDescription());
+			em().refresh(setCoverObj);
+			
+			poToken.progress = 1.0;
+			poToken.save();
+			return ok(createViewModel(setCoverObj).asJson());
+		}
+		
+		poToken.save();
+		controller.addProgessObserver(new ProgressObserver() {
+			@Override
+			public void observe(final double progress, String message) {
+				if (!"create".equalsIgnoreCase(message)) {
+					return;
+				}
+				
+				Ebean.execute(new TxRunnable() {
+					@Override
+					public void run() {
+						ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(poToken.id);
+						updatedToken.progress = progress;
+						updatedToken.save();
+					}
+				});
+			}
+		});
+		
+		Akka.future(new Callable<DocumentSetCover>() {
+			@Override
+			public DocumentSetCover call() throws Exception {
+				try {
+					return execute(new SareTxRunnable<DocumentSetCover>() {
+						@Override
+						public DocumentSetCover run(EntityManager em) throws Throwable {
+							DocumentSetCover setcover = controller.create(factoryOptions);
+							em.refresh(setcover);
+							for (SetCoverDocument document : setcover.getAllDocuments()) {
+								if (em.contains(document)) {
+									em.refresh(document);
+								} else {
+									em.persist(document);
+								}
+							}
+							
+							return setcover;
+						}
+					});
+				} catch (Throwable e) {
+					throw new IllegalArgumentException(e);
+				}
+			}
+		});
+		
+		return ok(createViewModel(setCoverObj).asJson());
 	}
 }

@@ -24,6 +24,8 @@ package controllers.modules.base;
 import java.lang.annotation.*;
 import java.util.UUID;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 
@@ -72,12 +74,23 @@ public abstract class Module
 		return this;
 	}
 	
+	public <T extends ViewModel> T findViewModel(Class<T> viewModelClass, Iterable<ViewModel> exclude, T defaultViewModel) {
+		exclude = ObjectUtils.defaultIfNull(exclude, Lists.<ViewModel>newArrayList());
+		return Iterables.getFirst(Iterables.filter(Iterables.filter(
+			this.viewModels, Predicates.not(Predicates.in(Lists.newArrayList(exclude)))), viewModelClass),
+			defaultViewModel);
+	}
+	
 	public <T extends ViewModel> T findViewModel(Class<T> viewModelClass, T defaultViewModel) {
-		return Iterables.getFirst(Iterables.filter(this.viewModels, viewModelClass), defaultViewModel);
+		return this.findViewModel(viewModelClass, null, defaultViewModel);
+	}
+	
+	public <T extends ViewModel> T findViewModel(Class<T> viewModelClass, Iterable<ViewModel> exclude) {
+		return this.findViewModel(viewModelClass, exclude, null);
 	}
 	
 	public <T extends ViewModel> T findViewModel(Class<T> viewModelClass) {
-		return this.findViewModel(viewModelClass, null);
+		return this.findViewModel(viewModelClass, (T)null);
 	}
 	
 	public abstract UUID getId();

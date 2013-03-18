@@ -23,6 +23,7 @@
 
 @import scala.util._
 
+@import controllers.base.Application._
 @import controllers.modules._
 
 @defining(Random.nextInt(1000)) { uid =>
@@ -34,5 +35,14 @@
 		@tags.storeList(stores = SetCoverBuilder.getSetCovers(corpus), editable = true, selectionPrompt = "Select a reduction")
 	</div>
 	}
+	
+	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.setCoverBuilder.js"))" type="text/javascript"></script>
+	<script type="text/javascript">
+		(function(window, $) {
+			$(function() {
+				$("#ctr-module-@uid").setCoverBuilder();
+			});
+		})(window, window.jQuery);
+	</script>
 </div>
 }

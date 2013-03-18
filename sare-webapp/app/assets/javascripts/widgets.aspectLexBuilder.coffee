@@ -75,7 +75,7 @@ widget =
 				.storeList "option",
 					suppressOutput: true
 					addRoute: =>
-						jsRoutes.controllers.modules.AspectLexBuilder.create(@options.corpus?.id ? "null")
+						@options.createLexiconRoute(@options.corpus?.id ? "null")
 		
 	refresh: ->
 		@_sendModuleOutput()
@@ -99,6 +99,7 @@ widget =
 		lexicaContainer: ".ctr-lexica"
 		documentsContainer: ".ctr-documents"
 		lexiconContainer: ".ctr-alex"
+		createLexiconRoute: jsRoutes.controllers.modules.AspectLexBuilder.create
 		documentsViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.documentsView
 		lexiconViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.lexiconView
 		lexiconKey: "lexicon"

@@ -41,6 +41,10 @@ import play.mvc.Http.Context;
 
 public class SareTransactionalAction extends Action.Simple {
 
+	public interface SareTxRunnable<T> {
+		public T run(EntityManager em) throws Throwable;
+	}
+	
 	private static ThreadLocal<EntityManager> currentEntityManager = new ThreadLocal<>();
 	
 	public static EntityManager em() {
@@ -131,21 +135,24 @@ public class SareTransactionalAction extends Action.Simple {
 		return forbiddenEntity(id, null);
 	}
 	
-	@Override
-	public Result call(Context ctx) throws Throwable {
-		Result result = null;
-		EntityManager em = null;
+	public static <T> T execute(SareTxRunnable<T> action) throws Throwable {
+		return execute(action, null);
+	}
+	
+	public static <T> T execute(SareTxRunnable<T> action, Context ctx) throws Throwable {
+		Validate.notNull(action);
 		
+		T result = null;
+		EntityManager em = null;
 		try {
 			// create entity manager, add it to args, and begin transaction before the call.
 			Logger.info(LoggedAction.getLogEntry(ctx, "creating entity manager"));
 			em = SareEntityManagerFactory
 				.createEntityManager(Play.application().getWrappedApplication().mode().toString());
-			currentEntityManager.set(em);
 			em.getTransaction().begin();
 
 			// call the actual action.
-			result = delegate.call(ctx);
+			result = action.run(em);
 			
 			// commit active transaction after the call.
 			if (em.isOpen() && em.getTransaction().isActive()) {
@@ -168,5 +175,16 @@ public class SareTransactionalAction extends Action.Simple {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public Result call(final Context ctx) throws Throwable {
+		return execute(new SareTxRunnable<Result>() {
+			@Override
+			public Result run(EntityManager em) throws Throwable {
+				currentEntityManager.set(em);
+				return delegate.call(ctx);
+			}
+		}, ctx);
 	}	
 }

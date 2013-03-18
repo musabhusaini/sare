@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -41,7 +41,8 @@ import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 import akka.actor.*;
 
-public class SessionCleaner extends UntypedActor {
+public class SessionCleaner
+	extends UntypedActor {
 	
 	public static boolean clean(WebSession session) {
 		if (session == null) {
@@ -49,6 +50,14 @@ public class SessionCleaner extends UntypedActor {
 		}
 		
 		Logger.info("deleting session " + UuidUtils.normalize(session.id));
+		List<ProgressObserverToken> poTokens = ProgressObserverToken.find
+			.where()
+				.eq("session", session)
+				.findList();
+		for (ProgressObserverToken poToken : poTokens) {
+			poToken.delete();
+		}
+		
 		session.delete();
 		
 		// if the owner id and session id are the same, it's a standalone session, so delete all stores owned.

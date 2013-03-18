@@ -23,13 +23,15 @@ package models.documentStore;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import models.TokenizingOptionsModel;
 
 import com.google.common.collect.Iterables;
 
 import controllers.base.SareTransactionalAction;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.DocumentSetCoverController;
-import edu.sabanciuniv.sentilab.sare.models.setcover.DocumentSetCover;
+import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 
 public class DocumentSetCoverModel
 	extends DocumentCorpusModel {
@@ -62,5 +64,19 @@ public class DocumentSetCoverModel
 	
 	public DocumentSetCoverModel() {
 		this(null);
+	}
+	
+	public SetCoverFactoryOptions toFactoryOptions() {
+		SetCoverFactoryOptions options = (SetCoverFactoryOptions)new SetCoverFactoryOptions()
+			.setWeightCoverage(ObjectUtils.defaultIfNull(this.weightCoverage, 1.0))
+			.setTitle(this.title)
+			.setDescription(this.description)
+			.setExistingId(this.id);
+		
+		if (this.tokenizingOptions != null) {
+			options.setTokenizingOptions(this.tokenizingOptions.toTokenizingOptions());
+		}
+		
+		return options;
 	}
 }

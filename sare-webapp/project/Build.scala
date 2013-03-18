@@ -31,13 +31,14 @@ object ApplicationBuild extends Build {
     val appDependencies = Seq(
 		javaCore, javaJdbc, javaEbean,
 		// Add your project dependencies here,
-		("edu.sabanciuniv.sentilab" % "sare-entitymanager" % "2.0.0-SNAPSHOT")
-			.exclude("org.apache.commons", "commons-lang3")
-			.exclude("com.google.guava", "guava")
-			.exclude("org.reflections", "reflections")
-			.exclude("joda-time", "joda-time")
-			.exclude("junit", "junit"),
-		"org.twitter4j" % "twitter4j-core" % "[3.0,)"
+		(
+			"edu.sabanciuniv.sentilab" % "sare-entitymanager" % "2.0.0-SNAPSHOT")
+				.exclude("org.apache.commons", "commons-lang3")
+				.exclude("com.google.guava", "guava")
+				.exclude("org.reflections", "reflections")
+				.exclude("joda-time", "joda-time")
+				.exclude("junit", "junit"),
+			"org.twitter4j" % "twitter4j-core" % "[3.0,)"
     )
 
 	// Only compile the bootstrap bootstrap.less file and any other *.less file in the stylesheets directory

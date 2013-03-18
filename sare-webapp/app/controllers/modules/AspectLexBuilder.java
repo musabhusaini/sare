@@ -128,7 +128,14 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	public static Result update(String corpus, String lexicon) {
-		DocumentCorpus corpusObj = fetchResourceQuietly(corpus, DocumentCorpus.class);
+		DocumentCorpus corpusObj = null;
+		if (corpus != null) {
+			corpusObj = fetchResource(corpus, DocumentCorpus.class);
+		}
+		AspectLexicon lexiconObj = null;
+		if (lexicon != null) {
+			lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		}
 		AspectLexiconFactoryOptions options = null;
 		
 		MultipartFormData formData = request().body().asMultipartFormData();
@@ -151,9 +158,8 @@ public class AspectLexBuilder extends Module {
 				if (viewModel != null) {
 					options = viewModel.toFactoryOptions();
 					
-					if (lexicon != null) {
-						AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
-						if (corpus != null && (lexiconObj.getBaseCorpus() == null
+					if (lexiconObj != null) {
+						if (corpusObj != null && (lexiconObj.getBaseCorpus() == null
 							|| !ObjectUtils.equals(lexiconObj.getBaseCorpus(), corpusObj))) {
 							throw new IllegalArgumentException();
 						}
@@ -171,6 +177,10 @@ public class AspectLexBuilder extends Module {
 			throw new IllegalArgumentException();
 		}
 		
+		if (lexicon == null && StringUtils.isEmpty(options.getTitle())) {
+			options.setTitle("Untitled aspect lexicon");
+		}
+		
 		options
 			.setBaseStore(corpusObj)
 			.setOwnerId(SessionedAction.getUsername(ctx()))
@@ -178,7 +188,7 @@ public class AspectLexBuilder extends Module {
 			.setEm(em());
 		
 		AspectLexiconController factory = new AspectLexiconController();
-		AspectLexicon lexiconObj = factory.create(options);
+		lexiconObj = factory.create(options);
 		if (!em().contains(lexiconObj)) {
 			em().persist(lexiconObj);
 			return created(createViewModel(lexiconObj).asJson());

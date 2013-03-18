@@ -93,4 +93,28 @@ public class TokenizingOptions
 			.setTags(this.getTags())
 			.setLemmatized(this.isLemmatized());
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof TokenizingOptions)) {
+			return super.equals(obj);
+		}
+		
+		TokenizingOptions otherObj = (TokenizingOptions)obj;
+		if (this.isLemmatized() != otherObj.isLemmatized()) {
+			return false;
+		}
+		
+		if (this.getTags().size() != otherObj.getTags().size()) {
+			return false;
+		}
+		
+		for (String tag : this.getTags()) {
+			if (!otherObj.getTags().contains(tag)) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
 }
