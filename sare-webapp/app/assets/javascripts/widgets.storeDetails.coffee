@@ -200,18 +200,9 @@ widget =
 				
 				updated = @_getUpdated store
 				if not not updated
-					updatedStore = updatedStore ? store
-					updateOptions = updatedStore
-					updateOptions.title = updated.title
-					updateOptions.description = updated.description
-					updateOptions.language = updated.language
-					updateOptions =
-						details: updateOptions
-						grabbers: updated.grabbers ? null
-	
-					@options.updateRoute(updatedStore.id).ajax
+					@options.updateRoute(updated.id).ajax
 						contentType: Helpers.MimeTypes.json
-						data: JSON.stringify updateOptions
+						data: JSON.stringify updated
 						success: (updatedStore) =>
 							finalizeUpdate updatedStore
 						complete: =>
@@ -220,7 +211,7 @@ widget =
 				else
 					@_changeInputState @_$(@options.updateButton), "reset"
 					if updatedStore?
-						finalizeUpdate(updatedStore)
+						finalizeUpdate updatedStore
 						@_fixButtons()
 			
 			@_changeInputState @_$(@options.updateButton), "loading"

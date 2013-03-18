@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -20,8 +20,6 @@
  */
 
 package models.documentStore;
-
-import org.apache.commons.lang3.ObjectUtils;
 
 import controllers.base.SareTransactionalAction;
 
@@ -48,11 +46,9 @@ public class AspectLexiconFactoryOptionsModel
 	}
 	
 	public AspectLexiconFactoryOptions toFactoryOptions() {
-		PersistentDocumentStoreModel storeView = (PersistentDocumentStoreModel)ObjectUtils.defaultIfNull(details, new PersistentDocumentStoreModel());
-		
 		AspectLexiconFactoryOptions options = (AspectLexiconFactoryOptions)new AspectLexiconFactoryOptions()
-			.setTitle(storeView.title)
-			.setDescription(storeView.description);
+			.setTitle(this.title)
+			.setDescription(this.description);
 		
 		if (this.baseStore != null && SareTransactionalAction.em() != null) {
 			options.setBaseStore(SareTransactionalAction.fetchResource(this.baseStore.id, PersistentDocumentStore.class));
