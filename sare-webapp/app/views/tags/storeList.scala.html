@@ -26,7 +26,7 @@
 @import controllers.base.Application._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-module-@uid" class="ctr-module">
+<div id="ctr-store-list-@uid" class="ctr-module ctr-store-list">
 	<div class="row-fluid">
 		<div class="ctr-store-list-inner">
 			<div class="row-fluid">
@@ -76,7 +76,7 @@
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {
-				$("#ctr-module-@uid").storeList({
+				$("#ctr-store-list-@uid").storeList({
 					editable: @editable
 				});
 			});

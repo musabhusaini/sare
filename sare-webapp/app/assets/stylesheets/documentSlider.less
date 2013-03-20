@@ -19,31 +19,29 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "bootstrap/variables";
-@import "aspectLexBuilder";
+@import-once "bootstrap/variables";
+@import-once "aspectLexBuilder";
 
-.ctr-document {
-  .lexbuilder-display
-}
-
-.enhanced-document {
-  font-size: 0;
-  line-height: @baseLineHeight + 10px;
-  
-  > .token-text {
-    font-size: @baseFontSize;
-    vertical-align: middle
+.ctr-doc-slider {
+  .ctr-document {
+    .ctr-alex-builder .boxed-display
   }
-}
-
-.emphasized-token {
-  font-weight: bold;
-}
-
-.txt-rank {
-  text-align: center;
-}
-
-.postags label.checkbox {
-  margin-left: 10px;
+  
+  .ctr-enhanced-doc {
+    font-size: 0;
+    line-height: @baseLineHeight + 10px;
+  
+    > .token-text {
+      font-size: @baseFontSize;
+      vertical-align: middle
+    }
+  }
+  
+  .emphasized-token {
+    font-weight: bold;
+  }
+  
+  .txt-rank {
+    text-align: center;
+  }
 }
