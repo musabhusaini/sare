@@ -43,6 +43,8 @@ public class DocumentSetCoverModel
 	
 	public DocumentSetCoverModel(DocumentSetCover setCover) {
 		super(setCover, true);
+
+		this.tokenizingOptions = new TokenizingOptionsModel();
 		
 		if (setCover != null) {
 			if (setCover.getBaseCorpus() != null) {

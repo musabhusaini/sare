@@ -19,22 +19,30 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "bootstrap/mixins";
+@import "bootstrap/variables";
 @import "main";
 
-.with-details {
-  border: @nice-border;
-  background-color: lighten(yellow, 45%);
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.with-details > .details-wrapper {
-  margin-top: 15px;
-  padding-top: 10px;
-  border-top: @nice-border;
-}
-
-.btn-store-details {
-  .border-radius(20px);
+.ctr-sc-editor {
+  .lbl-postags {
+    min-height: 2 + 3*@gridGutterWidth/2;
+    line-height: 2 + 3*@gridGutterWidth/2;
+  }
+  
+  .postags {
+    border: @nice-border;
+    padding: 0 @gridGutterWidth/4 @gridGutterWidth/4 @gridGutterWidth/4;
+    margin-left: @gridGutterWidth/4;
+  }
+  
+  .sc-controls {
+    margin-top: 10px;
+    
+    .btn-apply {
+      margin-right: @gridGutterWidth/2;
+    }
+    
+    .progress {
+      min-height: @inputHeight;
+    }
+  }
 }

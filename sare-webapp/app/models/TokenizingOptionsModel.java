@@ -23,6 +23,8 @@ package models;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
 import models.base.ViewModel;
 
@@ -34,6 +36,8 @@ public class TokenizingOptionsModel
 	
 	public TokenizingOptionsModel(TokenizingOptions tokenizingOptions) {
 		super(tokenizingOptions);
+		
+		this.tags = Lists.newArrayList();
 		
 		if (tokenizingOptions != null) {
 			this.tags = tokenizingOptions.getTags();

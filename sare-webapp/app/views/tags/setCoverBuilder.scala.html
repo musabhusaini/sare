@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(corpus: documentStore.DocumentCorpusModel, setcover: documentStore.DocumentSetCoverModel)
+@(corpus: documentStore.DocumentCorpusModel, setcover: documentStore.DocumentSetCoverModel, posTags: Map[String, String] = null)
 
 @import scala.util._
 
@@ -31,10 +31,20 @@
 	@if(setcover != null) { data-setcover="@setcover.asJson()" }>
 	
 	@if(setcover == null) {
-	<div id="ctr-setcovers-@uid" class="ctr-setcovers row-fluid">
-		@tags.storeList(stores = SetCoverBuilder.getSetCovers(corpus), editable = true, selectionPrompt = "Select a reduction")
+	<div class="row-fluid">
+		<div id="ctr-setcovers-@uid" class="ctr-setcovers">
+			@tags.storeList(stores = SetCoverBuilder.getSetCovers(corpus), editable = true, selectionPrompt = "Select a reduction")
+		</div>
 	</div>
 	}
+	
+	<div class="row-fluid">
+		<div id="ctr-setcover-@uid" class="ctr-setcover">
+			@if(setcover != null) {
+				@tags.setCoverEditor(setcover, posTags)
+			}
+		</div>
+	</div>
 	
 	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.setCoverBuilder.js"))" type="text/javascript"></script>
 	<script type="text/javascript">

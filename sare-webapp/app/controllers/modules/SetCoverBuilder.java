@@ -138,7 +138,17 @@ public class SetCoverBuilder extends Module {
 		
 		corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
 		return moduleRender(new SetCoverBuilder().setViewModels(Lists.<ViewModel>newArrayList(corpusVM, setCoverVM)),
-			setCoverBuilder.render(corpusVM, setCoverVM), partial);
+			setCoverBuilder.render(corpusVM, setCoverVM, corpusObj.getLinguisticProcessor().getBasicPosTags()), partial);
+	}
+	
+	public static Result editorView(String setcover) {
+		DocumentSetCover setCoverObj = fetchResource(setcover, DocumentSetCover.class);
+		Map<String, String> posTags = null;
+		if (setCoverObj.getBaseCorpus() != null) {
+			posTags = setCoverObj.getBaseCorpus().getLinguisticProcessor().getBasicPosTags();
+		}
+		
+		return ok(setCoverEditor.render((DocumentSetCoverModel)createViewModel(setCoverObj), posTags));
 	}
 	
 	public static Result create(String corpus) {

@@ -32,30 +32,6 @@ Strings = Page.Strings
 widget =
 	_create: ->
 		@options.setcover ?= $(@element).data @options.setCoverKey
-		@options.corpus ?= $(@element).data(@options.corpusKey) ? @options.setcover?.baseCorpus
-		if not @options.corpus?
-			return false
-		
-		refreshView = (setcover) =>
-			@options.setcover = setcover
-			@options.corpus = @options.setcover?.baseCorpus
-			
-			@_$(@options.setCoverEditorContainer)
-				.empty()
-				.load @options.setCoverEditorViewRoute(@options.setcover.id).url
-		
-		if not @options.setcover?
-			@_on @_$(@options.setCoversContainer).children(Selectors.moduleContainer),
-				storeListSelectionChange: (e, selected) ->
-					refreshView selected.data
-				storeUpdate: (e, data) ->
-					refreshView data.updatedData
-			
-			@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
-				.storeList "option",
-					suppressOutput: true
-					addRoute: =>
-						@options.createSetCoverRoute @options.corpus.id
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
@@ -69,11 +45,6 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
-		setCoversContainer: ".ctr-setcovers"
-		setCoverEditorContainer: ".ctr-setcover"
-		createSetCoverRoute: jsRoutes.controllers.modules.SetCoverBuilder.create
-		setCoverEditorViewRoute: jsRoutes.controllers.modules.SetCoverBuilder.editorView
-		corpusKey: "corpus"
 		setCoverKey: "setcover"
 
-$.widget "widgets.setCoverBuilder", Sare.Widget, widget
+$.widget "widgets.setCoverEditor", Sare.Widget, widget

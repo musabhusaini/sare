@@ -49,14 +49,26 @@
 		</div>
 		<div class="span8">
 			<div id="postags-@uid" class="postags pull-right">
-				@for((tag, displayTag) <- posTags) {
-				<label class="checkbox inline" title="Emphasize all @displayTag" data-placement="bottom"
-					data-container="#postags-@uid">
-					<input id="chk-tag-@uid" class="chk-posTag" type="checkbox"
-						@if(emphasizedTags.contains(tag)){checked="checked"} value="@tag" />
-					@displayTag
-				</label>					
-				}
+				<div class="btn-group">
+					<button id="btn-emphasis-@uid" class="btn-emphasis btn dropdown-toggle" data-toggle="dropdown"
+						title="Select parts to emphasize">
+						Emphasis on
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						@for((tag, displayTag) <- posTags) {
+						<li>
+							<label class="checkbox" title="Emphasize all @displayTag" data-placement="bottom"
+								data-container="#postags-@uid">
+								<input id="chk-tag-@uid" class="chk-posTag" type="checkbox"
+									@if(emphasizedTags.contains(tag)){checked="checked"} value="@tag" />
+								@displayTag
+							</label>
+						</li>
+						}
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 	

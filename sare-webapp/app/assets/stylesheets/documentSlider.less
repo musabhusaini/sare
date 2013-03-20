@@ -29,11 +29,11 @@
 .enhanced-document {
   font-size: 0;
   line-height: @baseLineHeight + 10px;
-}
-
-.enhanced-document > .token-text {
-  font-size: @baseFontSize;
-  vertical-align: middle
+  
+  > .token-text {
+    font-size: @baseFontSize;
+    vertical-align: middle
+  }
 }
 
 .emphasized-token {
@@ -42,4 +42,8 @@
 
 .txt-rank {
   text-align: center;
+}
+
+.postags label.checkbox {
+  margin-left: 10px;
 }
