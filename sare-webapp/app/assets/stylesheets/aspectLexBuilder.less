@@ -19,21 +19,24 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "main";
+@import-once "bootstrap/variables";
+@import-once "main";
 
-.lexbuilder-display {
-  height: 250px;
-  padding: 5px;
-  margin-bottom: 10px;
-  border: @nice-border;
-  overflow: auto;
-}
-
-.widget-header {
-  height: 100%;
-  padding-top: 5px;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  background-color: darken(gray, 20%);
-  color: white;
+.ctr-alex-builder {
+  .boxed-display {
+    height: 250px;
+    padding: @gridGutterWidth/4;
+    margin-bottom: @gridGutterWidth/2;
+    border: @nice-border;
+    overflow: auto;
+  }
+  
+  .widget-header {
+    height: 100%;
+    padding-top: @gridGutterWidth/4;
+    padding-left: @gridGutterWidth/4;
+    padding-bottom: @gridGutterWidth/4;
+    background-color: darken(gray, 20%);
+    color: white;
+  }
 }

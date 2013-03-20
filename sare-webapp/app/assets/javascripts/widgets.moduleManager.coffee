@@ -159,6 +159,9 @@ widget =
 		@_forwardModules = []
 		@_backwardModules = []
 		
+		# hide the controls as they get shown somewhere else.
+		@_$(@options.moduleControlsContainer).hide()
+		
 		window.addEventListener "popstate", (e) =>
 			state = e.state
 			uid = state?.uid

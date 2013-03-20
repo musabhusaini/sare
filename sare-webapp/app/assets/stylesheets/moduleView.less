@@ -19,18 +19,19 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "main";
+@import-once "bootstrap/variables";
+@import-once "main";
 
 #ctr-module-manager {
-  margin-top: 20px;
-}
+  margin-top: @gridGutterWidth;
 
-.ctr-module-content:not(:empty) {
-  border-bottom: @nice-border;
-  padding-bottom: 25px;
-  margin-bottom: 10px;
-}
-
-.ctr-module-controls {
-  margin-top: 20px;
+  .ctr-module-content:not(:empty) {
+    border-bottom: @nice-border;
+    padding-bottom: 5*@gridGutterWidth/4;
+    margin-bottom: @gridGutterWidth/2;
+  }
+  
+  .ctr-module-controls {
+    margin-top: @gridGutterWidth;
+  }
 }

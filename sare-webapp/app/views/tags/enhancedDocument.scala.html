@@ -21,7 +21,7 @@
 
 @(tokens: List[LexiconBuilderDocumentTokenModel], emphasizedTags: String)
 
-<div class="enhanced-document">
+<div class="ctr-enhanced-doc">
 @for(token <- tokens) {
 	<span
 		class="token-text @if(token.emphasized){lexicon-draggable emphasized-token btn btn-mini @if(token.aspect!=null){btn-success} else{@if(!token.seen){btn-info}}}"

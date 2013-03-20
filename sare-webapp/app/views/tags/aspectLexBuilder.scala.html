@@ -28,7 +28,7 @@
 @import controllers.modules._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-module-@uid" class="ctr-module" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }
+<div id="ctr-alex-builder-@uid" class="ctr-module ctr-alex-builder" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }
 	@if(corpus != null) { data-corpus="@corpus.asJson()" }>
 	@if(lexicon == null) {
 		<div id="ctr-lexica-@uid" class="ctr-lexica row-fluid">
@@ -54,7 +54,7 @@
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {
-				$("#ctr-module-@uid").aspectLexBuilder();
+				$("#ctr-alex-builder-@uid").aspectLexBuilder();
 			});
 		})(window, window.jQuery);
 	</script>
