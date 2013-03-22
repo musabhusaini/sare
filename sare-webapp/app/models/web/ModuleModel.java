@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package models;
+package models.web;
 
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;

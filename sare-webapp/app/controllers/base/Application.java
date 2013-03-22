@@ -24,7 +24,7 @@ package controllers.base;
 import org.apache.commons.io.FilenameUtils;
 
 import actors.*;
-import models.*;
+import models.web.WebSession;
 import play.*;
 import play.db.ebean.Transactional;
 import play.mvc.*;
@@ -122,7 +122,8 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.AspectLexBuilder.documentsView(),
 			controllers.modules.routes.javascript.SetCoverBuilder.editorView(),
 			controllers.modules.routes.javascript.SetCoverBuilder.create(),
-			controllers.modules.routes.javascript.SetCoverBuilder.update()
+			controllers.modules.routes.javascript.SetCoverBuilder.update(),
+			controllers.modules.routes.javascript.SetCoverBuilder.redeem()
 		));
 	}
 }

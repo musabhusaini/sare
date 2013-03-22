@@ -25,7 +25,7 @@ import java.security.AccessControlException;
 
 import javax.persistence.*;
 
-import models.ResourceFetchError;
+import models.web.ResourceFetchError;
 
 import org.apache.commons.lang3.*;
 
@@ -46,6 +46,11 @@ public class SareTransactionalAction extends Action.Simple {
 	}
 	
 	private static ThreadLocal<EntityManager> currentEntityManager = new ThreadLocal<>();
+	
+	public static void bindEntityManager(EntityManager em) {
+		Validate.notNull(em);
+		currentEntityManager.set(em);
+	}
 	
 	public static EntityManager em() {
 		EntityManager em = currentEntityManager.get();
@@ -182,7 +187,7 @@ public class SareTransactionalAction extends Action.Simple {
 		return execute(new SareTxRunnable<Result>() {
 			@Override
 			public Result run(EntityManager em) throws Throwable {
-				currentEntityManager.set(em);
+				bindEntityManager(em);
 				return delegate.call(ctx);
 			}
 		}, ctx);

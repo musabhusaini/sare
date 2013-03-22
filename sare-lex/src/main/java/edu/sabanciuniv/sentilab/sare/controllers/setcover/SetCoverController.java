@@ -175,18 +175,6 @@ public class SetCoverController
 		
 		this.createSpecific(setCover, options.getStore(), options.getTokenizingOptions(), options.getWeightCoverage());
 		
-		if (StringUtils.isNotEmpty(options.getTitle())) {
-			setCover.setTitle(options.getTitle());
-		}
-		
-		if (StringUtils.isNotEmpty(options.getDescription())) {
-			setCover.setDescription(options.getDescription());
-		}
-		
-		if (StringUtils.isNotEmpty(options.getLanguage())) {
-			setCover.setLanguage(options.getLanguage());
-		}
-		
 		return setCover;
 	}
 

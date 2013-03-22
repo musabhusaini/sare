@@ -30,27 +30,36 @@
 <div id="ctr-sc-editor-@uid" class="ctr-sc-editor" @if(setcover != null) { data-setcover="@setcover.asJson()" }>
 	<div class="row-fluid">
 		<div class="lbl-postags pull-left">
-			Focus on:
+			Optimize for:
 		</div>
-		<div class="postags pull-left">
+		<div id="ctr-postags-@uid" class="postags pull-left">
 			@for((tag, displayTag) <- posTags) {
-			<label class="checkbox inline" title="Emphasize all @displayTag" data-placement="bottom"
-				data-container="#postags-@uid">
+			<label class="checkbox inline" title="Optimize for @displayTag" data-placement="bottom"
+				data-container="#ctr-postags-@uid">
 				<input id="chk-tag-@uid" class="chk-posTag" type="checkbox"
 					@if(setcover.tokenizingOptions.tags.contains(tag)){checked="checked"} value="@tag" />
 				@displayTag
 			</label>
 			}
-	</div>
+		</div>
+		<label class="lbl-lemmatize checkbox inline">
+			<input id="chk-lemmatize-@uid" type="checkbox" class="chk-lemmatize" @if(setcover.tokenizingOptions.isLemmatized){checked="checked"} />
+			Use word lemma
+		</label>
 	</div>
 	
-	<div class="row-fluid sc-controls">
+	<div class="row-fluid ctr-sc-coverage">
+		<div class="ctr-sc-cov-matrix">
+		</div>
+	</div>
+	
+	<div class="row-fluid ctr-sc-controls">
 		<div class="pull-left">
-			<button id="btn-apply-@uid" class="btn-apply btn btn-primary">
+			<button id="btn-apply-sc-@uid" class="btn-apply btn btn-primary" title="Apply changes" data-placement="bottom">
 				<i class="icon-ok"></i> Apply
 			</button>
 		</div>
-		<div class="progress progress-striped active" style="display:none;">
+		<div class="ctr-sc-progress progress progress-striped active" style="display:none;">
 			<div class="bar" style="width:0%;">
 			</div>
 		</div>

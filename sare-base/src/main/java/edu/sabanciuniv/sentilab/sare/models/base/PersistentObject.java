@@ -203,6 +203,8 @@ public abstract class PersistentObject
 		if (this.otherDataJson == null) {
 			if (this.otherData == null) {
 				this.setOtherData(new JsonObject());
+			} else if (DIRTY_FLAG_STRING.equals(this.otherData)) {
+				this.setOtherData((JsonObject)new JsonObject());
 			} else {
 				this.setOtherData(this.otherData);
 			}

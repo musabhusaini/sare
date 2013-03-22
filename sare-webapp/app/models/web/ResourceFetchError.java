@@ -12,42 +12,38 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import-once "bootstrap/variables";
-@import-once "main";
+package models.web;
 
-.ctr-sc-editor {
-  .lbl-postags {
-    min-height: 2 + 3*@gridGutterWidth/2;
-    line-height: 2 + 3*@gridGutterWidth/2;
-    font-weight: bold;
-  }
-  
-  .postags {
-    border: @nice-border;
-    padding: 0 @gridGutterWidth/4 @gridGutterWidth/4 @gridGutterWidth/4;
-    margin-left: @gridGutterWidth/4;
-  }
-  
-  .lbl-lemmatize {
-    margin-left: @gridGutterWidth/2;
-  }
-  
-  .ctr-sc-controls {
-    margin-top: 10px;
-    
-    .btn-apply {
-      margin-right: @gridGutterWidth/2;
-    }
-    
-    .progress {
-      min-height: @inputHeight;
-    }
-  }
+import play.db.ebean.Model;
+
+public class ResourceFetchError extends Model {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5210039004842627482L;
+	
+	public String id;
+	public String message;
+	
+	public static ResourceFetchError nonExistentResourceError(String id) {
+		ResourceFetchError error = new ResourceFetchError();
+		error.id = id;
+		error.message = "non-existent resource";
+		return error;
+	}
+	
+	public static ResourceFetchError forbiddenResourceError(String id) {
+		ResourceFetchError error = new ResourceFetchError();
+		error.id = id;
+		error.message = "forbidden resource";
+		return error;
+	}
 }

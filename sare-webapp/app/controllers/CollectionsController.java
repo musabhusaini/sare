@@ -69,7 +69,9 @@ public class CollectionsController extends Application {
 	
 	public static Result get(String collection) {
 		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
-		return ok(createViewModel(store).asJson());
+		PersistentDocumentStoreModel storeVM = (PersistentDocumentStoreModel)createViewModel(store);
+		storeVM.populateSize(em(), store);
+		return ok(storeVM.asJson());
 	}
 	
 	public static Result delete(String collection) {
@@ -81,8 +83,9 @@ public class CollectionsController extends Application {
 	
 	public static Result detailsForm(String collection) {
 		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
-		PersistentDocumentStoreModel viewModel = (PersistentDocumentStoreModel)createViewModel(store);
+		PersistentDocumentStoreModel storeVM = (PersistentDocumentStoreModel)createViewModel(store);
+		storeVM.populateSize(em(), store);
 		
-		return ok(storeDetails.render(viewModel, store instanceof IDerivedStore, store instanceof DocumentCorpus));
+		return ok(storeDetails.render(storeVM, store instanceof IDerivedStore, store instanceof DocumentCorpus));
 	}
 }

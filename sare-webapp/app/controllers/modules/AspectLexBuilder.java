@@ -43,8 +43,8 @@ import play.mvc.*;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import views.html.tags.*;
-import models.LexiconBuilderDocumentTokenModel;
 import models.base.ViewModel;
+import models.document.LexiconBuilderDocumentTokenModel;
 import models.document.PersistentDocumentModel;
 import models.documentStore.*;
 import controllers.CollectionsController;
@@ -74,7 +74,10 @@ public class AspectLexBuilder extends Module {
 			AspectLexicon lexicon = fetchResource(lexiconId, AspectLexicon.class);
 			if (corpus == null || (lexicon.getBaseStore() != null
 				&& UuidUtils.normalize(corpus.id).equals(UuidUtils.normalize(lexicon.getBaseCorpus().getId())))) {
-				lexica.add((PersistentDocumentStoreModel)createViewModel(lexicon));
+				
+				PersistentDocumentStoreModel lexiconVM = (PersistentDocumentStoreModel)createViewModel(lexicon);
+				lexiconVM.populateSize(em(), lexicon);
+				lexica.add(lexiconVM);
 			}
 		}
 		return lexica;
@@ -116,8 +119,16 @@ public class AspectLexBuilder extends Module {
 			corpusObj = lexiconObj.getBaseCorpus();
 		}
 		
-		DocumentCorpusModel corpusVM = corpusObj != null ? (DocumentCorpusModel)createViewModel(corpusObj) : null;
-		AspectLexiconModel lexiconVM = lexiconObj != null ? (AspectLexiconModel)createViewModel(lexiconObj) : null;
+		DocumentCorpusModel corpusVM = null;
+		if (corpusObj != null) {
+			corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
+			corpusVM.populateSize(em(), corpusObj);
+		}
+		AspectLexiconModel lexiconVM = null;
+		if (lexiconObj != null) {
+			lexiconVM = (AspectLexiconModel)createViewModel(lexiconObj);
+			lexiconVM.populateSize(em(), lexiconObj);
+		}
 		
 		return moduleRender(new AspectLexBuilder().setViewModels(Lists.<ViewModel>newArrayList(corpusVM, lexiconVM)),
 			aspectLexBuilder.render(corpusVM, lexiconVM, true), partial);
@@ -187,15 +198,22 @@ public class AspectLexBuilder extends Module {
 			.setExistingId(lexicon)
 			.setEm(em());
 		
+		AspectLexiconModel lexiconVM = null;
 		AspectLexiconController factory = new AspectLexiconController();
 		lexiconObj = factory.create(options);
 		if (!em().contains(lexiconObj)) {
 			em().persist(lexiconObj);
-			return created(createViewModel(lexiconObj).asJson());
+			
+			lexiconVM = (AspectLexiconModel)createViewModel(lexiconObj);
+			lexiconVM.populateSize(em(), lexiconObj);
+			return created(lexiconVM.asJson());
 		}
 		
 		em().merge(lexiconObj);
-		return ok(createViewModel(lexiconObj).asJson());
+		
+		lexiconVM = (AspectLexiconModel)createViewModel(lexiconObj);
+		lexiconVM.populateSize(em(), lexiconObj);
+		return ok(lexiconVM.asJson());
 	}
 	
 	public static Html renderDocumentsView(String corpus, String lexicon) {
@@ -203,8 +221,14 @@ public class AspectLexBuilder extends Module {
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		
+		DocumentCorpusModel corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
+		corpusVM.populateSize(em(), corpusObj);
+		
+		AspectLexiconModel lexiconVM = (AspectLexiconModel)createViewModel(lexiconObj);
+		lexiconVM.populateSize(em(), lexiconObj);
+		
 		return documentSlider
-			.render((DocumentCorpusModel)createViewModel(corpusObj), (AspectLexiconModel)createViewModel(lexiconObj),
+			.render(corpusVM, lexiconVM,
 				corpusObj.getLinguisticProcessor().getBasicPosTags(),
 				Lists.newArrayList(Splitter.on("|")
 					.split(StringUtils.defaultString(builder.getProperty("emphasizedTags", String.class)))));
@@ -215,8 +239,10 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	public static Result lexiconView(String lexicon) {
-		AspectLexiconModel lexiconObj = (AspectLexiconModel)createViewModel(fetchResource(lexicon, AspectLexicon.class));
-		return ok(aspectLexicon.render(lexiconObj, true));
+		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		AspectLexiconModel lexiconVM = (AspectLexiconModel)createViewModel(lexiconObj);
+		lexiconVM.populateSize(em(), lexiconObj);
+		return ok(aspectLexicon.render(lexiconVM, true));
 	}
 	
 	private static LexiconBuilderDocumentStore fetchBuilder(String corpus, String lexicon) {
@@ -336,6 +362,7 @@ public class AspectLexBuilder extends Module {
 		if (aspectObj == null) {
 			return notFoundEntity(aspect);
 		}
+		
 		return ok(createViewModel(aspectObj).asJson());
 	}
 	
@@ -359,6 +386,7 @@ public class AspectLexBuilder extends Module {
 		}
 		
 		em().persist(aspectObj);
+		
 		return created(createViewModel(aspectObj).asJson());
 	}
 	
@@ -418,6 +446,7 @@ public class AspectLexBuilder extends Module {
 		}
 		
 		em().merge(aspectObj);
+		
 		return ok(createViewModel(aspectObj).asJson());
 	}
 	
@@ -429,6 +458,7 @@ public class AspectLexBuilder extends Module {
 				&& ObjectUtils.equals(aspectObj.getParentAspect(), lexiconObj)) {
 				aspectObj = lexiconObj.removeAspect(aspectObj.getTitle());
 				em().remove(aspectObj);
+				
 				return ok(createViewModel(aspectObj).asJson());
 			} else {
 				throw new IllegalArgumentException();

@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package models;
+package models.web;
 
 import java.util.*;
 
@@ -88,5 +88,11 @@ public class ProgressObserverToken
 	public ProgressObserverToken setProgress(double progress) {
 		this.progress = progress;
 		return this;
+	}
+	
+	@Override
+	public void save() {
+		this.created = new Date();
+		super.save();
 	}
 }

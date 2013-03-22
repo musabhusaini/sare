@@ -35,8 +35,8 @@ import views.html.moduleView;
 
 import controllers.base.Application;
 
-import models.ModuleModel;
 import models.base.*;
+import models.web.ModuleModel;
 
 public abstract class Module
 	extends Application {

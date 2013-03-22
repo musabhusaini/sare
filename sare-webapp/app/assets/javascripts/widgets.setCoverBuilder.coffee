@@ -38,11 +38,12 @@ widget =
 		
 		refreshView = (setcover) =>
 			@options.setcover = setcover
-			@options.corpus = @options.setcover?.baseCorpus
 			
-			@_$(@options.setCoverEditorContainer)
-				.empty()
-				.load @options.setCoverEditorViewRoute(@options.setcover.id).url
+			@_$(@options.setCoverEditorContainer).empty()
+			if setcover?
+				@options.corpus = @options.setcover?.baseCorpus
+				@_$(@options.setCoverEditorContainer)
+					.load @options.setCoverEditorViewRoute(@options.setcover.id).url
 		
 		if not @options.setcover?
 			@_on @_$(@options.setCoversContainer).children(Selectors.moduleContainer),

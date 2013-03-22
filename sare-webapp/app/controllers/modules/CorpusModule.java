@@ -83,7 +83,10 @@ public class CorpusModule extends Module {
 				@Override
 				@Nullable
 				public PersistentDocumentStoreModel apply(@Nullable String input) {
-					return (PersistentDocumentStoreModel)createViewModel(fetchResource(input, PersistentDocumentStore.class));
+					PersistentDocumentStore store = fetchResource(input, PersistentDocumentStore.class);
+					PersistentDocumentStoreModel storeVM = (PersistentDocumentStoreModel)createViewModel(store);
+					storeVM.populateSize(em(), store);
+					return storeVM;
 				}
 			});
 	}
@@ -190,11 +193,15 @@ public class CorpusModule extends Module {
 			.setExistingId(corpus)
 			.setEm(em());
 		
+		DocumentCorpusModel corpusVM = null;
 		OpinionCorpusFactory corpusFactory = new OpinionCorpusFactory();
 		corpusObj = corpusFactory.create(options);
 		if (!em().contains(corpusObj)) {
 			em().persist(corpusObj);
-			return created(createViewModel(corpusObj).asJson());
+			
+			corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
+			corpusVM.populateSize(em(), corpusObj);
+			return created(corpusVM.asJson());
 		}
 		
 		for (PersistentObject obj : corpusObj.getDocuments()) {
@@ -205,7 +212,10 @@ public class CorpusModule extends Module {
 			}
 		}
 		em().merge(corpusObj);
-		return ok(createViewModel(corpusObj).asJson());
+		
+		corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
+		corpusVM.populateSize(em(), corpusObj);
+		return ok(corpusVM.asJson());
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
@@ -247,6 +257,8 @@ public class CorpusModule extends Module {
 	
 	public static Result twitterGrabberView(String corpus) {
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
-		return ok(twitterGrabber.render((DocumentCorpusModel)createViewModel(corpusObj)));
+		DocumentCorpusModel corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
+		corpusVM.populateSize(em(), corpusObj);
+		return ok(twitterGrabber.render(corpusVM));
 	}
 }

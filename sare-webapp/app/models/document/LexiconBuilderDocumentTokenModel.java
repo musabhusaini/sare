@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package models;
+package models.document;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -104,6 +104,7 @@ GET		/view/modules/corpora/reductions/:setcover/editor			controllers.modules.Set
 POST	/api/modules/corpora/reductions/:setcover							controllers.modules.SetCoverBuilder.update(corpus = null, setcover: String)
 POST	/api/modules/corpora/:corpus/reductions/:setcover			controllers.modules.SetCoverBuilder.update(corpus: String, setcover: String)
 POST	/api/modules/corpora/:corpus/reductions								controllers.modules.SetCoverBuilder.create(corpus: String)
+POST	/api/modules/corpora/reductions/:setcover/redeemer		controllers.modules.SetCoverBuilder.redeem(setcover: String)
 
 # Support queries
 GET		/api/support/languages		controllers.CollectionsController.supportedLanguages()

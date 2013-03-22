@@ -29,7 +29,8 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import play.*;
 
-import models.*;
+import models.web.ProgressObserverToken;
+import models.web.WebSession;
 
 import com.avaje.ebean.*;
 

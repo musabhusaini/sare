@@ -24,11 +24,13 @@ package models.documentStore;
 import java.util.List;
 
 import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
 
 import com.google.common.base.Function;
 import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 
 public class AspectLexiconModel
 	extends PersistentDocumentStoreModel {
@@ -70,5 +72,14 @@ public class AspectLexiconModel
 	
 	public AspectLexiconModel() {
 		this(null);
+	}
+
+	@Override
+	public long populateSize(EntityManager em, PersistentDocumentStore store) {
+		if (store instanceof AspectLexicon && this.baseCorpus != null && ((AspectLexicon)store).getBaseCorpus() != null) {
+			this.baseCorpus.populateSize(em, ((AspectLexicon)store).getBaseCorpus());
+		}
+		
+		return super.populateSize(em, store);
 	}
 }

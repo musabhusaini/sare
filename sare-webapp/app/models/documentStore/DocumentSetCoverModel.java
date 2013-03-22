@@ -21,16 +21,16 @@
 
 package models.documentStore;
 
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import models.TokenizingOptionsModel;
+import models.document.TokenizingOptionsModel;
 
-import com.google.common.collect.Iterables;
-
-import controllers.base.SareTransactionalAction;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.DocumentSetCoverController;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 
 public class DocumentSetCoverModel
@@ -40,9 +40,10 @@ public class DocumentSetCoverModel
 	public TokenizingOptionsModel tokenizingOptions;
 	public Double weightCoverage;
 	public Double totalCoveredWeight;
+	public Map<Integer, Double> coverageMatrix;
 	
 	public DocumentSetCoverModel(DocumentSetCover setCover) {
-		super(setCover, true);
+		super(setCover);
 
 		this.tokenizingOptions = new TokenizingOptionsModel();
 		
@@ -53,19 +54,20 @@ public class DocumentSetCoverModel
 			this.tokenizingOptions = new TokenizingOptionsModel(setCover.getTokenizingOptions());
 			this.weightCoverage = setCover.getWeightCoverage();
 			this.totalCoveredWeight = setCover.getTotalCoveredWeight();
-			
-			EntityManager em = SareTransactionalAction.em();
-			if (em != null) {
-				// TODO: perhaps there is a better way to do this than to put controller code in the view model.
-				this.size = new DocumentSetCoverController().getCoverSize(em, setCover);
-			} else {
-				this.size = Iterables.size(setCover.getDocuments());
-			}
 		}
 	}
 	
 	public DocumentSetCoverModel() {
 		this(null);
+	}
+	
+	@Override
+	public long populateSize(EntityManager em, PersistentDocumentStore store) {
+		if (store instanceof DocumentSetCover) {
+			return this.size = new DocumentSetCoverController().getCoverSize(em, (DocumentSetCover)store);
+		}
+		
+		return super.populateSize(em, store);
 	}
 	
 	public SetCoverFactoryOptions toFactoryOptions() {

@@ -30,8 +30,65 @@ Selectors = Page.Selectors
 Strings = Page.Strings
 
 widget =
+	_fixButtons: ->
+		
+	_getUpdated: (setcover) ->
+		setcover ?= @options.setcover
+		{ weightCoverage, tokenizingOptions } = updatedSetCover =
+			weightCoverage: 1.0	# TODO: get real weight coverage
+			tokenizingOptions:
+				tags: ($(tag).val() for tag in @_$(@options.posTagCheckboxes).filter ":checked")
+				isLemmatized: @_$(@options.lemmatizeCheckbox).is ":checked"
+		
+		updated = no
+		if weightCoverage isnt setcover.weightCoverage then updated = yes
+		else if tokenizingOptions.isLemmatized isnt setcover.tokenizingOptions.isLemmatized then updated = yes
+		else if tokenizingOptions.tags.length isnt setcover.tokenizingOptions.length then updated = yes
+		else
+			for tag in tokenizingOptions.tags
+				updated = yes if not $.inArray tag, setcover.tokenizingOptions.tags
+		
+		if not updated then return updated
+		
+		$.extend {}, setcover, updatedSetCover
+	
+	_updateView: (setcover) ->
+		
+	
 	_create: ->
 		@options.setcover ?= $(@element).data @options.setCoverKey
+		
+		@_on @_$(@options.applyButton),
+			click: ->
+				updatedSetCover = @_getUpdated()
+				if not updatedSetCover then return
+				@options.updateRoute("null", @options.setcover.id).ajax
+					data: JSON.stringify updatedSetCover
+					contentType: Helpers.ContentTypes.json
+					success: (setcover) =>
+						redeem = =>
+							@_delay ->
+								@options.redeemRoute(setcover.id).ajax
+									success: (progressToken) =>
+										if not progressToken.progress?
+											@_$(@options.progressContainer).hide()
+											@_updateView progressToken
+										else
+											redeem()
+											@_$(@options.progressContainer).children(".bar")
+												.css "width", "#{window.Math.round(100 * progressToken.progress)}%"
+							, 1000
+						
+						@_$(@options.progressContainer)
+							.show()
+							.children(".bar")
+								.css "width", "0%"
+						redeem()
+		
+		@_$(@options.posTagCheckboxes).parent().tooltip()
+		@_$(@options.applyButton).tooltip()
+		
+		@_fixButtons()
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
@@ -45,6 +102,13 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
+		posTagCheckboxes: ".chk-posTag"
+		lemmatizeCheckbox: ".chk-lemmatize"
+		coverageMatrixContainer: ".ctr-sc-cov-matrix"
+		applyButton: ".btn-apply"
+		progressContainer: ".ctr-sc-progress"
+		updateRoute: jsRoutes.controllers.modules.SetCoverBuilder.update
+		redeemRoute: jsRoutes.controllers.modules.SetCoverBuilder.redeem
 		setCoverKey: "setcover"
 
 $.widget "widgets.setCoverEditor", Sare.Widget, widget

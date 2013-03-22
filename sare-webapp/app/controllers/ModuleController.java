@@ -28,8 +28,8 @@ import java.util.*;
 
 import javax.annotation.Nullable;
 
-import models.ModuleModel;
 import models.base.*;
+import models.web.ModuleModel;
 
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;

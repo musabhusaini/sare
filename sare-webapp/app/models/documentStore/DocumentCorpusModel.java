@@ -26,12 +26,8 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
 public class DocumentCorpusModel
 	extends PersistentDocumentStoreModel {
 	
-	public DocumentCorpusModel(DocumentCorpus corpus, boolean skipSize) {
-		super(corpus, skipSize);
-	}
-	
 	public DocumentCorpusModel(DocumentCorpus corpus) {
-		this(corpus, false);
+		super(corpus);
 	}
 	
 	public DocumentCorpusModel() {

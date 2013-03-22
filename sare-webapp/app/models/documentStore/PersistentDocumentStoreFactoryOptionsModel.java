@@ -23,7 +23,8 @@ package models.documentStore;
 
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStoreFactoryOptions;
 
-public class PersistentDocumentStoreFactoryOptionsModel extends PersistentDocumentStoreModel {
+public class PersistentDocumentStoreFactoryOptionsModel
+	extends PersistentDocumentStoreModel {
 
 	public String title;
 	public String description;

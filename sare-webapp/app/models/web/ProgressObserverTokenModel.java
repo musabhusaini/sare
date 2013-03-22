@@ -12,38 +12,34 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package models;
+package models.web;
 
-import play.db.ebean.Model;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
+import models.base.ViewModel;
 
-public class ResourceFetchError extends Model {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5210039004842627482L;
-	
+public class ProgressObserverTokenModel
+	extends ViewModel {
+
 	public String id;
-	public String message;
+	public double progress;
 	
-	public static ResourceFetchError nonExistentResourceError(String id) {
-		ResourceFetchError error = new ResourceFetchError();
-		error.id = id;
-		error.message = "non-existent resource";
-		return error;
+	public ProgressObserverTokenModel(ProgressObserverToken progressToken) {
+		super(progressToken);
+		
+		if (progressToken != null) {
+			this.id = UuidUtils.normalize(progressToken.id);
+			this.progress = progressToken.progress;
+		}
 	}
 	
-	public static ResourceFetchError forbiddenResourceError(String id) {
-		ResourceFetchError error = new ResourceFetchError();
-		error.id = id;
-		error.message = "forbidden resource";
-		return error;
+	public ProgressObserverTokenModel() {
+		this(null);
 	}
 }
