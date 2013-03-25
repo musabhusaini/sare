@@ -70,7 +70,7 @@ public class SetCoverBuilder extends Module {
 	
 	@Override
 	public String getDisplayName() {
-		return "Reduce Corpus";
+		return "Optimize Corpus";
 	}
 
 	@Override
@@ -191,7 +191,7 @@ public class SetCoverBuilder extends Module {
 			throw new IllegalArgumentException();
 		} else if (setcover == null) {
 			setCoverObj = (DocumentSetCover)new DocumentSetCover(corpusObj)
-				.setTitle(corpusObj.getTitle() + " untitled reduction")
+				.setTitle("Optimized " + corpusObj.getTitle())
 				.setOwnerId(getUsername());
 		}
 		

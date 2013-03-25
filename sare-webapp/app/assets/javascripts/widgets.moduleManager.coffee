@@ -124,7 +124,7 @@ widget =
 		@_currentModule
 	
 	_display: (module) ->
-		if not module.id is emptyModule.id
+		if module.id is emptyModule.id
 			@option "output", []
 		else
 			@option "output", null

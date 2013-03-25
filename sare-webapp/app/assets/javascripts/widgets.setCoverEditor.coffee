@@ -28,6 +28,7 @@ Helpers = Sare.Helpers
 Page = Sare.Page
 Selectors = Page.Selectors
 Strings = Page.Strings
+Widgets = Page.Widgets
 
 widget =
 	_fixButtons: ->
@@ -53,7 +54,13 @@ widget =
 		$.extend {}, setcover, updatedSetCover
 	
 	_updateView: (setcover) ->
+		@options.setcover = setcover
 		
+		# send options to the module manager.
+		if @options.setcover?.size > 0
+			Widgets.moduleManager "option", "output", @options.setcover
+		else
+			Widgets.moduleManager "option", "output", null
 	
 	_create: ->
 		@options.setcover ?= $(@element).data @options.setCoverKey
@@ -88,6 +95,7 @@ widget =
 		@_$(@options.posTagCheckboxes).parent().tooltip()
 		@_$(@options.applyButton).tooltip()
 		
+		@_updateView @options.setcover
 		@_fixButtons()
 		
 	refresh: ->

@@ -85,10 +85,6 @@ widget =
 				e.preventDefault()
 				@_changeInputState @_$(@options.addButton), "loading"
 				@options.addRoute().ajax
-					contentType: Helpers.MimeTypes.json
-					data: JSON.stringify
-						content: ""
-						format: "text"
 					success: (store) =>
 						@_updateListItem(option = $("<option>"), store)
 						@_$(@options.list)

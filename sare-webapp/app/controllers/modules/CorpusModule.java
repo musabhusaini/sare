@@ -68,7 +68,7 @@ public class CorpusModule extends Module {
 	
 	@Override
 	public String getDisplayName() {
-		return "Corpus selection";
+		return "Select a corpus";
 	}
 
 	@Override
@@ -173,10 +173,8 @@ public class CorpusModule extends Module {
 					}
 				}
 			} else {
-				// if not json, then treat the whole thing as a file.
-				options = (OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
-					.setFile(request().body().asRaw().asFile())
-					.setFormat(request().getHeader(CONTENT_TYPE));
+				// if not json, then just create empty.
+				options = new OpinionCorpusFactoryOptions();
 			}
 		}
 		
