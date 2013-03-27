@@ -37,10 +37,12 @@
 	}
 	
 	<div class="row-fluid">
-		@if(corpus != null && lexicon != null) {
-			<div id="ctr-documents-@uid" class="ctr-documents span8">
+		@if(corpus != null) {
+		<div id="ctr-documents-@uid" class="ctr-documents span8">
+			@if(lexicon != null) {
 				@AspectLexBuilder.renderDocumentsView(corpus.id, lexicon.id)
-			</div>
+			}
+		</div>
 		}
 		
 		<div id="ctr-alex-@uid" class="ctr-alex span5">
