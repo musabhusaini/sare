@@ -1,9 +1,11 @@
 # Sentilab SARE #
 ## A Sentiment Analysis Research Environment ##
 
-[SARE][] is a project of Sabancı University Sentilab Group. It is a modular and easily extendible environment that supports various sentiment analysis research activities.
+[SARE][] is a project of [Sabancı University][Sabanci] [Sentilab Group][Sentilab]. It is a modular and easily extendible environment that supports various sentiment analysis research activities.
 
 [SARE]: http://sare2.sabanciuniv.edu	"Sentilab SARE"
+[Sabanci]: http://www.sabanciuniv.edu	"Sabancı University"
+[Sentilab]: http://sentilab.sabanciuniv.edu	"Sabancı Sentilab Group"
 
 ### Prerequisites ###
 1. [Java][].
