@@ -123,13 +123,13 @@ public class UniquelyIdentifiableObject
 	
 	@Override
 	public String toString() {
-		return this.id.toString();
+		return this.getIdentifier().toString();
 	}
 	
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof UniquelyIdentifiableObject) {
-			return this.getIdentifier().equals(((UniquelyIdentifiableObject)other).getIdentifier());
+			return ObjectUtils.equals(this.getIdentifier(), ((UniquelyIdentifiableObject)other).getIdentifier());
 		}
 		
 		return super.equals(other);
@@ -137,6 +137,6 @@ public class UniquelyIdentifiableObject
 	
 	@Override
 	public int hashCode() {
-		return this.getIdentifier().hashCode();
+		return UuidUtils.normalize(this.getId()).hashCode();
 	}
 }

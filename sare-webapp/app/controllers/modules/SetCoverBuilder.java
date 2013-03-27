@@ -295,16 +295,22 @@ public class SetCoverBuilder extends Module {
 								.setExistingId(setCoverId)
 								.setEm(em);
 							
+							List<SetCoverDocument> oldDocuments = Lists.newArrayList(setCoverObj.getAllDocuments());
 							setCoverObj = controller.create(factoryOptions);
-							for (SetCoverDocument document : setCoverObj.getAllDocuments()) {
-								if (em.find(SetCoverDocument.class, document.getId()) == null) {
-									em.persist(document);
-								} else { 
-									em.merge(document);
+							
+							em.flush();
+							em.merge(setCoverObj);
+							em.getTransaction().commit();
+							em.clear();
+							
+							em.getTransaction().begin();
+							for (SetCoverDocument oldDocument : oldDocuments) {
+								if (Iterables.find(setCoverObj.getAllDocuments(), Predicates.equalTo(oldDocument), null) == null) {
+									SetCoverDocument tmpDocument = em.find(SetCoverDocument.class, oldDocument.getId());
+									em.remove(tmpDocument);
 								}
 							}
 							
-							em.merge(setCoverObj);
 							return setCoverObj;
 						}
 					}, ctx);
