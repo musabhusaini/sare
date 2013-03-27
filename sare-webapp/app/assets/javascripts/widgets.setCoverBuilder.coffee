@@ -50,10 +50,6 @@ widget =
 			@_on @_$(@options.setCoversContainer).children(Selectors.moduleContainer),
 				storeListSelectionChange: (e, selected) ->
 					refreshView selected.data
-					if @options.setcover?.size > 0
-						Widgets.moduleManager "option", "output", @options.setcover
-					else
-						Widgets.moduleManager "option", "output", null
 				storeUpdate: (e, data) ->
 					refreshView data.updatedData
 			
@@ -62,6 +58,12 @@ widget =
 					suppressOutput: true
 					addRoute: =>
 						@options.createSetCoverRoute @options.corpus.id
+		
+		@_on @_$(@options.setCoverEditorContainer),
+			setCoverUpdated: (e, setcover) ->
+				return if not setcover?.id?
+				@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
+					.storeList "updateItem", setcover.id, setcover
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @

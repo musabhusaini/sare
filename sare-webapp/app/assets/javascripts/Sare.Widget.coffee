@@ -45,14 +45,15 @@ class Sare.Widget extends $.Widget
 			delete @_tooltipCache[id]
 		@_$(input).tooltip options
 	
-	_changeInputState: (input, state) ->
+	_changeInputState: (input, state, value) ->
+		value ?= true
 		switch state
 			when "enabled"
 				@_restoreTooltip input
-				@_$(input).removeAttr "disabled"
+				@_$(input).prop "disabled", not value
 			when "disabled"
 				@_removeTooltip input
-				@_$(input).attr "disabled", true
+				@_$(input).prop "disabled", value
 			when "loading"
 				@_removeTooltip input
 				@_$(input).button state

@@ -55,10 +55,11 @@
 	
 	<div class="row-fluid">
 		<div class="ctr-sc-coverage">
-			<div class="form-inline ctr-tolerance">
+			<div id="ctr-tolerance-@uid" class="form-inline ctr-tolerance">
 				<label for="txt-tolerance-@uid">Loss tolerance:</label>
 				<div class="input-append">
-					<input id="txt-tolerance-@uid" class="txt-tolerance span3" type="text" placeholder="0" value="@if(setcover.weightCoverage!=null){@Math.round((1-setcover.weightCoverage)*100)}" />
+					<input id="txt-tolerance-@uid" class="txt-tolerance span3" type="text" placeholder="0" value="@if(setcover.weightCoverage!=null){@Math.round((1-setcover.weightCoverage)*100)}"
+						title="The percentage of lowest frequency words that can be ignored" data-placement="right" data-container="#ctr-tolerance-@uid"/>
 					<span class="add-on">%</span>
 				</div>
 			</div>
@@ -68,10 +69,15 @@
 		</div>
 	</div>
 	
-	<div class="row-fluid ctr-sc-controls">
-		<div class="pull-left">
-			<button id="btn-apply-sc-@uid" class="btn-apply btn btn-primary" title="Apply changes" data-placement="bottom">
+	<div id="ctr-sc-controls-@uid" class="row-fluid ctr-sc-controls">
+		<div class="ctr-sc-controls-inner">
+			<button id="btn-apply-sc-@uid" class="btn-apply btn btn-primary" title="Apply changes" data-placement="bottom"
+				data-container="#ctr-sc-controls-@uid" data-loading-text="Applying...">
 				<i class="icon-ok"></i> Apply
+			</button>
+			<button id="btn-reset-sc-@uid" class="btn-reset btn" title="Revert changes" data-placement="bottom"
+				data-container="#ctr-sc-controls-@uid">
+				<i class="icon-repeat"></i> Reset
 			</button>
 		</div>
 		<div class="ctr-sc-progress progress progress-striped active" style="display:none;">

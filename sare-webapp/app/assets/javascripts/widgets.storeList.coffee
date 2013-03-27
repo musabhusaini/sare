@@ -41,14 +41,24 @@ widget =
 		selected = @_$(@options.list).children "option:selected"
 		return {
 			item: selected
-			data: $(selected).data @options.dataKey
+			data: $(selected).data @options.storeKey
 		}
 		
+	findItem: (id) ->
+		key = @options.storeKey
+		@_$(@options.list).children("option").filter ->
+			$(@).data(key)?.id is id
+	
+	updateItem: (id, store) ->
+		return if not id? or id isnt store?.id
+		$(@findItem(id)).data @options.storeKey, store
+		if @options.detailsShown then @_toggleDetails 0, false
+	
 	_updateListItem: (item, data) ->
 		$(item)
 			.val(data.id)
 			.text(data.title ? data.id)
-			.data @options.dataKey, data
+			.data @options.storeKey, data
 
 	_toggleDetails: (duration, initial, callback) ->
 		initial ?= @options.detailsShown
@@ -121,7 +131,7 @@ widget =
 						next = $(selected.item).prev() if not next.length
 						if next.length
 							@_$(@options.list)
-								.val $(next).data(@options.dataKey)?.id
+								.val $(next).data(@options.storeKey)?.id
 						$(selected.item).remove()
 						@_trigger "itemRemove", e,
 							item: selected.item
@@ -168,7 +178,7 @@ widget =
 			firstItem = @_$(@options.list).children("option:first")
 			if firstItem.length
 				@_$(@options.list)
-					.val($(firstItem).data @options.dataKey)?.id
+					.val($(firstItem).data @options.storeKey)?.id
 		
 		window.setTimeout =>
 			@_$(@options.list).change()
@@ -203,6 +213,6 @@ widget =
 			deleteRoute: jsRoutes.controllers.CollectionsController.delete
 			detailsShown: false
 			suppressOutput: false
-			dataKey: "store"
+			storeKey: "store"
 
 $.widget "widgets.storeList", Sare.Widget, widget

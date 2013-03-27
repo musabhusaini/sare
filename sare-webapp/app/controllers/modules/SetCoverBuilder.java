@@ -36,7 +36,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 
 import com.avaje.ebean.*;
-import com.google.common.base.Function;
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import play.Logger;
@@ -296,9 +296,6 @@ public class SetCoverBuilder extends Module {
 								.setEm(em);
 							
 							setCoverObj = controller.create(factoryOptions);
-							Lists.newArrayList(setCoverObj.getDocuments());
-							Lists.newArrayList(setCoverObj.getAllDocuments());
-
 							for (SetCoverDocument document : setCoverObj.getAllDocuments()) {
 								if (em.contains(document)) {
 									em.merge(document);
@@ -306,21 +303,15 @@ public class SetCoverBuilder extends Module {
 									em.persist(document);
 								}
 							}
+							
 							em.merge(setCoverObj);
-							
-							Ebean.execute(new TxRunnable() {
-								@Override
-								public void run() {
-									ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(poToken.id);
-									updatedToken.setProgress(1.1);
-									updatedToken.update();
-								}
-							});
-							
 							return setCoverObj;
 						}
 					}, ctx);
 				} catch (Throwable e) {
+					Logger.error(LoggedAction.getLogEntry(ctx, "failed to build set cover"), e);
+					throw new IllegalArgumentException(e);
+				} finally {
 					Ebean.execute(new TxRunnable() {
 						@Override
 						public void run() {
@@ -329,9 +320,6 @@ public class SetCoverBuilder extends Module {
 							updatedToken.update();
 						}
 					});
-					
-					Logger.error(LoggedAction.getLogEntry(ctx, "failed to build set cover"), e);
-					throw new IllegalArgumentException(e);
 				}
 			}
 		});
@@ -343,14 +331,10 @@ public class SetCoverBuilder extends Module {
 		DocumentSetCover setCoverObj = fetchResource(setcover, DocumentSetCover.class);
 		
 		ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(setCoverObj.getId());
-		if (updatedToken == null) {
-			DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
-			setCoverVM.populateSize(em(), setCoverObj);
-			return ok(setCoverVM.asJson());
-		}
-		
-		if (updatedToken.getProgress() >= 1.1) {
-			updatedToken.delete();
+		if (updatedToken == null || updatedToken.getProgress() >= 1.1) {
+			if (updatedToken != null) {
+				updatedToken.delete();
+			}
 			
 			DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 			setCoverVM.populateSize(em(), setCoverObj);

@@ -52,7 +52,8 @@ public class DocumentSetCoverModel
 				this.baseCorpus = (DocumentCorpusModel)createViewModel(setCover.getBaseCorpus());
 			}
 			this.tokenizingOptions = new TokenizingOptionsModel(setCover.getTokenizingOptions());
-			this.weightCoverage = setCover.getWeightCoverage();
+			this.weightCoverage = Math.round(
+				ObjectUtils.defaultIfNull(setCover.getWeightCoverage(), SetCoverFactoryOptions.DEFAULT_WEIGHT_COVERAGE) * 100) / 100.0;
 			this.totalCoveredWeight = setCover.getTotalCoveredWeight();
 		}
 	}
