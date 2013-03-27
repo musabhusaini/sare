@@ -21,11 +21,7 @@
 [Git]: http://git-scm.com/downloads	"Git SCM download"
 
 ### Installation ###
-1.	Clone the repo:
-		
-		:::shell
-		git clone git@bitbucket.org:sentilab/sare.git
-
+1.	Clone the project repo.
 2.	Run the MySQL script [./scripts/setup.sql][setup.sql] as root to create the required databases and SQL user.
 3.	In a command line terminal, set the current directory to the project's root folder and run [./scripts/deploy.bat][deploy.bat] or [./scripts/deploy.sh][deploy.sh] for Windows and Linux respectively.
 4.	Now set the current directory to `sare-webapp`, and execute `play run` to start the application.
