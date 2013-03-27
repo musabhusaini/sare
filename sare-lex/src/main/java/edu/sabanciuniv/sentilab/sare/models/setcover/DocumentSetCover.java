@@ -156,7 +156,7 @@ public class DocumentSetCover
 	 * @param tokenizingOptions the {@link TokenizingOptions} object to set.
 	 * @return the {@code this} object.
 	 */
-	public DocumentSetCover setTokenizingTags(TokenizingOptions tokenizingOptions) {
+	public DocumentSetCover setTokenizingOptions(TokenizingOptions tokenizingOptions) {
 		return (DocumentSetCover)this.setProperty(TOKENIZING_OPTIONS_FIELD, tokenizingOptions);
 	}
 	

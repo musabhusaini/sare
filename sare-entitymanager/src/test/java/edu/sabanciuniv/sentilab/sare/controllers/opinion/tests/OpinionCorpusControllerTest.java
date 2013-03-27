@@ -87,7 +87,7 @@ public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 		OpinionCorpus actualCorpus = testFactory.create(testOptions);
 		assertNotNull(actualCorpus);
 		assertEquals(testCorpus.getIdentifier(), actualCorpus.getIdentifier());
-		assertEquals(2, Iterables.size(actualCorpus.getDocuments()));
+		assertEquals(4, Iterables.size(actualCorpus.getDocuments()));
 		
 		OpinionDocument document = Iterables.getFirst(actualCorpus.getDocuments(OpinionDocument.class), null);
 		assertNotNull(document);
@@ -105,7 +105,7 @@ public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 		actualCorpus = em.find(OpinionCorpus.class, testCorpus.getId());
 		assertNotNull(actualCorpus);
 		assertEquals(testCorpus.getIdentifier(), actualCorpus.getIdentifier());
-		assertEquals(2, Iterables.size(actualCorpus.getDocuments()));
+		assertEquals(4, Iterables.size(actualCorpus.getDocuments()));
 
 		document = Iterables.getFirst(actualCorpus.getDocuments(OpinionDocument.class), null);
 		assertNotNull(document);

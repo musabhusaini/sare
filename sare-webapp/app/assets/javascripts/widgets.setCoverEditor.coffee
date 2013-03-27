@@ -35,8 +35,11 @@ widget =
 		
 	_getUpdated: (setcover) ->
 		setcover ?= @options.setcover
-		{ weightCoverage, tokenizingOptions } = updatedSetCover =
-			weightCoverage: 1.0	# TODO: get real weight coverage
+		weightCoverage = @_$(@options.toleranceTextbox).val()
+		weightCoverage = (if window.isNaN weightCoverage then null else 1.0 - (window.Number weightCoverage)/100.0)
+		if weightCoverage is null or not (0 <= weightCoverage <= 1.0) then weightCoverage = setcover.weightCoverage 
+		{ tokenizingOptions } = updatedSetCover =
+			weightCoverage: weightCoverage
 			tokenizingOptions:
 				tags: ($(tag).val() for tag in @_$(@options.posTagCheckboxes).filter ":checked")
 				isLemmatized: @_$(@options.lemmatizeCheckbox).is ":checked"
@@ -45,6 +48,7 @@ widget =
 		if weightCoverage isnt setcover.weightCoverage then updated = yes
 		else if tokenizingOptions.isLemmatized isnt setcover.tokenizingOptions.isLemmatized then updated = yes
 		else if tokenizingOptions.tags.length isnt setcover.tokenizingOptions.length then updated = yes
+		else if weightCoverage isnt setcover.weightCoverage then updated = yes
 		else
 			for tag in tokenizingOptions.tags
 				updated = yes if not $.inArray tag, setcover.tokenizingOptions.tags
@@ -84,7 +88,7 @@ widget =
 											redeem()
 											@_$(@options.progressContainer).children(".bar")
 												.css "width", "#{window.Math.round(100 * progressToken.progress)}%"
-							, 1000
+							, 500
 						
 						@_$(@options.progressContainer)
 							.show()
@@ -93,6 +97,8 @@ widget =
 						redeem()
 		
 		@_$(@options.posTagCheckboxes).parent().tooltip()
+		@_$(@options.lemmatizeCheckbox).parent().tooltip()
+		@_$(@options.toleranceTextbox).tooltip()
 		@_$(@options.applyButton).tooltip()
 		
 		@_updateView @options.setcover
@@ -107,11 +113,16 @@ widget =
 	_destroy: ->
 		
 	_setOption: (key, value) ->
+		switch key
+			when "disabled"
+				if value then @_$("button").hide() else @_$("button").show()
+				@_changeInputState @_$("input"), if value then "disabled" else "enabled"
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
 		posTagCheckboxes: ".chk-posTag"
 		lemmatizeCheckbox: ".chk-lemmatize"
+		toleranceTextbox: ".txt-tolerance"
 		coverageMatrixContainer: ".ctr-sc-cov-matrix"
 		applyButton: ".btn-apply"
 		progressContainer: ".ctr-sc-progress"

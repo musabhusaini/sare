@@ -27,6 +27,8 @@ import java.io.File;
 
 import org.junit.*;
 
+import com.google.common.collect.Iterables;
+
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
@@ -80,7 +82,6 @@ public class SetCoverControllerTest
 		try {
 			actualSetCover = testController.create((SetCoverFactoryOptions)new SetCoverFactoryOptions()
 				.setStore(testCorpus)
-				.setTokenizingOptions(testTokenizingOptions)
 				.setEm(em)
 				.setExistingId(setCover.getId()));
 		} catch (IllegalFactoryOptionsException e) {
@@ -91,5 +92,50 @@ public class SetCoverControllerTest
 		assertNotNull(actualSetCover);
 		assertEquals(setCover.getIdentifier(), actualSetCover.getIdentifier());
 		assertEquals(setCover.getBaseStore().getIdentifier(), actualSetCover.getBaseStore().getIdentifier());
+	}
+	
+	@Test
+	public void testCreateWithDifferentCoverageAdjusts() {
+		DocumentSetCover setcover;
+		try {
+			setcover = testController.create(new SetCoverFactoryOptions()
+				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not create set cover");
+			return;
+		}
+		
+		assertEquals(3, Iterables.size(setcover.getDocuments()));
+		
+		em.getTransaction().begin();
+		persist(testCorpus);
+		persist(setcover);
+		em.getTransaction().commit();
+		em.clear();
+		
+		DocumentSetCover actualSetCover;
+		try {
+			actualSetCover = testController.create((SetCoverFactoryOptions)new SetCoverFactoryOptions()
+				.setStore(testCorpus)
+				.setWeightCoverage(0.1)
+				.setEm(em)
+				.setExistingId(setcover.getId()));
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not create set cover");
+			return;
+		}
+		
+		em.getTransaction().begin();
+		em.merge(actualSetCover);
+		em.getTransaction().commit();
+		em.clear();
+		
+		assertNotNull(actualSetCover);
+		assertEquals(1, Iterables.size(actualSetCover.getDocuments()));
+		
+		setcover = actualSetCover;
+		actualSetCover = em.find(DocumentSetCover.class, setcover.getId());
+		assertNotNull(actualSetCover);
+		assertEquals(Iterables.size(setcover.getDocuments()), Iterables.size(actualSetCover.getDocuments()));
 	}
 }

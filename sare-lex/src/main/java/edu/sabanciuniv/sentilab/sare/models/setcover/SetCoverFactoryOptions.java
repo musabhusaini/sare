@@ -35,12 +35,14 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 public class SetCoverFactoryOptions
 	extends PersistentDocumentStoreFactoryOptions<DocumentSetCover> {
 
+	public static final double DEFAULT_WEIGHT_COVERAGE = 1.0;
+	
 	private PersistentDocumentStore store;
 	private TokenizingOptions tokenizingOptions;
 	private double weightCoverage;
 	
 	public SetCoverFactoryOptions() {
-		this.weightCoverage = 1.0;
+		this.weightCoverage = DEFAULT_WEIGHT_COVERAGE;
 	}
 	
 	/**

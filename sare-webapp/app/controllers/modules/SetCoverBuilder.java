@@ -33,10 +33,11 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
 
 import com.avaje.ebean.*;
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 import play.Logger;
 import play.libs.*;
@@ -151,9 +152,6 @@ public class SetCoverBuilder extends Module {
 		DocumentSetCover setCoverObj = fetchResource(setcover, DocumentSetCover.class);
 		DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 		setCoverVM.populateSize(em(), setCoverObj);
-		if (new DocumentSetCoverController().getSize(em(), setCoverObj) > 0) {
-			setCoverVM.coverageMatrix = new SetCoverController().calculateCoverageMatrix(setCoverObj);
-		}
 		
 		Map<String, String> posTags = null;
 		if (setCoverObj.getBaseCorpus() != null) {
@@ -168,12 +166,13 @@ public class SetCoverBuilder extends Module {
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result update(final String corpus, final String setcover) {
+	public static Result update(final String corpus, String setcover) {
 		DocumentCorpus corpusObj = null;
 		if (corpus != null) {
 			corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		}
 		
+		// make sure we have the right combination.
 		DocumentSetCover setCoverObj = null;
 		if (setcover != null) {
 			setCoverObj = fetchResource(setcover, DocumentSetCover.class);
@@ -189,25 +188,61 @@ public class SetCoverBuilder extends Module {
 		JsonNode jsonBody = request().body().asJson();
 		if (jsonBody == null && setcover != null) {
 			throw new IllegalArgumentException();
-		} else if (setcover == null) {
-			setCoverObj = (DocumentSetCover)new DocumentSetCover(corpusObj)
-				.setTitle("Optimized " + corpusObj.getTitle())
-				.setOwnerId(getUsername());
+		}
+		if (jsonBody == null) {
+			jsonBody = JsonNodeFactory.instance.objectNode();
 		}
 		
 		DocumentSetCoverModel setCoverVM = null;
-		if (jsonBody == null) {
-			setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
-			setCoverVM.populateSize(em(), setCoverObj);
-			return ok(setCoverVM.asJson());
-		}
-		
 		setCoverVM = Json.fromJson(jsonBody, DocumentSetCoverModel.class);
 		final SetCoverFactoryOptions factoryOptions = (SetCoverFactoryOptions)setCoverVM.toFactoryOptions()
 			.setOwnerId(getUsername());
-		
 		final SetCoverController controller = new SetCoverController();
 		
+		// set the default title.
+		if (setcover == null && StringUtils.isEmpty(factoryOptions.getTitle())) {
+			factoryOptions.setTitle("Optimized " + corpusObj.getTitle());
+		}
+		
+		SetCoverFactoryOptions tmpFactoryOptions = (SetCoverFactoryOptions)new SetCoverFactoryOptions()
+			.setStore(corpusObj)
+			.setTitle(factoryOptions.getTitle())
+			.setDescription(factoryOptions.getDescription())
+			.setOwnerId(factoryOptions.getOwnerId());
+		
+		// make basic creation/updation first.
+		if (setcover == null) {
+			setCoverObj = controller.create(tmpFactoryOptions);
+			em().persist(setCoverObj);
+			setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
+			
+			// if this is a simple change, just return from here.
+			if (ObjectUtils.equals(ObjectUtils.defaultIfNull(factoryOptions.getTokenizingOptions(), new TokenizingOptions()), new TokenizingOptions())
+				&& factoryOptions.getWeightCoverage() == SetCoverFactoryOptions.DEFAULT_WEIGHT_COVERAGE) {
+				return created(setCoverVM.asJson());
+			}
+			setcover = UuidUtils.normalize(setCoverObj.getId());
+		} else if (!StringUtils.equals(StringUtils.defaultString(tmpFactoryOptions.getTitle(), setCoverObj.getTitle()), setCoverObj.getTitle())
+			|| !StringUtils.equals(StringUtils.defaultString(tmpFactoryOptions.getDescription(), setCoverObj.getDescription()), setCoverObj.getDescription())) {
+			
+			tmpFactoryOptions
+				.setEm(em())
+				.setExistingId(setcover);
+			setCoverObj = controller.create(tmpFactoryOptions);
+			em().merge(setCoverObj);
+			setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
+			setCoverVM.populateSize(em(), setCoverObj);
+			
+			// if this is a simple change, just return from here.
+			if (ObjectUtils.equals(ObjectUtils.defaultIfNull(factoryOptions.getTokenizingOptions(), new TokenizingOptions()),
+					ObjectUtils.defaultIfNull(setCoverObj.getTokenizingOptions(), new TokenizingOptions()))
+				&& ObjectUtils.equals(factoryOptions.getWeightCoverage(),
+					ObjectUtils.defaultIfNull(setCoverObj.getWeightCoverage(), SetCoverFactoryOptions.DEFAULT_WEIGHT_COVERAGE))) {
+				return ok(setCoverVM.asJson());
+			}
+		}
+		
+		// get rid of any old progress observer tokens and create a new one.
 		ProgressObserverToken oldPoToken = ProgressObserverToken.find.byId(setCoverObj.getId());
 		if (oldPoToken != null) {
 			oldPoToken.delete();
@@ -216,31 +251,6 @@ public class SetCoverBuilder extends Module {
 			.setId(setCoverObj.getId())
 			.setSession(getWebSession());
 
-		// create the response view model from now.
-		setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
-		setCoverVM.populateSize(em(), setCoverObj);
-		
-		// if it's a simple change, no need to do anything complicated.
-		if (ObjectUtils.equals(factoryOptions.getTokenizingOptions(), ObjectUtils.defaultIfNull(setCoverObj.getTokenizingOptions(), new TokenizingOptions()))
-			// using view model weight coverage as it allows for nulls.
-			&& ObjectUtils.equals(setCoverVM.weightCoverage, setCoverObj.getWeightCoverage())) {
-			
-			// TODO: this should happen through the factory as well, but shortcutting for now.
-			setCoverObj.setTitle(factoryOptions.getTitle());
-			setCoverObj.setDescription(factoryOptions.getDescription());
-			
-			if (em().contains(setCoverObj)) {
-				em().merge(setCoverObj);
-			} else {
-				em().persist(setCoverObj);
-			}
-			
-			poToken.progress = 1.0;
-			poToken.save();
-			
-			return ok(setCoverVM.asJson());
-		}
-		
 		poToken.save();
 		controller.addProgessObserver(new ProgressObserver() {
 			@Override
@@ -261,6 +271,7 @@ public class SetCoverBuilder extends Module {
 		});
 		
 		final Context ctx = Context.current();
+		final String setCoverId = setcover;
 		
 		Akka.future(new Callable<DocumentSetCover>() {
 			@Override
@@ -275,15 +286,19 @@ public class SetCoverBuilder extends Module {
 							DocumentSetCover setCoverObj = null;
 							String corpusId = corpus;
 							if (corpusId == null) {
-								setCoverObj = fetchResource(setcover, DocumentSetCover.class);
+								setCoverObj = fetchResource(setCoverId, DocumentSetCover.class);
 								corpusId = UuidUtils.normalize(setCoverObj.getBaseCorpus().getId());
 							}
 							
 							factoryOptions
 								.setStore(fetchResource(corpusId, DocumentCorpus.class))
+								.setExistingId(setCoverId)
 								.setEm(em);
 							
 							setCoverObj = controller.create(factoryOptions);
+							Lists.newArrayList(setCoverObj.getDocuments());
+							Lists.newArrayList(setCoverObj.getAllDocuments());
+
 							for (SetCoverDocument document : setCoverObj.getAllDocuments()) {
 								if (em.contains(document)) {
 									em.merge(document);
@@ -297,7 +312,7 @@ public class SetCoverBuilder extends Module {
 								@Override
 								public void run() {
 									ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(poToken.id);
-									updatedToken.setProgress(1.0);
+									updatedToken.setProgress(1.1);
 									updatedToken.update();
 								}
 							});
@@ -310,7 +325,7 @@ public class SetCoverBuilder extends Module {
 						@Override
 						public void run() {
 							ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(poToken.id);
-							updatedToken.setProgress(1.0);
+							updatedToken.setProgress(1.1);
 							updatedToken.update();
 						}
 					});
@@ -320,7 +335,7 @@ public class SetCoverBuilder extends Module {
 				}
 			}
 		});
-		
+
 		return ok(setCoverVM.asJson());
 	}
 	
@@ -334,7 +349,7 @@ public class SetCoverBuilder extends Module {
 			return ok(setCoverVM.asJson());
 		}
 		
-		if (updatedToken.progress >= 1.0) {
+		if (updatedToken.getProgress() >= 1.1) {
 			updatedToken.delete();
 			
 			DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);

@@ -2,4 +2,6 @@
 <corpus title="test-xml-corpus" description="test" language="en">
 	<document polarity="0.7">nice hotel</document>
 	<document polarity="-0.8">terrible hotel</document>
+	<document polarity="0.4">it was a nice place</document>
+	<document polarity="0.2">a decent residence</document>
 </corpus>

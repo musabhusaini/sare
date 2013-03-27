@@ -29,27 +29,42 @@
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-sc-editor-@uid" class="ctr-sc-editor" @if(setcover != null) { data-setcover="@setcover.asJson()" }>
 	<div class="row-fluid">
-		<div class="lbl-postags pull-left">
-			Optimize for:
+		<div class="ctr-sc-edit">
+			<div class="lbl-postags">
+				Optimize for:
+			</div>
+			<div id="ctr-postags-@uid" class="postags">
+				@for((tag, displayTag) <- posTags) {
+				<label class="checkbox inline" title="Optimize for @displayTag" data-placement="bottom"
+					data-container="#ctr-postags-@uid">
+					<input id="chk-tag-@uid" class="chk-posTag" type="checkbox"
+						@if(setcover.tokenizingOptions.tags.contains(tag)){checked="checked"} value="@tag" />
+					@displayTag
+				</label>
+				}
+			</div>
+			<div id="ctr-lemmatize-@uid">
+				<label class="lbl-lemmatize checkbox inline" title="Merge various forms of the same root word" data-placement="bottom"
+					data-container="#ctr-lemmatize-@uid">
+					<input id="chk-lemmatize-@uid" type="checkbox" class="chk-lemmatize" @if(setcover.tokenizingOptions.isLemmatized){checked="checked"} />
+					Optimize words with common roots
+				</label>
+			</div>
 		</div>
-		<div id="ctr-postags-@uid" class="postags pull-left">
-			@for((tag, displayTag) <- posTags) {
-			<label class="checkbox inline" title="Optimize for @displayTag" data-placement="bottom"
-				data-container="#ctr-postags-@uid">
-				<input id="chk-tag-@uid" class="chk-posTag" type="checkbox"
-					@if(setcover.tokenizingOptions.tags.contains(tag)){checked="checked"} value="@tag" />
-				@displayTag
-			</label>
-			}
-		</div>
-		<label class="lbl-lemmatize checkbox inline">
-			<input id="chk-lemmatize-@uid" type="checkbox" class="chk-lemmatize" @if(setcover.tokenizingOptions.isLemmatized){checked="checked"} />
-			Use word lemma
-		</label>
 	</div>
 	
-	<div class="row-fluid ctr-sc-coverage">
-		<div class="ctr-sc-cov-matrix">
+	<div class="row-fluid">
+		<div class="ctr-sc-coverage">
+			<div class="form-inline ctr-tolerance">
+				<label for="txt-tolerance-@uid">Loss tolerance:</label>
+				<div class="input-append">
+					<input id="txt-tolerance-@uid" class="txt-tolerance span3" type="text" placeholder="0" value="@if(setcover.weightCoverage!=null){@Math.round((1-setcover.weightCoverage)*100)}" />
+					<span class="add-on">%</span>
+				</div>
+			</div>
+	
+			<div class="ctr-sc-cov-matrix">
+			</div>
 		</div>
 	</div>
 	

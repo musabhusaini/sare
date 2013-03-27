@@ -72,6 +72,12 @@ widget =
 	_destroy: ->
 		
 	_setOption: (key, value) ->
+		switch key
+			when "disabled"
+				@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
+					.storeList if value then "disable" else "enable"
+				editor = (@_$(@options.setCoverEditorContainer).children().first().data Strings.widgetKey)
+				if value then editor.disable() else editor.enable()
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
