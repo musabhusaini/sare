@@ -297,10 +297,10 @@ public class SetCoverBuilder extends Module {
 							
 							setCoverObj = controller.create(factoryOptions);
 							for (SetCoverDocument document : setCoverObj.getAllDocuments()) {
-								if (em.contains(document)) {
-									em.merge(document);
-								} else {
+								if (em.find(SetCoverDocument.class, document.getId()) == null) {
 									em.persist(document);
+								} else { 
+									em.merge(document);
 								}
 							}
 							

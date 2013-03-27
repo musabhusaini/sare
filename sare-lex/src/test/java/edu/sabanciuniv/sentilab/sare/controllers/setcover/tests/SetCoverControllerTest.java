@@ -140,7 +140,7 @@ public class SetCoverControllerTest {
 		}
 		
 		assertNotNull(setCover);
-		assertEquals(5, Iterables.size(setCover.getDocuments()));
+		assertEquals(4, Iterables.size(setCover.getDocuments()));
 		assertEquals(weightCoverage, setCover.getWeightCoverage(), 0);
 		
 		int index=0;
@@ -177,7 +177,7 @@ public class SetCoverControllerTest {
 		setCover = testController.adjustCoverage(setCover, weightCoverage);
 		
 		assertNotNull(setCover);
-		assertEquals(5, Iterables.size(setCover.getDocuments()));
+		assertEquals(4, Iterables.size(setCover.getDocuments()));
 		assertEquals(weightCoverage, setCover.getWeightCoverage(), 0);
 		
 		int index=0;

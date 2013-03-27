@@ -63,17 +63,19 @@ public class SetCoverController
 		// create a dummy set cover to keep the extra stuff in.
 		DocumentSetCover dummySetCover = new DocumentSetCover(store);
 		
+		List<PersistentDocument> corpusDocuments = Lists.newArrayList(store.getDocuments());
+		List<SetCoverDocument> setCoverDocuments = Lists.newArrayList(setcover.getAllDocuments());
+		
 		// for each store document.
-		for (PersistentDocument document : store.getDocuments()) {
+		for (PersistentDocument document : corpusDocuments) {
 			// create a copy of the current document as a set cover document.
 			SetCoverDocument workingDocument = (SetCoverDocument)new SetCoverDocument(document)
 				.setTokenizingOptions(tokenizingOptions)
 				.setStore(dummySetCover);
 			
 			// loop through all set cover documents.
-			Iterable<SetCoverDocument> setCoverDocuments = setcover.getAllDocuments();
-			for (int scIndex=0; scIndex < Iterables.size(setCoverDocuments); scIndex++) {
-				SetCoverDocument setCoverDocument = Iterables.get(setCoverDocuments, scIndex);
+			for (int index=0; index<setCoverDocuments.size(); index++) {
+				SetCoverDocument setCoverDocument = setCoverDocuments.get(index);
 				
 				// create a working reference to the set cover document.
 				SetCoverDocument workingSCDocument = setCoverDocument;
@@ -84,7 +86,8 @@ public class SetCoverController
 				
 				// if we get more weight on the backward merge, swap the documents.
 				if (forwardMerge < backwardMerge) {
-					setcover.replaceDocuments(workingSCDocument, workingDocument);
+					setCoverDocuments.add(setCoverDocuments.indexOf(workingSCDocument), workingDocument);
+					setCoverDocuments.remove(workingSCDocument);
 					
 					SetCoverDocument tmpSCDocument = workingDocument;
 					workingDocument = workingSCDocument;
@@ -100,17 +103,20 @@ public class SetCoverController
 				}
 			}
 			
-			workingDocument.setStore(setcover);
+			setCoverDocuments.add(workingDocument);
+			
 			// if the document was completely consumed, then we mark it as uncovered.
 			if (workingDocument.getTotalTokenWeight() == 0) {
 				workingDocument.setCovered(false);
 			}
-			
+		
 			progress += 1.0 / storeSize;
 			for (ProgressObserver progressObserver : this.progressObservers) {
 				progressObserver.observe(progress, "create");
 			}
 		}
+		
+		setcover.setDocuments(setCoverDocuments);
 		
 		// get rid of the dummy.
 		dummySetCover.setBaseStore(null);
@@ -122,6 +128,7 @@ public class SetCoverController
 	private Pair<List<SetCoverDocument>, List<SetCoverDocument>> splitByCoverage(DocumentSetCover setcover, double weightCoverage) {
 		List<SetCoverDocument> covered = Lists.newArrayList();
 		List<SetCoverDocument> uncovered = Lists.newArrayList();
+		List<SetCoverDocument> setCoverDocuments = Collections.synchronizedList(Lists.newArrayList(setcover.getAllDocuments()));
 		
 		double totalWeight=setcover.getTotalWeight();
 		double accumulatedWeight=0;
@@ -132,7 +139,7 @@ public class SetCoverController
 			public int compare(SetCoverDocument o1, SetCoverDocument o2) {
 				return (int)((o2.getWeight() - o1.getWeight()) * 100);
 			}
-		}).immutableSortedCopy(setcover.getAllDocuments()).iterator();
+		}).immutableSortedCopy(setCoverDocuments).iterator();
 		
 		// get all the useful ones.
 		while (iterator.hasNext()) {
