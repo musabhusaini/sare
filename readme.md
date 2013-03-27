@@ -12,10 +12,12 @@
 
 ### Installation ###
 1.	Clone the repo using:
-		:::sh
+		
+		:::shell
 		git clone git@bitbucket.org:musabhusaini/sare.git
 2.	While logged in as root, run the MySQL script `sare\scripts\setup.sql` (or `sare\scripts\setup-prod.sql` if setting up the production environment) to create the required databases and user.
 3.	Run the batch script `sare\scripts\deploy.bat` for Windows or the shell script `sare\scripts\deploy.sh` for Linux.
+    
     **Hint:** If deploying to production, the respective scripts suffixed with `prod` can be used, which will also run the application.
 4.	From the `sare\sare-webapp` folder, execute `play run`.
 5.	The web application is up and running and can now be reached at: <http://localhost:9000/>.
