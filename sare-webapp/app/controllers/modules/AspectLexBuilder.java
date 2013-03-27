@@ -251,7 +251,8 @@ public class AspectLexBuilder extends Module {
 		LexiconBuilderController controller = new LexiconBuilderController();
 		LexiconBuilderDocumentStore builder = controller.findBuilder(em(), corpusObj, lexiconObj);
 		if (builder == null) {
-			builder = new LexiconBuilderDocumentStore(corpusObj, lexiconObj);
+			builder = (LexiconBuilderDocumentStore)new LexiconBuilderDocumentStore(corpusObj, lexiconObj)
+				.setOwnerId(getUsername());
 			em().persist(builder);
 		} else {
 			controller.refreshBuilder(em(), builder);
