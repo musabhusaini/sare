@@ -30,7 +30,7 @@
 <div id="ctr-sc-editor-@uid" class="ctr-sc-editor" @if(setcover != null) { data-setcover="@setcover.asJson()" }>
 	<div class="row-fluid">
 		<div class="ctr-sc-edit">
-			<div class="lbl-postags">
+			<div class="lbl-postags lefmost-label">
 				Optimize for:
 			</div>
 			<div id="ctr-postags-@uid" class="postags">
@@ -43,7 +43,7 @@
 				</label>
 				}
 			</div>
-			<div id="ctr-lemmatize-@uid">
+			<div id="ctr-lemmatize-@uid" class="ctr-lemmatize">
 				<label class="lbl-lemmatize checkbox inline" title="Merge various forms of the same root word" data-placement="bottom"
 					data-container="#ctr-lemmatize-@uid">
 					<input id="chk-lemmatize-@uid" type="checkbox" class="chk-lemmatize" @if(setcover.tokenizingOptions.isLemmatized){checked="checked"} />
@@ -56,15 +56,21 @@
 	<div class="row-fluid">
 		<div class="ctr-sc-coverage">
 			<div id="ctr-tolerance-@uid" class="form-inline ctr-tolerance">
-				<label for="txt-tolerance-@uid">Loss tolerance:</label>
+				<label for="txt-tolerance-@uid" class="lefmost-label">
+					Loss tolerance:
+				</label>
 				<div class="input-append">
 					<input id="txt-tolerance-@uid" class="txt-tolerance span3" type="text" placeholder="0" value="@if(setcover.weightCoverage!=null){@Math.round((1-setcover.weightCoverage)*100)}"
 						title="The percentage of lowest frequency words that can be ignored" data-placement="right" data-container="#ctr-tolerance-@uid"/>
 					<span class="add-on">%</span>
+					<button id="btn-plot-tolerance-@uid" class="btn btn-plot-tolerance" data-placement="right"
+						data-html="true" data-content="Things have changed; you must <b>Apply</b> before this functionality can be used" data-trigger="hover">
+						<i class="icon-signal"></i>
+					</button>
 				</div>
 			</div>
 	
-			<div class="ctr-sc-cov-matrix">
+			<div id="ctr-sc-cov-matrix-@uid" class="ctr-sc-cov-matrix">
 			</div>
 		</div>
 	</div>
@@ -86,7 +92,12 @@
 		</div>
 	</div>
 	
+	<link rel="stylesheet" href="@controllers.routes.Assets.at("plugins/jqplot/jquery.jqplot.min.css")">
 	<link rel="stylesheet" href="@controllers.routes.Assets.at(minifyInProd("stylesheets/setCoverEditor.css"))">
+	<script src="@controllers.routes.Assets.at("plugins/jqplot/jquery.jqplot.min.js")" type="text/javascript"></script>
+	<script src="@controllers.routes.Assets.at("plugins/jqplot/plugins/jqplot.canvasTextRenderer.min.js")" type="text/javascript"></script>
+	<script src="@controllers.routes.Assets.at("plugins/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js")" type="text/javascript"></script>
+	<script src="@controllers.routes.Assets.at("plugins/jqplot/plugins/jqplot.highlighter.min.js")" type="text/javascript"></script>
 	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.setCoverEditor.js"))" type="text/javascript"></script>
 	<script type="text/javascript">
 		(function(window, $) {

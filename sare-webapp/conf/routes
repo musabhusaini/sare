@@ -101,6 +101,7 @@ GET		/view/modules/corpora/optimizations/:setcover					controllers.modules.SetCo
 GET		/view/modules/corpora/:corpus/optimizations						controllers.modules.SetCoverBuilder.modulePage(corpus: String, setcover = null, partial: Boolean ?= false)
 GET		/view/modules/corpora/:corpus/optimizations/:setcover	controllers.modules.SetCoverBuilder.modulePage(corpus: String, setcover: String, partial: Boolean ?= false)
 GET		/view/modules/corpora/optimizations/:setcover/editor	controllers.modules.SetCoverBuilder.editorView(setcover: String)
+GET		/api/modules/corpora/optimizations/:setcover					controllers.modules.SetCoverBuilder.getSetCover(setcover: String, includeMatrix: Boolean ?= false)
 POST	/api/modules/corpora/optimizations/:setcover					controllers.modules.SetCoverBuilder.update(corpus = null, setcover: String)
 POST	/api/modules/corpora/:corpus/optimizations/:setcover	controllers.modules.SetCoverBuilder.update(corpus: String, setcover: String)
 POST	/api/modules/corpora/:corpus/optimizations						controllers.modules.SetCoverBuilder.create(corpus: String)

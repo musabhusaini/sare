@@ -344,7 +344,7 @@ public class SetCoverBuilder extends Module {
 			
 			DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 			setCoverVM.populateSize(em(), setCoverObj);
-			if (new DocumentSetCoverController().getSize(em(), setCoverObj) > 0) {
+			if (setCoverVM.size > 0) {
 				setCoverVM.coverageMatrix = new SetCoverController().calculateCoverageMatrix(setCoverObj);
 			}
 			
@@ -352,5 +352,16 @@ public class SetCoverBuilder extends Module {
 		}
 		
 		return ok(new ProgressObserverTokenModel(updatedToken).asJson());
+	}
+	
+	public static Result getSetCover(String setcover, boolean includeMatrix) {
+		DocumentSetCover setCoverObj = fetchResource(setcover, DocumentSetCover.class);
+		DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
+		setCoverVM.populateSize(em(), setCoverObj);
+		if (includeMatrix && setCoverVM.size > 0) {
+			setCoverVM.coverageMatrix = new SetCoverController().calculateCoverageMatrix(setCoverObj);
+		}
+		
+		return ok(setCoverVM.asJson());
 	}
 }

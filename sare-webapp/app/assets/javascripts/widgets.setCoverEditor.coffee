@@ -30,17 +30,50 @@ Selectors = Page.Selectors
 Strings = Page.Strings
 Widgets = Page.Widgets
 
+Math = window.Math
+
 makeTolerance = (coverage) ->
-	window.Math.round((1.0 - coverage) * 100);
+	Math.round((1.0 - coverage) * 100);
 
 makeCoverage = (tolerance) ->
 	1 - (tolerance / 100.0)
 
 widget =
 	_fixButtons: ->
-		updated = @_getUpdated()
+		updated = @_getHardUpdated()
+		
+		@_$(@options.plotToleranceButton).popover "destroy"
+		@_$(@options.plotToleranceButton).tooltip "destroy"
+		
+		if updated
+			@_$(@options.plotToleranceButton).popover()
+			@_togglePlot null, true
+		else
+			@_$(@options.plotToleranceButton).tooltip
+				title: "Plot the effect of tolerance on optimization"
+				trigger: "hover"
+		
+		updated = updated or @_getUpdated()
 		for input in [ @options.applyButton, @options.resetButton ]
 			@_changeInputState input, "enabled", updated
+	
+	_getHardUpdated: (setcover) ->
+		setcover ?= @options.setcover
+		{ tokenizingOptions } = updatedSetCover =
+			tokenizingOptions:
+				tags: ($(tag).val() for tag in @_$(@options.posTagCheckboxes).filter ":checked")
+				isLemmatized: @_$(@options.lemmatizeCheckbox).is ":checked"
+		
+		updated = no
+		if tokenizingOptions.isLemmatized isnt setcover.tokenizingOptions.isLemmatized then updated = yes
+		else if tokenizingOptions.tags.length isnt setcover.tokenizingOptions.tags.length then updated = yes
+		else
+			for tag in tokenizingOptions.tags
+				updated = yes if $.inArray(tag, setcover.tokenizingOptions.tags) < 0
+				
+		if not updated then return updated
+		
+		$.extend {}, setcover, updatedSetCover
 		
 	_getUpdated: (setcover) ->
 		setcover ?= @options.setcover
@@ -49,22 +82,70 @@ widget =
 		if weightCoverage is null or not (0 <= weightCoverage <= 1.0) then weightCoverage = setcover.weightCoverage 
 		{ tokenizingOptions } = updatedSetCover =
 			weightCoverage: weightCoverage
-			tokenizingOptions:
-				tags: ($(tag).val() for tag in @_$(@options.posTagCheckboxes).filter ":checked")
-				isLemmatized: @_$(@options.lemmatizeCheckbox).is ":checked"
 		
+		hardUpdated = @_getHardUpdated setcover
 		updated = no
 		if weightCoverage isnt setcover.weightCoverage then updated = yes
-		else if tokenizingOptions.isLemmatized isnt setcover.tokenizingOptions.isLemmatized then updated = yes
-		else if tokenizingOptions.tags.length isnt setcover.tokenizingOptions.tags.length then updated = yes
-		else if weightCoverage isnt setcover.weightCoverage then updated = yes
-		else
-			for tag in tokenizingOptions.tags
-				updated = yes if $.inArray(tag, setcover.tokenizingOptions.tags) < 0
+		else if hardUpdated then updated = yes
 		
 		if not updated then return updated
 		
-		$.extend {}, setcover, updatedSetCover
+		$.extend {}, setcover, updatedSetCover, hardUpdated or {}
+	
+	_togglePlot: (duration, initial, callback) ->
+		initial ?= @options.plotShown
+		duration ?= 200
+		
+		@options.plotShown = not initial
+		if @options.plotShown
+			@_$(@options.plotToleranceButton).addClass "active"
+		else
+			@_$(@options.plotToleranceButton).removeClass "active"
+			@_$(@options.coverageMatrixContainer)
+				.hide duration, =>
+					@_$(@options.coverageMatrixContainer).empty()
+					callback?()
+			return @options.plotShown
+		
+		@_$(@options.coverageMatrixContainer).empty()
+		
+		matrix = []
+		for coverage, covered of @options.setcover.coverageMatrix
+			matrix.push [100-coverage, covered * 100]
+		
+		id = @_$(@options.coverageMatrixContainer)
+			.addClass("invisible")
+			.show()
+			.attr "id"
+		
+		$.jqplot id, [ matrix ],
+			axesDefaults:
+				labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+			seriesDefaults:
+				rendererOptions:
+					smooth: true
+			axes:
+				xaxis:
+					label: "Loss tolerance (% of useful words lost)"
+					pad: 0
+					tickOptions:
+						formatString: "%2.0f"
+				yaxis:
+					label: "Optimized corpus size (% of original size)"
+					tickOptions:
+						formatString: "%2.0f"
+			highlighter:
+				show: true
+				sizeAdjust: 7.5
+			cursor:
+				show: false
+		
+		@_$(@options.coverageMatrixContainer)
+			.hide()
+			.removeClass("invisible")
+			.show duration, =>
+				callback?()
+		return @options.plotShown
 	
 	_updateView: (setcover) ->
 		@options.setcover = setcover
@@ -121,7 +202,7 @@ widget =
 												, pingTimeout
 										else
 											redeem()
-											animateProgress window.Math.round(100 * progressToken.progress)
+											animateProgress Math.round(100 * progressToken.progress)
 							, pingTimeout
 						
 						@_$(@options.progressContainer)
@@ -139,6 +220,29 @@ widget =
 				@_$(@options.toleranceTextbox).val makeTolerance @options.setcover.weightCoverage
 				@_fixButtons()
 		
+		@_on @_$(@options.coverageMatrixContainer),
+			jqplotDataClick: (event, seriesIndex, pointIndex, data) ->
+				@_$(@options.toleranceTextbox).val Math.round data[0]
+				@_fixButtons()
+		
+		@_on @_$(@options.plotToleranceButton),
+			click: (e) ->
+				if @_$(@options.plotToleranceButton).is ".active"
+					return not @_togglePlot null, true
+
+				if @_getHardUpdated()
+					return false
+				
+				if not @options.setcover.coverageMatrix?
+					response = @options.getSetCoverRoute(@options.setcover.id, true).ajax
+						success: (setcover) =>
+							@_updateView setcover
+							@_togglePlot null, false
+				else
+					@_togglePlot null, false
+				
+				false
+		
 		@_$(@options.posTagCheckboxes).parent().tooltip()
 		@_$(@options.lemmatizeCheckbox).parent().tooltip()
 		@_$(@options.toleranceTextbox).tooltip()
@@ -146,7 +250,8 @@ widget =
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
-
+		
+		@_togglePlot null, not @options.plotShown
 		@_updateView @options.setcover
 		
 	_init: ->
@@ -157,21 +262,31 @@ widget =
 	_setOption: (key, value) ->
 		switch key
 			when "disabled"
-				if value then @_$("button").hide() else @_$("button").show()
-				@_changeInputState @_$("input"), if value then "disabled" else "enabled"
+				btns = "#{@options.setCoverControls} button"
+				if value then @_$(btns).hide() else @_$(btns).show()
+				@_changeInputState @_$("input,button"), "disabled", value
 				if not value then @refresh()
+				if value and @_$(@options.plotToleranceButton).is ".active"
+					@_$(@options.plotToleranceButton).button "toggle"
+					@_$(@options.coverageMatrixContainer).empty().hide()
+					@options.plotShown = false
+					
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
 		suppressOutput: false
+		plotShown: false
 		posTagCheckboxes: ".chk-posTag"
 		lemmatizeCheckbox: ".chk-lemmatize"
 		toleranceContainer: ".ctr-tolerance"
 		toleranceTextbox: ".txt-tolerance"
+		plotToleranceButton: ".btn-plot-tolerance"
 		coverageMatrixContainer: ".ctr-sc-cov-matrix"
+		setCoverControls: ".ctr-sc-controls"
 		applyButton: ".btn-apply"
 		resetButton: ".btn-reset"
 		progressContainer: ".ctr-sc-progress"
+		getSetCoverRoute: jsRoutes.controllers.modules.SetCoverBuilder.getSetCover
 		updateRoute: jsRoutes.controllers.modules.SetCoverBuilder.update
 		redeemRoute: jsRoutes.controllers.modules.SetCoverBuilder.redeem
 		setCoverKey: "setcover"

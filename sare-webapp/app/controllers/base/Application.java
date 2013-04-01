@@ -123,6 +123,7 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.SetCoverBuilder.editorView(),
 			controllers.modules.routes.javascript.SetCoverBuilder.create(),
 			controllers.modules.routes.javascript.SetCoverBuilder.update(),
+			controllers.modules.routes.javascript.SetCoverBuilder.getSetCover(),
 			controllers.modules.routes.javascript.SetCoverBuilder.redeem()
 		));
 	}
