@@ -63,7 +63,8 @@ public class SessionCleaner
 		
 		// if the owner id and session id are the same, it's a standalone session, so delete all stores owned.
 		if (!SessionedAction.isAuthenticated(session)) {
-			EntityManager em = SareEntityManagerFactory.createEntityManager();
+			EntityManager em = SareEntityManagerFactory
+				.createEntityManager(Play.application().getWrappedApplication().mode().toString());
 			em.getTransaction().begin();
 			
 			// delete all owned stores.
