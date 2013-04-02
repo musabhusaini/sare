@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(title: String = "Sentilab Sare", scripts: Html = null, styles: Html = null, active: String = "Home",
+@(title: String = "Sentilab SARE", scripts: Html = null, styles: Html = null, active: String = "Home",
 	leftbar: Html = null, content: Html = null, rightbar: Html = null, contentWidth: Int = 10,
 	showPageHeader: Boolean = true)
 
@@ -92,7 +92,10 @@
 								<span class="icon-bar">
 								</span>
 							</a>
-							<a class="brand" href="@base.routes.Application.homePage()">Sentilab Sare</a>
+							<a class="brand" href="@base.routes.Application.homePage()">
+								<span>Sentilab SARE</span>
+								<sup><span class="label label-warning">BETA</span></sup>
+							</a>
 							<div class="nav-collapse collapse">
 								<p class="navbar-text pull-right">
 									Logged in as
@@ -105,7 +108,7 @@
 									</a>
 								</p>
 								<ul class="nav">
-									@for((title, url) <- LinkedHashMap("Home" -> "#", "About" -> "#", "Contact" -> "#")) {
+									@for((title, url) <- LinkedHashMap("Home" -> base.routes.Application.homePage(), "About" -> "#", "Contact" -> "#")) {
 										<li @if(title.equalsIgnoreCase(active)) { class="active" }>
 											<a href="@url">@title</a>
 										<li>
@@ -126,7 +129,7 @@
 				<div class="container-fluid page-header-container">
 					<div class="row-fluid page-header">
 						<div class="offset@((12-contentWidth)/2) span@contentWidth">
-							<h1>Sentilab Sare</h1>
+							<h1>Sentilab SARE</h1>
 							<p class="lead">
 								A Sentiment Analysis Research Environment
 							</p>
