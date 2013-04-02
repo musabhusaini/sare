@@ -39,7 +39,7 @@
 		<module>core</module>
 		<module>utils</module>
 		<module>sare-base</module>
-		<module>sare-lex</module>
+		<module>sare-alex</module>
 		<module>sare-entitymanager</module>
 	</modules>
 
