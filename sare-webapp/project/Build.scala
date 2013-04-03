@@ -29,10 +29,9 @@ object ApplicationBuild extends Build {
     val appVersion      = "2.0.0-SNAPSHOT"
 
     val appDependencies = Seq(
-		javaCore, javaJdbc, javaEbean,
-		// Add your project dependencies here,
-		(
-			"edu.sabanciuniv.sentilab" % "sare-entitymanager" % "2.0.0-SNAPSHOT")
+			javaCore, javaJdbc, javaEbean,
+			// Add your project dependencies here,
+			("edu.sabanciuniv.sentilab" % "sare-entitymanager" % "2.0.0-SNAPSHOT")
 				.exclude("org.apache.commons", "commons-lang3")
 				.exclude("com.google.guava", "guava")
 				.exclude("org.reflections", "reflections")
