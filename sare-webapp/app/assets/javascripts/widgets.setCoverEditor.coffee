@@ -112,8 +112,11 @@ widget =
 		@_$(@options.coverageMatrixContainer).empty()
 		
 		matrix = []
+		initialPoint = null
 		for coverage, covered of @options.setcover.coverageMatrix
-			matrix.push [100-coverage, Math.round(covered * @options.setcover.baseCorpus.size)]
+			point = [100-coverage, Math.round(covered * @options.setcover.baseCorpus.size)]
+			if coverage/100 is @options.setcover.weightCoverage or not initialPoint? then initialPoint = point
+			matrix.push point
 		
 		id = @_$(@options.coverageMatrixContainer)
 			.addClass("invisible")
@@ -142,6 +145,11 @@ widget =
 				tooltipLocation: "ne"
 				fadeTooltip: true
 				sizeAdjust: 7.5
+			permHighlighter:
+				show: true
+				initial:
+					data: initialPoint
+					seriesIndex: 0
 			cursor:
 				show: false
 		
