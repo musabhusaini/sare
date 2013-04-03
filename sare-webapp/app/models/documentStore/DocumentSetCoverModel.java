@@ -65,6 +65,9 @@ public class DocumentSetCoverModel
 	@Override
 	public long populateSize(EntityManager em, PersistentDocumentStore store) {
 		if (store instanceof DocumentSetCover) {
+			if (this.baseCorpus != null && ((DocumentSetCover)store).getBaseCorpus() != null) {
+				this.baseCorpus.populateSize(em, ((DocumentSetCover)store).getBaseCorpus());
+			}
 			return this.size = new DocumentSetCoverController().getCoverSize(em, (DocumentSetCover)store);
 		}
 		
