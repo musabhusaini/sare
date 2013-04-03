@@ -90,7 +90,7 @@ widget =
 		
 		if not updated then return updated
 		
-		$.extend {}, setcover, updatedSetCover, hardUpdated or {}
+		$.extend {}, setcover, hardUpdated or {}, updatedSetCover
 	
 	_tolerancePlot: null
 	
