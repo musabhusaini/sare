@@ -92,6 +92,8 @@ widget =
 		
 		$.extend {}, setcover, updatedSetCover, hardUpdated or {}
 	
+	_tolerancePlot: null
+	
 	_togglePlot: (duration, initial, callback) ->
 		initial ?= @options.plotShown
 		duration ?= 200
@@ -111,14 +113,14 @@ widget =
 		
 		matrix = []
 		for coverage, covered of @options.setcover.coverageMatrix
-			matrix.push [100-coverage, covered * 100]
+			matrix.push [100-coverage, Math.round(covered * @options.setcover.baseCorpus.size)]
 		
 		id = @_$(@options.coverageMatrixContainer)
 			.addClass("invisible")
 			.show()
 			.attr "id"
 		
-		$.jqplot id, [ matrix ],
+		@_tolerancePlot = $.jqplot id, [ matrix ],
 			axesDefaults:
 				labelRenderer: $.jqplot.CanvasAxisLabelRenderer
 			seriesDefaults:
@@ -131,11 +133,14 @@ widget =
 					tickOptions:
 						formatString: "%2.0f"
 				yaxis:
-					label: "Optimized corpus size (% of original size)"
+					label: "Optimized corpus size (# of documents)"
 					tickOptions:
 						formatString: "%2.0f"
 			highlighter:
+				formatString: "<table><tr><td>Loss tolerance:</td><td>%s%</td></tr><tr><td>Optimized corpus size:</td><td>%s</td></tr></table>"
 				show: true
+				tooltipLocation: "ne"
+				fadeTooltip: true
 				sizeAdjust: 7.5
 			cursor:
 				show: false
