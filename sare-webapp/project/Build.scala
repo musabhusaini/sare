@@ -37,6 +37,12 @@ object ApplicationBuild extends Build {
 				.exclude("org.reflections", "reflections")
 				.exclude("joda-time", "joda-time")
 				.exclude("junit", "junit"),
+			("edu.sabanciuniv.sentilab" % "sare-upome" % "2.0.0-SNAPSHOT")
+				.exclude("org.apache.commons", "commons-lang3")
+				.exclude("com.google.guava", "guava")
+				.exclude("org.reflections", "reflections")
+				.exclude("joda-time", "joda-time")
+				.exclude("junit", "junit"),
 			"org.twitter4j" % "twitter4j-core" % "[3.0,)"
     )
 
