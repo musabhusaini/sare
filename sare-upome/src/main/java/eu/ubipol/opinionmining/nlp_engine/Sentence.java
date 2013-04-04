@@ -33,7 +33,6 @@ public class Sentence {
 
 	protected Sentence(SemanticGraph dependencies, int indexStart,
 			DatabaseAdapter adp, int beginPosition) {
-		// System.out.println(dependencies);
 		IndexedWord rootWord = dependencies.getFirstRoot();
 		sentenceRoot = new Token(rootWord.originalText(), rootWord.lemma(),
 				rootWord.tag(), null, null, rootWord.index() + indexStart,

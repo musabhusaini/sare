@@ -35,7 +35,6 @@ public class SentenceObject {
 
 	public SentenceObject(SemanticGraph dependencies, int indexStart,
 			DatabaseAdapter adp, int beginPosition, int endPosition, String text) {
-		System.out.println(text);
 		sentence = new Sentence(dependencies, indexStart, adp, beginPosition);
 		this.beginPosition = beginPosition;
 		this.endPosition = endPosition;
