@@ -60,10 +60,10 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
 
 @With(SareTransactionalAction.class)
 @Module.Requireses({
-	@Module.Requires,
-	@Module.Requires(DocumentCorpusModel.class),
 	@Module.Requires({DocumentCorpusModel.class, AspectLexiconModel.class}),
-	@Module.Requires(AspectLexiconModel.class)
+	@Module.Requires(DocumentCorpusModel.class),
+	@Module.Requires(AspectLexiconModel.class),
+	@Module.Requires
 })
 public class AspectLexBuilder extends Module {
 

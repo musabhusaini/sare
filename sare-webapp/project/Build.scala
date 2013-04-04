@@ -49,6 +49,7 @@ object ApplicationBuild extends Build {
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
     	// Add your own project settings here
+        routesImport ++= Seq("java.util.UUID", "extensions.Binders._"),
     	lessEntryPoints <<= baseDirectory(customLessEntryPoints),
     	resolvers += "Local Maven Respository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository"      
     )

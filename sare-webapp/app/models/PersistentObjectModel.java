@@ -21,6 +21,8 @@
 
 package models;
 
+import java.util.UUID;
+
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 import models.base.ViewModel;
@@ -40,5 +42,9 @@ public class PersistentObjectModel
 	
 	public PersistentObjectModel() {
 		this(null);
+	}
+	
+	public UUID getIdentifier() {
+		return this.id == null ? null : UuidUtils.create(this.id);
 	}
 }

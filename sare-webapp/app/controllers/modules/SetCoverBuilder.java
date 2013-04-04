@@ -59,8 +59,8 @@ import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 @With(SareTransactionalAction.class)
 @Module.Requireses({
-	@Module.Requires({DocumentCorpusModel.class}),
 	@Module.Requires({DocumentCorpusModel.class, DocumentSetCoverModel.class}),
+	@Module.Requires({DocumentCorpusModel.class})
 })
 public class SetCoverBuilder extends Module {
 

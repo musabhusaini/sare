@@ -24,6 +24,7 @@ package controllers;
 import static controllers.base.SareTransactionalAction.*;
 import static models.base.ViewModel.*;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 import javax.annotation.Nullable;
@@ -78,6 +79,11 @@ public class ModuleController extends Application {
 		Set<ModuleModel> modules = Sets.newHashSet();
 		Reflections reflections = new Reflections("controllers.modules", Play.application().classloader());
 		for (Class<? extends Module> moduleClass : reflections.getSubTypesOf(Module.class)) {
+			// we're not interested in abstract classes.
+			if (Modifier.isAbstract(moduleClass.getModifiers())) {
+				continue;
+			}
+			
 			// get the Module.Requires/Requireses annotation for each module class.
 			// the requirements within each Module.Require are ANDed.
 			// the requirements across multiple Module.Require annotations are ORed.
