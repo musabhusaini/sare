@@ -90,7 +90,7 @@ public class SetCoverBuilder extends Module {
 			setCoverVM = new DocumentSetCoverModel();
 		}
 		
-		return controllers.modules.routes.SetCoverBuilder.modulePage(corpusVM.id, setCoverVM.id, false).url();
+		return controllers.modules.routes.SetCoverBuilder.modulePage(corpusVM.getIdentifier(), setCoverVM.getIdentifier(), false).url();
 	}
 	
 	public static List<PersistentDocumentStoreModel> getSetCovers(DocumentCorpusModel corpus) {
@@ -98,13 +98,13 @@ public class SetCoverBuilder extends Module {
 			return Lists.newArrayList();
 		}
 		
-		DocumentCorpus corpusObj = fetchResource(corpus.id, DocumentCorpus.class);
+		DocumentCorpus corpusObj = fetchResource(UuidUtils.create(corpus.id), DocumentCorpus.class);
 		return Lists.transform(new DocumentSetCoverController().getAllSetCovers(em(), getUsername(), corpusObj),
 			new Function<String, PersistentDocumentStoreModel>() {
 				@Override
 				@Nullable
 				public PersistentDocumentStoreModel apply(@Nullable String input) {
-					DocumentSetCover setcover = fetchResource(input, DocumentSetCover.class);
+					DocumentSetCover setcover = fetchResource(UuidUtils.create(input), DocumentSetCover.class);
 					PersistentDocumentStoreModel setcoverVM = (PersistentDocumentStoreModel)createViewModel(setcover);
 					setcoverVM.populateSize(em(), setcover);
 					return setcoverVM;
@@ -112,7 +112,7 @@ public class SetCoverBuilder extends Module {
 			});
 	}
 	
-	public static Result modulePage(String corpus, String setcover, boolean partial) {
+	public static Result modulePage(UUID corpus, UUID setcover, boolean partial) {
 		DocumentCorpus corpusObj = null;
 		DocumentCorpusModel corpusVM = null;
 		if (corpus != null) {
@@ -148,7 +148,7 @@ public class SetCoverBuilder extends Module {
 			setCoverBuilder.render(corpusVM, setCoverVM, corpusObj.getLinguisticProcessor().getBasicPosTags()), partial);
 	}
 	
-	public static Result editorView(String setcover) {
+	public static Result editorView(UUID setcover) {
 		DocumentSetCover setCoverObj = fetchResource(setcover, DocumentSetCover.class);
 		DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 		setCoverVM.populateSize(em(), setCoverObj);
@@ -161,12 +161,12 @@ public class SetCoverBuilder extends Module {
 		return ok(setCoverEditor.render(setCoverVM, posTags));
 	}
 	
-	public static Result create(String corpus) {
+	public static Result create(UUID corpus) {
 		return update(corpus, null);
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result update(final String corpus, String setcover) {
+	public static Result update(final UUID corpus, UUID setcover) {
 		DocumentCorpus corpusObj = null;
 		if (corpus != null) {
 			corpusObj = fetchResource(corpus, DocumentCorpus.class);
@@ -221,7 +221,7 @@ public class SetCoverBuilder extends Module {
 				&& factoryOptions.getWeightCoverage() == SetCoverFactoryOptions.DEFAULT_WEIGHT_COVERAGE) {
 				return created(setCoverVM.asJson());
 			}
-			setcover = UuidUtils.normalize(setCoverObj.getId());
+			setcover = setCoverObj.getIdentifier();
 		} else if (!StringUtils.equals(StringUtils.defaultString(tmpFactoryOptions.getTitle(), setCoverObj.getTitle()), setCoverObj.getTitle())
 			|| !StringUtils.equals(StringUtils.defaultString(tmpFactoryOptions.getDescription(), setCoverObj.getDescription()), setCoverObj.getDescription())) {
 			
@@ -271,7 +271,7 @@ public class SetCoverBuilder extends Module {
 		});
 		
 		final Context ctx = Context.current();
-		final String setCoverId = setcover;
+		final UUID setCoverId = setcover;
 		
 		Akka.future(new Callable<DocumentSetCover>() {
 			@Override
@@ -284,10 +284,10 @@ public class SetCoverBuilder extends Module {
 							Context.current.set(ctx);
 							
 							DocumentSetCover setCoverObj = null;
-							String corpusId = corpus;
+							UUID corpusId = corpus;
 							if (corpusId == null) {
 								setCoverObj = fetchResource(setCoverId, DocumentSetCover.class);
-								corpusId = UuidUtils.normalize(setCoverObj.getBaseCorpus().getId());
+								corpusId = setCoverObj.getBaseCorpus().getIdentifier();
 							}
 							
 							factoryOptions
@@ -333,7 +333,7 @@ public class SetCoverBuilder extends Module {
 		return ok(setCoverVM.asJson());
 	}
 	
-	public static Result redeem(String setcover) {
+	public static Result redeem(UUID setcover) {
 		DocumentSetCover setCoverObj = fetchResource(setcover, DocumentSetCover.class);
 		
 		ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(setCoverObj.getId());
@@ -354,7 +354,7 @@ public class SetCoverBuilder extends Module {
 		return ok(new ProgressObserverTokenModel(updatedToken).asJson());
 	}
 	
-	public static Result getSetCover(String setcover, boolean includeMatrix) {
+	public static Result getSetCover(UUID setcover, boolean includeMatrix) {
 		DocumentSetCover setCoverObj = fetchResource(setcover, DocumentSetCover.class);
 		DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 		setCoverVM.populateSize(em(), setCoverObj);

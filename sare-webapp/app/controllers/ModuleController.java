@@ -46,6 +46,7 @@ import views.html.moduleView;
 import controllers.base.*;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 public class ModuleController extends Application {
 
@@ -64,7 +65,7 @@ public class ModuleController extends Application {
 						if (!input.isTextual()) {
 							return null;
 						}
-						return createViewModelQuietly(fetchResource(input.asText(), PersistentObject.class), null);
+						return createViewModelQuietly(fetchResource(UuidUtils.create(input.asText()), PersistentObject.class), null);
 							
 					}
 				}));

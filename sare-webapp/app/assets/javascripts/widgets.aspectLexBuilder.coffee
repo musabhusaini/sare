@@ -75,7 +75,7 @@ widget =
 				.storeList "option",
 					suppressOutput: true
 					addRoute: =>
-						@options.createLexiconRoute(@options.corpus?.id ? "null")
+						@options.createLexiconRoute(@options.corpus?.id ? null)
 		
 	refresh: ->
 		@_sendModuleOutput()

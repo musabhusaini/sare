@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -20,6 +20,8 @@
  */
 
 package models.web;
+
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 import play.db.ebean.Model;
 
@@ -35,14 +37,14 @@ public class ResourceFetchError extends Model {
 	
 	public static ResourceFetchError nonExistentResourceError(String id) {
 		ResourceFetchError error = new ResourceFetchError();
-		error.id = id;
+		error.id = UuidUtils.normalize(id);
 		error.message = "non-existent resource";
 		return error;
 	}
 	
 	public static ResourceFetchError forbiddenResourceError(String id) {
 		ResourceFetchError error = new ResourceFetchError();
-		error.id = id;
+		error.id = UuidUtils.normalize(id);
 		error.message = "forbidden resource";
 		return error;
 	}

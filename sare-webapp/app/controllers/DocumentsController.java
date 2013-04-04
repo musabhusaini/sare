@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -23,6 +23,8 @@ package controllers;
 
 import static models.base.ViewModel.*;
 import static controllers.base.SareTransactionalAction.*;
+
+import java.util.UUID;
 
 import play.mvc.*;
 
@@ -36,7 +38,7 @@ import edu.sabanciuniv.sentilab.utils.UuidUtils;
 @With(SareTransactionalAction.class)
 public class DocumentsController extends Application {
 
-	public static <T extends PersistentDocument> T fetchDocument(String collection, String document, Class<T> clazz) {
+	public static <T extends PersistentDocument> T fetchDocument(UUID collection, UUID document, Class<T> clazz) {
 		T documentObj = fetchResource(document, clazz);
 		if (!UuidUtils.normalize(collection).equals(UuidUtils.normalize(documentObj.getStore().getIdentifier()))) {
 			throw new IllegalArgumentException();
@@ -44,18 +46,18 @@ public class DocumentsController extends Application {
 		return documentObj;
 	}
 	
-	public static PersistentDocument fetchDocument(String collection, String document) {
+	public static PersistentDocument fetchDocument(UUID collection, UUID document) {
 		return fetchDocument(collection, document, PersistentDocument.class);
 	}
 	
-	public static Result list(String collection) {
+	public static Result list(UUID collection) {
 		// make sure we have access to this collection.
 		fetchResource(collection, PersistentDocumentStore.class);
 		
-		return ok(play.libs.Json.toJson(new PersistentDocumentController().getAllUuids(em(), collection)));
+		return ok(play.libs.Json.toJson(new PersistentDocumentController().getAllUuids(em(), collection.toString())));
 	}
 	
-	public static Result get(String collection, String document) {
+	public static Result get(UUID collection, UUID document) {
 		return ok(createViewModel(fetchDocument(collection, document)).asJson());
 	}
 }

@@ -83,7 +83,7 @@ public class CorpusModule extends Module {
 				@Override
 				@Nullable
 				public PersistentDocumentStoreModel apply(@Nullable String input) {
-					PersistentDocumentStore store = fetchResource(input, PersistentDocumentStore.class);
+					PersistentDocumentStore store = fetchResource(UuidUtils.create(input), PersistentDocumentStore.class);
 					PersistentDocumentStoreModel storeVM = (PersistentDocumentStoreModel)createViewModel(store);
 					storeVM.populateSize(em(), store);
 					return storeVM;
@@ -99,7 +99,7 @@ public class CorpusModule extends Module {
 		return update(null);
 	}
 	
-	public static Result update(String corpus) {
+	public static Result update(UUID corpus) {
 		OpinionCorpus corpusObj = null;
 		if (corpus != null) {
 			corpusObj = fetchResource(corpus, OpinionCorpus.class);
@@ -217,12 +217,12 @@ public class CorpusModule extends Module {
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result addDocument(String corpus) {
+	public static Result addDocument(UUID corpus) {
 		return updateDocument(corpus, null);
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result updateDocument(String corpus, String document) {
+	public static Result updateDocument(UUID corpus, UUID document) {
 		DocumentCorpus store = fetchResource(corpus, DocumentCorpus.class);
 		
 		if (store instanceof OpinionCorpus) {
@@ -247,13 +247,13 @@ public class CorpusModule extends Module {
 		return badRequest();
 	}
 	
-	public static Result deleteDocument(String corpus, String document) {
+	public static Result deleteDocument(UUID corpus, UUID document) {
 		FullTextDocument documentObj = DocumentsController.fetchDocument(corpus, document, FullTextDocument.class);
 		em().remove(documentObj);
 		return ok(createViewModel(documentObj).asJson());
 	}
 	
-	public static Result twitterGrabberView(String corpus) {
+	public static Result twitterGrabberView(UUID corpus) {
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		DocumentCorpusModel corpusVM = (DocumentCorpusModel)createViewModel(corpusObj);
 		corpusVM.populateSize(em(), corpusObj);

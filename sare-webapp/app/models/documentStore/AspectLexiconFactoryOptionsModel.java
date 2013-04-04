@@ -25,6 +25,7 @@ import controllers.base.SareTransactionalAction;
 
 import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconFactoryOptions;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 public class AspectLexiconFactoryOptionsModel
 	extends PersistentDocumentStoreFactoryOptionsModel {
@@ -51,7 +52,7 @@ public class AspectLexiconFactoryOptionsModel
 			.setDescription(this.description);
 		
 		if (this.baseStore != null && SareTransactionalAction.em() != null) {
-			options.setBaseStore(SareTransactionalAction.fetchResource(this.baseStore.id, PersistentDocumentStore.class));
+			options.setBaseStore(SareTransactionalAction.fetchResource(UuidUtils.create(this.baseStore.id), PersistentDocumentStore.class));
 		}
 		
 		return options;

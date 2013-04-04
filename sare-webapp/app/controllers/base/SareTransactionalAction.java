@@ -22,6 +22,7 @@
 package controllers.base;
 
 import java.security.AccessControlException;
+import java.util.UUID;
 
 import javax.persistence.*;
 
@@ -61,28 +62,26 @@ public class SareTransactionalAction extends Action.Simple {
 		return em;
 	}
 	
-	public static <T extends PersistentObject> T fetchResource(Context ctx, String id, Class<T> clazz) {
+	public static <T extends PersistentObject> T fetchResource(Context ctx, UUID id, Class<T> clazz) {
 		Validate.notNull(clazz);
 		
 		Logger.info(LoggedAction.getLogEntry(ctx,
 			String.format("attempting to fetch resource: %s of type: %s", id, clazz.getName())));
 		
 		T object = null;
-		if (UuidUtils.isUuid(id) && em() != null) {
-			try {
-				byte[] uuid = UuidUtils.toBytes(UuidUtils.create(id));
-				object = em().find(clazz, uuid);
-				
-				if (object != null && (!SessionedAction.isOwnerOf(object) || object instanceof UserInaccessibleModel )) {
-					throw new AccessControlException(id);
-				}
-			} catch (EntityNotFoundException e) {
-				object = null;
+		try {
+			byte[] uuid = UuidUtils.toBytes(id);
+			object = em().find(clazz, uuid);
+			
+			if (object != null && (!SessionedAction.isOwnerOf(object) || object instanceof UserInaccessibleModel )) {
+				throw new AccessControlException(UuidUtils.normalize(id));
 			}
+		} catch (EntityNotFoundException e) {
+			object = null;
 		}
 		
 		if (object == null) {
-			throw new EntityNotFoundException(id);
+			throw new EntityNotFoundException(UuidUtils.normalize(id));
 		}
 		
 		Logger.info(LoggedAction.getLogEntry(ctx,
@@ -90,11 +89,11 @@ public class SareTransactionalAction extends Action.Simple {
 		return object;
 	}
 	
-	public static <T extends PersistentObject> T fetchResource(String id, Class<T> clazz) {
+	public static <T extends PersistentObject> T fetchResource(UUID id, Class<T> clazz) {
 		return fetchResource(null, id, clazz);
 	}
 	
-	public static <T extends PersistentObject> T fetchResourceQuietly(Context ctx, String id, Class<T> clazz) {
+	public static <T extends PersistentObject> T fetchResourceQuietly(Context ctx, UUID id, Class<T> clazz) {
 		try {
 			return fetchResource(ctx, id, clazz);
 		} catch (Throwable e) {
@@ -102,7 +101,7 @@ public class SareTransactionalAction extends Action.Simple {
 		}
 	}
 	
-	public static <T extends PersistentObject> T fetchResourceQuietly(String id, Class<T> clazz) {
+	public static <T extends PersistentObject> T fetchResourceQuietly(UUID id, Class<T> clazz) {
 		return fetchResourceQuietly(null, id, clazz);
 	}
 	
