@@ -41,12 +41,23 @@ import models.web.ModuleModel;
 public abstract class Module
 	extends Application {
 	
+	/**
+	 * Annotates the types of ViewModel objects a module requires to function.
+	 * One object of each type needs to be present in order for a requirement to be satisfied.
+	 * @author Mus'ab Husaini
+	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.TYPE})
 	public static @interface Requires {
 		public Class<? extends ViewModel>[] value() default {};
 	}
 	
+	/**
+	 * Annotates a collection of {@link Requires} annotations.
+	 * Any one of these requirements needs to be satisfied in order for the entire requirement to be satisfied.
+	 * The first requirement to be satisfied is taken and the rest are ignored.
+	 * @author Mus'ab Husaini
+	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.TYPE})
 	public static @interface Requireses {
@@ -105,5 +116,32 @@ public abstract class Module
 	
 	public boolean allowSelfOutput() {
 		return false;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Module && this.getId() != null) {
+			return ObjectUtils.equals(this.getId(), ((Module)obj).getId());
+		}
+		
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		if (this.getId() != null) {
+			return this.getId().hashCode();
+		}
+		
+		return super.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		if (this.getDisplayName() != null) {
+			return this.getDisplayName();
+		}
+		
+		return super.toString();
 	}
 }
