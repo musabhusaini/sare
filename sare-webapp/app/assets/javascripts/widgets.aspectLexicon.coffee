@@ -84,7 +84,7 @@ widget =
 			display node
 		else
 			aspect = $(node).data @options.aspectKey
-			@options.deleteAspectRoute("null", aspect.id).ajax
+			@options.deleteAspectRoute(null, aspect.id).ajax
 				success: => display node
 
 	getSelectedKeyword: ->
@@ -136,7 +136,7 @@ widget =
 			display node
 		else
 			keyword = $(node).data @options.keywordKey
-			@options.deleteKeywordRoute("null", keyword.id).ajax
+			@options.deleteKeywordRoute(null, keyword.id).ajax
 				success: => display node
 	
 	_create: ->
@@ -169,7 +169,7 @@ widget =
 		@_$(@options.aspectsContainer).on
 			"rename_node.jstree": (e, data) =>
 				aspect = $(data.rslt.obj).data @options.aspectKey
-				@options.updateAspectRoute("null", aspect.id).ajax
+				@options.updateAspectRoute(null, aspect.id).ajax
 					contentType: Helpers.ContentTypes.json
 					data: JSON.stringify
 						title: data.rslt.name
@@ -326,7 +326,7 @@ widget =
 		@_$(@options.keywordsContainer).on
 			"rename_node.jstree": (e, data) =>
 				keyword = $(data.rslt.obj).data @options.keywordKey
-				@options.updateKeywordRoute("null", keyword.id).ajax
+				@options.updateKeywordRoute(null, keyword.id).ajax
 					contentType: Helpers.ContentTypes.json
 					data: JSON.stringify
 						content: data.rslt.name

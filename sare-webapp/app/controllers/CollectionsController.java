@@ -25,7 +25,7 @@ import static models.base.ViewModel.*;
 import static controllers.base.SareTransactionalAction.*;
 import static controllers.base.SessionedAction.*;
 
-import java.util.List;
+import java.util.*;
 
 import models.documentStore.PersistentDocumentStoreModel;
 
@@ -67,21 +67,21 @@ public class CollectionsController extends Application {
 		return ok(play.libs.Json.toJson(new PersistentDocumentStoreController().getAllUuids(em(), getUsername())));
 	}
 	
-	public static Result get(String collection) {
+	public static Result get(UUID collection) {
 		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
 		PersistentDocumentStoreModel storeVM = (PersistentDocumentStoreModel)createViewModel(store);
 		storeVM.populateSize(em(), store);
 		return ok(storeVM.asJson());
 	}
 	
-	public static Result delete(String collection) {
+	public static Result delete(UUID collection) {
 		PersistentDocumentStore collectionObj = fetchResource(collection, PersistentDocumentStore.class);
 		em().remove(collectionObj);
 		
 		return ok(createViewModelQuietly(collectionObj).asJson());
 	}
 	
-	public static Result detailsForm(String collection) {
+	public static Result detailsForm(UUID collection) {
 		PersistentDocumentStore store = fetchResource(collection, PersistentDocumentStore.class);
 		PersistentDocumentStoreModel storeVM = (PersistentDocumentStoreModel)createViewModel(store);
 		storeVM.populateSize(em(), store);

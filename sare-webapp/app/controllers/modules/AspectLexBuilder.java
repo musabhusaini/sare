@@ -71,7 +71,7 @@ public class AspectLexBuilder extends Module {
 		LexiconController lexiconController = new LexiconController();
 		List<PersistentDocumentStoreModel> lexica = Lists.newArrayList();
 		for (String lexiconId : lexiconController.getAllLexica(em(), getUsername(), AspectLexicon.class)) {
-			AspectLexicon lexicon = fetchResource(lexiconId, AspectLexicon.class);
+			AspectLexicon lexicon = fetchResource(UuidUtils.create(lexiconId), AspectLexicon.class);
 			if (corpus == null || (lexicon.getBaseStore() != null
 				&& UuidUtils.normalize(corpus.id).equals(UuidUtils.normalize(lexicon.getBaseCorpus().getId())))) {
 				
@@ -102,14 +102,14 @@ public class AspectLexBuilder extends Module {
 		DocumentCorpusModel corpus = (DocumentCorpusModel)Iterables.find(this.viewModels, Predicates.instanceOf(DocumentCorpusModel.class), null);
 		AspectLexiconModel lexicon = (AspectLexiconModel)Iterables.find(this.viewModels, Predicates.instanceOf(AspectLexiconModel.class), null);
 		return controllers.modules.routes.AspectLexBuilder.modulePage(
-			corpus != null ? corpus.id : null,
-			lexicon != null ? lexicon.id : null,
+			corpus != null ? corpus.getIdentifier() : null,
+			lexicon != null ? lexicon.getIdentifier() : null,
 			false).url();
 	}
 	
-	public static Result modulePage(String corpus, String lexicon, boolean partial) {
-		DocumentCorpus corpusObj = StringUtils.isNotEmpty(corpus) ? fetchResource(corpus, DocumentCorpus.class) : null;
-		AspectLexicon lexiconObj = StringUtils.isNotEmpty(lexicon) ? fetchResource(lexicon, AspectLexicon.class) : null;
+	public static Result modulePage(UUID corpus, UUID lexicon, boolean partial) {
+		DocumentCorpus corpusObj = corpus != null ? fetchResource(corpus, DocumentCorpus.class) : null;
+		AspectLexicon lexiconObj = lexicon != null ? fetchResource(lexicon, AspectLexicon.class) : null;
 		if (lexiconObj == null
 			&& new LexiconController().getAllLexica(em(), SessionedAction.getUsername(), AspectLexicon.class).size() == 0) {
 			create(corpus);
@@ -134,11 +134,11 @@ public class AspectLexBuilder extends Module {
 			aspectLexBuilder.render(corpusVM, lexiconVM, true), partial);
 	}
 	
-	public static Result create(String corpus) {
+	public static Result create(UUID corpus) {
 		return update(corpus, null);
 	}
 	
-	public static Result update(String corpus, String lexicon) {
+	public static Result update(UUID corpus, UUID lexicon) {
 		DocumentCorpus corpusObj = null;
 		if (corpus != null) {
 			corpusObj = fetchResource(corpus, DocumentCorpus.class);
@@ -217,6 +217,10 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	public static Html renderDocumentsView(String corpus, String lexicon) {
+		return renderDocumentsView(UuidUtils.create(corpus), UuidUtils.create(lexicon));
+	}
+	
+	public static Html renderDocumentsView(UUID corpus, UUID lexicon) {
 		LexiconBuilderDocumentStore builder = fetchBuilder(corpus, lexicon);
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
@@ -234,18 +238,18 @@ public class AspectLexBuilder extends Module {
 					.split(StringUtils.defaultString(builder.getProperty("emphasizedTags", String.class)))));
 	}
 	
-	public static Result documentsView(String corpus, String lexicon) {
+	public static Result documentsView(UUID corpus, UUID lexicon) {
 		return ok(renderDocumentsView(corpus, lexicon));
 	}
 	
-	public static Result lexiconView(String lexicon) {
+	public static Result lexiconView(UUID lexicon) {
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		AspectLexiconModel lexiconVM = (AspectLexiconModel)createViewModel(lexiconObj);
 		lexiconVM.populateSize(em(), lexiconObj);
 		return ok(aspectLexicon.render(lexiconVM, true));
 	}
 	
-	private static LexiconBuilderDocumentStore fetchBuilder(String corpus, String lexicon) {
+	private static LexiconBuilderDocumentStore fetchBuilder(UUID corpus, UUID lexicon) {
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		LexiconBuilderController controller = new LexiconBuilderController();
@@ -274,7 +278,7 @@ public class AspectLexBuilder extends Module {
 		return document;
 	}
 		
-	public static Result getDocument(String corpus, String lexicon, final String emphasis, Long rank) {
+	public static Result getDocument(UUID corpus, UUID lexicon, final String emphasis, Long rank) {
 		final LexiconBuilderDocumentStore builder = fetchBuilder(corpus, lexicon);
 		final AspectLexicon lexiconObj = (AspectLexicon)builder.getLexicon();
 		final LexiconBuilderController controller = new LexiconBuilderController();
@@ -312,7 +316,7 @@ public class AspectLexBuilder extends Module {
 		return notFoundEntity(ObjectUtils.toString(rank));
 	}
 	
-	public static Result seeDocument(String corpus, String lexicon, String emphasis, Long rank) {
+	public static Result seeDocument(UUID corpus, UUID lexicon, String emphasis, Long rank) {
 		LexiconBuilderDocumentStore builder = fetchBuilder(corpus, lexicon);
 		LexiconBuilderDocument document = fetchDocument(builder, rank);
 		
@@ -328,7 +332,7 @@ public class AspectLexBuilder extends Module {
 		return notFoundEntity(ObjectUtils.toString(rank));
 	}
 	
-	public static Result getAspects(String lexicon) {
+	public static Result getAspects(UUID lexicon) {
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		List<AspectLexiconModel> aspects = Lists.newArrayList(Iterables.transform(lexiconObj.getAspects(),
 			new Function<AspectLexicon, AspectLexiconModel>() {
@@ -342,15 +346,15 @@ public class AspectLexBuilder extends Module {
 		return ok(Json.toJson(aspects));
 	}
 
-	public static Result getAspect(String lexicon, String aspect, boolean recursive) {
+	public static Result getAspect(UUID lexicon, String aspect, boolean recursive) {
 		AspectLexicon lexiconObj = null;
 		AspectLexicon aspectObj = null;
 		
-		if (UuidUtils.isUuid(lexicon)) {
+		if (lexicon != null) {
 			lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		}
 		if (UuidUtils.isUuid(aspect)) {
-			aspectObj = fetchResourceQuietly(aspect, AspectLexicon.class);
+			aspectObj = fetchResourceQuietly(UuidUtils.create(aspect), AspectLexicon.class);
 			if (aspectObj != null && lexiconObj != null && !ObjectUtils.equals(aspectObj.getParentAspect(), lexiconObj)) {
 				throw new IllegalArgumentException();
 			}
@@ -368,7 +372,7 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result addAspect(String lexicon) {
+	public static Result addAspect(UUID lexicon) {
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		JsonNode aspectJson = request().body().asJson();
 		AspectLexiconModel aspect = aspectJson == null ?
@@ -392,12 +396,12 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result updateExpression(String aspect, String expression) {
+	public static Result updateExpression(UUID aspect, UUID expression) {
 		AspectLexicon aspectObj = null;
 		AspectExpression expressionObj = fetchResource(expression, AspectExpression.class);
 		JsonNode updatedExpressionNode = request().body().asJson();
 		
-		if (StringUtils.isNotEmpty(aspect)) {
+		if (aspect != null) {
 			aspectObj = fetchResource(aspect, AspectLexicon.class);
 			if (!ObjectUtils.equals(expressionObj.getAspect(), aspectObj) && !aspectObj.migrateExpression(expressionObj)) {
 				throw new IllegalArgumentException();
@@ -421,12 +425,12 @@ public class AspectLexBuilder extends Module {
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result updateAspect(String lexicon, String aspect) {
+	public static Result updateAspect(UUID lexicon, UUID aspect) {
 		AspectLexicon lexiconObj = null;
 		AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
 		JsonNode updatedAspectNode = request().body().asJson();
 		
-		if (StringUtils.isNotEmpty(lexicon)) {
+		if (lexicon != null) {
 			lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 			
 			if (!ObjectUtils.equals(aspectObj.getParentAspect(), lexiconObj) && !lexiconObj.migrateAspect(aspectObj)) {
@@ -451,8 +455,8 @@ public class AspectLexBuilder extends Module {
 		return ok(createViewModel(aspectObj).asJson());
 	}
 	
-	public static Result deleteAspect(String lexicon, String aspect) {
-		if (StringUtils.isNotEmpty(lexicon)) {
+	public static Result deleteAspect(UUID lexicon, UUID aspect) {
+		if (lexicon != null) {
 			AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 			AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
 			if (aspectObj.getParentAspect() != null
@@ -469,7 +473,7 @@ public class AspectLexBuilder extends Module {
 		return CollectionsController.delete(aspect);
 	}
 	
-	public static Result getExpressions(String aspect) {
+	public static Result getExpressions(UUID aspect) {
 		AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
 		List<PersistentDocumentModel> expressions = Lists.newArrayList(Iterables.transform(aspectObj.getExpressions(),
 			new Function<AspectExpression, PersistentDocumentModel>() {
@@ -483,15 +487,15 @@ public class AspectLexBuilder extends Module {
 		return ok(Json.toJson(expressions));
 	}
 	
-	public static Result getExpression(String aspect, String expression, boolean recursive) {
+	public static Result getExpression(UUID aspect, String expression, boolean recursive) {
 		AspectLexicon aspectObj = null;
 		AspectExpression expressionObj = null;
 		
-		if (UuidUtils.isUuid(aspect)) {
+		if (aspect != null) {
 			aspectObj = fetchResource(aspect, AspectLexicon.class);
 		}
 		if (UuidUtils.isUuid(expression)) {
-			expressionObj = fetchResourceQuietly(expression, AspectExpression.class);
+			expressionObj = fetchResourceQuietly(UuidUtils.create(expression), AspectExpression.class);
 			if (expressionObj != null && aspectObj != null && !ObjectUtils.equals(expressionObj.getAspect(), aspectObj)) {
 				throw new IllegalArgumentException();
 			}
@@ -502,13 +506,13 @@ public class AspectLexBuilder extends Module {
 		}
 		
 		if (expressionObj == null) {
-			return notFoundEntity(expression);
+			return notFoundEntity(UuidUtils.normalize(expression));
 		}
 		return ok(createViewModel(expressionObj).asJson());
 	}
 	
 	@BodyParser.Of(play.mvc.BodyParser.Json.class)
-	public static Result addExpression(String aspect) {
+	public static Result addExpression(UUID aspect) {
 		AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
 		JsonNode expressionJson = request().body().asJson();
 		PersistentDocumentModel expression = expressionJson == null ?
@@ -530,9 +534,9 @@ public class AspectLexBuilder extends Module {
 		return created(createViewModel(expressionObj).asJson());
 	}
 	
-	public static Result deleteExpression(String aspect, String expression) {
+	public static Result deleteExpression(UUID aspect, UUID expression) {
 		AspectExpression expressionObj = fetchResource(expression, AspectExpression.class);
-		if (StringUtils.isNotEmpty(aspect)) {
+		if (aspect != null) {
 			AspectLexicon aspectObj = fetchResource(aspect, AspectLexicon.class);
 			if (expressionObj.getAspect() != null
 				&& ObjectUtils.equals(expressionObj.getAspect(), aspectObj)) {

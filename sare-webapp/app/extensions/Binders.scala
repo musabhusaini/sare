@@ -36,13 +36,13 @@ object Binders {
     }
     
     override def unbind(key: String, id: UUID): String = {
-      UuidUtils.normalize(id.toString())
+      if (id == null) null else UuidUtils.normalize(id.toString())
     }
   }
   
   implicit def uuidJavaScriptLitteral = new JavascriptLitteral[UUID] {
     override def to(id: UUID): String = {
-      UuidUtils.normalize(id.toString())
+      if (id == null) null else UuidUtils.normalize(id.toString())
     }
   }
 }

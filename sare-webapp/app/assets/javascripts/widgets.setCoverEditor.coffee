@@ -196,7 +196,7 @@ widget =
 						, duration, ->
 							callback?()
 				
-				@options.updateRoute("null", @options.setcover.id).ajax
+				@options.updateRoute(null, @options.setcover.id).ajax
 					data: JSON.stringify updatedSetCover
 					contentType: Helpers.ContentTypes.json
 					success: (setcover) =>
