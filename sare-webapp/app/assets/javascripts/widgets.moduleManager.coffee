@@ -175,7 +175,9 @@ widget =
 		
 		@replace module, true
 		@_$(@options.nextModulesButtons).on "click", "button", (e) =>
-			@push $(e.target).data @options.moduleKey
+			module = $(e.target).data @options.moduleKey
+			return true if module.subModules? and module.subModules.length > 0
+			@push module
 	
 	_setOption: (key, value) ->
 		switch key
@@ -186,16 +188,32 @@ widget =
 				value = ((val.id ? val) for val in value)
 				@options.moduleOptionsRoute(JSON.stringify value).ajax
 					success: (modules) =>
+						makeButton = (module) =>
+							$("<button>")
+									.text(module.name)
+									.addClass("btn")
+									.data @options.moduleKey, module
 						@_$(@options.moduleControlsContainer).hide()
 						@_$(@options.nextModulesButtons).empty()
 						for module in modules
 							if module.id isnt @_currentModule.id or @_currentModule.allowSelfOutput
 								@_$(@options.moduleControlsContainer).show()
-								$("<button>")
-									.text(module.name)
-									.addClass("btn")
-									.data(@options.moduleKey, module)
-									.appendTo @_$ @options.nextModulesButtons
+								btn = makeButton module
+								if not module.subModules? or module.subModules.length < 1
+									@_$(@options.nextModulesButtons).append btn
+								else
+									btn
+										.attr("data-toggle", "dropdown")
+										.append(" ")
+										.append $ "<span class=\"caret\">"
+									subBtns = $ "<ul class=\"dropdown-menu\">"
+									for mod in module.subModules
+										subBtns.append $("<li>").append makeButton mod
+									$("<div>")
+										.addClass("btn-group")
+										.append(btn)
+										.append(subBtns)
+										.appendTo @_$(@options.nextModulesButtons)
 		
 		$.Widget.prototype._setOption.apply @, arguments
 		

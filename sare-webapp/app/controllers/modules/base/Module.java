@@ -129,6 +129,10 @@ public abstract class Module
 	public boolean allowSelfOutput() {
 		return false;
 	}
+	
+	public Iterable<Module> getSubModules() {
+		return null;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
