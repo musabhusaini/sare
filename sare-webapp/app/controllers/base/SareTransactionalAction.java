@@ -48,18 +48,29 @@ public class SareTransactionalAction extends Action.Simple {
 	
 	private static ThreadLocal<EntityManager> currentEntityManager = new ThreadLocal<>();
 	
+	public static EntityManager createEntityManager() {
+		return SareEntityManagerFactory.createEntityManager(Play.application().getWrappedApplication().mode().toString());
+	}
+
+	public static boolean hasEntityManager() {
+		return currentEntityManager.get() != null;
+	}
+	
 	public static void bindEntityManager(EntityManager em) {
 		Validate.notNull(em);
 		currentEntityManager.set(em);
 	}
 	
+	public static void unbindEntityManager() {
+		currentEntityManager.remove();
+	}
+	
 	public static EntityManager em() {
-		EntityManager em = currentEntityManager.get();
-		if (em == null) {
+		if (!hasEntityManager()) {
 			throw new RuntimeException("No EntityManager bound to this thread. " +
 				"Try annotating your action method with @With(controllers.base.SareTransactionalAction)");
 		}
-		return em;
+		return currentEntityManager.get();
 	}
 	
 	public static <T extends PersistentObject> T fetchResource(Context ctx, UUID id, Class<T> clazz) {
@@ -151,8 +162,7 @@ public class SareTransactionalAction extends Action.Simple {
 		try {
 			// create entity manager, add it to args, and begin transaction before the call.
 			Logger.info(LoggedAction.getLogEntry(ctx, "creating entity manager"));
-			em = SareEntityManagerFactory
-				.createEntityManager(Play.application().getWrappedApplication().mode().toString());
+			em = createEntityManager();
 			em.getTransaction().begin();
 
 			// call the actual action.
