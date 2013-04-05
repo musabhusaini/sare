@@ -29,12 +29,11 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import play.*;
 
-import models.web.ProgressObserverToken;
-import models.web.WebSession;
+import models.web.*;
 
 import com.avaje.ebean.*;
 
-import controllers.base.SessionedAction;
+import controllers.base.*;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
@@ -63,8 +62,7 @@ public class SessionCleaner
 		
 		// if the owner id and session id are the same, it's a standalone session, so delete all stores owned.
 		if (!SessionedAction.isAuthenticated(session)) {
-			EntityManager em = SareEntityManagerFactory
-				.createEntityManager(Play.application().getWrappedApplication().mode().toString());
+			EntityManager em = SareTransactionalAction.createEntityManager();
 			em.getTransaction().begin();
 			
 			// delete all owned stores.

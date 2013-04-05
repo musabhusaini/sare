@@ -135,11 +135,11 @@ public class ModuleController extends Application {
 					try {
 						module = moduleClass.newInstance();
 						module.setViewModels(usefulViewModels);
-					} catch (InstantiationException | IllegalAccessException e) {
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException e) {
 						module = null;
 					} finally {
+						// if no module was created, just ignore.
 						if (module == null) {
-							// in this case, there is a problem with the module, so just ignore.
 							continue;
 						}
 					}

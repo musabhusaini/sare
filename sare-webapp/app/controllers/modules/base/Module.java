@@ -77,10 +77,22 @@ public abstract class Module
 	}
 	
 	protected Iterable<ViewModel> viewModels;
+	
+	public boolean validateViewModels(Iterable<ViewModel> viewModels) {
+		return true;
+	}
+	
+	public boolean validateViewModels() {
+		return this.validateViewModels(this.viewModels);
+	}
+	
 	public Module setViewModels(Iterable<ViewModel> viewModels) {
-		if (viewModels == null) {
-			viewModels = Lists.newArrayList();
+		viewModels = ObjectUtils.defaultIfNull(viewModels, Lists.<ViewModel>newArrayList());
+		
+		if (!validateViewModels(viewModels)) {
+			throw new IllegalArgumentException("Supplied view models not valid for the current context.");
 		}
+		
 		this.viewModels = Iterables.filter(viewModels, Predicates.notNull());
 		return this;
 	}
