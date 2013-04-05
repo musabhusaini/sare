@@ -151,8 +151,9 @@ widget =
 		@_on @_$(@options.list),
 			change: (e) ->
 				selected = @selected()
-				for input in [ @options.deleteButton, @options.detailsButton ]
-					@_changeInputState @_$(input), if selected.data? and @options.editable then "enabled" else "disabled"
+				@_changeInputState @options.deleteButton, "enabled", selected.data? and @options.editable
+				@_changeInputState @options.detailsButton, "enabled", selected.data?
+					
 				if not @options.suppressOutput
 					Widgets.moduleManager "option", "output", (selected.data ? null)
 				if @options.detailsShown
@@ -165,8 +166,8 @@ widget =
 				@_trigger "selectionchange", e, selected
 		
 		for input in [ @options.deleteButton, @options.detailsButton ]
-			@_changeInputState @_$(input), "disabled"
-		@_changeInputState @_$(@options.addButton), if @options.editable then "enabled" else "disabled"
+			@_changeInputState input, "disabled"
+		@_changeInputState @options.addButton, "enabled", @options.editable
 		
 		@_$(@options.list).tooltip()
 		
