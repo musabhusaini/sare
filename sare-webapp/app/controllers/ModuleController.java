@@ -26,6 +26,7 @@ import static models.base.ViewModel.*;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 
@@ -76,8 +77,8 @@ public class ModuleController extends Application {
 		suppliedViewModels = Lists.newArrayList(Iterables.filter(suppliedViewModels, Predicates.notNull()));
 		
 		// get all the modules that can use these inputs.
-		Set<ModuleModel> nullModules = Sets.newHashSet();
-		Set<ModuleModel> modules = Sets.newHashSet();
+		Map<Module, Double> nullModulesMap = Maps.newHashMap();
+		Map<Module, Double> modulesMap = Maps.newHashMap();
 		Reflections reflections = new Reflections("controllers.modules", Play.application().classloader());
 		for (Class<? extends Module> moduleClass : reflections.getSubTypesOf(Module.class)) {
 			// we're not interested in abstract classes.
@@ -143,24 +144,43 @@ public class ModuleController extends Application {
 						}
 					}
 					
-					// set the module view model properties and add.
-					ModuleModel moduleViewModel = new ModuleModel(module);
 					// let's not divide by zero!
-					moduleViewModel.relevancyScore = suppliedViewModels.size() != 0 ?
+					double relevancyScore = suppliedViewModels.size() != 0 ?
 						usefulViewModels.size() / (double)suppliedViewModels.size() : 1.0;
-	
+					
+					// keep null modules separate.
+					Map<Module, Double> targetModulesMap = null;
 					if (requiredViewModelClasses.size() > 0) {
-						modules.add(moduleViewModel);
+						// if a module of this type does not exist, add it.
+						if (Maps.filterKeys(modulesMap, Predicates.instanceOf(moduleClass)).size() == 0) {
+							targetModulesMap = modulesMap;
+						}
 					} else {
-						nullModules.add(moduleViewModel);
+						targetModulesMap = nullModulesMap;
+					}
+					if (targetModulesMap != null) {
+						targetModulesMap.put(module, relevancyScore);
 					}
 				}
 			}
 		}
 		
-		if (modules.size() == 0) {
-			modules = nullModules;
+		// use null modules only if there are no regular ones.
+		if (modulesMap.size() == 0) {
+			modulesMap = nullModulesMap;
 		}
+		
+		// convert to view models.
+		Set<ModuleModel> moduleViewModels = Sets.newHashSet(
+			Iterables.transform(modulesMap.entrySet(), new Function<Entry<Module, Double>, ModuleModel>() {
+				@Override
+				@Nullable
+				public ModuleModel apply(@Nullable Entry<Module, Double> input) {
+					return new ModuleModel(input.getKey())
+						.setRelevancyScore(input.getValue());
+				}
+			})
+		);
 		
 		// order first by relevance and then by name.
 		return Ordering.from(new Comparator<ModuleModel>() {
@@ -173,7 +193,7 @@ public class ModuleController extends Application {
 				
 				return relDiff;
 			}
-		}).sortedCopy(modules);
+		}).sortedCopy(moduleViewModels);
 	}
 	
 	@With(SareTransactionalAction.class)
