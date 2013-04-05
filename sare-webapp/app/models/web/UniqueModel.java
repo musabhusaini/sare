@@ -19,36 +19,10 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import-once "bootstrap/variables";
-@import-once "main";
+package models.web;
 
-#ctr-module-manager {
-  margin-top: @gridGutterWidth;
+import models.base.ViewModel;
 
-  .ctr-module-content:not(:empty) {
-    border-bottom: @nice-border;
-    padding-bottom: 5*@gridGutterWidth/4;
-    margin-bottom: @gridGutterWidth/2;
-  }
-  
-  .ctr-module-controls {
-    margin-top: @gridGutterWidth;
-  }
-  
-  .btg-next-modules {
-    .dropdown-menu {
-      min-width: 0;
-      padding: @gridGutterWidth/4;
-      
-      li {
-        &:not(:first-child) {
-          padding-top: @gridGutterWidth/8; 
-        }
-      
-        &:not(:last-child) {
-          padding-bottom: @gridGutterWidth/8;
-        }
-      }
-    }
-  }
+public class UniqueModel
+		extends ViewModel {
 }

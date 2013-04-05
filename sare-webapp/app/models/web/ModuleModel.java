@@ -21,6 +21,13 @@
 
 package models.web;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 import models.base.ViewModel;
@@ -33,6 +40,7 @@ public class ModuleModel extends ViewModel {
 	public boolean canPartiallyRender;
 	public boolean allowSelfOutput;
 	public double relevancyScore;
+	public List<ModuleModel> subModules;
 	
 	public ModuleModel(Module module) {
 		super(module);
@@ -44,6 +52,17 @@ public class ModuleModel extends ViewModel {
 			this.canPartiallyRender = module.canPartiallyRender();
 			this.allowSelfOutput = module.allowSelfOutput();
 			this.relevancyScore = 1.0;
+			
+			if (module.getSubModules() != null) {
+				this.subModules = Lists.transform(Lists.newArrayList(module.getSubModules()),
+					new Function<Module, ModuleModel>() {
+						@Override
+						@Nullable
+						public ModuleModel apply(@Nullable Module input) {
+							return new ModuleModel(input);
+						}
+					});
+			}
 		}
 	}
 	
