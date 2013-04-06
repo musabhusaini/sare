@@ -107,11 +107,11 @@ POST	/api/modules/corpora/:corpus/optimizations/:setcover	controllers.modules.Se
 POST	/api/modules/corpora/:corpus/optimizations						controllers.modules.SetCoverBuilder.create(corpus: UUID)
 POST	/api/modules/corpora/optimizations/:setcover/redeemer	controllers.modules.SetCoverBuilder.redeem(setcover: UUID)
 
-# UbiPOL opinion miner module
-GET		/view/modules/ubipol-opminer																	controllers.modules.UbiPolOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID = null, partial: Boolean ?= false)
-GET		/view/modules/lexica/:lexicon/ubipol-opminer									controllers.modules.UbiPolOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID, partial: Boolean ?= false)
-GET		/view/modules/corpora/:corpus/ubipol-opminer									controllers.modules.UbiPolOpinionMiner.modulePage(corpus: UUID, lexicon: UUID = null, partial: Boolean ?= false)
-GET		/view/modules/corpora/:corpus/lexica/:lexicon/ubipol-opminer	controllers.modules.UbiPolOpinionMiner.modulePage(corpus: UUID, lexicon: UUID, partial: Boolean ?= false)
+# Aspect-based opinion miner modules
+GET		/view/modules/opminers/aspect-based																		controllers.modules.opinionMiners.base.AspectBasedOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID = null, engine: String ?= null, partial: Boolean ?= false)
+GET		/view/modules/lexica/:lexicon/opminers/aspect-based										controllers.modules.opinionMiners.base.AspectBasedOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID, engine: String ?= null, partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/opminers/aspect-based										controllers.modules.opinionMiners.base.AspectBasedOpinionMiner.modulePage(corpus: UUID, lexicon: UUID = null, engine: String ?= null, partial: Boolean ?= false)
+GET		/view/modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based		controllers.modules.opinionMiners.base.AspectBasedOpinionMiner.modulePage(corpus: UUID, lexicon: UUID, engine: String ?= null, partial: Boolean ?= false)
 
 # Support queries
 GET	/api/support/languages		controllers.CollectionsController.supportedLanguages()

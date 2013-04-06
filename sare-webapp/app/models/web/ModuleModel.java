@@ -25,8 +25,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.google.common.base.*;
+import com.google.common.collect.*;
 
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
@@ -54,14 +54,15 @@ public class ModuleModel extends ViewModel {
 			this.relevancyScore = 1.0;
 			
 			if (module.getSubModules() != null) {
-				this.subModules = Lists.transform(Lists.newArrayList(module.getSubModules()),
+				this.subModules = Lists.transform(Lists.newArrayList(Iterables.filter(module.getSubModules(), Predicates.notNull())),
 					new Function<Module, ModuleModel>() {
 						@Override
 						@Nullable
 						public ModuleModel apply(@Nullable Module input) {
 							return new ModuleModel(input);
 						}
-					});
+					}
+				);
 			}
 		}
 	}

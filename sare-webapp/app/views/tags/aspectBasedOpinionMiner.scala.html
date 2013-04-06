@@ -1,0 +1,55 @@
+@*
+ * Sentilab SARE: a Sentiment Analysis Research Environment
+ * Copyright (C) 2013 Sabanci University Sentilab
+ * http://sentilab.sabanciuniv.edu
+ * 
+ * This file is part of SARE.
+ * 
+ * SARE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *  
+ * SARE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with SARE. If not, see <http://www.gnu.org/licenses/>.
+ *@
+
+@(corpus: documentStore.DocumentCorpusModel = null, lexicon: documentStore.AspectLexiconModel = null, engine: String)
+
+@import scala.util._
+
+@import controllers._
+@import controllers.base.Application._
+@import controllers.modules._
+
+@defining(Random.nextInt(1000)) { uid =>
+<div id="ctr-abom-@uid" class="ctr-module ctr-abom" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }
+	@if(corpus != null) { data-corpus="@corpus.asJson()" }>
+	@if(lexicon == null) {
+	<div id="ctr-lexica-@uid" class="ctr-lexica row-fluid">
+		@tags.storeList(stores = AspectLexBuilder.getLexica(), selectionPrompt = "Select an aspect lexicon", editable = false)
+	</div>
+	}
+	@if(corpus == null) {
+	<div id="ctr-corpora-@uid" class="ctr-corpora row-fluid">
+		@tags.storeList(stores = CorpusModule.getCorpora(), selectionPrompt = "Select a test corpus", editable = false)
+	</div>
+	}
+
+	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.aspectBasedOpinionMiner.js"))" type="text/javascript"></script>
+	<script type="text/javascript">
+		(function(window, $) {
+			$(function() {
+				$("#ctr-abom-@uid").aspectBasedOpinionMiner({
+					engine: "@engine"
+				});
+			});
+		})(window, window.jQuery);
+	</script>
+</div>
+}
