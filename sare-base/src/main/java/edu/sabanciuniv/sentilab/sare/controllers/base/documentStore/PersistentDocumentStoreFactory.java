@@ -34,29 +34,106 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
  * @param <T> the type of object that will be created; must derive from {@link PersistentDocumentStore}.
  * @param <O> the type of options that will be used to create the objects; must derive from {@link PersistentDocumentStoreFactoryOptions}.
  */
-public abstract class PersistentDocumentStoreFactory<T extends PersistentDocumentStore, O extends PersistentDocumentStoreFactoryOptions<T>>
-	extends PersistentObjectFactory<T, O> implements IDocumentController {
+public abstract class PersistentDocumentStoreFactory<T extends PersistentDocumentStore>
+		extends PersistentObjectFactory<T> implements IDocumentController {
+
+	protected String title;
+	protected String description;
+	protected String language;
+	protected String ownerId;
+	
+	/**
+	 * Gets the title of the store to be created.
+	 * @return the title of the store.
+	 */
+	public String getTitle() {
+		return this.title;
+	}
+	
+	/**
+	 * Sets the title of the store to create.
+	 * @param title the title of the store to set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStoreFactory<T> setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+	
+	/**
+	 * Gets the description of the store to be created.
+	 * @return the description of the store.
+	 */
+	public String getDescription() {
+		return this.description;
+	}
+	
+	/**
+	 * Sets the description of the store to create.
+	 * @param description the description of the store to be set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStoreFactory<T> setDescription(String description) {
+		this.description = description;
+		return this;
+	}
+	
+	/**
+	 * Gets the language of the store to be created.
+	 * @return the language of the store.
+	 */
+	public String getLanguage() {
+		return this.language;
+	}
+	
+	/**
+	 * Sets the language of the store to create.
+	 * @param language the language of the store to be set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentDocumentStoreFactory<T> setLanguage(String language) {
+		this.language = language;
+		return this;
+	}
+
+	/**
+	 * Gets the owner ID that will be set on the target object.
+	 * @return the owner ID to be set.
+	 */
+	public String getOwnerId() {
+		return this.ownerId;
+	}
+	
+	/**
+	 * Sets the owner ID required to be set fo the target object.
+	 * @param ownerId the owne ID to set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObjectFactory<T> setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+		return this;
+	}
 	
 	@Override
-	public T create(O options)
+	public T create()
 		throws IllegalFactoryOptionsException {
 		
-		T store = super.create(options);
+		T store = super.create();
 		
-		if (StringUtils.isNotEmpty(options.getOwnerId())) {
-			store.setOwnerId(options.getOwnerId());
+		if (StringUtils.isNotEmpty(this.getOwnerId())) {
+			store.setOwnerId(this.getOwnerId());
 		}
 		
-		if (StringUtils.isNotEmpty(options.getTitle())) {
-			store.setTitle(options.getTitle());
+		if (StringUtils.isNotEmpty(this.getTitle())) {
+			store.setTitle(this.getTitle());
 		}
 		
-		if (StringUtils.isNotEmpty(options.getDescription())) {
-			store.setDescription(options.getDescription());
+		if (StringUtils.isNotEmpty(this.getDescription())) {
+			store.setDescription(this.getDescription());
 		}
 		
-		if (StringUtils.isNotEmpty(options.getLanguage())) {
-			store.setLanguage(options.getLanguage());
+		if (StringUtils.isNotEmpty(this.getLanguage())) {
+			store.setLanguage(this.getLanguage());
 		}
 		
 		return store;

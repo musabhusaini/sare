@@ -37,14 +37,12 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 
 public class OpinionDocumentFactoryTest {
 
-	private OpinionDocumentFactory testFactory;
 	private String testXmlCorpusFilename;
 	private OpinionCorpus testCorpus;
 	private OpinionDocument expectedXmlDocument;
 	
 	@Before
 	public void setUp() throws Exception {
-		testFactory = new OpinionDocumentFactory();
 		testXmlCorpusFilename = "/test-corpus.xml";
 		testCorpus = new OpinionCorpus();
 		expectedXmlDocument = (OpinionDocument)new OpinionDocument()
@@ -68,8 +66,9 @@ public class OpinionDocumentFactoryTest {
 		    XPath xpath = factory.newXPath();
 		    
 		    NodeList documentNodes = (NodeList)xpath.compile("/corpus/document").evaluate(doc, XPathConstants.NODESET);
-		    OpinionDocument opinionDoc = testFactory.create(new OpinionDocumentFactoryOptions()
-		    	.setCorpus(testCorpus).setXmlNode(documentNodes.item(0)));
+		    OpinionDocument opinionDoc = new OpinionDocumentFactory()
+		    	.setCorpus(testCorpus).setXmlNode(documentNodes.item(0))
+		    	.create();
 			
 			assertNotNull(opinionDoc);
 			assertEquals(expectedXmlDocument.getContent(), opinionDoc.getContent());

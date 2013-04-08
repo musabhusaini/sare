@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -60,9 +60,9 @@ public class ViewModelFactoryTest extends TestBase {
 			.setPolarity(-0.9)
 			.setContent("some content");
 		ViewModelFactory factory = new ViewModelFactory();
-		ViewModelFactoryOptions options = new ViewModelFactoryOptions()
-			.setModel(model);
-		ViewModel viewModel = factory.create(options);
+		ViewModel viewModel = factory
+			.setModel(model)
+			.create();
 		
 		assertThat(viewModel).isNotNull();
 		assertThat(viewModel).isInstanceOf(OpinionDocumentModel.class);
@@ -78,9 +78,9 @@ public class ViewModelFactoryTest extends TestBase {
 		AspectExpression model = (AspectExpression)new AspectExpression()
 			.setContent("some content");
 		ViewModelFactory factory = new ViewModelFactory();
-		ViewModelFactoryOptions options = new ViewModelFactoryOptions()
-			.setModel(model);
-		ViewModel viewModel = factory.create(options);
+		ViewModel viewModel = factory
+			.setModel(model)
+			.create();
 		
 		assertThat(viewModel).isNotNull();
 		assertThat(viewModel).isInstanceOf(PersistentDocumentModel.class);
@@ -94,9 +94,9 @@ public class ViewModelFactoryTest extends TestBase {
 	public void testCreateWithModelFailsWhenNoViewExists() {
 		PersistentTestObject model = new PersistentTestObject();
 		ViewModelFactory factory = new ViewModelFactory();
-		ViewModelFactoryOptions options = new ViewModelFactoryOptions()
-			.setModel(model);
-		ViewModel viewModel = factory.create(options);
+		ViewModel viewModel = factory
+			.setModel(model)
+			.create();
 		
 		assertThat(viewModel).isNull();
 	}
@@ -108,9 +108,9 @@ public class ViewModelFactoryTest extends TestBase {
 				"\"content\": \"some content\"" +
 			"}");
 		ViewModelFactory factory = new ViewModelFactory();
-		ViewModelFactoryOptions options = new ViewModelFactoryOptions()
-			.setJson(json);
-		ViewModel viewModel = factory.create(options);
+		ViewModel viewModel = factory
+			.setJson(json)
+			.create();
 		
 		assertThat(viewModel).isNotNull();
 		assertThat(viewModel).isInstanceOf(OpinionDocumentModel.class);
@@ -127,9 +127,9 @@ public class ViewModelFactoryTest extends TestBase {
 				"\"content\": \"some content\"" +
 			"}");
 		ViewModelFactory factory = new ViewModelFactory();
-		ViewModelFactoryOptions options = new ViewModelFactoryOptions()
-			.setJson(json);
-		ViewModel viewModel = factory.create(options);
+		ViewModel viewModel = factory
+			.setJson(json)
+			.create();
 		
 		assertThat(viewModel).isNull();
 	}
@@ -141,9 +141,9 @@ public class ViewModelFactoryTest extends TestBase {
 				"\"content\": \"some content\"" +
 			"}");
 		ViewModelFactory factory = new ViewModelFactory();
-		ViewModelFactoryOptions options = new ViewModelFactoryOptions()
-			.setJson(json);
-		ViewModel viewModel = factory.create(options);
+		ViewModel viewModel = factory
+			.setJson(json)
+			.create();
 		
 		assertThat(viewModel).isNull();
 	}

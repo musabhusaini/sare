@@ -25,9 +25,13 @@ import java.util.*;
 
 import javax.persistence.*;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.*;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
+
+import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 
@@ -38,8 +42,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 @Entity
 @DiscriminatorValue("setcover-corpus")
 public class DocumentSetCover
-	extends DocumentCorpus
-	implements IDerivedStore {
+		extends DocumentCorpus implements IDerivedStore {
 
 	/**
 	 * 
@@ -65,6 +68,40 @@ public class DocumentSetCover
 		this.setBaseStore(baseStore);
 	}
 	
+	private Pair<List<SetCoverDocument>, List<SetCoverDocument>> splitByCoverage(double weightCoverage) {
+		List<SetCoverDocument> covered = Lists.newArrayList();
+		List<SetCoverDocument> uncovered = Lists.newArrayList();
+		List<SetCoverDocument> setCoverDocuments = Collections.synchronizedList(Lists.newArrayList(this.getAllDocuments()));
+
+		double totalWeight=this.getTotalWeight();
+		double accumulatedWeight=0;
+
+		// sort set cover.
+		Iterator<SetCoverDocument> iterator = Ordering.from(new Comparator<SetCoverDocument>() {
+			@Override
+			public int compare(SetCoverDocument o1, SetCoverDocument o2) {
+				return (int)((o2.getWeight() - o1.getWeight()) * 100);
+			}
+		}).immutableSortedCopy(setCoverDocuments).iterator();
+
+		// get all the useful ones.
+		while (iterator.hasNext()) {
+			if (accumulatedWeight >= weightCoverage * totalWeight) {
+				break;
+			}
+
+			SetCoverDocument document = iterator.next();
+			accumulatedWeight += document.getWeight();
+			covered.add(document);
+		}
+
+		while (iterator.hasNext()) {
+			uncovered.add(iterator.next());
+		}
+
+		return new ImmutablePair<List<SetCoverDocument>, List<SetCoverDocument>>(covered, uncovered);
+	}
+
 	/**
 	 * Gets the corpus from which this set cover is derived.
 	 * @return the {@link DocumentCorpus} which is the source of this set cover.
@@ -183,6 +220,69 @@ public class DocumentSetCover
 		return this;
 	}
 	
+	/**
+	 * Adjusts the coverage of the set cover.
+	 * @param weightCoverage the desired minimum weight coverage.
+	 * @return the {@code this} object.
+	 */
+	public DocumentSetCover adjustCoverage(double weightCoverage) {
+		// a quick way of checking if the weight coverage is valid or not. the setter will throw an exception if not.
+		new SetCoverController()
+			.setWeightCoverage(weightCoverage);
+
+		// apply the weight ratio.
+		Pair<List<SetCoverDocument>, List<SetCoverDocument>> coverageSplit = this.splitByCoverage(weightCoverage);
+
+		// mark covered and uncovered.
+		for (SetCoverDocument document : coverageSplit.getLeft()) {
+			document.setCovered(true);
+		}
+
+		for (SetCoverDocument document : coverageSplit.getRight()) {
+			document.setCovered(false);
+		}
+
+		return this.setWeightCoverage(weightCoverage);
+	}
+
+	/**
+	 * Calculates the coverage matrix for the set cover.
+	 * @param coverageGranularity the coverage granularity, which is the interval between two coverage points in the matrix.
+	 * @return the coverage matrix as a {@link Map} of percentage coverage as keys and store size reduction ratio as values.
+	 */
+	public Map<Integer, Double> calculateCoverageMatrix(int coverageGranularity) {
+		Validate.isTrue(coverageGranularity > 0 && coverageGranularity <= 100, "parameter 'coverageGranularity' must fall within (0, 100]");
+
+		double totalSize = Iterables.size(this.getBaseStore() != null ?
+			this.getBaseStore().getDocuments() : this.getAllDocuments());
+		Map<Integer, Double> matrix = Maps.newHashMap();
+		for (int coverage=100; coverage>=0; coverage-=coverageGranularity) {
+			List<SetCoverDocument> covered = this.splitByCoverage(coverage/100.0).getLeft();
+			matrix.put(coverage, covered.size()/totalSize);
+		}
+
+		return matrix;
+	}
+
+	/**
+	 * Calculates the coverage matrix for a given set cover.
+	 * @return the coverage matrix as a {@link Map} of percentage coverage as keys and store size reduction ratio as values.
+	 */
+	public Map<Integer, Double> calculateCoverageMatrix() {
+		return this.calculateCoverageMatrix(5);
+	}
+
+	/**
+	 * Clears the provided set cover and brings it back to empty. Connection with the base store is not severed.
+	 * @return the {@code this} object.
+	 */
+	public DocumentSetCover clear() {
+		this.setWeightCoverage(null)
+			.setTokenizingOptions(null)
+			.setDocuments(null);
+		return this;
+	}
+
 	@Override
 	public String getTitle() {
 		return super.getTitle() == null && this.getBaseStore() != null ? this.getBaseStore().getTitle() : super.getTitle();

@@ -37,8 +37,13 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * @author Mus'ab Husaini
  */
 public class OpinionDocumentFactory
-	extends PersistentObjectFactory<OpinionDocument, OpinionDocumentFactoryOptions>
-	implements IDocumentController {
+		extends PersistentObjectFactory<OpinionDocument>
+		implements IDocumentController {
+
+	private OpinionCorpus corpus;
+	private Node xmlNode;
+	private String content;
+	private Double polarity;
 
 	private OpinionDocument create(OpinionDocument document, OpinionCorpus corpus, String content, Double polarity) {
 		if (corpus != null) {
@@ -73,10 +78,8 @@ public class OpinionDocumentFactory
 	}
 
 	@Override
-	protected OpinionDocument createPrivate(OpinionDocumentFactoryOptions options, OpinionDocument document)
-		throws IllegalFactoryOptionsException {
-		
-		Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
+	protected OpinionDocument createPrivate(OpinionDocument document)
+			throws IllegalFactoryOptionsException {
 		
 		boolean existing = true;
 		if (document == null) {
@@ -84,12 +87,12 @@ public class OpinionDocumentFactory
 			existing = false;
 		}
 		
-		if (options.getContent() != null) {
-			return this.create(document, options.getCorpus(), options.getContent(), options.getPolarity());
+		if (this.getContent() != null) {
+			return this.create(document, this.getCorpus(), this.getContent(), this.getPolarity());
 		}
-		if (options.getXmlNode() != null) {
+		if (this.getXmlNode() != null) {
 			try {
-				return this.create(document, options.getCorpus(), options.getXmlNode());
+				return this.create(document, this.getCorpus(), this.getXmlNode());
 			} catch (XPathException e) {
 				throw new IllegalFactoryOptionsException("options.xmlNode is not a valid input", e);
 			}
@@ -100,5 +103,77 @@ public class OpinionDocumentFactory
 		}
 		
 		return document;
+	}
+	
+	/**
+	 * Gets the corpus the document will be stored in.
+	 * @return the {@link OpinionCorpus} object representing the corpus of documents.
+	 */
+	public OpinionCorpus getCorpus() {
+		return this.corpus;
+	}
+	
+	/**
+	 * Sets the corpus to store the document in.
+	 * @param corpus the {@link OpinionCorpus} object to set.
+	 * @return the {@code this} object.
+	 */
+	public OpinionDocumentFactory setCorpus(OpinionCorpus corpus) {
+		this.corpus = corpus;
+		return this;
+	}
+	
+	/**
+	 * Gets the XML node to create the document from, if the document is to be created from an XML node.
+	 * @return the {@link Node} object representing the XML node.
+	 */
+	public Node getXmlNode() {
+		return this.xmlNode;
+	}
+	
+	/**
+	 * Sets the XML node the document will be created from.
+	 * @param xmlNode the {@link Node} object representing the XML node to create the document from.
+	 * @return the {@code this} object.
+	 */
+	public OpinionDocumentFactory setXmlNode(Node xmlNode) {
+		this.xmlNode = xmlNode;
+		return this;
+	}
+	
+	/**
+	 * Gets the text content of the document to be created.
+	 * @return the {@link String} content of the document.
+	 */
+	public String getContent() {
+		return this.content;
+	}
+	
+	/**
+	 * Sets the text content of the document to be created.
+	 * @param content the {@link String} content of the document.
+	 * @return the {@code this} object.
+	 */
+	public OpinionDocumentFactory setContent(String content) {
+		this.content = content;
+		return this;
+	}
+	
+	/**
+	 * Gets the polarity of the document to be created.
+	 * @return the {@link Double} polarity of the opinion document.
+	 */
+	public Double getPolarity() {
+		return this.polarity;
+	}
+	
+	/**
+	 * Sets the polarity of the document to be created.
+	 * @param polarity the {@link Double} polarity of the document.
+	 * @return the {@code this} object.
+	 */
+	public OpinionDocumentFactory setPolarity(Double polarity) {
+		this.polarity = polarity;
+		return this;
 	}
 }

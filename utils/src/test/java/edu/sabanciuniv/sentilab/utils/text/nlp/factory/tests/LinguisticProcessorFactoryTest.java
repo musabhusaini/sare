@@ -71,10 +71,8 @@ public class LinguisticProcessorFactoryTest {
 
 	@Test
 	public void testCreateWithOnlyLanguage() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
-			.setLanguage("xx");
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory().setLanguage("xx");
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -82,10 +80,8 @@ public class LinguisticProcessorFactoryTest {
 	
 	@Test
 	public void testCreateWithOnlyLanguageCased() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
-			.setLanguage("Xx");
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory().setLanguage("Xx");
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -93,10 +89,8 @@ public class LinguisticProcessorFactoryTest {
 	
 	@Test
 	public void testCreateWithOnlyName() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
-			.setName("test");
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory().setName("test");
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -104,12 +98,10 @@ public class LinguisticProcessorFactoryTest {
 
 	@Test
 	public void testCreateWithOnlyNameIgnoreCase() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("TEsT")
 			.setIgnoreNameCase(true);
-		
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -117,35 +109,30 @@ public class LinguisticProcessorFactoryTest {
 	
 	@Test
 	public void testCreateWithIncorrectNameIgnoreCase() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("TET")
 			.setIgnoreNameCase(true);
-		
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNull(processor);
 	}
 	
 	@Test
 	public void testCreateWithIncorrectlyCasedNameNoIgnoreCase() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("TEsT")
 			.setIgnoreNameCase(false);
-		
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNull(processor);
 	}
 	
 	@Test
 	public void testCreateWithNameAndLanguage() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test")
 			.setLanguage("xx");
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -153,54 +140,49 @@ public class LinguisticProcessorFactoryTest {
 	
 	@Test
 	public void testCreateWithNameAndIncorrectLanguage() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test")
 			.setLanguage("xy");
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNull(processor);
 	}
 	
 	@Test
 	public void testCreateWithLanguageAndIncorrectName() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test1")
 			.setLanguage("xx");
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNull(processor);
 	}
 	
 	@Test
 	public void testCreateWithIncorrectNameAndLanguage() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test1")
 			.setLanguage("xy");
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNull(processor);
 	}
 	
 	@Test
 	public void testCreateWithNoNameAndLanguage() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions();
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNotNull(processor);
 	}
 	
 	@Test
 	public void testCreateWithNameAndLanguageAndMustTag() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test")
 			.setLanguage("xx")
 			.setMustTag(true);
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -208,25 +190,23 @@ public class LinguisticProcessorFactoryTest {
 
 	@Test
 	public void testCreateWithNameAndLanguageAndMustTagAndMustParse() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test")
 			.setLanguage("xx")
 			.setMustTag(true)
 			.setMustParse(true);
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNull(processor);
 	}
 
 	@Test
 	public void testCreateWithNameAndLanguageAndMustParse() {
-		LinguisticProcessorFactoryOptions options = new LinguisticProcessorFactoryOptions()
+		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test")
 			.setLanguage("xx")
 			.setMustParse(true);
-		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create(options);
+		ILinguisticProcessor processor = factory.create();
 		
 		assertNull(processor);
 	}

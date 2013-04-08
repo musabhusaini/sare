@@ -23,38 +23,38 @@ package models.documentStore;
 
 import controllers.base.SareTransactionalAction;
 
-import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexiconFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconController;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
-public class AspectLexiconFactoryOptionsModel
-	extends PersistentDocumentStoreFactoryOptionsModel {
+public class AspectLexiconFactoryModel
+		extends PersistentDocumentStoreFactoryModel {
 	
 	public PersistentDocumentStoreModel baseStore;
 	
-	public AspectLexiconFactoryOptionsModel(AspectLexiconFactoryOptions options) {
-		super(options);
+	public AspectLexiconFactoryModel(AspectLexiconController factory) {
+		super(factory);
 		
-		if (options != null) {
-			if (options.getBaseStore() != null) {
-				this.baseStore = (PersistentDocumentStoreModel)createViewModel(options.getBaseStore());
+		if (factory != null) {
+			if (factory.getBaseStore() != null) {
+				this.baseStore = (PersistentDocumentStoreModel)createViewModel(factory.getBaseStore());
 			}
 		}
 	}
 	
-	public AspectLexiconFactoryOptionsModel() {
+	public AspectLexiconFactoryModel() {
 		this(null);
 	}
 	
-	public AspectLexiconFactoryOptions toFactoryOptions() {
-		AspectLexiconFactoryOptions options = (AspectLexiconFactoryOptions)new AspectLexiconFactoryOptions()
+	public AspectLexiconController toFactory() {
+		AspectLexiconController factory = (AspectLexiconController)new AspectLexiconController()
 			.setTitle(this.title)
 			.setDescription(this.description);
 		
 		if (this.baseStore != null && SareTransactionalAction.em() != null) {
-			options.setBaseStore(SareTransactionalAction.fetchResource(UuidUtils.create(this.baseStore.id), PersistentDocumentStore.class));
+			factory.setBaseStore(SareTransactionalAction.fetchResource(UuidUtils.create(this.baseStore.id), PersistentDocumentStore.class));
 		}
 		
-		return options;
+		return factory;
 	}
 }

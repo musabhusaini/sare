@@ -25,8 +25,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.*;
 import org.junit.*;
 
 import com.google.common.collect.*;
@@ -36,8 +35,6 @@ import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 
 public class OpinionCorpusFactoryTest {
-	
-	private OpinionCorpusFactory testFactory;
 	
 	private String testXmlCorpusFilename;
 	private OpinionCorpus expectedXmlCorpus;
@@ -56,8 +53,6 @@ public class OpinionCorpusFactoryTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		testFactory = new OpinionCorpusFactory();
-		
 		testXmlCorpusFilename = "/test-corpus.xml";
 		
 		expectedXmlCorpus = (OpinionCorpus)new OpinionCorpus()
@@ -95,8 +90,9 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromXmlFile() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
-				.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath())));
+			actualCorpus = new OpinionCorpusFactory()
+				.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath()))
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not open file");
 		}
@@ -112,8 +108,9 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromZipFile() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
-				.setFile(new File(getClass().getResource(testZipCorpusFilename).getPath())));
+			actualCorpus = new OpinionCorpusFactory()
+				.setFile(new File(getClass().getResource(testZipCorpusFilename).getPath()))
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("error reading input file");
 		}
@@ -129,9 +126,10 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromTextFile() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
+			actualCorpus = new OpinionCorpusFactory()
 				.setFile(new File(getClass().getResource(testTextCorpusFilename).getPath()))
-				.setTextDelimiter(","));
+				.setTextDelimiter(",")
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("error reading input file");
 		}
@@ -157,10 +155,11 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromContent() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
+			actualCorpus = new OpinionCorpusFactory()
 				.setContent(testContent)
 				.setFormat("txt")
-				.setTextDelimiter("|"));
+				.setTextDelimiter("|")
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create");
 		}
@@ -182,10 +181,11 @@ public class OpinionCorpusFactoryTest {
 	public void testCreateFromNoPolarityContent() {
 		OpinionCorpus actualCorpus = null;
 		try {
-			actualCorpus = testFactory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
+			actualCorpus = new OpinionCorpusFactory()
 				.setContent(testNoPolarityContent)
 				.setFormat("txt")
-				.setTextDelimiter("|"));
+				.setTextDelimiter("|")
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create");
 		}
@@ -206,7 +206,7 @@ public class OpinionCorpusFactoryTest {
 	@Test
 	public void testCreateFromNothing() {
 		try {
-			assertNotNull(testFactory.create(new OpinionCorpusFactoryOptions()));
+			assertNotNull(new OpinionCorpusFactory().create());
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create from nothing");
 		}

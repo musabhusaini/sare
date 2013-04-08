@@ -34,19 +34,18 @@ import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 
-public class OpinionCorpusControllerTest extends PersistenceTestsBase {
+public class OpinionCorpusControllerTest
+		extends PersistenceTestsBase {
 
 	private String testXmlCorpusFilename;
 	private OpinionCorpus testCorpus;
 	private OpinionCorpusFactory testFactory;
-	private OpinionCorpusFactoryOptions testOptions;
 	
 	@Before
 	public void setUp() throws Exception {
 		testXmlCorpusFilename = "/test-corpus.xml";
-		testFactory = new OpinionCorpusFactory();
 		testCorpus = new OpinionCorpus();
-		testOptions = (OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
+		testFactory = (OpinionCorpusFactory)new OpinionCorpusFactory()
 			.setExistingId(testCorpus.getId())
 			.setEm(em);
 	}
@@ -58,7 +57,7 @@ public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 		em.getTransaction().commit();
 		em.clear();
 		
-		OpinionCorpus actualCorpus = testFactory.create(testOptions);
+		OpinionCorpus actualCorpus = testFactory.create();
 		assertNotNull(actualCorpus);
 		assertEquals(testCorpus.getIdentifier(), actualCorpus.getIdentifier());
 	}
@@ -66,12 +65,12 @@ public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 	@Test
 	public void testCreateWithNonExistingIdCreatesNewObject() {
 		UUID id = UUID.randomUUID();
-		testOptions
+		testFactory
 			.setContent("some content")
 			.setFormat("txt")
 			.setExistingId(id)
 			.setEm(em);
-		OpinionCorpus actualCorpus = testFactory.create(testOptions);
+		OpinionCorpus actualCorpus = testFactory.create();
 		assertNotNull(actualCorpus);
 		assertNotEquals(id, actualCorpus.getIdentifier());
 	}
@@ -83,8 +82,8 @@ public class OpinionCorpusControllerTest extends PersistenceTestsBase {
 		em.getTransaction().commit();
 		em.clear();
 		
-		testOptions.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath()));
-		OpinionCorpus actualCorpus = testFactory.create(testOptions);
+		testFactory.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath()));
+		OpinionCorpus actualCorpus = testFactory.create();
 		assertNotNull(actualCorpus);
 		assertEquals(testCorpus.getIdentifier(), actualCorpus.getIdentifier());
 		assertEquals(4, Iterables.size(actualCorpus.getDocuments()));

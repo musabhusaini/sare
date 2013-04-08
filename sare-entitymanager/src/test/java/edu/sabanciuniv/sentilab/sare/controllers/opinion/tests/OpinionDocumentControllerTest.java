@@ -31,17 +31,16 @@ import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionDocumentFactory;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 
-public class OpinionDocumentControllerTest extends PersistenceTestsBase {
+public class OpinionDocumentControllerTest
+		extends PersistenceTestsBase {
 
 	private OpinionCorpus testCorpus;
 	private OpinionDocument testDocument;
 	private OpinionDocumentFactory testFactory;
-	private OpinionDocumentFactoryOptions testOptions;
 	
 	@Before
 	public void setUp() throws Exception {
 		testCorpus = new OpinionCorpus();
-		testFactory = new OpinionDocumentFactory();
 		
 		testDocument = new OpinionDocument();
 		testCorpus.addDocument(testDocument);
@@ -49,12 +48,12 @@ public class OpinionDocumentControllerTest extends PersistenceTestsBase {
 
 	@Test
 	public void testFactoryCreatedDataIsPersisted() {
-		testOptions = new OpinionDocumentFactoryOptions()
+		testFactory = new OpinionDocumentFactory()
 			.setPolarity(0.8)
 			.setContent("some content")
 			.setCorpus(testCorpus);
 	
-		testDocument = testFactory.create(testOptions);
+		testDocument = testFactory.create();
 		
 		em.getTransaction().begin();
 		persist(testCorpus);
@@ -74,11 +73,11 @@ public class OpinionDocumentControllerTest extends PersistenceTestsBase {
 		em.getTransaction().commit();
 		em.clear();
 		
-		testOptions = (OpinionDocumentFactoryOptions)new OpinionDocumentFactoryOptions()
+		testFactory = (OpinionDocumentFactory)new OpinionDocumentFactory()
 			.setCorpus(testCorpus)
 			.setExistingId(testDocument.getIdentifier())
 			.setEm(em);
-		OpinionDocument actualDocument = testFactory.create(testOptions);
+		OpinionDocument actualDocument = testFactory.create();
 		assertNotNull(actualDocument);
 		assertEquals(testDocument.getIdentifier(), actualDocument.getIdentifier());
 	}
@@ -86,12 +85,12 @@ public class OpinionDocumentControllerTest extends PersistenceTestsBase {
 	@Test
 	public void testCreateWithNonExistingIdCreatesNewObject() {
 		UUID id = UUID.randomUUID();
-		testOptions = (OpinionDocumentFactoryOptions)new OpinionDocumentFactoryOptions()
+		testFactory = (OpinionDocumentFactory)new OpinionDocumentFactory()
 			.setContent("some content")
 			.setExistingId(id)
 			.setEm(em);
 		
-		OpinionDocument actualDocument = testFactory.create(testOptions);
+		OpinionDocument actualDocument = testFactory.create();
 		assertNotNull(actualDocument);
 		assertNotEquals(id, actualDocument.getIdentifier());
 	}
@@ -103,14 +102,14 @@ public class OpinionDocumentControllerTest extends PersistenceTestsBase {
 		em.getTransaction().commit();
 		em.clear();
 
-		testOptions = (OpinionDocumentFactoryOptions)new OpinionDocumentFactoryOptions()
+		testFactory = (OpinionDocumentFactory)new OpinionDocumentFactory()
 			.setContent("some content")
 			.setExistingId(testDocument.getId())
 			.setEm(em);
 		
-		OpinionDocument actualDocument = testFactory.create(testOptions);
+		OpinionDocument actualDocument = testFactory.create();
 		assertNotNull(actualDocument);
 		assertEquals(testDocument.getIdentifier(), actualDocument.getIdentifier());
-		assertEquals(testOptions.getContent(), actualDocument.getContent());
+		assertEquals(testFactory.getContent(), actualDocument.getContent());
 	}
 }

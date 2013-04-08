@@ -12,24 +12,33 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.core.models.factory;
+package models.documentStore;
 
-import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
-import edu.sabanciuniv.sentilab.core.models.IModel;
+import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.PersistentDocumentStoreFactory;
 
-/**
- * A class that extends this interface provides options for an implementation of the {@link IFactory} interface.
- * @author Mus'ab Husaini
- *
- * @param <T> the type of objects that can be created using these options.
- */
-public interface IFactoryOptions<T>
-	extends IModel {
+public class PersistentDocumentStoreFactoryModel
+		extends PersistentDocumentStoreModel {
+
+	public String title;
+	public String description;
+	public String language;
+	
+	public PersistentDocumentStoreFactoryModel(PersistentDocumentStoreFactory<?> factory) {
+		if (factory != null) {
+			title = factory.getTitle();
+			description = factory.getDescription();
+			language = factory.getLanguage();
+		}
+	}
+	
+	public PersistentDocumentStoreFactoryModel() {
+		this(null);
+	}
 }

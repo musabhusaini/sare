@@ -104,7 +104,7 @@ public class CorpusModule extends Module {
 		if (corpus != null) {
 			corpusObj = fetchResource(corpus, OpinionCorpus.class);
 		}
-		OpinionCorpusFactoryOptions options = null;
+		OpinionCorpusFactory corpusFactory = null;
 		
 		MultipartFormData formData = request().body().asMultipartFormData();
 		if (formData != null) {
@@ -114,7 +114,7 @@ public class CorpusModule extends Module {
 				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("file"),
 					Iterables.getFirst(formData.getFiles(), null));
 				if (filePart != null) {
-					options = (OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
+					corpusFactory = (OpinionCorpusFactory)new OpinionCorpusFactory()
 						.setFile(filePart.getFile())
 						.setFormat(FilenameUtils.getExtension(filePart.getFilename()));
 				}
@@ -123,9 +123,9 @@ public class CorpusModule extends Module {
 			// otherwise try as a json body.
 			JsonNode json = request().body().asJson();
 			if (json != null) {
-				OpinionCorpusFactoryOptionsModel optionsVM = Json.fromJson(json, OpinionCorpusFactoryOptionsModel.class);
+				OpinionCorpusFactoryModel optionsVM = Json.fromJson(json, OpinionCorpusFactoryModel.class);
 				if (optionsVM != null) {
-					options = optionsVM.toFactoryOptions();
+					corpusFactory = optionsVM.toFactory();
 				} else {
 					throw new IllegalArgumentException();
 				}
@@ -145,8 +145,8 @@ public class CorpusModule extends Module {
 							Query query = new Query(optionsVM.grabbers.twitter.query);
 							query.count(ObjectUtils.defaultIfNull(optionsVM.grabbers.twitter.limit, 10));
 							query.resultType(Query.RECENT);
-							if (StringUtils.isNotEmpty(options.getLanguage())) {
-								query.lang(options.getLanguage());
+							if (StringUtils.isNotEmpty(corpusFactory.getLanguage())) {
+								query.lang(corpusFactory.getLanguage());
 							} else if (corpusObj != null) {
 								query.lang(corpusObj.getLanguage());
 							}
@@ -167,33 +167,32 @@ public class CorpusModule extends Module {
 								tweets.append(text + System.lineSeparator());
 							}
 							
-							options.setContent(tweets.toString());
-							options.setFormat("txt");
+							corpusFactory.setContent(tweets.toString());
+							corpusFactory.setFormat("txt");
 						}
 					}
 				}
 			} else {
 				// if not json, then just create empty.
-				options = new OpinionCorpusFactoryOptions();
+				corpusFactory = new OpinionCorpusFactory();
 			}
 		}
 		
-		if (options == null) {
+		if (corpusFactory == null) {
 			throw new IllegalArgumentException();
 		}
 		
-		if (corpus == null && StringUtils.isEmpty(options.getTitle())) {
-			options.setTitle("Untitled corpus");
+		if (corpus == null && StringUtils.isEmpty(corpusFactory.getTitle())) {
+			corpusFactory.setTitle("Untitled corpus");
 		}
 		
-		options
+		corpusFactory
 			.setOwnerId(SessionedAction.getUsername(ctx()))
 			.setExistingId(corpus)
 			.setEm(em());
 		
 		DocumentCorpusModel corpusVM = null;
-		OpinionCorpusFactory corpusFactory = new OpinionCorpusFactory();
-		corpusObj = corpusFactory.create(options);
+		corpusObj = corpusFactory.create();
 		if (!em().contains(corpusObj)) {
 			em().persist(corpusObj);
 			
@@ -227,14 +226,14 @@ public class CorpusModule extends Module {
 		
 		if (store instanceof OpinionCorpus) {
 			OpinionDocumentModel viewModel = Json.fromJson(request().body().asJson(), OpinionDocumentModel.class);
-			OpinionDocumentFactoryOptions options = (OpinionDocumentFactoryOptions)new OpinionDocumentFactoryOptions()
+			OpinionDocumentFactory documentFactory = (OpinionDocumentFactory)new OpinionDocumentFactory()
 				.setContent(viewModel.content)
 				.setPolarity(viewModel.polarity)
 				.setCorpus((OpinionCorpus)store)
 				.setEm(em())
 				.setExistingId(document);
 			
-			OpinionDocument documentObj = new OpinionDocumentFactory().create(options);
+			OpinionDocument documentObj = documentFactory.create();
 			if (em().contains(documentObj)) {
 				em().merge(documentObj);
 			} else {

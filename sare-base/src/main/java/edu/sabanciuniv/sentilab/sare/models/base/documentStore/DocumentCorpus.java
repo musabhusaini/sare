@@ -32,7 +32,7 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.factory.*;
  */
 @Entity
 public abstract class DocumentCorpus
-	extends PersistentDocumentStore {
+		extends PersistentDocumentStore {
 
 	/**
 	 * 
@@ -45,7 +45,7 @@ public abstract class DocumentCorpus
 	 */
 	public ILinguisticProcessor getLinguisticProcessor() {
 		return new LinguisticProcessorFactory()
-			.create(new LinguisticProcessorFactoryOptions()
-			.setLanguage(this.getLanguage()));
+			.setLanguage(this.getLanguage())
+			.create();
 	}
 }

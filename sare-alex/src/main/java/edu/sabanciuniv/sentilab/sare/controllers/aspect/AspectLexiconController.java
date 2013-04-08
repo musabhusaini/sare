@@ -31,6 +31,7 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
+import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.NonDerivedStoreFactory;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
@@ -40,10 +41,12 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * @author Mus'ab Husaini
  */
 public class AspectLexiconController
-	extends NonDerivedStoreFactory<AspectLexicon, AspectLexiconFactoryOptions> {
+		extends NonDerivedStoreFactory<AspectLexicon> {
+
+	private PersistentDocumentStore baseStore;
 
 	@Override
-	protected AspectLexiconController addXmlPacket(AspectLexicon lexicon, InputStream input, AspectLexiconFactoryOptions options)
+	protected AspectLexiconController addXmlPacket(AspectLexicon lexicon, InputStream input)
 		throws ParserConfigurationException, SAXException, IOException, XPathException {
 		
 		Validate.notNull(lexicon, CannedMessages.NULL_ARGUMENT, "lexicon");
@@ -129,7 +132,7 @@ public class AspectLexiconController
 	}
 	
 	@Override
-	protected AspectLexiconController addTextPacket(AspectLexicon lexicon, InputStream input, String delimiter, AspectLexiconFactoryOptions options)
+	protected AspectLexiconController addTextPacket(AspectLexicon lexicon, InputStream input, String delimiter)
 		throws IOException {
 		
 		throw new IllegalFactoryOptionsException();
@@ -141,15 +144,33 @@ public class AspectLexiconController
 	}
 	
 	@Override
-	protected AspectLexicon createPrivate(AspectLexiconFactoryOptions options, AspectLexicon lexicon)
+	protected AspectLexicon createPrivate(AspectLexicon lexicon)
 		throws IllegalFactoryOptionsException {
 		
 		if (lexicon == null) {
-			lexicon = new AspectLexicon(options.getBaseStore());
+			lexicon = new AspectLexicon(this.getBaseStore());
 		}
 		
-		super.createPrivate(options, lexicon);
+		super.createPrivate(lexicon);
 		
 		return lexicon;
+	}
+
+	/**
+	 * Gets the base store that will be set for the lexicon.
+	 * @return the {@link PersistentDocumentStore} object representing the base store.
+	 */
+	public PersistentDocumentStore getBaseStore() {
+		return this.baseStore;
+	}
+
+	/**
+	 * Sets the base store to set for the lexicon (can be null).
+	 * @param baseStore the {@link PersistentDocumentStore} object representing the base store to be set.
+	 * @return the {@code this} object.
+	 */
+	public AspectLexiconController setBaseStore(PersistentDocumentStore baseStore) {
+		this.baseStore = baseStore;
+		return this;
 	}
 }
