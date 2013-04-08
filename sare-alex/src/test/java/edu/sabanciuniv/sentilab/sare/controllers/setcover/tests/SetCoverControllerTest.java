@@ -43,21 +43,18 @@ public class SetCoverControllerTest {
 	private String testXmlCorpusFilename;
 	private OpinionCorpus testCorpus;
 	private TokenizingOptions testTokenizingOptions;
-	private SetCoverController testController;
 	
 	@Before
 	public void setUp() throws Exception {
 		testXmlCorpusFilename = "/test-small-corpus.xml";
 		
-		OpinionCorpusFactory factory = new OpinionCorpusFactory();
-		testCorpus = factory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
-			.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath())));
+		OpinionCorpusFactory factory = (OpinionCorpusFactory)new OpinionCorpusFactory()
+			.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath()));
+		testCorpus = factory.create();
 		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
 			.setTags(PosTag.NOUN);
-		
-		testController = new SetCoverController();
 	}
 
 	@After
@@ -69,8 +66,9 @@ public class SetCoverControllerTest {
 		String testTitle = "a test";
 		DocumentSetCover setcover;
 		try {
-			setcover = testController.create((SetCoverFactoryOptions)new SetCoverFactoryOptions()
-				.setStore(testCorpus).setTitle(testTitle));
+			SetCoverController testController = (SetCoverController)new SetCoverController()
+				.setStore(testCorpus).setTitle(testTitle);
+			setcover = testController.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
@@ -81,19 +79,21 @@ public class SetCoverControllerTest {
 		assertEquals(0, Iterables.size(setcover.getDocuments()));
 	}
 	
+	// TODO: move this to a new DocumentSetCoverTest.
 	@Test
 	public void testClearClears() {
 		DocumentSetCover setcover;
 		try {
-			setcover = testController.create(new SetCoverFactoryOptions()
-				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
+			setcover = new SetCoverController()
+				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions)
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
 		}
 		
 		assertTrue(Iterables.size(setcover.getDocuments()) > 0);
-		testController.clear(setcover);
+		setcover.clear();
 		assertFalse(Iterables.size(setcover.getDocuments()) > 0);
 		assertNull(setcover.getTokenizingOptions());
 		assertNull(setcover.getWeightCoverage());
@@ -101,26 +101,27 @@ public class SetCoverControllerTest {
 	
 	@Test
 	public void testCreateWithTokenizingOptions() {
-		DocumentSetCover setCover;
+		DocumentSetCover setcover;
 		try {
-			setCover = testController.create(new SetCoverFactoryOptions()
-				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
+			setcover = new SetCoverController()
+				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions)
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
 		}
 		
-		assertNotNull(setCover);
-		assertEquals(8, Iterables.size(setCover.getDocuments()));
+		assertNotNull(setcover);
+		assertEquals(8, Iterables.size(setcover.getDocuments()));
 		
 		int index=0;
-		SetCoverDocument firstDoc = Iterables.get(setCover.getDocuments(SetCoverDocument.class), index);
+		SetCoverDocument firstDoc = Iterables.get(setcover.getDocuments(SetCoverDocument.class), index);
 		assertNotNull(firstDoc);
-		assertNotNull(setCover.getTokenizingOptions());
-		assertTrue(Iterables.size(setCover.getTokenizingOptions().getTags()) > 0);
+		assertNotNull(setcover.getTokenizingOptions());
+		assertTrue(Iterables.size(setcover.getTokenizingOptions().getTags()) > 0);
 		assertEquals(94.0, firstDoc.getWeight(), 0);
 		
-		for (SetCoverDocument doc : setCover.getDocuments(SetCoverDocument.class)) {
+		for (SetCoverDocument doc : setcover.getDocuments(SetCoverDocument.class)) {
 			assertFalse(doc.getContent().equals("This hotel was great; I loved the bathroom!"));
 		}
 	}
@@ -130,10 +131,11 @@ public class SetCoverControllerTest {
 		double weightCoverage = 0.8;
 		DocumentSetCover setCover;
 		try {
-			setCover = testController.create(new SetCoverFactoryOptions()
+			setCover = new SetCoverController()
 				.setStore(testCorpus)
 				.setTokenizingOptions(testTokenizingOptions)
-				.setWeightCoverage(weightCoverage));
+				.setWeightCoverage(weightCoverage)
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
@@ -158,54 +160,57 @@ public class SetCoverControllerTest {
 	@Test
 	public void testAdjustCoverage() {
 		double weightCoverage = 0.5;
-		DocumentSetCover setCover;
+		DocumentSetCover setcover;
 		try {
-			setCover = testController.create(new SetCoverFactoryOptions()
+			setcover = new SetCoverController()
 				.setStore(testCorpus)
 				.setTokenizingOptions(testTokenizingOptions)
-				.setWeightCoverage(weightCoverage));
+				.setWeightCoverage(weightCoverage)
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
 		}
 
-		assertNotNull(setCover);
-		assertEquals(2, Iterables.size(setCover.getDocuments()));
-		assertEquals(weightCoverage, setCover.getWeightCoverage(), 0);
+		assertNotNull(setcover);
+		assertEquals(2, Iterables.size(setcover.getDocuments()));
+		assertEquals(weightCoverage, setcover.getWeightCoverage(), 0);
 		
 		weightCoverage = 0.8;
-		setCover = testController.adjustCoverage(setCover, weightCoverage);
+		setcover = setcover.adjustCoverage(weightCoverage);
 		
-		assertNotNull(setCover);
-		assertEquals(4, Iterables.size(setCover.getDocuments()));
-		assertEquals(weightCoverage, setCover.getWeightCoverage(), 0);
+		assertNotNull(setcover);
+		assertEquals(4, Iterables.size(setcover.getDocuments()));
+		assertEquals(weightCoverage, setcover.getWeightCoverage(), 0);
 		
 		int index=0;
-		SetCoverDocument firstDoc = Iterables.get(setCover.getDocuments(SetCoverDocument.class), index);
+		SetCoverDocument firstDoc = Iterables.get(setcover.getDocuments(SetCoverDocument.class), index);
 		assertNotNull(firstDoc);
 		
 		double firstWeight = 94.0;
 		assertEquals(firstWeight, firstDoc.getWeight(), 0);
 		
-		for (SetCoverDocument doc : setCover.getDocuments(SetCoverDocument.class)) {
+		for (SetCoverDocument doc : setcover.getDocuments(SetCoverDocument.class)) {
 			assertFalse(doc.getContent().equals("This hotel was great; I loved the bathroom!"));
 		}
 	}
 	
 	@Test
 	public void testCalculateCoverageMatrix() {
-		DocumentSetCover setCover;
+		DocumentSetCover setcover;
 		try {
-			setCover = testController.create(new SetCoverFactoryOptions()
-				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
+			setcover = new SetCoverController()
+				.setStore(testCorpus)
+				.setTokenizingOptions(testTokenizingOptions)
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
 		}
 		
-		assertNotNull(setCover);
+		assertNotNull(setcover);
 		
-		Map<Integer, Double> matrix = testController.calculateCoverageMatrix(setCover, 10);
+		Map<Integer, Double> matrix = setcover.calculateCoverageMatrix(10);
 		
 		assertNotNull(matrix);
 		assertEquals(11, matrix.size());

@@ -147,7 +147,8 @@ public class AspectLexBuilder extends Module {
 		if (lexicon != null) {
 			lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		}
-		AspectLexiconFactoryOptions options = null;
+		
+		AspectLexiconController factory = null;
 		
 		MultipartFormData formData = request().body().asMultipartFormData();
 		if (formData != null) {
@@ -157,7 +158,7 @@ public class AspectLexBuilder extends Module {
 				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("file"),
 					Iterables.getFirst(formData.getFiles(), null));
 				if (filePart != null) {
-					options = (AspectLexiconFactoryOptions)new AspectLexiconFactoryOptions()
+					factory = (AspectLexiconController)new AspectLexiconController()
 						.setFile(filePart.getFile())
 						.setFormat(FilenameUtils.getExtension(filePart.getFilename()));
 				}
@@ -165,9 +166,9 @@ public class AspectLexBuilder extends Module {
 		} else {
 			JsonNode json = request().body().asJson();
 			if (json != null) {
-				AspectLexiconFactoryOptionsModel viewModel = Json.fromJson(json, AspectLexiconFactoryOptionsModel.class);
+				AspectLexiconFactoryModel viewModel = Json.fromJson(json, AspectLexiconFactoryModel.class);
 				if (viewModel != null) {
-					options = viewModel.toFactoryOptions();
+					factory = viewModel.toFactory();
 					
 					if (lexiconObj != null) {
 						if (corpusObj != null && (lexiconObj.getBaseCorpus() == null
@@ -180,27 +181,26 @@ public class AspectLexBuilder extends Module {
 				}
 			} else {
 				// if not json, then just create empty options.
-				options = new AspectLexiconFactoryOptions();
+				factory = new AspectLexiconController();
 			}
 		}
 		
-		if (options == null) {
+		if (factory == null) {
 			throw new IllegalArgumentException();
 		}
 		
-		if (lexicon == null && StringUtils.isEmpty(options.getTitle())) {
-			options.setTitle("Untitled aspect lexicon");
+		if (lexicon == null && StringUtils.isEmpty(factory.getTitle())) {
+			factory.setTitle("Untitled aspect lexicon");
 		}
 		
-		options
+		factory
 			.setBaseStore(corpusObj)
 			.setOwnerId(SessionedAction.getUsername(ctx()))
 			.setExistingId(lexicon)
 			.setEm(em());
 		
 		AspectLexiconModel lexiconVM = null;
-		AspectLexiconController factory = new AspectLexiconController();
-		lexiconObj = factory.create(options);
+		lexiconObj = factory.create();
 		if (!em().contains(lexiconObj)) {
 			em().persist(lexiconObj);
 			

@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -43,10 +43,31 @@ import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsExcepti
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 
 public class ViewModelFactory
-	implements IFactory<ViewModel, ViewModelFactoryOptions> {
+		implements IFactory<ViewModel> {
 
 	public static final String MODEL_SUFFIX = "Model";
 	
+	private Object model;
+	private JsonNode json;
+	
+	public Object getModel() {
+		return this.model;
+	}
+	
+	public ViewModelFactory setModel(Object model) {
+		this.model = model;
+		return this;
+	}
+	
+	public JsonNode getJson() {
+		return this.json;
+	}
+	
+	public ViewModelFactory setJson(JsonNode json) {
+		this.json = json;
+		return this;
+	}
+
 	private ViewModel createSpecific(Object model) {
 		Reflections reflections = new Reflections("models", Play.application().getWrappedApplication().classloader());
 		Set<Class<? extends ViewModel>> viewModelClasses = reflections.getSubTypesOf(ViewModel.class);
@@ -137,13 +158,13 @@ public class ViewModelFactory
 	}
 	
 	@Override
-	public ViewModel create(ViewModelFactoryOptions options)
-		throws IllegalFactoryOptionsException {
+	public ViewModel create()
+			throws IllegalFactoryOptionsException {
 		
-		if (options.getModel() != null) {
-			return this.createSpecific(options.getModel());
-		} else if (options.getJson() != null) {
-			return this.createSpecific(options.getJson());
+		if (this.getModel() != null) {
+			return this.createSpecific(this.getModel());
+		} else if (this.getJson() != null) {
+			return this.createSpecific(this.getJson());
 		}
 		
 		return null;

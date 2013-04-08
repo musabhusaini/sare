@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -31,14 +31,13 @@ import edu.sabanciuniv.sentilab.core.models.factory.*;
  * @param <T> the type of objects created by this implementation.
  * @param <O> the type of options accepted by this factory; must implement {@link IFactoryOptions}.
  */
-public interface IFactory<T, O extends IFactoryOptions<T>>
-	extends IController {
+public interface IFactory<T>
+		extends IController {
 
 	/**
 	 * Creates an object of type {@code T}.
-	 * @param options the options to use for creating the desired object.
 	 * @return the created object.
 	 * @throws IllegalFactoryOptionsException when the options are not sufficient to create the object.
 	 */
-	public T create(O options) throws IllegalFactoryOptionsException;
+	public T create() throws IllegalFactoryOptionsException;
 }

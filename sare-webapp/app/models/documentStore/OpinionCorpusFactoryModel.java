@@ -22,32 +22,32 @@
 package models.documentStore;
 
 import models.grabbers.GrabbersModel;
-import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpusFactoryOptions;
+import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
 
-public class OpinionCorpusFactoryOptionsModel
-	extends PersistentDocumentStoreFactoryOptionsModel {
+public class OpinionCorpusFactoryModel
+		extends PersistentDocumentStoreFactoryModel {
 
 	public String content;
 	public String format;
 	public String delimiter;
 	public GrabbersModel grabbers;
 	
-	public OpinionCorpusFactoryOptionsModel(OpinionCorpusFactoryOptions options) {
-		super(options);
+	public OpinionCorpusFactoryModel(OpinionCorpusFactory factory) {
+		super(factory);
 		
-		if (options != null) {
-			this.content = options.getContent();
-			this.format = options.getFormat();
-			this.delimiter = options.getTextDelimiter();
+		if (factory != null) {
+			this.content = factory.getContent();
+			this.format = factory.getFormat();
+			this.delimiter = factory.getTextDelimiter();
 		}
 	}
 	
-	public OpinionCorpusFactoryOptionsModel() {
+	public OpinionCorpusFactoryModel() {
 		this(null);
 	}
 	
-	public OpinionCorpusFactoryOptions toFactoryOptions() {
-		return (OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
+	public OpinionCorpusFactory toFactory() {
+		return (OpinionCorpusFactory)new OpinionCorpusFactory()
 			.setContent(this.content)
 			.setFormat(this.format)
 			.setTextDelimiter(this.delimiter)

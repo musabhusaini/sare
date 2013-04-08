@@ -195,49 +195,48 @@ public class SetCoverBuilder extends Module {
 		
 		DocumentSetCoverModel setCoverVM = null;
 		setCoverVM = Json.fromJson(jsonBody, DocumentSetCoverModel.class);
-		final SetCoverFactoryOptions factoryOptions = (SetCoverFactoryOptions)setCoverVM.toFactoryOptions()
+		final SetCoverController factory = (SetCoverController)setCoverVM.toFactory()
 			.setOwnerId(getUsername());
-		final SetCoverController controller = new SetCoverController();
 		
 		// set the default title.
-		if (setcover == null && StringUtils.isEmpty(factoryOptions.getTitle())) {
-			factoryOptions.setTitle("Optimized " + corpusObj.getTitle());
+		if (setcover == null && StringUtils.isEmpty(factory.getTitle())) {
+			factory.setTitle("Optimized " + corpusObj.getTitle());
 		}
 		
-		SetCoverFactoryOptions tmpFactoryOptions = (SetCoverFactoryOptions)new SetCoverFactoryOptions()
+		SetCoverController tmpFactory = (SetCoverController)new SetCoverController()
 			.setStore(corpusObj)
-			.setTitle(factoryOptions.getTitle())
-			.setDescription(factoryOptions.getDescription())
-			.setOwnerId(factoryOptions.getOwnerId());
+			.setTitle(factory.getTitle())
+			.setDescription(factory.getDescription())
+			.setOwnerId(factory.getOwnerId());
 		
 		// make basic creation/updation first.
 		if (setcover == null) {
-			setCoverObj = controller.create(tmpFactoryOptions);
+			setCoverObj = tmpFactory.create();
 			em().persist(setCoverObj);
 			setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 			
 			// if this is a simple change, just return from here.
-			if (ObjectUtils.equals(ObjectUtils.defaultIfNull(factoryOptions.getTokenizingOptions(), new TokenizingOptions()), new TokenizingOptions())
-				&& factoryOptions.getWeightCoverage() == SetCoverFactoryOptions.DEFAULT_WEIGHT_COVERAGE) {
+			if (ObjectUtils.equals(ObjectUtils.defaultIfNull(factory.getTokenizingOptions(), new TokenizingOptions()), new TokenizingOptions())
+				&& factory.getWeightCoverage() == SetCoverController.DEFAULT_WEIGHT_COVERAGE) {
 				return created(setCoverVM.asJson());
 			}
 			setcover = setCoverObj.getIdentifier();
-		} else if (!StringUtils.equals(StringUtils.defaultString(tmpFactoryOptions.getTitle(), setCoverObj.getTitle()), setCoverObj.getTitle())
-			|| !StringUtils.equals(StringUtils.defaultString(tmpFactoryOptions.getDescription(), setCoverObj.getDescription()), setCoverObj.getDescription())) {
+		} else if (!StringUtils.equals(StringUtils.defaultString(tmpFactory.getTitle(), setCoverObj.getTitle()), setCoverObj.getTitle())
+			|| !StringUtils.equals(StringUtils.defaultString(tmpFactory.getDescription(), setCoverObj.getDescription()), setCoverObj.getDescription())) {
 			
-			tmpFactoryOptions
+			tmpFactory
 				.setEm(em())
 				.setExistingId(setcover);
-			setCoverObj = controller.create(tmpFactoryOptions);
+			setCoverObj = tmpFactory.create();
 			em().merge(setCoverObj);
 			setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 			setCoverVM.populateSize(em(), setCoverObj);
 			
 			// if this is a simple change, just return from here.
-			if (ObjectUtils.equals(ObjectUtils.defaultIfNull(factoryOptions.getTokenizingOptions(), new TokenizingOptions()),
+			if (ObjectUtils.equals(ObjectUtils.defaultIfNull(factory.getTokenizingOptions(), new TokenizingOptions()),
 					ObjectUtils.defaultIfNull(setCoverObj.getTokenizingOptions(), new TokenizingOptions()))
-				&& ObjectUtils.equals(factoryOptions.getWeightCoverage(),
-					ObjectUtils.defaultIfNull(setCoverObj.getWeightCoverage(), SetCoverFactoryOptions.DEFAULT_WEIGHT_COVERAGE))) {
+				&& ObjectUtils.equals(factory.getWeightCoverage(),
+					ObjectUtils.defaultIfNull(setCoverObj.getWeightCoverage(), SetCoverController.DEFAULT_WEIGHT_COVERAGE))) {
 				return ok(setCoverVM.asJson());
 			}
 		}
@@ -252,7 +251,7 @@ public class SetCoverBuilder extends Module {
 			.setSession(getWebSession());
 
 		poToken.save();
-		controller.addProgessObserver(new ProgressObserver() {
+		factory.addProgessObserver(new ProgressObserver() {
 			@Override
 			public void observe(final double progress, String message) {
 				if (!"create".equalsIgnoreCase(message)) {
@@ -290,13 +289,13 @@ public class SetCoverBuilder extends Module {
 								corpusId = setCoverObj.getBaseCorpus().getIdentifier();
 							}
 							
-							factoryOptions
+							factory
 								.setStore(fetchResource(corpusId, DocumentCorpus.class))
 								.setExistingId(setCoverId)
 								.setEm(em);
 							
 							List<SetCoverDocument> oldDocuments = Lists.newArrayList(setCoverObj.getAllDocuments());
-							setCoverObj = controller.create(factoryOptions);
+							setCoverObj = factory.create();
 							
 							em.flush();
 							em.merge(setCoverObj);
@@ -345,7 +344,7 @@ public class SetCoverBuilder extends Module {
 			DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 			setCoverVM.populateSize(em(), setCoverObj);
 			if (setCoverVM.size > 0) {
-				setCoverVM.coverageMatrix = new SetCoverController().calculateCoverageMatrix(setCoverObj);
+				setCoverVM.coverageMatrix = setCoverObj.calculateCoverageMatrix();
 			}
 			
 			return ok(setCoverVM.asJson());
@@ -359,7 +358,7 @@ public class SetCoverBuilder extends Module {
 		DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 		setCoverVM.populateSize(em(), setCoverObj);
 		if (includeMatrix && setCoverVM.size > 0) {
-			setCoverVM.coverageMatrix = new SetCoverController().calculateCoverageMatrix(setCoverObj);
+			setCoverVM.coverageMatrix = setCoverObj.calculateCoverageMatrix();
 		}
 		
 		return ok(setCoverVM.asJson());

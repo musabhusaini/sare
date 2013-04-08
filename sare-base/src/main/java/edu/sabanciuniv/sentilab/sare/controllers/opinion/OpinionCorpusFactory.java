@@ -32,7 +32,7 @@ import org.apache.commons.lang3.text.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
+import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.NonDerivedStoreFactory;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
@@ -41,10 +41,10 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * @author Mus'ab Husaini
  */
 public final class OpinionCorpusFactory
-	extends NonDerivedStoreFactory<OpinionCorpus, OpinionCorpusFactoryOptions> {
+		extends NonDerivedStoreFactory<OpinionCorpus> {
 
 	@Override
-	protected OpinionCorpusFactory addXmlPacket(OpinionCorpus corpus, InputStream input, OpinionCorpusFactoryOptions options)
+	protected OpinionCorpusFactory addXmlPacket(OpinionCorpus corpus, InputStream input)
 		throws ParserConfigurationException, SAXException, IOException, XPathException {
 		
 		Validate.notNull(corpus, CannedMessages.NULL_ARGUMENT, "corpus");
@@ -57,11 +57,12 @@ public final class OpinionCorpusFactory
 	    XPathFactory factory = XPathFactory.newInstance();
 	    XPath xpath = factory.newXPath();
 	    
-	    OpinionDocumentFactory opinionFactory = new OpinionDocumentFactory();
+	    OpinionDocumentFactory opinionFactory;
 	    
 	    if ("document".equals(doc.getDocumentElement().getLocalName())) {
-	    	corpus.addDocument(opinionFactory.create(new OpinionDocumentFactoryOptions()
-    			.setCorpus(corpus).setXmlNode(doc.getDocumentElement())));
+	    	opinionFactory = new OpinionDocumentFactory()
+	    		.setCorpus(corpus).setXmlNode(doc.getDocumentElement());
+	    	corpus.addDocument(opinionFactory.create());
 	    	return this;
 	    }
 	    
@@ -93,21 +94,21 @@ public final class OpinionCorpusFactory
 	    }
 	    
 	    for (int index=0; index<documentNodes.getLength(); index++) {
-	    	corpus.addDocument(opinionFactory.create(new OpinionDocumentFactoryOptions()
-	    		.setCorpus(corpus).setXmlNode(documentNodes.item(index))));
+	    	opinionFactory = new OpinionDocumentFactory().setCorpus(corpus).setXmlNode(documentNodes.item(index));
+	    	corpus.addDocument(opinionFactory.create());
 	    }
 		
 		return this;
 	}
 	
 	@Override
-	protected OpinionCorpusFactory addTextPacket(OpinionCorpus corpus, InputStream input, String delimiter, OpinionCorpusFactoryOptions options)
+	protected OpinionCorpusFactory addTextPacket(OpinionCorpus corpus, InputStream input, String delimiter)
 		throws IOException {
 		
 		Validate.notNull(corpus, CannedMessages.NULL_ARGUMENT, "corpus");
 		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
 				
-		OpinionDocumentFactory opinionFactory = new OpinionDocumentFactory();
+		OpinionDocumentFactory opinionFactory = null;
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 		String line;
 		
@@ -118,19 +119,19 @@ public final class OpinionCorpusFactory
 				continue;
 			}
 			
-			OpinionDocumentFactoryOptions opinionOptions = new OpinionDocumentFactoryOptions()
+			opinionFactory = new OpinionDocumentFactory()
 				.setCorpus(corpus)
 				.setContent(columns.get(0));
 			
 			if (columns.size() > 1) {
 				try {
-					opinionOptions.setPolarity(Double.parseDouble(columns.get(1)));
+					opinionFactory.setPolarity(Double.parseDouble(columns.get(1)));
 				} catch (NumberFormatException e) {
-					opinionOptions.setPolarity(null);
+					opinionFactory.setPolarity(null);
 				}
 			}
 			
-			corpus.addDocument(opinionFactory.create(opinionOptions));
+			corpus.addDocument(opinionFactory.create());
 		}
 		
 		return this;

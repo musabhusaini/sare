@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -26,14 +26,18 @@ import org.codehaus.jackson.annotate.*;
 import org.springframework.util.ClassUtils;
 
 import controllers.factories.ViewModelFactory;
+import edu.sabanciuniv.sentilab.core.models.IModel;
 
 import play.libs.Json;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ViewModel {
+public class ViewModel 
+		implements IModel {
 
 	public static <T> ViewModel createViewModel(T model) {
-		ViewModel viewModel = new ViewModelFactory().create(new ViewModelFactoryOptions().setModel(model));
+		ViewModel viewModel = new ViewModelFactory()
+			.setModel(model)
+			.create();
 		if (viewModel == null) {
 			throw new IllegalArgumentException();
 		}
@@ -42,7 +46,9 @@ public class ViewModel {
 	}
 	
 	public static ViewModel createViewModel(JsonNode json) {
-		ViewModel viewModel = new ViewModelFactory().create(new ViewModelFactoryOptions().setJson(json));
+		ViewModel viewModel = new ViewModelFactory()
+			.setJson(json)
+			.create();
 		if (viewModel == null) {
 			throw new IllegalArgumentException();
 		}

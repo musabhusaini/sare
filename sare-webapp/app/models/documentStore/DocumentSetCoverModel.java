@@ -30,11 +30,12 @@ import org.apache.commons.lang3.ObjectUtils;
 import models.document.TokenizingOptionsModel;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.DocumentSetCoverController;
+import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 
 public class DocumentSetCoverModel
-	extends DocumentCorpusModel {
+		extends DocumentCorpusModel {
 
 	public DocumentCorpusModel baseCorpus;
 	public TokenizingOptionsModel tokenizingOptions;
@@ -53,7 +54,7 @@ public class DocumentSetCoverModel
 			}
 			this.tokenizingOptions = new TokenizingOptionsModel(setCover.getTokenizingOptions());
 			this.weightCoverage = Math.round(
-				ObjectUtils.defaultIfNull(setCover.getWeightCoverage(), SetCoverFactoryOptions.DEFAULT_WEIGHT_COVERAGE) * 100) / 100.0;
+				ObjectUtils.defaultIfNull(setCover.getWeightCoverage(), SetCoverController.DEFAULT_WEIGHT_COVERAGE) * 100) / 100.0;
 			this.totalCoveredWeight = setCover.getTotalCoveredWeight();
 		}
 	}
@@ -74,17 +75,17 @@ public class DocumentSetCoverModel
 		return super.populateSize(em, store);
 	}
 	
-	public SetCoverFactoryOptions toFactoryOptions() {
-		SetCoverFactoryOptions options = (SetCoverFactoryOptions)new SetCoverFactoryOptions()
+	public SetCoverController toFactory() {
+		SetCoverController factory = (SetCoverController)new SetCoverController()
 			.setWeightCoverage(ObjectUtils.defaultIfNull(this.weightCoverage, 1.0))
 			.setTitle(this.title)
 			.setDescription(this.description)
 			.setExistingId(this.id);
 		
 		if (this.tokenizingOptions != null) {
-			options.setTokenizingOptions(this.tokenizingOptions.toTokenizingOptions());
+			factory.setTokenizingOptions(this.tokenizingOptions.toTokenizingOptions());
 		}
 		
-		return options;
+		return factory;
 	}
 }

@@ -24,7 +24,6 @@ package edu.sabanciuniv.sentilab.sare.controllers.setcover;
 import java.util.*;
 
 import org.apache.commons.lang3.*;
-import org.apache.commons.lang3.tuple.*;
 
 import com.google.common.collect.*;
 
@@ -41,12 +40,22 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * @author Mus'ab Husaini
  */
 public class SetCoverController
-	extends PersistentDocumentStoreFactory<DocumentSetCover, SetCoverFactoryOptions>
-	implements IDocumentStoreController, ProgressObservable {
+		extends PersistentDocumentStoreFactory<DocumentSetCover>
+		implements IDocumentStoreController, ProgressObservable {
+
+	public static final double DEFAULT_WEIGHT_COVERAGE = 1.0;
+
+	private PersistentDocumentStore store;
+	private TokenizingOptions tokenizingOptions;
+	private double weightCoverage;
 	
 	private Set<ProgressObserver> progressObservers;
 	
+	/**
+	 * Creates an instance of the {@link SetCoverController}.
+	 */
 	public SetCoverController() {
+		this.weightCoverage = DEFAULT_WEIGHT_COVERAGE;
 		this.progressObservers = Sets.newHashSet();
 	}
 	
@@ -121,145 +130,95 @@ public class SetCoverController
 		// get rid of the dummy.
 		dummySetCover.setBaseStore(null);
 		
-		return this.adjustCoverage(setcover, weightCoverage)
+		return setcover.adjustCoverage(weightCoverage)
 			.setTokenizingOptions(tokenizingOptions);
 	}
 	
-	private Pair<List<SetCoverDocument>, List<SetCoverDocument>> splitByCoverage(DocumentSetCover setcover, double weightCoverage) {
-		List<SetCoverDocument> covered = Lists.newArrayList();
-		List<SetCoverDocument> uncovered = Lists.newArrayList();
-		List<SetCoverDocument> setCoverDocuments = Collections.synchronizedList(Lists.newArrayList(setcover.getAllDocuments()));
-		
-		double totalWeight=setcover.getTotalWeight();
-		double accumulatedWeight=0;
-		
-		// sort set cover.
-		Iterator<SetCoverDocument> iterator = Ordering.from(new Comparator<SetCoverDocument>() {
-			@Override
-			public int compare(SetCoverDocument o1, SetCoverDocument o2) {
-				return (int)((o2.getWeight() - o1.getWeight()) * 100);
-			}
-		}).immutableSortedCopy(setCoverDocuments).iterator();
-		
-		// get all the useful ones.
-		while (iterator.hasNext()) {
-			if (accumulatedWeight >= weightCoverage * totalWeight) {
-				break;
-			}
-			
-			SetCoverDocument document = iterator.next();
-			accumulatedWeight += document.getWeight();
-			covered.add(document);
-		}
-		
-		while (iterator.hasNext()) {
-			uncovered.add(iterator.next());
-		}
-		
-		return new ImmutablePair<List<SetCoverDocument>, List<SetCoverDocument>>(covered, uncovered);
-	}
-	
 	@Override
-	protected DocumentSetCover createPrivate(SetCoverFactoryOptions options, DocumentSetCover setcover)
+	protected DocumentSetCover createPrivate(DocumentSetCover setcover)
 		throws IllegalFactoryOptionsException {
 		
 		try {
-			Validate.notNull(options.getStore(), CannedMessages.NULL_ARGUMENT, "options.store");
+			Validate.notNull(this.getStore(), CannedMessages.NULL_ARGUMENT, "this.store");
 		} catch (NullPointerException e) {
 			throw new IllegalFactoryOptionsException(e);
 		}
 		
 		if (setcover == null) {
 			// create a set cover based on this store.
-			setcover = new DocumentSetCover(options.getStore());
+			setcover = new DocumentSetCover(this.getStore());
 		}
 		
-		if (ObjectUtils.equals(options.getTokenizingOptions(), setcover.getTokenizingOptions())) {
-			if (ObjectUtils.equals(options.getWeightCoverage(), ObjectUtils.defaultIfNull(setcover.getWeightCoverage(), SetCoverFactoryOptions.DEFAULT_WEIGHT_COVERAGE))) {
+		if (ObjectUtils.equals(this.getTokenizingOptions(), setcover.getTokenizingOptions())) {
+			if (ObjectUtils.equals(this.getWeightCoverage(), ObjectUtils.defaultIfNull(setcover.getWeightCoverage(), DEFAULT_WEIGHT_COVERAGE))) {
 				// in this case, nothing to do here.
 				return setcover;
 			} else {
 				// in this case, we just need to adjust coverage.
-				return this.adjustCoverage(setcover, options.getWeightCoverage());
+				return setcover.adjustCoverage(this.getWeightCoverage());
 			}
 		}
 		
 		// clear set cover if it already exists, we'll start afresh.
-		this.clear(setcover);
-		this.createSpecific(setcover, options.getStore(), options.getTokenizingOptions(), options.getWeightCoverage());
+		setcover.clear();
+		this.createSpecific(setcover, this.getStore(), this.getTokenizingOptions(), this.getWeightCoverage());
 		
 		return setcover;
 	}
 
 	/**
-	 * Adjusts the coverage of a set cover.
-	 * @param setcover the {@link DocumentSetCover} to adjust.
-	 * @param weightCoverage the desired minimum weight coverage.
-	 * @return the reduced {@link DocumentSetCover} object.
+	 * Gets the store from which the set cover will be created.
+	 * @return the {@link PersistentDocumentStore} object from which the set cover will be created.
 	 */
-	public DocumentSetCover adjustCoverage(DocumentSetCover setcover, double weightCoverage) {
-		Validate.notNull(setcover, CannedMessages.NULL_ARGUMENT, "setcover");
-		
-		// a quick way of checking if the weight coverage is valid or not. the setter will throw an exception if not.
-		new SetCoverFactoryOptions()
-			.setWeightCoverage(weightCoverage);
-		
-		// apply the weight ratio.
-		Pair<List<SetCoverDocument>, List<SetCoverDocument>> coverageSplit = this.splitByCoverage(setcover, weightCoverage);
-		
-		// mark covered and uncovered.
-		for (SetCoverDocument document : coverageSplit.getLeft()) {
-			document.setCovered(true);
-		}
-		
-		for (SetCoverDocument document : coverageSplit.getRight()) {
-			document.setCovered(false);
-		}
-		
-		return setcover.setWeightCoverage(weightCoverage);
+	public PersistentDocumentStore getStore() {
+		return this.store;
 	}
 	
 	/**
-	 * Calculates the coverage matrix for a given set cover.
-	 * @param setcover the {@link DocumentSetCover} to find the matrix for.
-	 * @param coverageGranularity the coverage granularity, which is the interval between two coverage points in the matrix.
-	 * @return the coverage matrix as a {@link Map} of percentage coverage as keys and store size reduction ratio as values.
-	 */
-	public Map<Integer, Double> calculateCoverageMatrix(DocumentSetCover setcover, int coverageGranularity) {
-		Validate.notNull(setcover, CannedMessages.NULL_ARGUMENT, "setcover");
-		Validate.isTrue(coverageGranularity > 0 && coverageGranularity <= 100, "parameter 'coverageGranularity' must fall within (0, 100]");
-		
-		double totalSize = Iterables.size(setcover.getBaseStore() != null ?
-			setcover.getBaseStore().getDocuments() : setcover.getAllDocuments());
-		Map<Integer, Double> matrix = Maps.newHashMap();
-		for (int coverage=100; coverage>=0; coverage-=coverageGranularity) {
-			List<SetCoverDocument> covered = this.splitByCoverage(setcover, coverage/100.0).getLeft();
-			matrix.put(coverage, covered.size()/totalSize);
-		}
-		
-		return matrix;
-	}
-	
-	/**
-	 * Calculates the coverage matrix for a given set cover.
-	 * @param setcover the {@link DocumentSetCover} to find the matrix for.
-	 * @return the coverage matrix as a {@link Map} of percentage coverage as keys and store size reduction ratio as values.
-	 */
-	public Map<Integer, Double> calculateCoverageMatrix(DocumentSetCover setcover) {
-		return this.calculateCoverageMatrix(setcover, 5);
-	}
-	
-	/**
-	 * Clears the provided set cover and brings it back to empty. Connection with the base store is not severed.
-	 * @param setcover the {@link DocumentSetCover} object representing the set cover to clear.
+	 * Sets the store from which the set cover is to be created.
+	 * @param store the {@link PersistentDocumentStore} object from which the set cover is to be created.
 	 * @return the {@code this} object.
 	 */
-	public SetCoverController clear(DocumentSetCover setcover) {
-		Validate.notNull(setcover, CannedMessages.NULL_ARGUMENT, "setcover");
-		
-		setcover.setWeightCoverage(null)
-			.setTokenizingOptions(null)
-			.setDocuments(null);
+	public SetCoverController setStore(PersistentDocumentStore store) {
+		this.store = store;
+		return this;
+	}
+	
+	/**
+	 * Gets the tokenizing options that will be used to tokenize the content of the documents.
+	 * @return the {@link TokenizingOptions} object containing the tokenizing options.
+	 */
+	public TokenizingOptions getTokenizingOptions() {
+		return this.tokenizingOptions;
+	}
+	
+	/**
+	 * Sets the tokenizing options to be used for tokenizing the content of the documents.
+	 * @param tokenizingOptions the {@link TokenizingOptions} object containing the tokenizing options.
+	 * @return the {@code this} object.
+	 */
+	public SetCoverController setTokenizingOptions(TokenizingOptions tokenizingOptions) {
+		this.tokenizingOptions = tokenizingOptions;
+		return this;
+	}
+
+	/**
+	 * Gets the token weight coverage to be maintained in the final set cover.
+	 * @return the token weight coverage; must be in [0.0, 1.0].
+	 */
+	public double getWeightCoverage() {
+		return this.weightCoverage;
+	}
+
+	/**
+	 * Sets the desired token weight coverage for the set cover.
+	 * @param weightCoverage the desired token weight coverage; must be in [0.0, 1.0].
+	 * @return the {@code this} object.
+	 */
+	public SetCoverController setWeightCoverage(double weightCoverage) {
+		Validate.isTrue(weightCoverage >= 0.0 && weightCoverage <= 1.0, "weight coverage must be in the interval [0.0, 1.0].");
+
+		this.weightCoverage = weightCoverage;
 		return this;
 	}
 

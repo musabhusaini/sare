@@ -21,9 +21,12 @@
 
 package edu.sabanciuniv.sentilab.sare.controllers.base;
 
+import java.util.UUID;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.Validate;
+import javax.persistence.EntityManager;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
@@ -31,38 +34,132 @@ import com.google.gson.*;
 import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.models.base.*;
-import edu.sabanciuniv.sentilab.utils.CannedMessages;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 /**
  * The base class for all factories that create {@link PersistentObject} instances.
  * @author Mus'ab Husaini
  * @param <T> the type of object that will be created; must derive from {@link PersistentObject}.
- * @param <O> the type of options that will be used to create the objects; must derive from {@link PersistentObjectFactoryOptions}.
  */
-public abstract class PersistentObjectFactory<T extends PersistentObject, O extends PersistentObjectFactoryOptions<T>>
-	extends ControllerBase
-	implements IFactory<T, O> {
+public abstract class PersistentObjectFactory<T extends PersistentObject>
+		extends ControllerBase implements IFactory<T> {
 	
-	protected abstract T createPrivate(O options, T existing) throws IllegalFactoryOptionsException;
+	protected byte[] existingId;
+	protected String otherData;
+	protected EntityManager em;
+
+	/**
+	 * Gets the ID of an existing object to be modified.
+	 * @return the ID to fetch the object with.
+	 */
+	public byte[] getExistingId() {
+		return this.existingId;
+	}
+
+	/**
+	 * Sets the ID of an existing object to be modified. Must also provide a non-{@code null} value for {@code em}
+	 * if this is {@code null}
+	 * @param id the ID to fetch the object with.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObjectFactory<T> setExistingId(byte[] id) {
+		this.existingId = id;
+		return this;
+	}
+
+	/**
+	 * Sets the ID of an existing object to be modified. Must also provide a non-{@code null} value for {@code em}
+	 * if this is {@code null}
+	 * @param id the ID to fetch the object with.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObjectFactory<T> setExistingId(String id) {
+		if (StringUtils.isEmpty(id)) {
+			return this;
+		}
+
+		return this.setExistingId(UuidUtils.toBytes(id));
+	}
+
+	/**
+	 * Sets the ID of an existing object to be modified. Must also provide a non-{@code null} value for {@code em}
+	 * if this is {@code null}
+	 * @param id the ID to fetch the object with.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObjectFactory<T> setExistingId(UUID id) {
+		if (id == null) {
+			return this;
+		}
+
+		return this.setExistingId(UuidUtils.toBytes(id));
+	}
+
+	/**
+	 * Gets any other data to be attached to the target object.
+	 * @return the {@link String} representing other data.
+	 */
+	public String getOtherData() {
+		return this.otherData;
+	}
+
+	/**
+	 * Sets any other data to attach to the target object.
+	 * @param otherData the {@link String} representing any other data (must be valid JSON).
+	 * @return the {@code this} object.
+	 * @throws IllegalArgumentException when the argument cannot be parsed as a JSON object.
+	 */
+	public PersistentObjectFactory<T> setOtherData(String otherData) {
+		if (otherData != null) {
+			try {
+				if (!new JsonParser().parse(otherData).isJsonObject()) {
+					throw new JsonSyntaxException("");
+				}
+			} catch (JsonSyntaxException e) {
+				throw new IllegalArgumentException("argument 'otherData' must be valid JSON", e);
+			}
+		}
+
+		this.otherData = otherData;
+		return this;
+	}
+
+	/**
+	 * Gets an entity manager that will be used in case an ID was provided.
+	 * @return the {@link EntityManager} that will be used.
+	 */
+	public EntityManager getEm() {
+		return this.em;
+	}
+
+	/**
+	 * Sets the entity manager to use in case an ID was provided. Only needed if an existing ID was provided.
+	 * @param em the {@link EntityManager} to be set.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObjectFactory<T> setEm(EntityManager em) {
+		this.em = em;
+		return this;
+	}
+
+	protected abstract T createPrivate(T existing) throws IllegalFactoryOptionsException;
 
 	@SuppressWarnings({ "unchecked", "serial" })
 	@Override
-	public T create(O options)
+	public T create()
 		throws IllegalFactoryOptionsException {
 		
 		try {
-			Validate.notNull(options, CannedMessages.NULL_ARGUMENT, "options");
-			
 			T obj = null;
-			if (options.getExistingId() != null && options.getEm() != null) {
-				obj = (T)options.getEm().find(new TypeToken<T>(this.getClass()){}.getRawType(), options.getExistingId());
+			if (this.getExistingId() != null && this.getEm() != null) {
+				obj = (T)this.getEm().find(new TypeToken<T>(this.getClass()){}.getRawType(), this.getExistingId());
 			}
 
-			obj = this.createPrivate(options, obj);
+			obj = this.createPrivate(obj);
 			
 			// merge the other data.
-			if (obj != null && options.getOtherData() != null) {
-				JsonObject otherData = new JsonParser().parse(options.getOtherData()).getAsJsonObject();
+			if (obj != null && this.getOtherData() != null) {
+				JsonObject otherData = new JsonParser().parse(this.getOtherData()).getAsJsonObject();
 				for (Entry<String, JsonElement> dataEntry : otherData.entrySet()) {
 					if (!obj.hasProperty(dataEntry.getKey())) {
 						obj.setProperty(dataEntry.getKey(), dataEntry.getValue());

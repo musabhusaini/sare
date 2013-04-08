@@ -39,7 +39,7 @@ import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
 
 public class SetCoverControllerTest
-	extends PersistenceTestsBase {
+		extends PersistenceTestsBase {
 
 	private String testXmlCorpusFilename;
 	private OpinionCorpus testCorpus;
@@ -50,9 +50,9 @@ public class SetCoverControllerTest
 	public void setUp() throws Exception {
 		testXmlCorpusFilename = "/test-corpus.xml";
 		
-		OpinionCorpusFactory factory = new OpinionCorpusFactory();
-		testCorpus = factory.create((OpinionCorpusFactoryOptions)new OpinionCorpusFactoryOptions()
-			.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath())));
+		OpinionCorpusFactory factory = (OpinionCorpusFactory)new OpinionCorpusFactory()
+			.setFile(new File(getClass().getResource(testXmlCorpusFilename).getPath()));
+		testCorpus = factory.create();
 		
 		testTokenizingOptions = new TokenizingOptions()
 			.setLemmatized(true)
@@ -63,10 +63,12 @@ public class SetCoverControllerTest
 
 	@Test
 	public void testSetCoverControllerWithExistingIdGetsExisting() {
-		DocumentSetCover setCover;
+		DocumentSetCover setcover;
 		try {
-			setCover = testController.create(new SetCoverFactoryOptions()
-				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
+			setcover = testController
+				.setStore(testCorpus)
+				.setTokenizingOptions(testTokenizingOptions)
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
@@ -74,32 +76,35 @@ public class SetCoverControllerTest
 		
 		em.getTransaction().begin();
 		persist(testCorpus);
-		persist(setCover);
+		persist(setcover);
 		em.getTransaction().commit();
 		em.clear();
 		
 		DocumentSetCover actualSetCover;
 		try {
-			actualSetCover = testController.create((SetCoverFactoryOptions)new SetCoverFactoryOptions()
+			actualSetCover = testController
 				.setStore(testCorpus)
 				.setEm(em)
-				.setExistingId(setCover.getId()));
+				.setExistingId(setcover.getId())
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
 		}
 		
 		assertNotNull(actualSetCover);
-		assertEquals(setCover.getIdentifier(), actualSetCover.getIdentifier());
-		assertEquals(setCover.getBaseStore().getIdentifier(), actualSetCover.getBaseStore().getIdentifier());
+		assertEquals(setcover.getIdentifier(), actualSetCover.getIdentifier());
+		assertEquals(setcover.getBaseStore().getIdentifier(), actualSetCover.getBaseStore().getIdentifier());
 	}
 	
 	@Test
 	public void testCreateWithDifferentCoverageAdjusts() {
 		DocumentSetCover setcover;
 		try {
-			setcover = testController.create(new SetCoverFactoryOptions()
-				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions));
+			setcover = testController
+				.setStore(testCorpus)
+				.setTokenizingOptions(testTokenizingOptions)
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;
@@ -115,11 +120,12 @@ public class SetCoverControllerTest
 		
 		DocumentSetCover actualSetCover;
 		try {
-			actualSetCover = testController.create((SetCoverFactoryOptions)new SetCoverFactoryOptions()
+			actualSetCover = testController
 				.setStore(testCorpus)
 				.setWeightCoverage(0.1)
 				.setEm(em)
-				.setExistingId(setcover.getId()));
+				.setExistingId(setcover.getId())
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");
 			return;

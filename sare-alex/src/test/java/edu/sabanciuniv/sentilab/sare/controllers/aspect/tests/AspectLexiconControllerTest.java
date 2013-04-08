@@ -38,16 +38,12 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus;
 public class AspectLexiconControllerTest {
 
 	private OpinionCorpus testCorpus = new OpinionCorpus();
-	private AspectLexiconController testController = new AspectLexiconController();
-	private AspectLexiconFactoryOptions testOptions = new AspectLexiconFactoryOptions();
 	
 	private String testXmlLexiconFilename;
 	private AspectLexicon expectedXmlLexicon;
 	
 	@Before
 	public void setUp() throws Exception {
-		testOptions = new AspectLexiconFactoryOptions();
-		testController = new AspectLexiconController();
 	}
 	
 	private boolean areLexicaEqual(AspectLexicon expectedLexicon, AspectLexicon actualLexicon) {
@@ -105,11 +101,11 @@ public class AspectLexiconControllerTest {
 		aspect2.addExpression("expression 2.1");
 		aspect2.addExpression("expression 2.2");
 		
-		testOptions.setFile(new File(getClass().getResource(testXmlLexiconFilename).getPath()));
-		
 		AspectLexicon actualLexicon = null;
 		try {
-			actualLexicon = testController.create(testOptions);
+			actualLexicon = new AspectLexiconController()
+				.setFile(new File(getClass().getResource(testXmlLexiconFilename).getPath()))
+				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not open file");
 		}
@@ -120,8 +116,9 @@ public class AspectLexiconControllerTest {
 	
 	@Test
 	public void testCreateSetsBaseCorpus() {
-		testOptions.setBaseStore(testCorpus);
-		AspectLexicon actualLexicon = testController.create(testOptions);
+		AspectLexicon actualLexicon = new AspectLexiconController()
+			.setBaseStore(testCorpus)
+			.create();
 		
 		assertNotNull(actualLexicon);
 		assertEquals(testCorpus, actualLexicon.getBaseStore());
@@ -129,28 +126,31 @@ public class AspectLexiconControllerTest {
 	
 	@Test
 	public void testCreateSetsTitle() {
-		testOptions.setTitle("test");
-		AspectLexicon actualLexicon = testController.create(testOptions);
+		AspectLexiconController testController = (AspectLexiconController)new AspectLexiconController()
+			.setTitle("test");
+		AspectLexicon actualLexicon = testController.create();
 		
 		assertNotNull(actualLexicon);
-		assertEquals(testOptions.getTitle(), actualLexicon.getTitle());
+		assertEquals(testController.getTitle(), actualLexicon.getTitle());
 	}
 	
 	@Test
 	public void testCreateSetsDescription() {
-		testOptions.setDescription("test lexicon");
-		AspectLexicon actualLexicon = testController.create(testOptions);
+		AspectLexiconController testController = (AspectLexiconController)new AspectLexiconController()
+			.setDescription("test lexicon");
+		AspectLexicon actualLexicon = testController.create();
 		
 		assertNotNull(actualLexicon);
-		assertEquals(testOptions.getDescription(), actualLexicon.getDescription());
+		assertEquals(testController.getDescription(), actualLexicon.getDescription());
 	}
 	
 	@Test
 	public void testCreateSetsLanguage() {
-		testOptions.setLanguage("tr");
-		AspectLexicon actualLexicon = testController.create(testOptions);
+		AspectLexiconController testController = (AspectLexiconController)new AspectLexiconController()
+			.setLanguage("tr");
+		AspectLexicon actualLexicon = testController.create();
 		
 		assertNotNull(actualLexicon);
-		assertEquals(testOptions.getLanguage(), actualLexicon.getLanguage());
+		assertEquals(testController.getLanguage(), actualLexicon.getLanguage());
 	}
 }
