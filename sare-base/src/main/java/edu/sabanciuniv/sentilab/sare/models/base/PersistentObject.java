@@ -21,6 +21,7 @@
 
 package edu.sabanciuniv.sentilab.sare.models.base;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 import javax.persistence.*;
@@ -41,7 +42,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
 @Entity
 @Table(name = "persistent_objects")
 public abstract class PersistentObject
-	extends UniquelyIdentifiableObject {
+		extends UniquelyIdentifiableObject {
 
 	/**
 	 * 
@@ -238,12 +239,29 @@ public abstract class PersistentObject
 	/**
 	 * Gets an attached property of this object.
 	 * @param property the name of the property to get.
+	 * @param typeOfT the type of object expected.
+	 * @return the retrieved property; {@code null} if not present or if the type is not correct.
+	 */
+	public <T> T getProperty(String property, Type typeOfT) {
+		Validate.notEmpty(property, CannedMessages.EMPTY_ARGUMENT, "property");
+		Validate.notNull(typeOfT, CannedMessages.NULL_ARGUMENT, "typeOfT");
+
+		try {
+			return new Gson().fromJson(this.getOtherData(), typeOfT);
+		} catch (JsonSyntaxException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Gets an attached property of this object.
+	 * @param property the name of the property to get.
 	 * @param classOfT the type of object expected.
 	 * @return the retrieved property; {@code null} if not present or if the type is not correct.
 	 */
 	public <T> T getProperty(String property, Class<T> classOfT) {
 		Validate.notEmpty(property, CannedMessages.EMPTY_ARGUMENT, "property");
-		Validate.notNull(classOfT, CannedMessages.NULL_ARGUMENT, "type");
+		Validate.notNull(classOfT, CannedMessages.NULL_ARGUMENT, "classOfT");
 		
 		try {
 			return new Gson().fromJson(this.getOtherData().get(property), classOfT);

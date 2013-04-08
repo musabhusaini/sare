@@ -23,6 +23,8 @@ package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 
 import javax.persistence.Entity;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.google.common.collect.*;
 
 /**
@@ -31,7 +33,7 @@ import com.google.common.collect.*;
  */
 @Entity
 public abstract class HybridDocumentStore
-	extends PersistentDocumentStore implements IDerivedStore {
+		extends PersistentDocumentStore implements IDerivedStore {
 
 	/**
 	 * 
@@ -42,7 +44,7 @@ public abstract class HybridDocumentStore
 	 * Creates a new instance of the {@link HybridDocumentStore}.
 	 * @param stores the {@link PersistentDocumentStore} objects this hybrid is based on.
 	 */
-	public HybridDocumentStore(Iterable<PersistentDocumentStore> stores) {
+	public HybridDocumentStore(PersistentDocumentStore... stores) {
 		if (stores != null) {
 			for (PersistentDocumentStore store : stores) {
 				this.addReference(store);
@@ -52,9 +54,18 @@ public abstract class HybridDocumentStore
 	
 	/**
 	 * Creates a new instance of the {@link HybridDocumentStore}.
+	 * @param stores the {@link PersistentDocumentStore} objects this hybrid is based on.
+	 */
+	public HybridDocumentStore(Iterable<PersistentDocumentStore> stores) {
+		this(Iterables.toArray(ObjectUtils.defaultIfNull(stores, Lists.<PersistentDocumentStore>newArrayList()),
+			PersistentDocumentStore.class));
+	}
+	
+	/**
+	 * Creates a new instance of the {@link HybridDocumentStore}.
 	 */
 	public HybridDocumentStore() {
-		this(Lists.<PersistentDocumentStore>newArrayList());
+		this(new PersistentDocumentStore[]{});
 	}
 	
 	/**

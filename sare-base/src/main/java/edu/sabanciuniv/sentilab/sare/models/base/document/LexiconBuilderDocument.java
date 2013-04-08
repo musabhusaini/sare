@@ -33,7 +33,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDoc
 @Entity
 @DiscriminatorValue("lex-builder-doc")
 public class LexiconBuilderDocument
-	extends FullTextDocument implements UserInaccessibleModel, IWeightedDocument {
+		extends ShadowFullTextDocument implements UserInaccessibleModel, IWeightedDocument {
 
 	private static final long serialVersionUID = -2107212900717706813L;
 	
@@ -45,7 +45,7 @@ public class LexiconBuilderDocument
 	 * @param baseDocument the {@link FullTextDocument} object to base this shadow document on.
 	 */
 	public LexiconBuilderDocument(FullTextDocument baseDocument) {
-		this.setBaseDocument(baseDocument);
+		super(baseDocument);
 		
 		if (baseDocument != null) {
 			this.weight = baseDocument instanceof IWeightedDocument ?
@@ -58,17 +58,6 @@ public class LexiconBuilderDocument
 	 */
 	public LexiconBuilderDocument() {
 		this(null);
-	}
-	
-	/**
-	 * Gets the underlying full text document.
-	 * @return the underlying {@link FullTextDocument}.
-	 */
-	public FullTextDocument getFullTextDocument() {
-		if (this.getBaseDocument() instanceof FullTextDocument) {
-			return (FullTextDocument)this.getBaseDocument();
-		}
-		return null;
 	}
 	
 	/**
@@ -105,24 +94,6 @@ public class LexiconBuilderDocument
 		return this.weight;
 	}
 	
-	@Override
-	public String getContent() {
-		return this.getBaseDocument() == null ? null : this.getBaseDocument().getContent();
-	}
-	
-	@Override
-	public TokenizingOptions getTokenizingOptions() {
-		if (super.getTokenizingOptions() != null) {
-			return super.getTokenizingOptions();
-		}
-		
-		if (this.getBaseDocument() instanceof FullTextDocument) {
-			return ((FullTextDocument)this.getBaseDocument()).getTokenizingOptions();
-		}
-		
-		return null;
-	}
-
 	/**
 	 * Gets a flag indicating whether this document has been "seen" or not.
 	 * @return {@code true} if the document has been seen, {@code false} otherwise.

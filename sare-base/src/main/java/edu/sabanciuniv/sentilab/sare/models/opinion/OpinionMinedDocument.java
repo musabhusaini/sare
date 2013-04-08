@@ -23,26 +23,39 @@ package edu.sabanciuniv.sentilab.sare.models.opinion;
 
 import javax.persistence.*;
 
+import edu.sabanciuniv.sentilab.core.models.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 
 /**
- * Represents an opinion document (review).
+ * A document that contains the result of opinion mining.
  * @author Mus'ab Husaini
  */
 @Entity
-@DiscriminatorValue("opinion-document")
-public class OpinionDocument
-	extends EditableTextDocument implements IOpinionDocument {
-
-	private static final long serialVersionUID = -2242899151250566895L;
+@DiscriminatorValue("opinion-mined-doc")
+public class OpinionMinedDocument
+		extends ShadowFullTextDocument
+		implements UserInaccessibleModel, IOpinionDocument {
+	
+	private static final long serialVersionUID = 4247797717350293911L;
+	
+	/**
+	 * Creates an instance of {@link OpinionMinedDocument}.
+	 * @param baseDocument the {@link FullTextDocument} to base this instance on.
+	 */
+	public OpinionMinedDocument(FullTextDocument baseDocument) {
+		super(baseDocument);
+	}
+	
+	/**
+	 * Creates an instance of {@link OpinionMinedDocument}.
+	 */
+	public OpinionMinedDocument() {
+		this(null);
+	}
 
 	@Override
 	public Double getPolarity() {
-		Double polarity = this.getProperty("polarity", Double.class);
-		if (polarity != null && polarity.isNaN()) {
-			return null;
-		}
-		return polarity;
+		return this.getProperty("polarity", Double.class);
 	}
 
 	/**
@@ -50,16 +63,16 @@ public class OpinionDocument
 	 * @param polarity the opinion polarity to set.
 	 * @return the {@code this} object.
 	 */
-	public OpinionDocument setPolarity(Double polarity) {
+	public OpinionMinedDocument setPolarity(Double polarity) {
 		if (polarity != null && polarity.isNaN()) {
 			polarity = null;
 		}
 		this.setProperty("polarity", polarity);
 		return this;
 	}
-	
+
 	@Override
-	public String toString() {
-		return String.format("%s [polarity = %1.2f]", super.toString(), this.getPolarity());
+	public FullTextDocument getAccessible() {
+		return this.getFullTextDocument();
 	}
 }

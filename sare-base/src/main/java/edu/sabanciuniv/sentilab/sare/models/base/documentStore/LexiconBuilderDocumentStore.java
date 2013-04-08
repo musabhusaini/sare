@@ -24,7 +24,6 @@ package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 import javax.persistence.*;
 
 import com.google.common.base.*;
-import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.core.models.UserInaccessibleModel;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
@@ -36,7 +35,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 @Entity
 @DiscriminatorValue("lex-builder")
 public class LexiconBuilderDocumentStore
-	extends HybridDocumentStore implements UserInaccessibleModel {
+		extends CorpusLexiconHybridStore<Lexicon> implements UserInaccessibleModel {
 	
 	private static final long serialVersionUID = -5249613407009854782L;
 	
@@ -46,22 +45,17 @@ public class LexiconBuilderDocumentStore
 	 * @param lexicon the {@link Lexicon} being created.
 	 */
 	public LexiconBuilderDocumentStore(DocumentCorpus corpus, Lexicon lexicon) {
-		super(Lists.newArrayList(corpus, lexicon));
-		this.setBaseStore(corpus);
-		
-		if (corpus != null) {
-			this.setDocuments(Iterables.filter(Iterables.transform(corpus.getDocuments(),
-				new Function<PersistentDocument, LexiconBuilderDocument>() {
-					@Override
-					public LexiconBuilderDocument apply(PersistentDocument input) {
-						if (input instanceof FullTextDocument) {
-							return new LexiconBuilderDocument((FullTextDocument)input);
-						}
-						return null;
+		super(corpus, lexicon,
+			new Function<PersistentDocument, LexiconBuilderDocument>() {
+				@Override
+				public LexiconBuilderDocument apply(PersistentDocument input) {
+					if (input instanceof FullTextDocument) {
+						return new LexiconBuilderDocument((FullTextDocument)input);
 					}
+					return null;
 				}
-			), Predicates.notNull()));
-		}
+			}
+		);
 	}
 	
 	/**
@@ -71,49 +65,6 @@ public class LexiconBuilderDocumentStore
 		this(null, null);
 	}
 	
-	/**
-	 * Gets the corpus this builder is based on.
-	 * @return the {@link DocumentCorpus} object this builder is based on.
-	 */
-	public DocumentCorpus getCorpus() {
-		if (this.getBaseStore() instanceof DocumentCorpus) {
-			return (DocumentCorpus)this.getBaseStore();
-		}
-		return null;
-	}
-	
-	/**
-	 * Gets the lexicon being created by this builder.
-	 * @return the {@link Lexicon} object this builder is creating.
-	 */
-	public Lexicon getLexicon() {
-		return Iterables.getFirst(this.getBaseStores(Lexicon.class), null);
-	}
-
-	@Override
-	public String getTitle() {
-		return super.getTitle() != null ? super.getTitle() :
-			this.getBaseStore() != null ? this.getBaseStore().getTitle() : null;
-	}
-
-	@Override
-	public String getLanguage() {
-		return super.getLanguage() != null ? super.getLanguage() :
-			this.getBaseStore() != null ? this.getBaseStore().getLanguage() : null;
-	}
-
-	@Override
-	public String getDescription() {
-		return super.getDescription() != null ? super.getDescription() :
-			this.getBaseStore() != null ? this.getBaseStore().getDescription() : null;
-	}
-
-	@Override
-	public String getOwnerId() {
-		return super.getOwnerId() != null ? super.getOwnerId() :
-			this.getBaseStore() != null ? this.getBaseStore().getOwnerId() : null;
-	}
-
 	@Override
 	public DocumentCorpus getAccessible() {
 		return this.getCorpus();
