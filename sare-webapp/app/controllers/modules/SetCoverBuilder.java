@@ -35,7 +35,7 @@ import org.apache.commons.lang3.*;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 
-import com.avaje.ebean.*;
+import com.avaje.ebean.annotation.Transactional;
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
@@ -49,7 +49,6 @@ import models.documentStore.*;
 import models.web.*;
 import controllers.base.*;
 import controllers.modules.base.Module;
-import edu.sabanciuniv.sentilab.core.controllers.ProgressObserver;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.DocumentSetCoverController;
 import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
@@ -242,32 +241,9 @@ public class SetCoverBuilder extends Module {
 		}
 		
 		// get rid of any old progress observer tokens and create a new one.
-		ProgressObserverToken oldPoToken = ProgressObserverToken.find.byId(setCoverObj.getId());
-		if (oldPoToken != null) {
-			oldPoToken.delete();
-		}
-		final ProgressObserverToken poToken = new ProgressObserverToken()
-			.setId(setCoverObj.getId())
-			.setSession(getWebSession());
-
-		poToken.save();
-		factory.addProgessObserver(new ProgressObserver() {
-			@Override
-			public void observe(final double progress, String message) {
-				if (!"create".equalsIgnoreCase(message)) {
-					return;
-				}
-				
-				Ebean.execute(new TxRunnable() {
-					@Override
-					public void run() {
-						ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(poToken.id);
-						updatedToken.setProgress(progress);
-						updatedToken.update();
-					}
-				});
-			}
-		});
+		finalizeProgress(setCoverObj.getId());
+		createProgressObserverToken(setCoverObj.getId());
+		watchProgress(factory, "create", setCoverObj.getId());
 		
 		final Context ctx = Context.current();
 		final UUID setCoverId = setcover;
@@ -317,14 +293,7 @@ public class SetCoverBuilder extends Module {
 					Logger.error(LoggedAction.getLogEntry(ctx, "failed to build set cover"), e);
 					throw new IllegalArgumentException(e);
 				} finally {
-					Ebean.execute(new TxRunnable() {
-						@Override
-						public void run() {
-							ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(poToken.id);
-							updatedToken.setProgress(1.1);
-							updatedToken.update();
-						}
-					});
+					setProgressFinished(UuidUtils.toBytes(setCoverId));
 				}
 			}
 		});
@@ -332,15 +301,12 @@ public class SetCoverBuilder extends Module {
 		return ok(setCoverVM.asJson());
 	}
 	
+	@Transactional
 	public static Result redeem(UUID setcover) {
 		DocumentSetCover setCoverObj = fetchResource(setcover, DocumentSetCover.class);
 		
-		ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(setCoverObj.getId());
-		if (updatedToken == null || updatedToken.getProgress() >= 1.1) {
-			if (updatedToken != null) {
-				updatedToken.delete();
-			}
-			
+		ProgressObserverToken poToken = redeemProgress(setCoverObj.getId());
+		if (poToken == null) {
 			DocumentSetCoverModel setCoverVM = (DocumentSetCoverModel)createViewModel(setCoverObj);
 			setCoverVM.populateSize(em(), setCoverObj);
 			if (setCoverVM.size > 0) {
@@ -350,7 +316,7 @@ public class SetCoverBuilder extends Module {
 			return ok(setCoverVM.asJson());
 		}
 		
-		return ok(new ProgressObserverTokenModel(updatedToken).asJson());
+		return ok(new ProgressObserverTokenModel(poToken).asJson());
 	}
 	
 	public static Result getSetCover(UUID setcover, boolean includeMatrix) {
