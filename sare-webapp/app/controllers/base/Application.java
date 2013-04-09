@@ -114,17 +114,38 @@ public class Application extends Controller {
 		return ObjectUtils.defaultIfNull(Ebean.execute(new TxCallable<Boolean>() {
 			@Override
 			public Boolean call() {
-				ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(id);
-				if (updatedToken == null) {
+				ProgressObserverToken token = ProgressObserverToken.find.byId(id);
+				if (token == null) {
 					return false;
 				}
 				
-				updatedToken.delete();
+				token.delete();
 				return true;
 			}
 		}), false);
 	}
+	
+	public static ProgressObserverToken redeemProgress(final byte[] id) {
+		if (id == null) {
+			return null;
+		}
 		
+		return Ebean.execute(new TxCallable<ProgressObserverToken>() {
+			@Override
+			public ProgressObserverToken call() {
+				ProgressObserverToken token = ProgressObserverToken.find.byId(id);
+				if (token == null) {
+					return null;
+				} else if (token.getProgress() >= 1.1) {
+					token.delete();
+					return null;
+				}
+				
+				return token;
+			}
+		});
+	}
+	
 	public static ProgressObserver watchProgress(ProgressObservable remoteObject, final String watchedMessage, final byte[] id) {
 		if (remoteObject == null || id == null) {
 			return null;
