@@ -29,8 +29,6 @@ import java.util.concurrent.Callable;
 
 import javax.persistence.EntityManager;
 
-import com.avaje.ebean.*;
-import com.avaje.ebean.annotation.Transactional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 
@@ -120,7 +118,6 @@ public class AspectOpinionMiner
 			aspectOpinionMiner.render(corpusVM, lexiconVM, engine), partial);
 	}
 	
-	@Transactional
 	public static Result mine(UUID corpus, UUID lexicon, String engine) {
 		final AspectOpinionMiningEngine miningEngine = getEngine(engine);
 		
@@ -161,12 +158,7 @@ public class AspectOpinionMiner
 					Logger.error(LoggedAction.getLogEntry(ctx, "failed to mine corpus"), e);
 					throw new IllegalArgumentException(e);
 				} finally {
-					Ebean.execute(new TxRunnable() {
-						@Override
-						public void run() {
-							setProgressFinished(poToken.id);
-						}
-					});
+					setProgressFinished(poToken.id);
 				}
 			}
 		});
