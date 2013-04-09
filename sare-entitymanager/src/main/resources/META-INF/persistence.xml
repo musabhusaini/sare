@@ -51,6 +51,10 @@
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
+
+		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionMinedDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedCorpus</class>
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		
@@ -92,6 +96,9 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
 
+		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionMinedDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedCorpus</class>
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		
@@ -133,6 +140,10 @@
 		
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
+
+		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionMinedDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedDocument</class>
+		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedCorpus</class>
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		

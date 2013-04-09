@@ -30,7 +30,6 @@ import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.sare.controllers.base.ControllerBase;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.utils.*;
 
@@ -39,7 +38,7 @@ import edu.sabanciuniv.sentilab.utils.*;
  * @author Mus'ab Husaini
  */
 public class PersistentDocumentStoreController
-	extends ControllerBase {
+		extends PersistentObjectController {
 	
 	/**
 	 * Gets all UUIDs for {@code T} type document stores owned by the given owner.

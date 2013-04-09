@@ -21,10 +21,17 @@
 
 package controllers.base;
 
+import static controllers.base.SessionedAction.*;
+
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.*;
+
+import com.avaje.ebean.*;
+
+import edu.sabanciuniv.sentilab.core.controllers.*;
 
 import actors.*;
-import models.web.WebSession;
+import models.web.*;
 import play.*;
 import play.db.ebean.Transactional;
 import play.mvc.*;
@@ -47,6 +54,110 @@ public class Application extends Controller {
 		}
 		
 		return file;
+	}
+	
+	public static ProgressObserverToken createProgressObserverToken(final byte[] id, final Double initialProgress) {
+		return Ebean.execute(new TxCallable<ProgressObserverToken>() {
+			@Override
+			public ProgressObserverToken call() {
+				ProgressObserverToken token = new ProgressObserverToken()
+					.setSession(getWebSession())
+					.setProgress((double)ObjectUtils.defaultIfNull(initialProgress, 0.0));
+				
+				if (id != null) {
+					token.setId(id);
+				}
+				
+				token.save();
+				return token;
+			}
+		});
+	}
+	
+	public static ProgressObserverToken createProgressObserverToken(byte[] id) {
+		return createProgressObserverToken(id, null);
+	}
+	
+	public static ProgressObserverToken createProgressObserverToken(Double initialProgress) {
+		return createProgressObserverToken(null, initialProgress);
+	}
+	
+	public static ProgressObserverToken createProgressObserverToken() {
+		return createProgressObserverToken(null, null);
+	}
+	
+	public static ProgressObserverToken setProgressFinished(final byte[] id) {
+		if (id == null) {
+			return null;
+		}
+		
+		return Ebean.execute(new TxCallable<ProgressObserverToken>() {
+			@Override
+			public ProgressObserverToken call() {
+				ProgressObserverToken token = ProgressObserverToken.find.byId(id);
+				if (token == null) {
+					return null;
+				}
+				
+				token.setProgress(1.1);
+				token.update();
+				return token;
+			}
+		});
+	}
+	
+	public static boolean finalizeProgress(final byte[] id) {
+		if (id == null) {
+			return false;
+		}
+		
+		return ObjectUtils.defaultIfNull(Ebean.execute(new TxCallable<Boolean>() {
+			@Override
+			public Boolean call() {
+				ProgressObserverToken updatedToken = ProgressObserverToken.find.byId(id);
+				if (updatedToken == null) {
+					return false;
+				}
+				
+				updatedToken.delete();
+				return true;
+			}
+		}), false);
+	}
+		
+	public static ProgressObserver watchProgress(ProgressObservable remoteObject, final String watchedMessage, final byte[] id) {
+		if (remoteObject == null || id == null) {
+			return null;
+		}
+		
+		ProgressObserver observer = new ProgressObserver() {
+			@Override
+			public void observe(final double progress, String message) {
+				if (StringUtils.isNotEmpty(watchedMessage) && !watchedMessage.equalsIgnoreCase(message)) {
+					return;
+				}
+				
+				Ebean.execute(new TxRunnable() {
+					@Override
+					public void run() {
+						ProgressObserverToken token = ProgressObserverToken.find.byId(id);
+						if (token == null) {
+							return;
+						}
+						
+						token.setProgress(progress);
+						token.update();
+					}
+				});
+			}
+		};
+		
+		remoteObject.addProgessObserver(observer);
+		return observer;
+	}
+	
+	public static ProgressObserver watchProgress(ProgressObservable remoteObject, final byte[] id) {
+		return watchProgress(remoteObject, null, id);
 	}
 	
 	public static Result homePage() {

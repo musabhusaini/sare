@@ -21,8 +21,6 @@
 
 package controllers.modules.opinionMiners.base;
 
-import java.lang.annotation.*;
-import java.lang.reflect.Modifier;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -42,44 +40,14 @@ import play.Play;
 public abstract class OpinionMiner
 		extends Module {
 	
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ElementType.TYPE})
-	public static @interface Coded {
-		public String value();
-	}
-	
-	public static String getCode(Class<? extends OpinionMiner> typeOfMiner) {
-		Validate.notNull(typeOfMiner);
-		
-		Coded coded = typeOfMiner.getAnnotation(Coded.class);
-		return coded == null ? null : coded.value();
-	}
-		
 	public static <T extends OpinionMiner> Set<Class<? extends T>> getSubMiners(Class<T> minerBase) {
 		Validate.notNull(minerBase);
 		Reflections reflections = new Reflections("controllers.modules.opinionMiners", Play.application().classloader());
 		return reflections.getSubTypesOf(minerBase);
 	}
 
-	public static <T extends OpinionMiner> Class<? extends T> findMiner(final String code, Class<T> minerBase) {
-		Validate.notNull(minerBase);
-		
-		if (ObjectUtils.equals(getCode(minerBase), code) && !Modifier.isAbstract(minerBase.getModifiers())) {
-			return minerBase;
-		}
-		
-		for (Class<? extends OpinionMiner> minerClass : getSubMiners(minerBase)) {
-			Class<? extends OpinionMiner> realMinerClass = findMiner(code, minerClass);
-			if (realMinerClass != null) {
-				return realMinerClass.asSubclass(minerBase);
-			}
-		}
-		
-		return null;
-	}
-	
 	public String getCode() {
-		return getCode(this.getClass());
+		return null;
 	}
 	
 	public Set<Class<? extends OpinionMiner>> getSubMiners() {
@@ -97,10 +65,6 @@ public abstract class OpinionMiner
 			}));
 	}
 	
-	public Class<? extends OpinionMiner> findMiner(String code) {
-		return findMiner(code, this.getClass());
-	}
-
 	@Override
 	public Iterable<Module> getSubModules() {
 		final Iterable<ViewModel> viewModels = this.viewModels;

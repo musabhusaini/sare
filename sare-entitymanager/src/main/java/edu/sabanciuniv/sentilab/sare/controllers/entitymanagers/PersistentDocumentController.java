@@ -12,7 +12,7 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
@@ -30,7 +30,6 @@ import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.sare.controllers.base.ControllerBase;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.utils.*;
@@ -40,7 +39,7 @@ import edu.sabanciuniv.sentilab.utils.*;
  * @author Mus'ab Husaini
  */
 public class PersistentDocumentController
-	extends ControllerBase {
+		extends PersistentObjectController {
 
 	/**
 	 * Gets all UUIDs for {@link PersistentDocument} objects that are associated with a particular {@link PersistentDocumentStore}.

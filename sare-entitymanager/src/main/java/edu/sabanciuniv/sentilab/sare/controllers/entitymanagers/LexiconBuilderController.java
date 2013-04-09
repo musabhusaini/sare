@@ -40,7 +40,7 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticToken;
  * @author Mus'ab Husaini
  */
 public class LexiconBuilderController
-	extends PersistentDocumentStoreController {
+		extends PersistentDocumentStoreController {
 
 	private TypedQuery<LexiconBuilderDocument> getDocumentsQuery(EntityManager em, LexiconBuilderDocumentStore builder, Boolean seen) {
 		TypedQuery<LexiconBuilderDocument> query = em.createQuery(String.format("SELECT doc FROM LexiconBuilderDocument doc " +
@@ -53,10 +53,6 @@ public class LexiconBuilderController
 		}
 		
 		return query;
-	}
-	
-	private <T> T getSingleResult(TypedQuery<T> query) {
-		return query.getResultList().size() == 1 ? query.getSingleResult() : null;
 	}
 	
 	/**

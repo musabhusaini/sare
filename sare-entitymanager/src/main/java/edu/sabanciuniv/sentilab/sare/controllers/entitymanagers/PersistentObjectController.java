@@ -19,33 +19,21 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package controllers.modules.opinionMiners;
+package edu.sabanciuniv.sentilab.sare.controllers.entitymanagers;
 
-import java.util.UUID;
+import javax.persistence.TypedQuery;
 
-import models.web.*;
+import edu.sabanciuniv.sentilab.sare.controllers.base.ControllerBase;
+import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 
-import controllers.modules.base.Module;
-import controllers.modules.opinionMiners.base.*;
-import edu.sabanciuniv.sentilab.sare.controllers.opinion.aspectBased.UbiPolAspectBasedEngine;
-import edu.sabanciuniv.sentilab.utils.UuidUtils;
+/**
+ * The base class for controllers that operate on {@link PersistentObject} types.
+ * @author Mus'ab Husaini
+ */
+public abstract class PersistentObjectController
+		extends ControllerBase {
 
-@Module.Requires(UniqueModel.class)
-public class UbiPolOpinionMiner
-		extends AspectOpinionMiner {
-
-	@Override
-	public UUID getId() {
-		return UuidUtils.create("d438a7c53b45432b9ef9ab5934fa7422");
-	}
-
-	@Override
-	public String getDisplayName() {
-		return "UbiPOL Engine";
-	}
-	
-	@Override
-	public String getCode() {
-		return UbiPolAspectBasedEngine.CODE;
+	protected <T> T getSingleResult(TypedQuery<T> query) {
+		return query.getResultList().size() == 1 ? query.getSingleResult() : null;
 	}
 }

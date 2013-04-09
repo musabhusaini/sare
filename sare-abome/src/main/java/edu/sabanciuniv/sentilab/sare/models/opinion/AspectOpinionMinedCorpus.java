@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinions;
+package edu.sabanciuniv.sentilab.sare.models.opinion;
 
 import javax.persistence.*;
 
@@ -66,21 +66,17 @@ public class AspectOpinionMinedCorpus
 		this(null, null);
 	}
 	
-	/**
-	 * Gets information about the opinion mining engine used.
-	 * @return information about the opinion mining engine.
-	 */
 	@Override
 	public String getEngineCode() {
 		return this.getProperty("engine", String.class);
 	}
 	
 	/**
-	 * Sets information about the opinion mining engine used.
-	 * @param engine information about the opinion mining engine.
+	 * Sets the engine code of the opinion mining engine used.
+	 * @param engine the engine code to set.
 	 * @return the {@code this} object.
 	 */
-	public AspectOpinionMinedCorpus setEngine(String engine) {
+	public AspectOpinionMinedCorpus setEngineCode(String engine) {
 		this.setProperty("engine", engine);
 		return this;
 	}

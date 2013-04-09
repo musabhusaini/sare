@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinions;
+package edu.sabanciuniv.sentilab.sare.models.opinion;
 
 import java.util.Map;
 
@@ -60,8 +60,8 @@ public class AspectOpinionMinedDocument
 	 * Gets the aspect-based opinion polarities of this document.
 	 * @return a {@link Map} of aspect identifiers and their polarities.
 	 */
-	public Map<String, Float> getAspectPolarities() {
-		return this.getProperty("aspectPolarities", new TypeToken<Map<String, Float>>() {
+	public Map<String, Double> getAspectPolarities() {
+		return this.getProperty("aspectPolarities", new TypeToken<Map<String, Double>>() {
 			private static final long serialVersionUID = 1L;
 		}.getType());
 	}
@@ -71,7 +71,7 @@ public class AspectOpinionMinedDocument
 	 * @param aspectPolarities a {@link Map} of aspect identifiers and their polarities to set.
 	 * @return the {@code this} object.
 	 */
-	public AspectOpinionMinedDocument setAspectPolarities(Map<String, Float> aspectPolarities) {
+	public AspectOpinionMinedDocument setAspectPolarities(Map<String, Double> aspectPolarities) {
 		this.setProperty("aspectPolarities", aspectPolarities);
 		return this;
 	}
