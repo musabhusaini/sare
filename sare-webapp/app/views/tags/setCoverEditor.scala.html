@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(setcover: documentStore.DocumentSetCoverModel, posTags: Map[String, String] = null)
+@(setcover: documentStore.DocumentSetCoverModel, posTags: Map[String, String])
 
 @import scala.util._
 
@@ -30,19 +30,7 @@
 <div id="ctr-sc-editor-@uid" class="ctr-sc-editor" @if(setcover != null) { data-setcover="@setcover.asJson()" }>
 	<div class="row-fluid">
 		<div class="ctr-sc-edit">
-			<div class="lbl-postags lefmost-label">
-				Optimize for:
-			</div>
-			<div id="ctr-postags-@uid" class="postags">
-				@for((tag, displayTag) <- posTags) {
-				<label class="checkbox inline" title="Optimize for @displayTag" data-placement="bottom"
-					data-container="#ctr-postags-@uid">
-					<input id="chk-tag-@uid" class="chk-posTag" type="checkbox"
-						@if(setcover.tokenizingOptions.tags.contains(tag)){checked="checked"} value="@tag" />
-					@displayTag
-				</label>
-				}
-			</div>
+			@tags.posTags("Optimize for", posTags, setcover.tokenizingOptions.tags)
 			<div id="ctr-lemmatize-@uid" class="ctr-lemmatize">
 				<label class="lbl-lemmatize checkbox inline" title="Merge various forms of the same root word" data-placement="bottom"
 					data-container="#ctr-lemmatize-@uid">
@@ -56,7 +44,7 @@
 	<div class="row-fluid">
 		<div class="ctr-sc-coverage">
 			<div id="ctr-tolerance-@uid" class="form-inline ctr-tolerance">
-				<label for="txt-tolerance-@uid" class="lefmost-label">
+				<label for="txt-tolerance-@uid">
 					Loss tolerance:
 				</label>
 				<div class="input-append">

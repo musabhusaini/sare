@@ -20,58 +20,28 @@
  */
 
 @import-once "bootstrap/variables";
-@import-once "bootstrap/utilities";
 @import-once "main";
-@import-once "posTags";
 
-@first-label-width: 7.5em;
+.postags-label {
+  min-height: 2 + 3*@gridGutterWidth/2;
+  line-height: 2 + 3*@gridGutterWidth/2;
+}
 
-.ctr-sc-editor {
-  .ctr-sc-edit > div {
+.ctr-postags {
+  > div {
     .inline-block;
-    
-    > div:first-child {
-      width: @first-label-width;
-    }
   }
   
-  .ctr-lemmatize {
-    .lbl-lemmatize {
-      margin-left: @gridGutterWidth/2;
+  .lbl-postags {
+    .postags-label;
+    
+    .lbl-postags-inner {
+      padding-right: @gridGutterWidth/4;
     }
   }
-
-  .ctr-sc-coverage {
-    margin-top: @gridGutterWidth/2;
     
-    .ctr-tolerance > label:first-child {
-      width: @first-label-width;
-    }
-    
-    .btn-plot-tolerance {
-      i {
-        .flip-icon;
-      }
-    }
-    
-    .ctr-sc-cov-matrix {
-      width: 500px;
-      height: 350px;
-      margin-top: @gridGutterWidth;
-      margin-bottom: @gridGutterWidth;
-    }
-  }
-  
-  .ctr-sc-controls {
-    margin-top: @gridGutterWidth/2;
-    
-    .ctr-sc-controls-inner {
-      .pull-left;
-      padding-right: @gridGutterWidth/2;
-    }
-    
-    .progress {
-      min-height: @inputHeight;
-    }
+  .ctr-postags-inner {
+    border: @nice-border;
+    padding: 0 @gridGutterWidth/4 @gridGutterWidth/4 @gridGutterWidth/4;
   }
 }

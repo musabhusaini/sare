@@ -49,19 +49,7 @@
 		</div>
 		<div class="span8">
 			<div class="pull-right">
-				<div class="lbl-postags pull-left">
-					Emphasize:
-				</div>
-				<div class="postags pull-left">
-					@for((tag, displayTag) <- posTags) {
-					<label class="checkbox inline" title="Emphasize all @displayTag" data-placement="bottom"
-						data-container="#postags-@uid">
-						<input id="chk-tag-@uid" class="chk-posTag" type="checkbox"
-							@if(emphasizedTags.contains(tag)){checked="checked"} value="@tag" />
-						@displayTag
-					</label>
-					}
-				</div>
+				@tags.posTags("Emphasize", posTags, emphasizedTags)
 			</div>
 		</div>
 	</div>
