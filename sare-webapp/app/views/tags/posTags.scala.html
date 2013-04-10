@@ -1,4 +1,4 @@
-/*
+@*
  * Sentilab SARE: a Sentiment Analysis Research Environment
  * Copyright (C) 2013 Sabanci University Sentilab
  * http://sentilab.sabanciuniv.edu
@@ -17,33 +17,26 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
- */
+ *@
 
-@import-once "bootstrap/variables";
-@import-once "bootstrap/utilities";
-@import-once "aspectLexBuilder";
-@import-once "posTags";
+@(label: String, tags: Map[String, String], checkedTags: List[String])
 
-.ctr-doc-slider {
-  .ctr-document {
-    .ctr-alex-builder .boxed-display
-  }
-  
-  .ctr-enhanced-doc {
-    font-size: 0;
-    line-height: @baseLineHeight + 10px;
-  
-    > .token-text {
-      font-size: @baseFontSize;
-      vertical-align: middle
-    }
-  }
-  
-  .emphasized-token {
-    font-weight: bold;
-  }
-  
-  .txt-rank {
-    text-align: center;
-  }
+@import scala.util._
+
+@defining(Random.nextInt(1000)) { uid =>
+	<div class="ctr-postags">
+		<div class="lbl-postags">
+			<div class="lbl-postags-inner">@label:</div>
+		</div>
+		<div id="ctr-postags-inner-@uid" class="ctr-postags-inner">
+			@for((tag, displayTag) <- tags) {
+			<label class="checkbox inline" title="@label @displayTag" data-placement="bottom"
+				data-container="#ctr-postags-inner-@uid">
+				<input id="chk-tag-@uid" class="chk-posTag" type="checkbox"
+					@if(checkedTags.contains(tag)){checked="checked"} value="@tag" />
+				@displayTag
+			</label>
+			}
+		</div>
+	</div>
 }

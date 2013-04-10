@@ -173,6 +173,13 @@ widget =
 	_create: ->
 		@options.setcover ?= $(@element).data @options.setCoverKey
 		
+		@_$(@options.progressContainer).progress
+			callback: (setcover) =>
+				@_changeInputState @options.applyButton, "reset"
+				@_delay ->
+					@_updateView setcover
+				, 0
+		
 		@_on @_$("input"),
 			change: -> @_fixButtons()
 			keyup: -> @_fixButtons()
@@ -186,44 +193,14 @@ widget =
 				@_changeInputState @options.applyButton, "loading"
 				@_changeInputState @options.resetButton, "disabled"
 				
-				pingTimeout = 500
-				animateProgress = (progress, duration, callback) =>
-					duration ?= pingTimeout
-					progress ?= 0
-					@_$(@options.progressContainer).children(".bar")
-						.animate
-							width: "#{progress}%"
-						, duration, ->
-							callback?()
-				
 				@options.updateRoute(null, @options.setcover.id).ajax
 					data: JSON.stringify updatedSetCover
 					contentType: Helpers.ContentTypes.json
 					success: (setcover) =>
-						redeem = =>
-							@_delay ->
-								@options.redeemRoute(setcover.id).ajax
-									success: (progressToken) =>
-										if not progressToken.progress?
-											animateProgress 100, null, =>
-												@_delay ->
-													@_$(@options.progressContainer).hide()
-													@_changeInputState @options.applyButton, "reset"
-													@_delay ->
-														@_updateView progressToken
-													, 0
-												, pingTimeout
-										else
-											redeem()
-											animateProgress Math.round(100 * progressToken.progress)
-							, pingTimeout
-						
-						@_$(@options.progressContainer)
-							.show()
-							.children(".bar")
-								.css "width", "0%"
-						redeem()
-
+						@_$(@options.progressContainer).progress "option",
+							redeemAjax: @options.redeemRoute(setcover.id).ajax
+						@_$(@options.progressContainer).progress "animate"
+		
 		@_on @_$(@options.resetButton),
 			click: ->
 				options = @options
