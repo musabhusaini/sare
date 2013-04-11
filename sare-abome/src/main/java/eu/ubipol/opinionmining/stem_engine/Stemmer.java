@@ -22,11 +22,9 @@
 package eu.ubipol.opinionmining.stem_engine;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.apache.lucene.analysis.hunspell.HunspellDictionary;
-import org.apache.lucene.analysis.hunspell.HunspellStemmer;
+import org.apache.lucene.analysis.hunspell.*;
 import org.apache.lucene.analysis.hunspell.HunspellStemmer.Stem;
 import org.apache.lucene.util.Version;
 
@@ -39,9 +37,9 @@ public class Stemmer {
 		if (stemmerOptions.contains("h") && hunspellStem == null) {
 			try {
 				InputStream aff = Stemmer.class
-						.getResourceAsStream("resources/en_US.aff");
+						.getResourceAsStream("/en_US.aff");
 				InputStream dic = Stemmer.class
-						.getResourceAsStream("resources/en_US.dic");
+						.getResourceAsStream("/en_US.dic");
 				HunspellDictionary dictionary = new HunspellDictionary(aff,
 						dic, Version.LUCENE_36);
 				hunspellStem = new HunspellStemmer(dictionary);
@@ -52,7 +50,7 @@ public class Stemmer {
 		if (stemmerOptions.contains("p") && paiceStem == null)
 			paiceStem = new PaiceStemmer(
 					Stemmer.class
-							.getResourceAsStream("resources/stemrules.txt"),
+							.getResourceAsStream("/stemrules.txt"),
 					"/p");
 		if (stemmerOptions.contains("s") && snowballStem == null)
 			snowballStem = new EnglishStemmer();

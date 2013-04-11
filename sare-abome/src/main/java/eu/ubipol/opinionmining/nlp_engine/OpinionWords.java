@@ -53,7 +53,7 @@ public class OpinionWords {
 			wordScores = new HashMap<String, Float>();
 			reader = new Scanner(
 					OpinionWords.class
-							.getResourceAsStream("resources/sentiwordnet_stemmed.txt"));
+							.getResourceAsStream("/sentiwordnet_stemmed.txt"));
 			while (reader.hasNextLine()) {
 				String[] line = reader.nextLine().split("\t");
 				wordScores.put(line[0], Float.valueOf(line[1]));

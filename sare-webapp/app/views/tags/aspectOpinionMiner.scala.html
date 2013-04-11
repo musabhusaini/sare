@@ -28,8 +28,8 @@
 @import controllers.modules._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-abom-@uid" class="ctr-module ctr-abom" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }
-	@if(corpus != null) { data-corpus="@corpus.asJson()" }>
+<div id="ctr-aom-@uid" class="ctr-module ctr-aom" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }
+		@if(corpus != null) { data-corpus="@corpus.asJson()" }>
 	@if(lexicon == null) {
 	<div id="ctr-lexica-@uid" class="ctr-lexica row-fluid">
 		@tags.storeList(stores = AspectLexBuilder.getLexica(), selectionPrompt = "Select an aspect lexicon", editable = false)
@@ -40,12 +40,18 @@
 		@tags.storeList(stores = CorpusModule.getCorpora(), selectionPrompt = "Select a test corpus", editable = false)
 	</div>
 	}
-
-	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.aspectBasedOpinionMiner.js"))" type="text/javascript"></script>
+	<div id="ctr-aom-editor-outer-@uid" class="ctr-aom-editor-outer row-fluid">
+		@if(lexicon != null && corpus != null) {
+			@tags.aspectOpinionMinerEditor(corpus, lexicon, engine)
+		}
+	</div>
+	
+	<link rel="stylesheet" href="@controllers.routes.Assets.at(minifyInProd("stylesheets/aspectOpinionMiner.css"))">
+	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.aspectOpinionMiner.js"))" type="text/javascript"></script>
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {
-				$("#ctr-abom-@uid").aspectBasedOpinionMiner({
+				$("#ctr-aom-@uid").aspectOpinionMiner({
 					engine: "@engine"
 				});
 			});

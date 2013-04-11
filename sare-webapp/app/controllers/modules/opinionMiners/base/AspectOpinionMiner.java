@@ -29,6 +29,8 @@ import java.util.concurrent.Callable;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 
@@ -63,6 +65,16 @@ import edu.sabanciuniv.sentilab.utils.UuidUtils;
 public class AspectOpinionMiner
 		extends OpinionMiner {
 	
+	private String engine;
+	
+	public AspectOpinionMiner(String engine) {
+		this.engine = engine;
+	}
+	
+	public AspectOpinionMiner() {
+		this(null);
+	}
+	
 	@Override
 	public UUID getId() {
 		return UuidUtils.create("b628d137c5fd4a70a3632f6be13f9cb0");
@@ -91,7 +103,7 @@ public class AspectOpinionMiner
 		AspectLexiconModel lexiconVM = this.findViewModel(AspectLexiconModel.class, new AspectLexiconModel());
 		
 		return controllers.modules.opinionMiners.base.routes.AspectOpinionMiner.modulePage(
-			corpusVM.getIdentifier(), lexiconVM.getIdentifier(), this.getCode(), false).url();
+			corpusVM.getIdentifier(), lexiconVM.getIdentifier(), ObjectUtils.defaultIfNull(this.getCode(), this.engine), false).url();
 	}
 	
 	protected static AspectOpinionMiningEngine getEngine(String engine) {
@@ -114,25 +126,67 @@ public class AspectOpinionMiner
 		AspectLexicon lexiconObj = lexicon != null ? fetchResource(lexicon, AspectLexicon.class) : null;
 		AspectLexiconModel lexiconVM = lexiconObj != null ? (AspectLexiconModel)createViewModel(lexiconObj): null;
 		
-		return moduleRender(new AspectOpinionMiner().setViewModels(Lists.<ViewModel>newArrayList(corpusVM, lexiconVM)),
+		return moduleRender(new AspectOpinionMiner(engine).setViewModels(Lists.<ViewModel>newArrayList(corpusVM, lexiconVM)),
 			aspectOpinionMiner.render(corpusVM, lexiconVM, engine), partial);
 	}
 	
-	public static Result mine(UUID corpus, UUID lexicon, String engine) {
+	public static Result editorView(UUID corpus, UUID lexicon, String engine) {
+		getEngine(engine);
+		
+		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
+		
+		return ok(aspectOpinionMinerEditor.render((DocumentCorpusModel)createViewModel(corpusObj),
+				(AspectLexiconModel)createViewModel(lexiconObj), engine));
+	}
+	
+	public static Result resultsView(UUID corpus, UUID lexicon, String engine) {
+		return ok(aspectOpinionMinerResults.render(getMined(corpus.toString(), lexicon.toString(), engine)));
+	}
+	
+	public static AspectOpinionMinedCorpusModel getMined(String corpus, String lexicon, String engine) {
+		AspectLexicon lexiconObj = fetchResource(UuidUtils.create(lexicon), AspectLexicon.class);
+		DocumentCorpus corpusObj = fetchResource(UuidUtils.create(corpus), DocumentCorpus.class);
+		AspectOpinionMinedCorpus minedCorpus = new AspectOpinionMinedCorpusController().findMinedCorpus(em(), corpusObj, lexiconObj, engine);
+		return minedCorpus != null ? (AspectOpinionMinedCorpusModel)createViewModel(minedCorpus) : null;
+	}
+	
+	public static Result getMined(UUID corpus, UUID lexicon, String engine) {
+		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
+		AspectOpinionMinedCorpus minedCorpus = new AspectOpinionMinedCorpusController().findMinedCorpus(em(), corpusObj, lexiconObj, engine);
+		if (minedCorpus == null) {
+			return notFoundEntity(String.format("mined corpus for lexicon %s and corpus %s", UuidUtils.normalize(lexicon), UuidUtils.normalize(corpus)));
+		}
+		
+		return ok(createViewModel(minedCorpus).asJson());
+	}
+	
+	public static Result redeem(UUID token) {
+		ProgressObserverToken progressToken = redeemProgress(token);
+		if (progressToken == null) {
+			AspectOpinionMinedCorpus minedCorpus = fetchResource(null, token, AspectOpinionMinedCorpus.class, true);
+			return ok(new AspectOpinionMinedCorpusModel(minedCorpus).asJson());
+		}
+		
+		return ok(new ProgressObserverTokenModel(progressToken).asJson());
+	}
+	
+	public static Result mine(final UUID corpus, final UUID lexicon, String engine) {
 		final AspectOpinionMiningEngine miningEngine = getEngine(engine);
 		
 		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
+		
+		// get rid of any old results (for now).
 		AspectOpinionMinedCorpus minedCorpus = new AspectOpinionMinedCorpusController().findMinedCorpus(em(), corpusObj, lexiconObj, engine);
 		if (minedCorpus != null) {
-			ProgressObserverToken poToken = createProgressObserverToken(minedCorpus.getId(), 1.2);
-			return ok(new ProgressObserverTokenModel(poToken).asJson());
+			em().remove(minedCorpus);
+			em().getTransaction().commit();
+			em().getTransaction().begin();
 		}
 		
-		miningEngine
-			.setAspectLexicon(lexiconObj)
-			.setTestCorpus(corpusObj);
-		minedCorpus = miningEngine.getTargetMinedCorpus();
+		minedCorpus = new AspectOpinionMinedCorpus();
 		
 		final ProgressObserverToken poToken = createProgressObserverToken(minedCorpus.getId());
 		watchProgress(miningEngine, "mine", poToken.id);
@@ -149,7 +203,17 @@ public class AspectOpinionMiner
 							bindEntityManager(em);
 							Context.current.set(ctx);
 							
-							AspectOpinionMinedCorpus minedCorpus = miningEngine.mine();
+							AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
+							DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
+							
+							miningEngine
+								.setAspectLexicon(lexiconObj)
+								.setTestCorpus(corpusObj);
+							
+							AspectOpinionMinedCorpus minedCorpus = (AspectOpinionMinedCorpus)miningEngine
+								.mine()
+								.setId(poToken.getId());
+							
 							em.persist(minedCorpus);
 							return minedCorpus;
 						}

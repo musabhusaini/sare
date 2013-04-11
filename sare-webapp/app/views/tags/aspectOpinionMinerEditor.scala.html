@@ -1,0 +1,68 @@
+@*
+ * Sentilab SARE: a Sentiment Analysis Research Environment
+ * Copyright (C) 2013 Sabanci University Sentilab
+ * http://sentilab.sabanciuniv.edu
+ * 
+ * This file is part of SARE.
+ * 
+ * SARE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *  
+ * SARE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with SARE. If not, see <http://www.gnu.org/licenses/>.
+ *@
+
+@(corpus: documentStore.DocumentCorpusModel, lexicon: documentStore.AspectLexiconModel, engine: String)
+
+@import scala.util._
+
+@import controllers._
+@import controllers.base.Application._
+@import controllers.modules._
+@import controllers.modules.opinionMiners.base._
+
+@defining(Random.nextInt(1000)) { uid =>
+<div id="ctr-aom-editor-@uid" class="ctr-module ctr-aom-editor" data-lexicon="@lexicon.asJson()"
+		data-corpus="@corpus.asJson()">
+	
+	<div id="ctr-aom-controls-@uid" class="ctr-aom-controls row-fluid">
+		<div class="ctr-aom-controls-inner">
+			<button id="btn-apply-aom-@uid" class="btn-analyze btn btn-primary" title="Analyze opinions" data-placement="bottom"
+				data-container="#ctr-aom-controls-@uid" data-loading-text="Analyzing...">
+				<i class="icon-ok"></i> Analyze
+			</button>
+		</div>
+		<div class="ctr-aom-progress progress progress-striped active" style="display:none;">
+			<div class="bar" style="width:0%;">
+			</div>
+		</div>
+	</div>
+	
+	<div id="ctr-aom-results-outer-@uid" class="ctr-aom-results-outer row-fluid">
+		@AspectOpinionMiner.getMined(corpus.id, lexicon.id, engine) match {
+			case null => {}
+			case mined:documentStore.AspectOpinionMinedCorpusModel => { @tags.aspectOpinionMinerResults(mined) }
+		}
+	</div>
+	
+	<link rel="stylesheet" href="@controllers.routes.Assets.at(minifyInProd("stylesheets/aspectOpinionMinerEditor.css"))">
+	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.progress.js"))" type="text/javascript"></script>
+	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.aspectOpinionMinerEditor.js"))" type="text/javascript"></script>
+	<script type="text/javascript">
+		(function(window, $) {
+			$(function() {
+				$("#ctr-aom-editor-@uid").aspectOpinionMinerEditor({
+					engine: "@engine"
+				});
+			});
+		})(window, window.jQuery);
+	</script>
+</div>
+}

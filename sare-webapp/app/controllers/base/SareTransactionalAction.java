@@ -73,7 +73,7 @@ public class SareTransactionalAction extends Action.Simple {
 		return currentEntityManager.get();
 	}
 	
-	public static <T extends PersistentObject> T fetchResource(Context ctx, UUID id, Class<T> clazz) {
+	public static <T extends PersistentObject> T fetchResource(Context ctx, UUID id, Class<T> clazz, boolean bypassAccessibility) {
 		Validate.notNull(clazz);
 		
 		Logger.info(LoggedAction.getLogEntry(ctx,
@@ -84,7 +84,7 @@ public class SareTransactionalAction extends Action.Simple {
 			byte[] uuid = UuidUtils.toBytes(id);
 			object = em().find(clazz, uuid);
 			
-			if (object != null && (!SessionedAction.isOwnerOf(object) || object instanceof UserInaccessibleModel )) {
+			if (object != null && (!SessionedAction.isOwnerOf(object) || (!bypassAccessibility && object instanceof UserInaccessibleModel))) {
 				throw new AccessControlException(UuidUtils.normalize(id));
 			}
 		} catch (EntityNotFoundException e) {
@@ -100,16 +100,24 @@ public class SareTransactionalAction extends Action.Simple {
 		return object;
 	}
 	
+	public static <T extends PersistentObject> T fetchResource(Context ctx, UUID id, Class<T> clazz) {
+		return fetchResource(ctx, id, clazz, false);
+	}
+	
 	public static <T extends PersistentObject> T fetchResource(UUID id, Class<T> clazz) {
 		return fetchResource(null, id, clazz);
 	}
 	
-	public static <T extends PersistentObject> T fetchResourceQuietly(Context ctx, UUID id, Class<T> clazz) {
+	public static <T extends PersistentObject> T fetchResourceQuietly(Context ctx, UUID id, Class<T> clazz, boolean bypassAccessibility) {
 		try {
-			return fetchResource(ctx, id, clazz);
+			return fetchResource(ctx, id, clazz, bypassAccessibility);
 		} catch (Throwable e) {
 			return null;
 		}
+	}
+	
+	public static <T extends PersistentObject> T fetchResourceQuietly(Context ctx, UUID id, Class<T> clazz) {
+		return fetchResourceQuietly(ctx, id, clazz, false);
 	}
 	
 	public static <T extends PersistentObject> T fetchResourceQuietly(UUID id, Class<T> clazz) {

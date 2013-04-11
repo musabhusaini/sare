@@ -78,7 +78,8 @@ public class UbiPolAspectBasedEngine
 				progress += 1.0 / documents.size();
 				this.notifyProgress(progress, "mine");
 			} catch (Exception e) {
-				// do nothing.
+				progress = 1.0;
+				throw new RuntimeException(e);
 			} finally {
 				this.notifyProgress(progress, "mine");
 			}

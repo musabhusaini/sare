@@ -108,11 +108,15 @@ POST     /api/modules/corpora/:corpus/optimizations                            c
 POST     /api/modules/corpora/optimizations/:setcover/redeemer                 controllers.modules.SetCoverBuilder.redeem(setcover: UUID)
 
 # Aspect-based opinion miner modules
-GET      /view/modules/opminers/aspect-based                                   controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID = null, engine: String ?= null, partial: Boolean ?= false)
-GET      /view/modules/lexica/:lexicon/opminers/aspect-based                   controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID, engine: String ?= null, partial: Boolean ?= false)
-GET      /view/modules/corpora/:corpus/opminers/aspect-based                   controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID, lexicon: UUID = null, engine: String ?= null, partial: Boolean ?= false)
-GET      /view/modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based   controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID, lexicon: UUID, engine: String ?= null, partial: Boolean ?= false)
-POST     /api/modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based    controllers.modules.opinionMiners.base.AspectOpinionMiner.mine(corpus: UUID, lexicon: UUID, engine: String ?= null)
+GET      /view/modules/opminers/aspect-based                                   		  controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID = null, engine: String ?= null, partial: Boolean ?= false)
+GET      /view/modules/lexica/:lexicon/opminers/aspect-based                   		  controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID, engine: String ?= null, partial: Boolean ?= false)
+GET      /view/modules/corpora/:corpus/opminers/aspect-based                   		  controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID, lexicon: UUID = null, engine: String ?= null, partial: Boolean ?= false)
+GET      /view/modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based   		  controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID, lexicon: UUID, engine: String ?= null, partial: Boolean ?= false)
+GET      /view/modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based/editor   controllers.modules.opinionMiners.base.AspectOpinionMiner.editorView(corpus: UUID, lexicon: UUID, engine: String ?= null)
+GET      /view/modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based/results  controllers.modules.opinionMiners.base.AspectOpinionMiner.resultsView(corpus: UUID, lexicon: UUID, engine: String ?= null)
+GET      /api/modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based    		  controllers.modules.opinionMiners.base.AspectOpinionMiner.getMined(corpus: UUID, lexicon: UUID, engine: String ?= null)
+POST     /api/modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based    		  controllers.modules.opinionMiners.base.AspectOpinionMiner.mine(corpus: UUID, lexicon: UUID, engine: String ?= null)
+POST     /api/modules/opminers/aspect-based/redeemer/:token							  controllers.modules.opinionMiners.base.AspectOpinionMiner.redeem(token: UUID)
 
 # Support queries
 GET      /api/support/languages                                                controllers.CollectionsController.supportedLanguages()

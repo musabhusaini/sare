@@ -23,12 +23,15 @@ package controllers.base;
 
 import static controllers.base.SessionedAction.*;
 
+import java.util.UUID;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.*;
 
 import com.avaje.ebean.*;
 
 import edu.sabanciuniv.sentilab.core.controllers.*;
+import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 import actors.*;
 import models.web.*;
@@ -146,6 +149,10 @@ public class Application extends Controller {
 		});
 	}
 	
+	public static ProgressObserverToken redeemProgress(UUID id) {
+		return redeemProgress(UuidUtils.toBytes(id));
+	}
+	
 	public static ProgressObserver watchProgress(ProgressObservable remoteObject, final String watchedMessage, final byte[] id) {
 		if (remoteObject == null || id == null) {
 			return null;
@@ -256,7 +263,12 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.SetCoverBuilder.create(),
 			controllers.modules.routes.javascript.SetCoverBuilder.update(),
 			controllers.modules.routes.javascript.SetCoverBuilder.getSetCover(),
-			controllers.modules.routes.javascript.SetCoverBuilder.redeem()
+			controllers.modules.routes.javascript.SetCoverBuilder.redeem(),
+			controllers.modules.opinionMiners.base.routes.javascript.AspectOpinionMiner.getMined(),
+			controllers.modules.opinionMiners.base.routes.javascript.AspectOpinionMiner.mine(),
+			controllers.modules.opinionMiners.base.routes.javascript.AspectOpinionMiner.redeem(),
+			controllers.modules.opinionMiners.base.routes.javascript.AspectOpinionMiner.editorView(),
+			controllers.modules.opinionMiners.base.routes.javascript.AspectOpinionMiner.resultsView()
 		));
 	}
 }

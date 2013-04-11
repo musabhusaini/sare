@@ -32,29 +32,8 @@ Widgets = Page.Widgets
 
 widget =
 	_create: ->
-		@options.lexicon ?= $(@element).data @options.lexiconKey
 		@options.corpus ?= $(@element).data @options.corpusKey
-		
-		storeLists = @_$(@options.lexicaContainer).children(Selectors.moduleContainer)
-			.add(@_$(@options.corporaContainer).children Selectors.moduleContainer)
-		
-		if $(storeLists).length
-			refreshView = (e, data) =>
-				if $(e.target).closest(@options.lexicaContainer).length
-					lexicon = data
-				if $(e.target).closest(@options.corporaContainer).length
-					corpus = data
-				[ lexicon, corpus ]
-				
-			@_on storeLists,
-				storeListSelectionChange: (e, selected) ->
-					refreshView e, selected.data
-				storeUpdate: (e, data) ->
-					refreshView e, data.updatedData
-			
-			storeLists
-					.storeList "option",
-						suppressOutput: true
+		@options.lexicon ?= $(@element).data @options.lexiconKey		
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
@@ -67,16 +46,12 @@ widget =
 	_setOption: (key, value) ->
 		switch key
 			when "disabled"
-				# TODO: do something
-				a = 0
+				null
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
 		engine: null
-		lexicaContainer: ".ctr-lexica"
-		corporaContainer: ".ctr-corpora"
-		createLexiconRoute: jsRoutes.controllers.modules.AspectLexBuilder.create
 		lexiconKey: "lexicon"
 		corpusKey: "corpus"
 
-$.widget "widgets.aspectBasedOpinionMiner", Sare.Widget, widget
+$.widget "widgets.aspectOpinionMinerResults", Sare.Widget, widget
