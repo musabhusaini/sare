@@ -25,6 +25,7 @@
 @import scala.util._
 
 @import controllers.base.Application._
+@import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-doc-slider-@uid" class="ctr-doc-slider" data-corpus="@corpus.asJson()" data-lexicon="@lexicon.asJson()">
@@ -49,7 +50,7 @@
 		</div>
 		<div class="span8">
 			<div class="pull-right">
-				@tags.posTags("Emphasize", posTags, emphasizedTags)
+				@helpers.posTags("Emphasize", posTags, emphasizedTags)
 			</div>
 		</div>
 	</div>

@@ -25,12 +25,13 @@
 
 @import controllers.base.Application._
 @import controllers.modules._
+@import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-sc-editor-@uid" class="ctr-sc-editor" @if(setcover != null) { data-setcover="@setcover.asJson()" }>
 	<div class="row-fluid">
 		<div class="ctr-sc-edit">
-			@tags.posTags("Optimize for", posTags, setcover.tokenizingOptions.tags)
+			@helpers.posTags("Optimize for", posTags, setcover.tokenizingOptions.tags)
 			<div id="ctr-lemmatize-@uid" class="ctr-lemmatize">
 				<label class="lbl-lemmatize checkbox inline" title="Merge various forms of the same root word" data-placement="bottom"
 					data-container="#ctr-lemmatize-@uid">
@@ -74,10 +75,7 @@
 				<i class="icon-repeat"></i> Reset
 			</button>
 		</div>
-		<div class="ctr-sc-progress progress progress-striped active" style="display:none;">
-			<div class="bar" style="width:0%;">
-			</div>
-		</div>
+		@helpers.progress(cssClass="ctr-sc-progress")
 	</div>
 	
 	<link rel="stylesheet" href="@controllers.routes.Assets.at("plugins/jqplot/jquery.jqplot.min.css")">
