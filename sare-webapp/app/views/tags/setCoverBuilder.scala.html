@@ -25,6 +25,7 @@
 
 @import controllers.base.Application._
 @import controllers.modules._
+@import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-sc-builder-@uid" class="ctr-module ctr-sc-builder" @if(corpus != null) { data-corpus="@corpus.asJson()" }
@@ -46,8 +47,8 @@
 		</div>
 	</div>
 	
-	<link rel="stylesheet" href="@controllers.routes.Assets.at(minifyInProd("stylesheets/setCoverBuilder.css"))">
-	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.setCoverBuilder.js"))" type="text/javascript"></script>
+	@helpers.stylesheet("stylesheets/setCoverBuilder.css")
+	@helpers.script("javascripts/widgets.setCoverBuilder.js")
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {

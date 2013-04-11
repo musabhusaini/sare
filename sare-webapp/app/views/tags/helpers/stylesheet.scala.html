@@ -18,33 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
- 
-@()
+
+@(src: Any, neverMinify: Boolean = false)
 
 @import controllers.base.Application._
-@import tags._
 
-@contentHtml = {
-	<div id="ctr-content">
-		<div class="offset5 span2">
-			<p>
-				<a id="btn-signon" href="#" class="btn btn-primary btn-block btn-large disabled"
-					title="Sign in to SARE with your account" data-placement="right">
-					Sign in
-				</a>
-			</p>
-			<p>
-				<a id="btn-guest" href="@controllers.routes.ModuleController.landingPage()" class="btn btn-primary btn-block btn-large"
-					title="Start a temporary guest session" data-placement="right">
-					Start as guest
-				</a>
-			</p>
-		</div>
-	</div>
-}
-
-@moreScripts = {
-	@helpers.script("javascripts/home.html.js")
-}
-
-@main(content = contentHtml, scripts = moreScripts)
+<link rel="stylesheet" href="@src match {
+	case path:String => { @controllers.routes.Assets.at(minifyInProd(path, neverMinify)) }
+	case _ => { @src }
+}"></link>

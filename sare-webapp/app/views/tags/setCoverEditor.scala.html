@@ -78,15 +78,15 @@
 		@helpers.progress(cssClass="ctr-sc-progress")
 	</div>
 	
-	<link rel="stylesheet" href="@controllers.routes.Assets.at("plugins/jqplot/jquery.jqplot.min.css")">
-	<link rel="stylesheet" href="@controllers.routes.Assets.at(minifyInProd("stylesheets/setCoverEditor.css"))">
-	<script src="@controllers.routes.Assets.at("plugins/jqplot/jquery.jqplot.min.js")" type="text/javascript"></script>
-	<script src="@controllers.routes.Assets.at("plugins/jqplot/plugins/jqplot.canvasTextRenderer.min.js")" type="text/javascript"></script>
-	<script src="@controllers.routes.Assets.at("plugins/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js")" type="text/javascript"></script>
-	<script src="@controllers.routes.Assets.at("plugins/jqplot/plugins/jqplot.highlighter.min.js")" type="text/javascript"></script>
-	<script src="@controllers.routes.Assets.at("plugins/jqplot/plugins/jqplot.permHighlighter.min.js")" type="text/javascript"></script>
-	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.progress.js"))" type="text/javascript"></script>
-	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.setCoverEditor.js"))" type="text/javascript"></script>
+	@helpers.stylesheet("plugins/jqplot/jquery.jqplot.min.css")
+	@helpers.stylesheet("stylesheets/setCoverEditor.css")
+	@helpers.script("plugins/jqplot/jquery.jqplot.min.js", true)
+	@helpers.script("plugins/jqplot/plugins/jqplot.canvasTextRenderer.min.js", true)
+	@helpers.script("plugins/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js", true)
+	@helpers.script("plugins/jqplot/plugins/jqplot.highlighter.min.js", true)
+	@helpers.script("plugins/jqplot/plugins/jqplot.permHighlighter.min.js", true)
+	@helpers.script("javascripts/widgets.progress.js")
+	@helpers.script("javascripts/widgets.setCoverEditor.js")
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {

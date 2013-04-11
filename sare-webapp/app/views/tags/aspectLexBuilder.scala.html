@@ -26,6 +26,7 @@
 @import controllers._
 @import controllers.base.Application._
 @import controllers.modules._
+@import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-alex-builder-@uid" class="ctr-module ctr-alex-builder" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }
@@ -52,7 +53,7 @@
 		</div>
 	</div>
 	
-	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.aspectLexBuilder.js"))" type="text/javascript"></script>
+	@helpers.script("javascripts/widgets.aspectLexBuilder.js")
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {
