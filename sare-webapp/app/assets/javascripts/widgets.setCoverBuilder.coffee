@@ -41,7 +41,9 @@ widget =
 			@options.setcover = setcover
 			
 			@_$(@options.setCoverEditorContainer).empty()
-			if setcover?
+			if not setcover?
+				Widgets.moduleManager "option", "output", null
+			else
 				@options.corpus = @options.setcover?.baseCorpus
 				@_$(@options.setCoverEditorContainer)
 					.load @options.setCoverEditorViewRoute(@options.setcover.id).url
