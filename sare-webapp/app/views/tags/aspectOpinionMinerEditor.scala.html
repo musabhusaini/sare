@@ -28,6 +28,8 @@
 @import controllers.modules._
 @import controllers.modules.opinionMiners.base._
 
+@import tags._
+
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-aom-editor-@uid" class="ctr-module ctr-aom-editor" data-lexicon="@lexicon.asJson()"
 		data-corpus="@corpus.asJson()">
@@ -39,10 +41,7 @@
 				<i class="icon-ok"></i> Analyze
 			</button>
 		</div>
-		<div class="ctr-aom-progress progress progress-striped active" style="display:none;">
-			<div class="bar" style="width:0%;">
-			</div>
-		</div>
+		@helpers.progress(cssClass="ctr-aom-progress")
 	</div>
 	
 	<div id="ctr-aom-results-outer-@uid" class="ctr-aom-results-outer row-fluid">
