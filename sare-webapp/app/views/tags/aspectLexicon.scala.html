@@ -78,8 +78,12 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/aspectLexicon.css")
-	@helpers.script("plugins/jstree/jquery.jstree.js", true)
-	@helpers.script("plugins/jstree/_lib/jquery.hotkeys.js", true)
+	@helpers.script(
+		Seq(
+			"plugins/jstree/jquery.jstree.js",
+			"plugins/jstree/_lib/jquery.hotkeys.js"
+		), true
+	)
 	@helpers.script("javascripts/widgets.aspectLexicon.js")
 	<script type="text/javascript">
 		(function(window, $) {

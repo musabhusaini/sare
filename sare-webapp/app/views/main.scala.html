@@ -44,27 +44,35 @@
 		<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
 		<link rel="wait image" type="image/gif" href="@routes.Assets.at("images/throbber.gif")">
 		
-		@helpers.stylesheet("stylesheets/bootstrap/bootstrap.min.css", true)
-		@helpers.stylesheet("stylesheets/bootstrap/responsive.min.css", true)
+		@helpers.stylesheet(
+			Seq(
+				"stylesheets/bootstrap/bootstrap.min.css",
+				"stylesheets/bootstrap/responsive.min.css"
+			), true
+		)
 		@helpers.stylesheet("stylesheets/main.css")
 		@styles
 		
-		@helpers.script("javascripts/jquery-1.9.1.min.js", true)
-		@helpers.script("plugins/jquery-ui/js/jquery-ui-1.10.1.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-affix.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-alert.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-button.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-carousel.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-collapse.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-dropdown.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-transition.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-tooltip.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-popover.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-modal.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-scrollspy.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-tab.min.js", true)
-		@helpers.script("javascripts/bootstrap/bootstrap-typeahead.min.js", true)
-		@helpers.script(base.routes.Application.javascriptRoutes(), true)
+		@helpers.script(
+			Seq(
+				"javascripts/jquery-1.9.1.min.js",
+				"plugins/jquery-ui/js/jquery-ui-1.10.1.min.js",
+				"javascripts/bootstrap/bootstrap-affix.min.js",
+				"javascripts/bootstrap/bootstrap-alert.min.js",
+				"javascripts/bootstrap/bootstrap-button.min.js",
+				"javascripts/bootstrap/bootstrap-carousel.min.js",
+				"javascripts/bootstrap/bootstrap-collapse.min.js",
+				"javascripts/bootstrap/bootstrap-dropdown.min.js",
+				"javascripts/bootstrap/bootstrap-transition.min.js",
+				"javascripts/bootstrap/bootstrap-tooltip.min.js",
+				"javascripts/bootstrap/bootstrap-popover.min.js",
+				"javascripts/bootstrap/bootstrap-modal.min.js",
+				"javascripts/bootstrap/bootstrap-scrollspy.min.js",
+				"javascripts/bootstrap/bootstrap-tab.min.js",
+				"javascripts/bootstrap/bootstrap-typeahead.min.js",
+				base.routes.Application.javascriptRoutes()
+			), true
+		)
 		<script type="text/javascript">
 			var timeout = window.Number("@Play.application().configuration().getInt("application.session.browserPingTimeout")");
 			if (!timeout) {
@@ -76,8 +84,12 @@
 				}
 			};
 		</script>
-		@helpers.script("javascripts/main.html.js")
-		@helpers.script("javascripts/Sare.Widget.js")
+		@helpers.script(
+			Seq(
+				"javascripts/main.html.js",
+				"javascripts/Sare.Widget.js"
+			)
+		)
 		@scripts
 	</head>
 	<body>

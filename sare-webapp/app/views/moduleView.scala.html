@@ -47,8 +47,12 @@
 }
 
 @moreScripts = {
-	@helpers.script("javascripts/widgets.moduleManager.js")
-	@helpers.script("javascripts/moduleView.html.js")
+	@helpers.script(
+			Seq(
+			"javascripts/widgets.moduleManager.js",
+			"javascripts/moduleView.html.js"
+		)
+	)
 	@scripts
 }
 

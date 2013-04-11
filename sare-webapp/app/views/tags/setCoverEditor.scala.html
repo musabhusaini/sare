@@ -78,15 +78,23 @@
 		@helpers.progress(cssClass="ctr-sc-progress")
 	</div>
 	
-	@helpers.stylesheet("plugins/jqplot/jquery.jqplot.min.css")
+	@helpers.stylesheet("plugins/jqplot/jquery.jqplot.min.css", true)
 	@helpers.stylesheet("stylesheets/setCoverEditor.css")
-	@helpers.script("plugins/jqplot/jquery.jqplot.min.js", true)
-	@helpers.script("plugins/jqplot/plugins/jqplot.canvasTextRenderer.min.js", true)
-	@helpers.script("plugins/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js", true)
-	@helpers.script("plugins/jqplot/plugins/jqplot.highlighter.min.js", true)
-	@helpers.script("plugins/jqplot/plugins/jqplot.permHighlighter.min.js", true)
-	@helpers.script("javascripts/widgets.progress.js")
-	@helpers.script("javascripts/widgets.setCoverEditor.js")
+	@helpers.script(
+		Seq(
+			"plugins/jqplot/jquery.jqplot.min.js",
+			"plugins/jqplot/plugins/jqplot.canvasTextRenderer.min.js",
+			"plugins/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js",
+			"plugins/jqplot/plugins/jqplot.highlighter.min.js",
+			"plugins/jqplot/plugins/jqplot.permHighlighter.min.js"
+		), true
+	)
+	@helpers.script(
+		Seq(
+			"javascripts/widgets.progress.js",
+			"javascripts/widgets.setCoverEditor.js"
+		)
+	)
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {

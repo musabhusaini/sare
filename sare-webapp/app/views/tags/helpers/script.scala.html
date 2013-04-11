@@ -23,7 +23,14 @@
 
 @import controllers.base.Application._
 
-<script src="@src match {
-	case path:String => { @controllers.routes.Assets.at(minifyInProd(path, neverMinify)) }
-	case _ => { @src }
-}" type="text/javascript"></script>
+@src match {
+	case paths:Seq[Any] => {@for(path <- paths) {
+			@script(path, neverMinify)
+		}
+	}
+	case _ => {<script src="@src match {
+			case path:String => {@controllers.routes.Assets.at(minifyInProd(path, neverMinify))}
+			case _ => {@src}
+		}" type="text/javascript"></script>
+	}
+}
