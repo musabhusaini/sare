@@ -45,8 +45,8 @@ import views.html.*;
 @With({ SessionedAction.class, ErrorHandledAction.class, LoggedAction.class })
 public class Application extends Controller {
 	
-	public static String minifyInProd(String file) {
-		if (Play.isProd()) {
+	public static String minifyInProd(String file, Boolean neverMinify) {
+		if (Play.isProd() && !ObjectUtils.defaultIfNull(neverMinify, false)) {
 			String path = FilenameUtils.getFullPath(file);
 			String name = FilenameUtils.getBaseName(file);
 			String ext = FilenameUtils.getExtension(file);
@@ -57,6 +57,10 @@ public class Application extends Controller {
 		}
 		
 		return file;
+	}
+	
+	public static String minifyInProd(String file) {
+		return minifyInProd(file, null);
 	}
 	
 	public static ProgressObserverToken createProgressObserverToken(final byte[] id, final Double initialProgress) {

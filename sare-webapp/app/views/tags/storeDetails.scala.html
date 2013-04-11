@@ -25,6 +25,7 @@
 
 @import controllers.base.Application._
 @import controllers.modules._
+@import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-store-details-@uid" class="ctr-store-details" data-store="@store.asJson()">
@@ -109,9 +110,9 @@
 		</button>
 	</div>
 	
-	<link rel="stylesheet" href="@controllers.routes.Assets.at(minifyInProd("stylesheets/storeDetails.css"))">
-	<script src="@controllers.routes.Assets.at("plugins/plupload/js/plupload.full.js")" type="text/javascript"></script>
-	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.storeDetails.js"))" type="text/javascript"></script>
+	@helpers.stylesheet("stylesheets/storeDetails.css")
+	@helpers.script("plugins/plupload/js/plupload.full.js", true)
+	@helpers.script("javascripts/widgets.storeDetails.js")
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {

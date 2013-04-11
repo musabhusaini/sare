@@ -25,6 +25,7 @@
 
 @import controllers.base.Application._
 @import controllers.modules._
+@import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-twitter-grabber-@uid" class="ctr-twitter-grabber alert alert-info offset4 span8" data-corpus="@corpus.asJson()">
@@ -36,7 +37,7 @@
 	<input id="input-limit-@uid" type="text" class="input-limit span3" placeholder="Limit"
 		title="Enter maximum number of results to retrieve" />
 	
-	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.twitterGrabber.js"))" type="text/javascript"></script>
+	@helpers.script("javascripts/widgets.twitterGrabber.js")
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {
