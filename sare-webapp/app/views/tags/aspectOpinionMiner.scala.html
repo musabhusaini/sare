@@ -26,6 +26,7 @@
 @import controllers._
 @import controllers.base.Application._
 @import controllers.modules._
+@import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-aom-@uid" class="ctr-module ctr-aom" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }
@@ -46,8 +47,8 @@
 		}
 	</div>
 	
-	<link rel="stylesheet" href="@controllers.routes.Assets.at(minifyInProd("stylesheets/aspectOpinionMiner.css"))">
-	<script src="@controllers.routes.Assets.at(minifyInProd("javascripts/widgets.aspectOpinionMiner.js"))" type="text/javascript"></script>
+	@helpers.stylesheet("stylesheets/aspectOpinionMiner.css")
+	@helpers.script("javascripts/widgets.aspectOpinionMiner.js")
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {
