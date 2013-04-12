@@ -30,6 +30,9 @@ Strings = Page.Strings
 Widgets = Page.Widgets
 
 widget =
+	select: (value) ->
+		return @selected value
+	
 	selected: (value) ->
 		if typeof value is "string"
 			@_$(@options.list).val(value).change()

@@ -92,7 +92,7 @@ public class CorpusModule extends Module {
 	}
 		
 	public static Result modulePage(boolean partial) {
-		return moduleRender(new CorpusModule(), storeList.render(getCorpora(), true, "Select a corpus"), partial);
+		return moduleRender(new CorpusModule(), storeList.render(getCorpora(), null, true, "Select a corpus"), partial);
 	}
 		
 	public static Result create() {
