@@ -21,8 +21,21 @@
 
 package models.documentStore;
 
+import static controllers.base.SareTransactionalAction.*;
+
+import java.util.*;
+
+import javax.persistence.EntityManager;
+
+import models.document.AspectOpinionMinedDocumentModel;
+
+import org.apache.commons.lang3.*;
+
+import com.google.common.collect.*;
+
 import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
-import edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedCorpus;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
+import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 
 public class AspectOpinionMinedCorpusModel
 		extends PersistentDocumentStoreModel {
@@ -30,6 +43,7 @@ public class AspectOpinionMinedCorpusModel
 	public DocumentCorpusModel corpus;
 	public AspectLexiconModel lexicon;
 	public String engineCode;
+	public Map<String, List<AspectOpinionMinedDocumentModel>> documents;
 	
 	public AspectOpinionMinedCorpusModel(AspectOpinionMinedCorpus minedCorpus) {
 		super(minedCorpus);
@@ -48,5 +62,46 @@ public class AspectOpinionMinedCorpusModel
 	
 	public AspectOpinionMinedCorpusModel() {
 		this(null);
+	}
+	
+	@Override
+	public long populateSize(EntityManager em, PersistentDocumentStore store) {
+		Validate.notNull(em);
+		super.populateSize(em, store);
+		
+		if (store != null && store instanceof AspectOpinionMinedCorpus) {
+			DocumentCorpus corpus = ((AspectOpinionMinedCorpus)store).getCorpus();
+			this.corpus = new DocumentCorpusModel(corpus);
+			this.corpus.populateSize(em, corpus);
+		}
+		
+		return this.size;
+	}
+
+	public AspectOpinionMinedCorpusModel populateDocuments(AspectOpinionMinedCorpus corpus) {
+		Validate.isTrue(hasEntityManager());
+		this.populateSize(em(), corpus);
+		
+		this.documents = Maps.newLinkedHashMap();
+		if (corpus != null) {
+			for (AspectOpinionMinedDocument document : corpus.getDocuments(AspectOpinionMinedDocument.class)) {
+				String orientation = null;
+				double polarity = ObjectUtils.defaultIfNull(document.getPolarity(), 0.0);
+				if (polarity < 0) {
+					orientation = "Negative";
+				} else if (polarity == 0) {
+					orientation = "Neutral";
+				} else {
+					orientation = "Positive";
+				}
+				
+				List<AspectOpinionMinedDocumentModel> docs = ObjectUtils.defaultIfNull(this.documents.get(orientation),
+						Lists.<AspectOpinionMinedDocumentModel>newArrayList());
+				docs.add(new AspectOpinionMinedDocumentModel(document));
+				this.documents.put(orientation, docs);
+			}
+		}
+		
+		return this;
 	}
 }

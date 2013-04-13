@@ -30,7 +30,7 @@
 @import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-aom-editor-@uid" class="ctr-module ctr-aom-editor" data-lexicon="@lexicon.asJson()"
+<div id="ctr-aom-editor-@uid" class="ctr-aom-editor" data-lexicon="@lexicon.asJson()"
 		data-corpus="@corpus.asJson()">
 	
 	<div id="ctr-aom-controls-@uid" class="ctr-aom-controls row-fluid">
@@ -51,8 +51,12 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/aspectOpinionMinerEditor.css")
-	@helpers.script("javascripts/widgets.progress.js")
-	@helpers.script("javascripts/widgets.aspectOpinionMinerEditor.js")
+	@helpers.script(
+		Seq(
+			"javascripts/widgets.progress.js",
+			"javascripts/widgets.aspectOpinionMinerEditor.js"
+		)
+	)
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {

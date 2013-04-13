@@ -35,29 +35,34 @@ widget =
 		@options.lexicon ?= $(@element).data @options.lexiconKey
 		@options.corpus ?= $(@element).data @options.corpusKey
 		
-		storeLists = @_$(@options.lexicaContainer).children(Selectors.moduleContainer)
-			.add(@_$(@options.corporaContainer).children Selectors.moduleContainer)
+		lexicaList = @_$(@options.lexicaContainer).children Selectors.moduleContainer
+		corporaList = @_$(@options.corporaContainer).children Selectors.moduleContainer
+		storeLists = lexicaList.add corporaList
 		
-		if $(storeLists).length
-			refreshView = (e, data) =>
-				if $(e.target).closest(@options.lexicaContainer).length
-					@options.lexicon = data
-				if $(e.target).closest(@options.corporaContainer).length
-					@options.corpus = data
-				
-				if @options.corpus? and @options.lexicon
-					@_$(@options.editorContainer).empty()
-						.load @options.editorViewRoute(@options.corpus.id, @options.lexicon.id, @options.engine).url 
-				
-			@_on storeLists,
-				storeListSelectionChange: (e, selected) ->
-					refreshView e, selected.data
-				storeUpdate: (e, data) ->
-					refreshView e, data.updatedData
+		refreshView = (e, data) =>
+			if $(e.target).closest(@options.lexicaContainer).length
+				@options.lexicon = data
+			if $(e.target).closest(@options.corporaContainer).length
+				@options.corpus = data
 			
-			storeLists
-					.storeList "option",
-						suppressOutput: true
+			if @options.lexicon and @options.corpus?
+				@_$(@options.editorContainer).empty()
+					.load @options.editorViewRoute(@options.corpus.id, @options.lexicon.id, @options.engine).url 
+			
+		@_on storeLists,
+			storeListSelectionChange: (e, selected) ->
+				refreshView e, selected.data
+			storeUpdate: (e, data) ->
+				refreshView e, data.updatedData
+		
+		storeLists
+			.storeList "option",
+				suppressOutput: true
+		
+		if @options.corpus?
+			$(corporaList).storeList "disable"
+		if @options.lexicon?
+			$(lexicaList).storeList "disable"
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @

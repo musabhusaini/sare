@@ -62,7 +62,7 @@ public class Sentence {
 		}
 	}
 
-	protected Map<AspectLexicon, Float> getScoreMap() {
+	protected Map<AspectLexicon, Double> getScoreMap() {
 		return sentenceRoot.getScoreMap();
 	}
 

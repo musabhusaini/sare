@@ -53,12 +53,12 @@ public class CommentResultTest {
 
 	@Test
 	public void testGetScoreMap() {
-		Map<AspectLexicon, Float> scores = testResult.getScoreMap();
+		Map<AspectLexicon, Double> scores = testResult.getScoreMap();
 		
 		assertNotNull(scores);
 		assertEquals(3, scores.size());
 		
-		for (Entry<AspectLexicon, Float> scoreEntry : scores.entrySet()) {
+		for (Entry<AspectLexicon, Double> scoreEntry : scores.entrySet()) {
 			assertNotNull(scoreEntry);
 			assertNotNull(scoreEntry.getValue());
 			assertTrue(Math.abs(scoreEntry.getValue()) > 0.0);

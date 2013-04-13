@@ -19,22 +19,14 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import-once "bootstrap/variables";
 @import-once "bootstrap/utilities";
-@import-once "main";
 
-.ctr-aom-editor {
-  .ctr-aom-controls {
-    margin-top: @gridGutterWidth/2;
-    margin-bottom: @gridGutterWidth/2;
+.ctr-tabs {
+  .ctr-tab {
+    .hide;
     
-    .ctr-aom-controls-inner {
-      .pull-left;
-      padding-right: @gridGutterWidth/2;
+    &.active {
+      .show;
     }
-  }
-  
-  .ctr-aom-results-outer {
-    margin-top: @gridGutterWidth;
   }
 }

@@ -148,7 +148,10 @@ public class AspectOpinionMiner
 		AspectLexicon lexiconObj = fetchResource(UuidUtils.create(lexicon), AspectLexicon.class);
 		DocumentCorpus corpusObj = fetchResource(UuidUtils.create(corpus), DocumentCorpus.class);
 		AspectOpinionMinedCorpus minedCorpus = new AspectOpinionMinedCorpusController().findMinedCorpus(em(), corpusObj, lexiconObj, engine);
-		return minedCorpus != null ? (AspectOpinionMinedCorpusModel)createViewModel(minedCorpus) : null;
+		
+		AspectOpinionMinedCorpusModel minedCorpusVM = new AspectOpinionMinedCorpusModel(minedCorpus);
+		minedCorpusVM.populateDocuments(minedCorpus);
+		return minedCorpus != null ? minedCorpusVM : null;
 	}
 	
 	public static Result getMined(UUID corpus, UUID lexicon, String engine) {
@@ -166,7 +169,9 @@ public class AspectOpinionMiner
 		ProgressObserverToken progressToken = redeemProgress(token);
 		if (progressToken == null) {
 			AspectOpinionMinedCorpus minedCorpus = fetchResource(null, token, AspectOpinionMinedCorpus.class, true);
-			return ok(new AspectOpinionMinedCorpusModel(minedCorpus).asJson());
+			AspectOpinionMinedCorpusModel minedCorpusVM = new AspectOpinionMinedCorpusModel(minedCorpus);
+			minedCorpusVM.populateDocuments(minedCorpus);
+			return ok(minedCorpusVM.asJson());
 		}
 		
 		return ok(new ProgressObserverTokenModel(progressToken).asJson());

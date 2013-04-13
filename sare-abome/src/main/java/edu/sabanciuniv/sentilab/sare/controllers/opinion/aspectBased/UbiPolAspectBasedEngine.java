@@ -58,15 +58,16 @@ public class UbiPolAspectBasedEngine
 		for (AspectOpinionMinedDocument document : documents) {
 			try {
 				CommentResult commentResult = new CommentResult(document.getContent(), this.getAspectLexicon());
-				Map<AspectLexicon, Float> scoreMap = commentResult.getScoreMap();
-				Map<String, Double> aspectPolarities = Maps.newHashMap();
+				Map<AspectLexicon, Double> scoreMap = commentResult.getScoreMap();
+				Map<AspectLexicon, Double> aspectPolarities = Maps.newHashMap();
 				Double overallPolarity = null;
-				for (Entry<AspectLexicon, Float> scoreEntry : scoreMap.entrySet()) {
+				for (Entry<AspectLexicon, Double> scoreEntry : scoreMap.entrySet()) {
 					if (scoreEntry.getKey() == null) {
-						overallPolarity = scoreEntry.getValue().doubleValue();
+						overallPolarity = scoreEntry.getValue();
 					} else {
 						aspectPolarities.put(
-							UuidUtils.normalize(scoreEntry.getKey().getIdentifier()), scoreEntry.getValue().doubleValue()
+							(AspectLexicon)new AspectLexicon().setTitle(scoreEntry.getKey().getTitle()).setId(scoreEntry.getKey().getId()),
+							scoreEntry.getValue()
 						);
 					}
 				}

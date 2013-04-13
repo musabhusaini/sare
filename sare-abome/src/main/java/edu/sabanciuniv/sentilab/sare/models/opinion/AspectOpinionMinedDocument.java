@@ -25,8 +25,12 @@ import java.util.Map;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang3.ObjectUtils;
+
+import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 
+import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionMinedDocument;
 
@@ -58,20 +62,22 @@ public class AspectOpinionMinedDocument
 
 	/**
 	 * Gets the aspect-based opinion polarities of this document.
-	 * @return a {@link Map} of aspect identifiers and their polarities.
+	 * @return a {@link Map} of {@link AspectLexicon} objects and their polarities. The keys might only contain the most necessary information.
 	 */
-	public Map<String, Double> getAspectPolarities() {
-		return this.getProperty("aspectPolarities", new TypeToken<Map<String, Double>>() {
-			private static final long serialVersionUID = 1L;
-		}.getType());
+	@SuppressWarnings({ "serial", "unchecked" })
+	public Map<AspectLexicon, Double> getAspectPolarities() {
+		return ObjectUtils.defaultIfNull(
+			(Map<AspectLexicon, Double>)this.getProperty("aspectPolarities", new TypeToken<Map<String, Double>>() {}.getType()),
+			Maps.<AspectLexicon, Double>newHashMap()
+		);
 	}
 
 	/**
 	 * Sets the aspect-based opinion polarities of this document.
-	 * @param aspectPolarities a {@link Map} of aspect identifiers and their polarities to set.
+	 * @param aspectPolarities a {@link Map} of {@link AspectLexicon} objects to corresponding polarities to set.
 	 * @return the {@code this} object.
 	 */
-	public AspectOpinionMinedDocument setAspectPolarities(Map<String, Double> aspectPolarities) {
+	public AspectOpinionMinedDocument setAspectPolarities(Map<AspectLexicon, Double> aspectPolarities) {
 		this.setProperty("aspectPolarities", aspectPolarities);
 		return this;
 	}

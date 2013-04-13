@@ -29,15 +29,14 @@
 @import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-aom-editor-@uid" class="ctr-module ctr-aom-editor" data-minedCorpus="@minedCorpus.asJson()">
-	<div>Results</div>
+<div id="ctr-aom-results-@uid" class="ctr-aom-results" data-minedCorpus="@minedCorpus.asJson()">
 	
 	@helpers.stylesheet("stylesheets/aspectOpinionMinerResults.css")
 	@helpers.script("javascripts/widgets.aspectOpinionMinerResults.js")
 	<script type="text/javascript">
 		(function(window, $) {
 			$(function() {
-				$("#ctr-aom-editor-@uid").aspectOpinionMinerResults();
+				$("#ctr-aom-results-@uid").aspectOpinionMinerResults();
 			});
 		})(window, window.jQuery);
 	</script>

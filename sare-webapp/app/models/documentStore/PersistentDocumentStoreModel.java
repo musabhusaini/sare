@@ -23,6 +23,8 @@ package models.documentStore;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.Validate;
+
 import models.PersistentObjectModel;
 
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentStoreController;
@@ -34,7 +36,7 @@ public class PersistentDocumentStoreModel
 	public String title;
 	public String description;
 	public String language;
-	public long size;
+	public Long size;
 	
 	public PersistentDocumentStoreModel(PersistentDocumentStore documentStore) {
 		super(documentStore);
@@ -51,6 +53,7 @@ public class PersistentDocumentStoreModel
 	}
 	
 	public long populateSize(EntityManager em, PersistentDocumentStore store) {
-		return this.size = new PersistentDocumentStoreController().getSize(em, store);
+		Validate.notNull(em);
+		return this.size = store == null ? 0 : new PersistentDocumentStoreController().getSize(em, store);
 	}
 }

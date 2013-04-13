@@ -54,15 +54,15 @@ public class Paragraph {
 		}
 	}
 
-	public Map<AspectLexicon, Float> getScoreMap() {
-		Map<AspectLexicon, Float> tempScoreMap = new HashMap<AspectLexicon, Float>();
+	public Map<AspectLexicon, Double> getScoreMap() {
+		Map<AspectLexicon, Double> tempScoreMap = new HashMap<AspectLexicon, Double>();
 		Map<AspectLexicon, Integer> tempWeightMap = new HashMap<AspectLexicon, Integer>();
 
 		for (SentenceObject so : sentences) {
 			Sentence s = so.getSentence();
-			for (Entry<AspectLexicon, Float> e : s.getScoreMap().entrySet()) {
+			for (Entry<AspectLexicon, Double> e : s.getScoreMap().entrySet()) {
 				if (!tempScoreMap.containsKey(e.getKey())) {
-					tempScoreMap.put(e.getKey(), new Float(0));
+					tempScoreMap.put(e.getKey(), new Double(0));
 					tempWeightMap.put(e.getKey(), 0);
 				}
 				tempScoreMap

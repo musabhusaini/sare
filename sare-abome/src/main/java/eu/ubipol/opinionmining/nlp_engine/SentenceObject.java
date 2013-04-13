@@ -53,7 +53,7 @@ public class SentenceObject {
 		return endPosition;
 	}
 
-	public Map<AspectLexicon, Float> getScoreMap() {
+	public Map<AspectLexicon, Double> getScoreMap() {
 		return sentence.getScoreMap();
 	}
 

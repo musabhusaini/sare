@@ -30,28 +30,40 @@ Selectors = Page.Selectors
 Strings = Page.Strings
 Widgets = Page.Widgets
 
+Math = window.Math
+
 widget =
 	_create: ->
-		@options.corpus ?= $(@element).data @options.corpusKey
-		@options.lexicon ?= $(@element).data @options.lexiconKey
-		
-	refresh: ->
-		$(@element).data Strings.widgetKey, @
-		
-	_init: ->
-		@refresh()
+		@_on $(@element),
+			"click li": (e) ->
+				li = $(e.target).closest "li"
+				if $(li).is(".#{@options.activeClass}") then return
+				
+				@_$("ul.nav").children("li")
+					.removeClass @options.activeClass
+				$(li)
+					.addClass @options.activeClass
+				
+				nav = $(li).data @options.navKey
+				@_$(@options.tabsContainer).children(@options.tabContainer)
+					.removeClass @options.activeClass
+					
+				navKey = @options.navKey
+				ctr = @_$(@options.tabsContainer).children(@options.tabContainer).filter ->
+					nav is $(@).data navKey
+				
+				$(ctr).addClass @options.activeClass
 		
 	_destroy: ->
 		
 	_setOption: (key, value) ->
-		switch key
-			when "disabled"
-				null
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
-		engine: null
-		lexiconKey: "lexicon"
-		corpusKey: "corpus"
+		navContainer: "ul.nav"
+		tabsContainer: ".ctr-tabs"
+		tabContainer: ".ctr-tab"
+		activeClass: "active"
+		navKey: "nav"
 
-$.widget "widgets.aspectOpinionMinerResults", Sare.Widget, widget
+$.widget "widgets.tabbedNav", Sare.Widget, widget

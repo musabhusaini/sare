@@ -35,7 +35,7 @@ public class CommentResult {
 		this.paragraph = new Paragraph(comment, new DatabaseAdapter(lexicon));
 	}
 
-	public Map<AspectLexicon, Float> getScoreMap() {
+	public Map<AspectLexicon, Double> getScoreMap() {
 		return this.paragraph.getScoreMap();
 	}
 

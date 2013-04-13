@@ -43,11 +43,11 @@ public class Token implements Comparable {
 	private String originalText;
 	private List<String> stemmedTexts;
 	private WordType wordType;
-	private Map<AspectLexicon, Float> scoreList;
+	private Map<AspectLexicon, Double> scoreList;
 	private Map<AspectLexicon, Integer> weightList;
 	private AspectLexicon aspect;
-	private float score;
-	private float pureScore;
+	private double score;
+	private double pureScore;
 	private int weight;
 	private String parentEdgeType;
 	private int tokenIndex;
@@ -61,7 +61,7 @@ public class Token implements Comparable {
 			int endPosition, DatabaseAdapter adp, int sentenceBeginPosition) {
 		modifiedByList = new ArrayList<Token>();
 		childTokens = new ArrayList<Token>();
-		scoreList = new HashMap<AspectLexicon, Float>();
+		scoreList = new HashMap<AspectLexicon, Double>();
 		weightList = new HashMap<AspectLexicon, Integer>();
 		this.parentToken = parentToken;
 		originalText = original.trim();
@@ -90,7 +90,7 @@ public class Token implements Comparable {
 				wordType = WordType.OTHER;
 		}
 
-		score = new Float(-2);
+		score = new Double(-2);
 		for (int i = 0; i < stemmedTexts.size() && score == -2; i++)
 			score = OpinionWords.getWordScore(stemmedTexts.get(i), wordType);
 
@@ -110,11 +110,11 @@ public class Token implements Comparable {
 		childTokens.add(child);
 	}
 
-	private float getProcessedScore(float score) {
+	private double getProcessedScore(double score) {
 		return (invert ? score * -1 : score);
 	}
 
-	private float getProcessedScore() {
+	private double getProcessedScore() {
 		return (invert ? score * -1 : score);
 	}
 
@@ -283,7 +283,7 @@ public class Token implements Comparable {
 																		// score
 				parentToken.addAspectScore(pureScore, 1, null);
 			}
-			for (Entry<AspectLexicon, Float> e : getScoreMap().entrySet())
+			for (Entry<AspectLexicon, Double> e : getScoreMap().entrySet())
 				parentToken.addAspectScore(getProcessedScore(e.getValue()),
 						weightList.get(e.getKey()), e.getKey());
 		} else {
@@ -307,7 +307,7 @@ public class Token implements Comparable {
 		return modifiedByList;
 	}
 
-	protected void updateScore(float score, int weight) {
+	protected void updateScore(double score, int weight) {
 		if (this.score == 0 && this.weight == 1) {
 			this.score = score;
 			this.weight = weight + 1;
@@ -320,7 +320,7 @@ public class Token implements Comparable {
 		}
 	}
 
-	protected void updateScore(float score) {
+	protected void updateScore(double score) {
 		if (this.score < 0)
 			this.score = (Math.abs(this.score) + (1 - Math.abs(this.score))
 					/ (1 / score))
@@ -333,7 +333,7 @@ public class Token implements Comparable {
 		weight++;
 	}
 
-	protected void addAspectScore(float score, int weight, AspectLexicon aspect) {
+	protected void addAspectScore(double score, int weight, AspectLexicon aspect) {
 		if (!scoreList.containsKey(aspect)) {
 			scoreList.put(aspect, score);
 			weightList.put(aspect, weight);
@@ -362,10 +362,10 @@ public class Token implements Comparable {
 		return childTokens;
 	}
 
-	protected Map<AspectLexicon, Float> getScoreMap() {
+	protected Map<AspectLexicon, Double> getScoreMap() {
 		if (invert) {
-			Map<AspectLexicon, Float> tempScoreMap = new HashMap<AspectLexicon, Float>();
-			for (Entry<AspectLexicon, Float> e : scoreList.entrySet()) {
+			Map<AspectLexicon, Double> tempScoreMap = new HashMap<AspectLexicon, Double>();
+			for (Entry<AspectLexicon, Double> e : scoreList.entrySet()) {
 				tempScoreMap.put(e.getKey(), e.getValue() * -1);
 			}
 			return tempScoreMap;
@@ -395,11 +395,11 @@ public class Token implements Comparable {
 		return aspect;
 	}
 
-	public Float getScore() {
+	public Double getScore() {
 		return score;
 	}
 
-	public Float getPureScore() {
+	public Double getPureScore() {
 		return pureScore;
 	}
 
