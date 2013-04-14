@@ -107,7 +107,7 @@ public final class OpinionCorpusFactory
 		
 		Validate.notNull(corpus, CannedMessages.NULL_ARGUMENT, "corpus");
 		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
-				
+		
 		OpinionDocumentFactory opinionFactory = null;
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 		String line;

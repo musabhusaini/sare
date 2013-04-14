@@ -22,11 +22,14 @@
 package edu.sabanciuniv.sentilab.sare.controllers.aspect;
 
 import java.io.*;
+import java.util.List;
+import java.util.regex.*;
 
 import javax.xml.parsers.*;
 import javax.xml.xpath.*;
 
 import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.text.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -133,9 +136,37 @@ public class AspectLexiconController
 	
 	@Override
 	protected AspectLexiconController addTextPacket(AspectLexicon lexicon, InputStream input, String delimiter)
-		throws IOException {
+			throws IOException {
+		Validate.notNull(lexicon, CannedMessages.NULL_ARGUMENT, "lexicon");
+		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
 		
-		throw new IllegalFactoryOptionsException();
+		delimiter = StringUtils.defaultString(delimiter, "\t");
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+		String line;
+		
+		while ((line = reader.readLine()) != null) {
+			StrTokenizer tokenizer = new StrTokenizer(line, StrMatcher.stringMatcher(delimiter), StrMatcher.quoteMatcher());
+			List<String> columns = tokenizer.getTokenList();
+			if (columns.size() < 1) {
+				continue;
+			}
+			
+			String aspectStr = columns.get(0);
+			Matcher matcher = Pattern.compile("^<(.*)>$").matcher(aspectStr);
+			if (matcher.matches()) {
+				aspectStr = matcher.group(1);
+			} else {
+				continue;
+			}
+			
+			AspectLexicon aspect = lexicon.addAspect(aspectStr);
+			for (int i = 1; i < columns.size(); i++) {
+				aspect.addExpression(columns.get(i));
+			}
+		}
+		
+		return this;
 	}
 
 	@Override

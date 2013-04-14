@@ -25,8 +25,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.*;
 
 import com.google.common.collect.Iterables;
 
@@ -39,18 +39,18 @@ public class AspectLexiconControllerTest {
 
 	private OpinionCorpus testCorpus = new OpinionCorpus();
 	
-	private String testXmlLexiconFilename;
-	private AspectLexicon expectedXmlLexicon;
+	private String testLexiconFilename;
+	private AspectLexicon expectedLexicon;
 	
 	@Before
 	public void setUp() throws Exception {
 	}
 	
 	private boolean areLexicaEqual(AspectLexicon expectedLexicon, AspectLexicon actualLexicon) {
-		if (!expectedLexicon.getTitle().equals(actualLexicon.getTitle())) {
+		if (!StringUtils.equals(expectedLexicon.getTitle(), actualLexicon.getTitle())) {
 			return false;
 		}
-		if (expectedLexicon.getDescription().equals(actualLexicon.getDescription())) {
+		if (!StringUtils.equals(expectedLexicon.getDescription(), actualLexicon.getDescription())) {
 			return false;
 		}
 		if (Iterables.size(expectedLexicon.getExpressions()) != Iterables.size(actualLexicon.getExpressions())) {
@@ -83,13 +83,13 @@ public class AspectLexiconControllerTest {
 	
 	@Test
 	public void testCreateFromXmlFile() {
-		testXmlLexiconFilename = "/test-lexicon.xml";
+		testLexiconFilename = "/test-lexicon.xml";
 		
-		expectedXmlLexicon = (AspectLexicon)new AspectLexicon()
+		expectedLexicon = (AspectLexicon)new AspectLexicon()
 			.setTitle("test lexicon")
 			.setDescription("a test lexicon");
 		
-		AspectLexicon aspect1 = expectedXmlLexicon.addAspect("aspect 1");
+		AspectLexicon aspect1 = expectedLexicon.addAspect("aspect 1");
 		aspect1.addExpression("expression 1.1");
 		aspect1.addExpression("expression 1.2");
 		AspectLexicon subAspect11 = aspect1.addAspect("sub-aspect 1.1");
@@ -97,21 +97,48 @@ public class AspectLexiconControllerTest {
 		AspectLexicon subAspect12 = aspect1.addAspect("sub-aspect 1.2");
 		subAspect12.addExpression("expression 1.2.1");
 		
-		AspectLexicon aspect2 = expectedXmlLexicon.addAspect("aspect 2");
+		AspectLexicon aspect2 = expectedLexicon.addAspect("aspect 2");
 		aspect2.addExpression("expression 2.1");
 		aspect2.addExpression("expression 2.2");
 		
 		AspectLexicon actualLexicon = null;
 		try {
 			actualLexicon = new AspectLexiconController()
-				.setFile(new File(getClass().getResource(testXmlLexiconFilename).getPath()))
+				.setFile(new File(getClass().getResource(testLexiconFilename).getPath()))
 				.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not open file");
 		}
 		
 		assertNotNull(actualLexicon);
-		assertTrue(areLexicaEqual(expectedXmlLexicon, actualLexicon));
+		assertTrue(areLexicaEqual(expectedLexicon, actualLexicon));
+	}
+	
+	@Test
+	public void testCreateFromTextFile() {
+		testLexiconFilename = "/test-lexicon.txt";
+		
+		expectedLexicon = (AspectLexicon)new AspectLexicon();
+		
+		AspectLexicon aspect1 = expectedLexicon.addAspect("Aspect 1");
+		aspect1.addExpression("expression 1.1");
+		aspect1.addExpression("expression 1.2");
+		
+		AspectLexicon aspect2 = expectedLexicon.addAspect("Aspect 2");
+		aspect2.addExpression("expression 2.1");
+		aspect2.addExpression("expression 2.2");
+		
+		AspectLexicon actualLexicon = null;
+		try {
+			actualLexicon = new AspectLexiconController()
+				.setFile(new File(getClass().getResource(testLexiconFilename).getPath()))
+				.create();
+		} catch (IllegalFactoryOptionsException e) {
+			fail("could not open file");
+		}
+		
+		assertNotNull(actualLexicon);
+		assertTrue(areLexicaEqual(expectedLexicon, actualLexicon));
 	}
 	
 	@Test
