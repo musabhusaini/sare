@@ -24,13 +24,18 @@ package models.documentStore;
 import static controllers.base.SareTransactionalAction.*;
 
 import java.util.*;
+import java.util.Map.Entry;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 
 import models.document.AspectOpinionMinedDocumentModel;
 
 import org.apache.commons.lang3.*;
 
+import scala.util.*;
+
+import com.google.common.base.Function;
 import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
@@ -39,11 +44,50 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 
 public class AspectOpinionMinedCorpusModel
 		extends PersistentDocumentStoreModel {
+	
+	public static final String NEGATIVE = "Negative";
+	public static final String NEUTRAL = "Neutral";
+	public static final String POSITIVE = "Positive";
 
+	public static enum DocumentGrouping {
+		orientation,
+		aspect
+	}
+	
+	public static class GroupedDocuments {
+		public Object key;
+		public Either<List<GroupedDocuments>, List<AspectOpinionMinedDocumentModel>> value;
+		
+		public long size() {
+			long size = 0;
+			if (this.value == null) {
+				size = 0;
+			} else if (this.value.isRight()) {
+				size = this.value.right().get().size();
+			} else {
+				for (GroupedDocuments gd : this.value.left().get()) {
+					size += gd.size();
+				}
+			}
+			
+			return size;
+		}
+		
+		public Map<Object, Long> getSummary() {
+			Map<Object, Long> summary = Maps.newLinkedHashMap();
+			if (this.value != null && this.value.isLeft()) {
+				for (GroupedDocuments gd : this.value.left().get()) {
+					summary.put(gd.key, gd.size());
+				}
+			}
+			return summary;
+		}
+	}
+	
 	public DocumentCorpusModel corpus;
 	public AspectLexiconModel lexicon;
 	public String engineCode;
-	public Map<String, List<AspectOpinionMinedDocumentModel>> documents;
+	public GroupedDocuments documents;
 	
 	public AspectOpinionMinedCorpusModel(AspectOpinionMinedCorpus minedCorpus) {
 		super(minedCorpus);
@@ -51,6 +95,7 @@ public class AspectOpinionMinedCorpusModel
 		if (minedCorpus != null) {
 			if (minedCorpus.getCorpus() != null) {
 				this.corpus = (DocumentCorpusModel)createViewModel(minedCorpus.getCorpus());
+				this.id = this.corpus.id;
 			}
 			if (minedCorpus.getLexicon() != null && minedCorpus.getLexicon() instanceof AspectLexicon) {
 				this.lexicon = (AspectLexiconModel)createViewModel(minedCorpus.getLexicon());
@@ -71,37 +116,98 @@ public class AspectOpinionMinedCorpusModel
 		
 		if (store != null && store instanceof AspectOpinionMinedCorpus) {
 			DocumentCorpus corpus = ((AspectOpinionMinedCorpus)store).getCorpus();
-			this.corpus = new DocumentCorpusModel(corpus);
-			this.corpus.populateSize(em, corpus);
+			
+			if (corpus != null) {
+				this.corpus = new DocumentCorpusModel(corpus);
+				this.corpus.populateSize(em, corpus);
+			}
 		}
 		
 		return this.size;
 	}
 
-	public AspectOpinionMinedCorpusModel populateDocuments(AspectOpinionMinedCorpus corpus) {
+	private Map<Object, Collection<AspectOpinionMinedDocumentModel>> groupDocuments(Iterable<AspectOpinionMinedDocumentModel> documents, DocumentGrouping grouping) {
+		Multimap<Object, AspectOpinionMinedDocumentModel> indexedDocuments = null;
+		
+		switch(grouping) {
+		case orientation:
+			indexedDocuments = Multimaps.index(documents, new Function<AspectOpinionMinedDocumentModel, Object>() {
+				@Override
+				@Nullable
+				public Object apply(@Nullable AspectOpinionMinedDocumentModel document) {
+					double polarity = ObjectUtils.defaultIfNull(document.polarity, 0.0);
+					if (polarity < 0) {
+						return NEGATIVE;
+					} else if (polarity == 0) {
+						return NEUTRAL;
+					}
+					return POSITIVE;
+				}
+			});
+			
+			break;
+		case aspect:
+			indexedDocuments = ArrayListMultimap.create();
+			for (AspectOpinionMinedDocumentModel document : documents) {
+				if (document.aspectPolarities == null || document.aspectPolarities.size() == 0) {
+					indexedDocuments.put(null, document);
+				} else {
+					for (AspectLexiconModel aspect : document.aspectPolarities.keySet()) {
+						indexedDocuments.put(aspect, document);
+					}
+				}
+			}
+			
+			break;
+		}
+		
+		return indexedDocuments.asMap();
+	}
+	
+	private GroupedDocuments groupDocuments(Iterable<AspectOpinionMinedDocumentModel> documents, List<DocumentGrouping> grouping) {
+		GroupedDocuments groupedDocuments = new GroupedDocuments();
+		if (grouping == null || grouping.size() == 0) {
+			groupedDocuments.value = new Right<List<GroupedDocuments>, List<AspectOpinionMinedDocumentModel>>((List<AspectOpinionMinedDocumentModel>)Lists.newArrayList(documents));
+		} else {
+			DocumentGrouping topGrouping = grouping.get(0);
+			List<DocumentGrouping> remainingGrouping = Lists.newArrayList(grouping);
+			remainingGrouping.remove(0);
+			Map<Object, Collection<AspectOpinionMinedDocumentModel>> subGroupsMap = groupDocuments(documents, topGrouping);
+			List<GroupedDocuments> subGroups = Lists.newArrayList();
+			for (Entry<Object, Collection<AspectOpinionMinedDocumentModel>> groupEntry : subGroupsMap.entrySet()) {
+				GroupedDocuments subGroup = groupDocuments(groupEntry.getValue(), remainingGrouping);
+				subGroup.key = ObjectUtils.defaultIfNull(groupEntry.getKey(), "None");
+				subGroups.add(subGroup);
+			}
+			groupedDocuments.value = new Left<List<GroupedDocuments>, List<AspectOpinionMinedDocumentModel>>(subGroups);
+		}
+		
+		return groupedDocuments;
+	}
+	
+	public AspectOpinionMinedCorpusModel populateDocuments(AspectOpinionMinedCorpus corpus, List<DocumentGrouping> grouping) {
 		Validate.isTrue(hasEntityManager());
 		this.populateSize(em(), corpus);
 		
-		this.documents = Maps.newLinkedHashMap();
 		if (corpus != null) {
-			for (AspectOpinionMinedDocument document : corpus.getDocuments(AspectOpinionMinedDocument.class)) {
-				String orientation = null;
-				double polarity = ObjectUtils.defaultIfNull(document.getPolarity(), 0.0);
-				if (polarity < 0) {
-					orientation = "Negative";
-				} else if (polarity == 0) {
-					orientation = "Neutral";
-				} else {
-					orientation = "Positive";
+			Iterable<AspectOpinionMinedDocumentModel> models = Iterables.transform(
+				corpus.getDocuments(AspectOpinionMinedDocument.class),
+				new Function<AspectOpinionMinedDocument, AspectOpinionMinedDocumentModel>() {
+					@Override
+					@Nullable
+					public AspectOpinionMinedDocumentModel apply(@Nullable AspectOpinionMinedDocument document) {
+						return new AspectOpinionMinedDocumentModel(document);
+					}
 				}
-				
-				List<AspectOpinionMinedDocumentModel> docs = ObjectUtils.defaultIfNull(this.documents.get(orientation),
-						Lists.<AspectOpinionMinedDocumentModel>newArrayList());
-				docs.add(new AspectOpinionMinedDocumentModel(document));
-				this.documents.put(orientation, docs);
-			}
+			);
+			
+			this.documents = groupDocuments(models, grouping);
+			this.documents.key = corpus.getTitle();
 		}
-		
 		return this;
+	}
+	
+	public AspectOpinionMinedCorpusModel populateDocuments(AspectOpinionMinedCorpus corpus) {
+		return populateDocuments(corpus, Lists.newArrayList(DocumentGrouping.orientation, DocumentGrouping.aspect));
 	}
 }

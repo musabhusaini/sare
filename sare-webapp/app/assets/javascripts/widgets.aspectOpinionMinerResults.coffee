@@ -30,10 +30,107 @@ Selectors = Page.Selectors
 Strings = Page.Strings
 Widgets = Page.Widgets
 
+Math = window.Math
+
 widget =
+	_summaryPlot: null
+	
 	_create: ->
 		@options.corpus ?= $(@element).data @options.corpusKey
 		@options.lexicon ?= $(@element).data @options.lexiconKey
+		
+		@_on $(window.document),
+			"click": (e) ->
+				if not $(e.target).closest(@_$ @options.documentsTreeContainer).length
+					$(@_$ @options.documentsTreeContainer).jstree "unset_focus"
+		
+		@_on @_$(@options.documentsTreeContainer),
+			"click a": (e) ->
+				$(e.target).focus()
+				
+		@_$(@options.documentsTreeContainer).on
+			"loaded.jstree": (e, data) =>
+				data.inst.select_node $(data.inst.get_container_ul()).children "li:first"
+			
+			"select_node.jstree": (e, data) =>
+				@_$(@options.detailsContainer).children().removeClass "active"
+				@_summaryPlot?.destroy()
+				
+				type = $(data.rslt.obj).data @options.typeKey
+				summary = $(data.rslt.obj).data @options.summaryKey
+				document = $(data.rslt.obj).data @options.documentKey
+				
+				tableMap = summary or document?.aspectPolarities
+				graphData = null
+				scoreMax = 0
+				graphInnerContainer = @_$(@options.graphContainer).children("div").first()
+				graphId = $(graphInnerContainer).empty().removeClass().attr "id"
+				thead = @_$(@options.tableContainer).find("table thead").empty()
+				tbody = @_$(@options.tableContainer).find("table tbody").empty()
+				
+				if tableMap?
+					for title, value of tableMap
+						$(tbody).append "<tr><td>#{title}</td><td>#{Math.round(value*1000)/1000}</td></tr>"
+						scoreMax = Math.max scoreMax, Math.abs value
+					@_$(@options.visualsContainer).addClass "active"
+					graphData = [ (for title, value of tableMap
+						[title, value]) ]
+				
+				if not graphData?[0].length
+					$(graphInnerContainer).text "Not enough data for a graph"
+				
+				if summary?
+					$(thead).append "<tr><th>Type</th><th>Count</th></tr>"
+					$(tbody).append "<tr><td>Total</td><td>#{$(data.rslt.obj).data @options.sizeKey}</td></tr>"
+					
+					if graphData?[0].length
+						@_summaryPlot = $.jqplot graphId, graphData,
+							seriesDefaults:
+								renderer: jQuery.jqplot.PieRenderer
+								rendererOptions:
+									showDataLabels: true
+							legend:
+								show: true
+								location: 'e'
+						
+				else if document?
+					if graphData?[0].length
+						@_summaryPlot = $.jqplot graphId, graphData,
+							seriesDefaults:
+								renderer: $.jqplot.BarRenderer
+								rendererOptions:
+									fillToZero: true
+							axes:
+								xaxis:
+									renderer: $.jqplot.CategoryAxisRenderer
+									tickRenderer: $.jqplot.CanvasAxisTickRenderer
+									tickOptions:
+										fontFamily: "Courier New"
+										fontSize: "9pt"
+								yaxis:
+									min: -scoreMax
+									max: scoreMax
+					
+					@_$(@options.documentOuterContainer).addClass "active"
+					@_$(@options.documentContainer).text document.content
+					$(thead).append "<tr><th>Aspect</th><th>Polarity</th></tr>"
+					$(tbody).append "<tr><td>Overall</td><td>#{value = Math.round(document.polarity*1000)/1000}</td></tr>"
+		
+		@_$(@options.documentsTreeContainer).jstree
+			ui:
+				select_limit: 1
+			types:
+				valid_children: [ "documentGroup" ]
+				types:
+					documentGroup:
+						valid_children: [ "documentGroup", "document" ]
+					document:
+						max_children: 0
+						icon:
+							image: jsRoutes.controllers.Assets.at("/plugins/jstree/themes/misc/file.png").url
+			plugins: [ "themes", "html_data", "ui", "types", "hotkeys" ]
+		
+		@_$(@options.visualsContainer).tabbedNav()
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
@@ -51,7 +148,18 @@ widget =
 	
 	_getCreateOptions: ->
 		engine: null
+		documentsTreeContainer: ".ctr-documents-tree"
+		detailsContainer: ".ctr-details"
+		documentOuterContainer: ".ctr-document-outer"
+		documentContainer: ".ctr-document"
+		visualsContainer: ".ctr-visuals"
+		tableContainer: ".ctr-visual-table"
+		graphContainer: ".ctr-visual-graph"
 		lexiconKey: "lexicon"
 		corpusKey: "corpus"
+		typeKey: "type"
+		sizeKey: "size"
+		summaryKey: "summary"
+		documentKey: "document"
 
 $.widget "widgets.aspectOpinionMinerResults", Sare.Widget, widget

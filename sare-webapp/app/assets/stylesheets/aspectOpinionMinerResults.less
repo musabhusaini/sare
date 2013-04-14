@@ -20,5 +20,39 @@
  */
 
 @import-once "bootstrap/variables";
-@import-once "main";
+@import-once "bootstrap/utilities";
+@import-once "utilities";
+@import-once "tabbedNav";
 
+@box-height: 300px;
+@full-height: (@box-height + @baseLineHeight + 2*@gridGutterWidth/4);
+
+.ctr-aom-results {
+  .ctr-documents-tree {
+    .boxed-display(@box-height);
+  }
+  
+  .ctr-details > div {
+    .hide;
+    
+    &.active {
+      .show;
+    }
+  }
+  
+  .ctr-document {
+    .boxed-display(@box-height);
+  }
+  
+  .ctr-visual {
+    height: @full-height;
+    .border-box;
+    overflow: auto;
+  }
+  
+  .ctr-visual-table table {
+    tbody tr:last-child {
+      font-weight: bold;
+    } 
+  }
+}

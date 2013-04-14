@@ -37,7 +37,7 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedDocument;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 public class AspectOpinionMinedDocumentModel
-		extends PersistentDocumentModel {
+		extends FullTextDocumentModel {
 	
 	public Double polarity;
 	public Map<AspectLexiconModel, Double> aspectPolarities;
@@ -46,6 +46,9 @@ public class AspectOpinionMinedDocumentModel
 		super(document);
 		
 		if (document != null) {
+			if (document.getFullTextDocument() != null) {
+				this.id = UuidUtils.normalize(document.getFullTextDocument().getId());
+			}
 			this.polarity = document.getPolarity();
 			this.aspectPolarities = Maps.newHashMap();
 			if (document.getAspectPolarities() != null) {

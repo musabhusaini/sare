@@ -44,7 +44,7 @@
 	</div>
 	
 	<div id="ctr-aom-results-outer-@uid" class="ctr-aom-results-outer row-fluid">
-		@AspectOpinionMiner.getMined(corpus.id, lexicon.id, engine) match {
+		@AspectOpinionMiner.getMined(corpus.id, lexicon.id, engine, true) match {
 			case null => {}
 			case mined:documentStore.AspectOpinionMinedCorpusModel => { @tags.aspectOpinionMinerResults(mined) }
 		}

@@ -1,0 +1,68 @@
+/*
+ * Sentilab SARE: a Sentiment Analysis Research Environment
+ * Copyright (C) 2013 Sabanci University Sentilab
+ * http://sentilab.sabanciuniv.edu
+ * 
+ * This file is part of SARE.
+ * 
+ * SARE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *  
+ * SARE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with SARE. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@import-once "bootstrap/variables";
+
+@nice-border: 1px darken(rgb(227, 227, 227), 10%) solid;
+
+@imagesPath: "/assets/images";
+
+.border-box {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+.progress {
+  min-height: @inputHeight;
+}
+
+.flip-icon {
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  filter: FlipH;
+  -ms-filter: "FlipH";
+}
+
+.inline-block(@align: top) {
+  display: inline-block;
+  vertical-align: @align;
+}
+
+.boxed-display(@height: 250px, @margin-bottom: @gridGutterWidth/2) {
+  height: @height;
+  padding: @gridGutterWidth/4;
+  margin-bottom: @margin-bottom;
+  border: @nice-border;
+  overflow: auto;
+  .border-box;
+}
+
+.widget-header {
+  height: 100%;
+  padding-top: @gridGutterWidth/4;
+  padding-left: @gridGutterWidth/4;
+  padding-bottom: @gridGutterWidth/4;
+  background-color: darken(gray, 20%);
+  color: white;
+}

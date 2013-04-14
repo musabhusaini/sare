@@ -33,27 +33,35 @@ Widgets = Page.Widgets
 Math = window.Math
 
 widget =
+	_activate: (li) ->
+		if not $(li).length then return
+		
+		@_$(@options.navContainer).children("li")
+			.removeClass @options.activeClass
+		$(li)
+			.addClass @options.activeClass
+		
+		@_$(@options.tabsContainer).children(@options.tabContainer)
+			.removeClass @options.activeClass
+		
+		nav = $(li).data @options.navKey	
+		navKey = @options.navKey
+		ctr = @_$(@options.tabsContainer).children(@options.tabContainer).filter ->
+			nav is $(@).data navKey
+		
+		$(ctr).addClass @options.activeClass
+		
 	_create: ->
 		@_on $(@element),
 			"click li": (e) ->
-				li = $(e.target).closest "li"
-				if $(li).is(".#{@options.activeClass}") then return
-				
-				@_$("ul.nav").children("li")
-					.removeClass @options.activeClass
-				$(li)
-					.addClass @options.activeClass
-				
-				nav = $(li).data @options.navKey
-				@_$(@options.tabsContainer).children(@options.tabContainer)
-					.removeClass @options.activeClass
-					
-				navKey = @options.navKey
-				ctr = @_$(@options.tabsContainer).children(@options.tabContainer).filter ->
-					nav is $(@).data navKey
-				
-				$(ctr).addClass @options.activeClass
-		
+				@_activate $(e.target).closest "#{@options.navContainer} li"
+	
+	refresh: ->
+		@_activate @_$(@options.navContainer).find "li.#{@options.activeClass}"
+	
+	_init: ->
+		@refresh()
+	
 	_destroy: ->
 		
 	_setOption: (key, value) ->

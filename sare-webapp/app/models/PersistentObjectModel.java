@@ -23,6 +23,9 @@ package models;
 
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 import models.base.ViewModel;
@@ -44,7 +47,24 @@ public class PersistentObjectModel
 		this(null);
 	}
 	
+	@JsonIgnore
 	public UUID getIdentifier() {
 		return this.id == null ? null : UuidUtils.create(this.id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PersistentObjectModel) {
+			if (super.equals(obj) || StringUtils.isEmpty(this.type) || StringUtils.isEmpty(((PersistentObjectModel)obj).type)) {
+				return StringUtils.equals(this.id, ((PersistentObjectModel)obj).id);
+			}
+		}
+		
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() + this.id.hashCode();
 	}
 }

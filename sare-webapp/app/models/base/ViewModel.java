@@ -21,9 +21,10 @@
 
 package models.base;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.*;
-import org.springframework.util.ClassUtils;
+import org.codehaus.jackson.node.ObjectNode;
 
 import controllers.factories.ViewModelFactory;
 import edu.sabanciuniv.sentilab.core.models.IModel;
@@ -84,7 +85,7 @@ public class ViewModel
 	
 	public ViewModel(Object obj) {
 		if (obj != null) {
-			this.type = ClassUtils.getShortName(obj.getClass());
+			this.type = obj.getClass().getSimpleName();
 		}
 	}
 	
@@ -92,7 +93,31 @@ public class ViewModel
 		this(null);
 	}
 	
+	public JsonNode asJson(Iterable<String> excludedProperties) {
+		JsonNode json = Json.toJson(this);
+		if (excludedProperties != null && json.isObject()) {
+			for (String property : excludedProperties) {
+				((ObjectNode)json).remove(property);
+			}
+		}
+		return json;
+	}
+	
 	public JsonNode asJson() {
-		return Json.toJson(this);
+		return this.asJson(null);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ViewModel) {
+			return StringUtils.equals(this.type, ((ViewModel)obj).type);
+		}
+		
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return StringUtils.defaultString(this.type).hashCode();
 	}
 }

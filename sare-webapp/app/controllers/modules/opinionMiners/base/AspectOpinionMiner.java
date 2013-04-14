@@ -141,17 +141,24 @@ public class AspectOpinionMiner
 	}
 	
 	public static Result resultsView(UUID corpus, UUID lexicon, String engine) {
-		return ok(aspectOpinionMinerResults.render(getMined(corpus.toString(), lexicon.toString(), engine)));
+		AspectOpinionMinedCorpusModel minedCorpusFull = getMined(corpus.toString(), lexicon.toString(), engine, true);
+		return ok(aspectOpinionMinerResults.render(minedCorpusFull));
 	}
 	
-	public static AspectOpinionMinedCorpusModel getMined(String corpus, String lexicon, String engine) {
+	public static AspectOpinionMinedCorpusModel getMined(String corpus, String lexicon, String engine, boolean includeDocuments) {
 		AspectLexicon lexiconObj = fetchResource(UuidUtils.create(lexicon), AspectLexicon.class);
 		DocumentCorpus corpusObj = fetchResource(UuidUtils.create(corpus), DocumentCorpus.class);
 		AspectOpinionMinedCorpus minedCorpus = new AspectOpinionMinedCorpusController().findMinedCorpus(em(), corpusObj, lexiconObj, engine);
 		
 		AspectOpinionMinedCorpusModel minedCorpusVM = new AspectOpinionMinedCorpusModel(minedCorpus);
-		minedCorpusVM.populateDocuments(minedCorpus);
+		if (includeDocuments) {
+			minedCorpusVM.populateDocuments(minedCorpus);
+		}
 		return minedCorpus != null ? minedCorpusVM : null;
+	}
+	
+	public static AspectOpinionMinedCorpusModel getMined(String corpus, String lexicon, String engine) {
+		return getMined(corpus, lexicon, engine, false);
 	}
 	
 	public static Result getMined(UUID corpus, UUID lexicon, String engine) {
@@ -162,7 +169,9 @@ public class AspectOpinionMiner
 			return notFoundEntity(String.format("mined corpus for lexicon %s and corpus %s", UuidUtils.normalize(lexicon), UuidUtils.normalize(corpus)));
 		}
 		
-		return ok(createViewModel(minedCorpus).asJson());
+		AspectOpinionMinedCorpusModel minedCorpusVM = (AspectOpinionMinedCorpusModel)createViewModel(minedCorpus);
+		minedCorpusVM.populateDocuments(minedCorpus);
+		return ok(minedCorpusVM.asJson());
 	}
 	
 	public static Result redeem(UUID token) {

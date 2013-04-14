@@ -21,10 +21,6 @@
 
 @import-once "bootstrap/variables";
 
-@nice-border: 1px darken(rgb(227, 227, 227), 10%) solid;
-
-@imagesPath: "/assets/images";
-
 html,
 body {
   height: 100%;
@@ -107,22 +103,4 @@ textarea[readonly],
 .uneditable-input,
 .uneditable-textarea {
   cursor: default;
-}
-
-.progress {
-  min-height: @inputHeight;
-}
-
-.flip-icon {
-  -moz-transform: scaleX(-1);
-  -o-transform: scaleX(-1);
-  -webkit-transform: scaleX(-1);
-  transform: scaleX(-1);
-  filter: FlipH;
-  -ms-filter: "FlipH";
-}
-
-.inline-block(@align: top) {
-  display: inline-block;
-  vertical-align: @align;
 }
