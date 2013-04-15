@@ -56,4 +56,9 @@ public class PersistentDocumentStoreModel
 		Validate.notNull(em);
 		return this.size = store == null ? 0 : new PersistentDocumentStoreController().getSize(em, store);
 	}
+	
+	@Override
+	public String toString() {
+		return this.title;
+	}
 }

@@ -119,10 +119,10 @@
 				$("#ctr-store-details-@uid").storeDetails({
 					updateRoute: @store match {
 						case _:documentStore.DocumentSetCoverModel => { function(setcover) {
-							return jsRoutes.controllers.modules.SetCoverBuilder.update("null", setcover);
+							return jsRoutes.controllers.modules.SetCoverBuilder.update(null, setcover);
 						} }
 						case _:documentStore.AspectLexiconModel => { function(lexicon) {
-							return jsRoutes.controllers.modules.AspectLexBuilder.update("null", lexicon);
+							return jsRoutes.controllers.modules.AspectLexBuilder.update(null, lexicon);
 						} }
 						case _ => { jsRoutes.controllers.modules.CorpusModule.update }
 					},

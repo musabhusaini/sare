@@ -42,4 +42,9 @@ public class PersistentDocumentModel
 	public PersistentDocumentModel() {
 		this(null);
 	}
+	
+	@Override
+	public String toString() {
+		return this.content;
+	}
 }
