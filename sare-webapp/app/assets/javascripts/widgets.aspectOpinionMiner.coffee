@@ -45,8 +45,9 @@ widget =
 			if $(e.target).closest(@options.corporaContainer).length
 				@options.corpus = data
 			
-			if @options.lexicon and @options.corpus?
-				@_$(@options.editorContainer).empty()
+			@_$(@options.editorContainer).empty()
+			if @options.lexicon? and @options.corpus?
+				@_$(@options.editorContainer)
 					.load @options.editorViewRoute(@options.corpus.id, @options.lexicon.id, @options.engine).url 
 			
 		@_on storeLists,
@@ -58,6 +59,10 @@ widget =
 		storeLists
 			.storeList? "option",
 				suppressOutput: true
+		
+		$(lexicaList).storeList? "option",
+			addRoute: =>
+				@options.createLexiconRoute null
 		
 		if @options.corpus?
 			$(corporaList).storeList? "disable"
@@ -83,6 +88,7 @@ widget =
 		lexicaContainer: ".ctr-lexica"
 		corporaContainer: ".ctr-corpora"
 		editorContainer: ".ctr-aom-editor-outer"
+		createLexiconRoute: jsRoutes.controllers.modules.AspectLexBuilder.create
 		editorViewRoute: jsRoutes.controllers.modules.opinionMiners.base.AspectOpinionMiner.editorView
 		lexiconKey: "lexicon"
 		corpusKey: "corpus"

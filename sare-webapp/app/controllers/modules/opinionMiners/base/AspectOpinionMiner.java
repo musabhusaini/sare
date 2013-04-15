@@ -31,7 +31,6 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 
 import models.base.ViewModel;
@@ -45,7 +44,6 @@ import play.mvc.Http.Context;
 import views.html.tags.*;
 
 import controllers.base.*;
-import controllers.modules.*;
 import controllers.modules.base.*;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.AspectOpinionMinedCorpusController;
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionMiningEngine;
@@ -85,18 +83,6 @@ public class AspectOpinionMiner
 		return "Run Aspect-Based Opinion Miner";
 	}
 	
-	@Override
-	public boolean validateViewModels(Iterable<ViewModel> viewModels) {
-		if (viewModels == null) {
-			viewModels = Lists.newArrayList();
-		}
-		
-		return !(Iterables.find(viewModels, Predicates.instanceOf(AspectLexiconModel.class), null) == null
-				&& CorpusModule.getCorpora().size() == 0)
-			&& !(Iterables.find(viewModels, Predicates.instanceOf(DocumentCorpusModel.class), null) == null
-				&& AspectLexBuilder.getLexica().size() == 0);
-	}
-
 	@Override
 	public String getRoute() {
 		DocumentCorpusModel corpusVM = this.findViewModel(DocumentCorpusModel.class, new DocumentCorpusModel());

@@ -33,12 +33,12 @@
 		@if(corpus != null) { data-corpus="@corpus.asJson()" }>
 	@if(lexicon == null) {
 	<div id="ctr-lexica-@uid" class="ctr-lexica row-fluid">
-		@tags.storeList(stores = AspectLexBuilder.getLexica(), selectionPrompt = "Select an aspect lexicon", editable = false)
+		@tags.storeList(stores = AspectLexBuilder.getLexica(), selectionPrompt = "Select an aspect lexicon")
 	</div>
 	}
 	@if(corpus == null) {
 	<div id="ctr-corpora-@uid" class="ctr-corpora row-fluid">
-		@tags.storeList(stores = CorpusModule.getCorpora(), selectionPrompt = "Select a test corpus", editable = false)
+		@tags.storeList(stores = CorpusModule.getCorpora(), selectionPrompt = "Select a test corpus")
 	</div>
 	}
 	<div id="ctr-aom-editor-outer-@uid" class="ctr-aom-editor-outer row-fluid">

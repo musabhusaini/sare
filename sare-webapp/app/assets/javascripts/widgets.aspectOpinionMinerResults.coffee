@@ -105,7 +105,9 @@ widget =
 								location: 'e'
 						
 						# this makes sure the proportions are correct.
-						@_summaryPlot.replot()
+						@_delay ->
+							@_summaryPlot.replot()
+						, 0
 								
 					activeNav = @_$(@options.detailsContainer).tabbedNav("getActiveNav")?.li
 					if not activeNav.length or not $(activeNav).is(@options.visualsNav)
