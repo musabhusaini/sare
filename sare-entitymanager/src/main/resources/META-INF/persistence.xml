@@ -18,17 +18,17 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with SARE. If not, see <http://www.gnu.org/licenses/>.
  -->
- 
+
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
-             version="2.0">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
 
-    <persistence-unit name="edu.sabanciuniv.sentilab.sare.data.prod">
-    	<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		
+	<persistence-unit name="edu.sabanciuniv.sentilab.sare.data.prod">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+
 		<class>edu.sabanciuniv.sentilab.sare.models.base.PersistentObject</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditableTextDocument</class>
@@ -36,43 +36,43 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditablePartialDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconBuilderDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconDocument</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.Lexicon</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.HybridDocumentStore</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDocumentStore</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.setcover.SetCoverDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.setcover.DocumentSetCover</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
 
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionMinedDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedCorpus</class>
-		
-		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-		
-        <properties>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/sare_main_db" />
-            <property name="javax.persistence.jdbc.user" value="java_user" />
-            <property name="javax.persistence.jdbc.password" value="java_user_pwd" />
 
-            <property name="hibernate.hbm2ddl.auto" value="update" />
-        </properties>
-    </persistence-unit>
-    
-    <persistence-unit name="edu.sabanciuniv.sentilab.sare.data.dev">
-    	<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/sare_main_db" />
+			<property name="javax.persistence.jdbc.user" value="sare_user" />
+			<property name="javax.persistence.jdbc.password" value="sare_user_pwd" />
+
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+		</properties>
+	</persistence-unit>
+
+	<persistence-unit name="edu.sabanciuniv.sentilab.sare.data.dev">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+
 		<class>edu.sabanciuniv.sentilab.sare.models.base.PersistentObject</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditableTextDocument</class>
@@ -80,44 +80,44 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditablePartialDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconBuilderDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconDocument</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.Lexicon</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.HybridDocumentStore</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDocumentStore</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.setcover.SetCoverDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.setcover.DocumentSetCover</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
 
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionMinedDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedCorpus</class>
-		
-		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-		
-        <properties>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/sare_dev_db" />
-            <property name="javax.persistence.jdbc.user" value="java_user" />
-            <property name="javax.persistence.jdbc.password" value="java_user_pwd" />
 
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="update" />
-        </properties>
-    </persistence-unit>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/sare_dev_db" />
+			<property name="javax.persistence.jdbc.user" value="sare_user" />
+			<property name="javax.persistence.jdbc.password" value="sare_user_pwd" />
+
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+		</properties>
+	</persistence-unit>
 
 	<persistence-unit name="edu.sabanciuniv.sentilab.sare.data.test">
-    	<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+
 		<class>edu.sabanciuniv.sentilab.sare.models.base.PersistentObject</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditableTextDocument</class>
@@ -125,36 +125,36 @@
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.EditablePartialDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconBuilderDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.document.LexiconDocument</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.Lexicon</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.HybridDocumentStore</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDocumentStore</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.setcover.SetCoverDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.setcover.DocumentSetCover</class>
-		
+
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectExpression</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon</class>
 
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.OpinionMinedDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedDocument</class>
 		<class>edu.sabanciuniv.sentilab.sare.models.opinion.AspectOpinionMinedCorpus</class>
-		
-		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-		
-        <properties>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/sare_test_db" />
-            <property name="javax.persistence.jdbc.user" value="java_user" />
-            <property name="javax.persistence.jdbc.password" value="java_user_pwd" />
 
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="create-drop" />
-        </properties>
-    </persistence-unit>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/sare_test_db" />
+			<property name="javax.persistence.jdbc.user" value="sare_user" />
+			<property name="javax.persistence.jdbc.password" value="sare_user_pwd" />
+
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
+		</properties>
+	</persistence-unit>
 </persistence>
