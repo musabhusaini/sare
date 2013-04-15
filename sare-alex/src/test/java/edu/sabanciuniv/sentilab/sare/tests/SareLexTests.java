@@ -25,13 +25,21 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import edu.sabanciuniv.sentilab.sare.controllers.aspect.tests.AspectLexiconControllerTest;
 import edu.sabanciuniv.sentilab.sare.controllers.setcover.tests.*;
+import edu.sabanciuniv.sentilab.sare.models.aspect.tests.AspectLexiconTest;
 import edu.sabanciuniv.sentilab.sare.models.base.document.tests.MergableDocumentTest;
+import edu.sabanciuniv.sentilab.sare.models.opinion.tests.AspectOpinionMinedDocumentTest;
+import edu.sabanciuniv.sentilab.sare.models.setcover.tests.SetCoverDocumentTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	AspectLexiconControllerTest.class,
+	AspectLexiconTest.class,
 	MergableDocumentTest.class,
-	SetCoverControllerTest.class
+	SetCoverControllerTest.class,
+	AspectOpinionMinedDocumentTest.class,
+	SetCoverDocumentTest.class
 })
 public class SareLexTests {
 }

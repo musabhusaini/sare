@@ -1,4 +1,4 @@
-package edu.sabanciuniv.sentilab.models.opinion.tests;
+package edu.sabanciuniv.sentilab.sare.models.opinion.tests;
 
 import static org.junit.Assert.*;
 

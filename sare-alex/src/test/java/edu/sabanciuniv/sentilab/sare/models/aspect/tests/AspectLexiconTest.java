@@ -32,7 +32,7 @@ import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
 import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus;
 
-public class AspectLexiconTests {
+public class AspectLexiconTest {
 
 	private AspectLexicon testLexicon1;
 	private AspectLexicon testLexicon2;

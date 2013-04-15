@@ -86,7 +86,7 @@ widget =
 					$(graphInnerContainer).text "Not enough data for a graph"
 				
 				if summary?
-					$(thead).append "<tr><th>Type</th><th>Count</th></tr>"
+					$(thead).append "<tr><th>Category</th><th>Count</th></tr>"
 					$(tbody).append "<tr><td>Total</td><td>#{$(data.rslt.obj).data @options.sizeKey}</td></tr>"
 					
 					if graphData?[0].length
@@ -103,6 +103,9 @@ widget =
 							legend:
 								show: true
 								location: 'e'
+						
+						# this makes sure the proportions are correct.
+						@_summaryPlot.replot()
 								
 					activeNav = @_$(@options.detailsContainer).tabbedNav("getActiveNav")?.li
 					if not activeNav.length or not $(activeNav).is(@options.visualsNav)

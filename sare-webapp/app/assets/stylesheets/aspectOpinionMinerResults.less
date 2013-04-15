@@ -24,12 +24,15 @@
 @import-once "utilities";
 @import-once "tabbedNav";
 
-@box-height: 350px;
-@full-height: @box-height; //(@box-height + @baseLineHeight + 2*@gridGutterWidth/4);
+@full-height: 350px;
 
 .ctr-aom-results {
+  .jstree-default.jstree-focused {
+    background: transparent;
+  }
+  
   .ctr-documents-tree {
-    .boxed-display(@box-height);
+    .boxed-display(@full-height);
   }
   
   .ctr-details {
@@ -53,6 +56,10 @@
   .ctr-visual-table table {
     min-width: 150px;
     width: auto;
+    
+    tbody tr:last-child:not(:first-child) {
+      font-weight: bold;
+    }
   }
   
   .ctr-visual-graph > div {

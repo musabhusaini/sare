@@ -40,7 +40,6 @@
 		<module>utils</module>
 		<module>sare-base</module>
 		<module>sare-alex</module>
-		<module>sare-abome</module>
 		<module>sare-entitymanager</module>
 	</modules>
 
