@@ -135,6 +135,7 @@ widget =
 				.tooltip("destroy")
 				.tooltip
 					title: @options.dropFileTip
+			@_changeInputState @_$(@options.updateButton), "reset"
 			@_fixButtons()
 			@_trigger "uploadError", up, error
 	
@@ -179,7 +180,7 @@ widget =
 		# delay execution so that this happens at the end.
 		window.setTimeout =>
 			for input in [ @options.updateButton, @options.resetButton ]
-				@_changeInputState @_$(input), if not not @_getUpdated() then "enabled" else "disabled"
+				@_changeInputState input, "enabled", not not @_getUpdated()
 		, 0
 		false
 

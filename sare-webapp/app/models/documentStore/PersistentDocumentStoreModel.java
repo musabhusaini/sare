@@ -53,4 +53,9 @@ public class PersistentDocumentStoreModel
 	public long populateSize(EntityManager em, PersistentDocumentStore store) {
 		return this.size = new PersistentDocumentStoreController().getSize(em, store);
 	}
+	
+	@Override
+	public String toString() {
+		return this.title;
+	}
 }
