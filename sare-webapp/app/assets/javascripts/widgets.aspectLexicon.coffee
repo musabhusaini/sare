@@ -50,7 +50,7 @@ widget =
 			keyword: keyword
 		data:
 			title: keyword.content
-			icon: jsRoutes.controllers.Assets.at("/plugins/jstree/themes/misc/file.png").url
+			icon: jsRoutes.controllers.Assets.at("plugins/jstree/themes/misc/file.png").url
 			attr:
 				id: "keyword-node-#{keyword.id}"
 		metadata: metadata

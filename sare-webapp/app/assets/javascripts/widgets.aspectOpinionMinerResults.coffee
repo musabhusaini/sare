@@ -157,7 +157,7 @@ widget =
 					document:
 						max_children: 0
 						icon:
-							image: jsRoutes.controllers.Assets.at("/plugins/jstree/themes/misc/file.png").url
+							image: jsRoutes.controllers.Assets.at("plugins/jstree/themes/misc/file.png").url
 			plugins: [ "themes", "html_data", "ui", "types", "hotkeys" ]
 		
 		@_$(@options.detailsContainer).tabbedNav()
