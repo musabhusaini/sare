@@ -4,12 +4,13 @@ git clean -df
 git checkout .
 git pull
 
-echo -n "application.secret=" >> sare-webapp/conf/prod.conf
-cat ../secret.key >> sare-webapp/conf/prod.conf
+SECRET_KEY=$(<../secret.key)
+echo "application.secret=${SECRET_KEY}" >> sare-webapp/conf/prod.conf
 
 SQL_PWD=$(<../sql.pwd)
-echo -n "db.default.password=${SQL_PWD}" >> sare-webapp/conf/prod.conf
-xmlstarlet ed -N x="http://java.sun.com/xml/ns/persistence" -u "/x:persistence/x:persistence-unit/x:properties/x:property[@name='javax.persistence.jdbc.password']/@value" -v "${SQL_PWD}" sare-entitymanager/src/main/resources/META-INF/persistence.xml
+echo "db.default.password=${SQL_PWD}" >> sare-webapp/conf/prod.conf
+
+xmlstarlet ed -L -N x="http://java.sun.com/xml/ns/persistence" -u "/x:persistence/x:persistence-unit/x:properties/x:property[@name='javax.persistence.jdbc.password']/@value" -v "${SQL_PWD}" sare-entitymanager/src/main/resources/META-INF/persistence.xml
 
 mvn clean compile install
 rm -rf $PLAY_HOME/repository/cache/edu.sabanciuniv.sentilab
