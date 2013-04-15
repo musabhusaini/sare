@@ -43,7 +43,7 @@ widget =
 	activate: (li) ->
 		if typeof li is "string"
 			li = @_findNav li
-		if not $(li).length then return
+		if not $(li).length then return true
 		
 		@_$(@options.navContainer).children("li")
 			.removeClass @options.activeClass
@@ -61,6 +61,8 @@ widget =
 		$(@element).trigger "tabbedNavTabChanged",
 			key: nav
 			container: ctr
+		
+		false
 		
 	_create: ->
 		@_on $(@element),

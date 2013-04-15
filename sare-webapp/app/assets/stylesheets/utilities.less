@@ -44,6 +44,14 @@
   -ms-filter: "FlipH";
 }
 
+.rotate-icon(@degree: 90deg) {
+  -webkit-transform: rotate(@degree);
+  -moz-transform: rotate(@degree);
+  -ms-transform: rotate(@degree);
+  -o-transform: rotate(@degree);
+  transform: rotate(@degree);
+}
+
 .inline-block(@align: top) {
   display: inline-block;
   vertical-align: @align;

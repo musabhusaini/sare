@@ -45,9 +45,9 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 public class AspectOpinionMinedCorpusModel
 		extends PersistentDocumentStoreModel {
 	
-	public static final String NEGATIVE = "Negative";
-	public static final String NEUTRAL = "Neutral";
-	public static final String POSITIVE = "Positive";
+	public static final String NEGATIVE = "Overall negative";
+	public static final String NEUTRAL = "Overall neutral";
+	public static final String POSITIVE = "Overall positive";
 
 	public static enum DocumentGrouping {
 		orientation,

@@ -21,6 +21,8 @@
 
 @import-once "bootstrap/variables";
 @import-once "bootstrap/utilities";
+@import-once "bootstrap/mixins";
+@import-once "bootstrap/sprites";
 @import-once "utilities";
 @import-once "tabbedNav";
 
@@ -29,6 +31,11 @@
 .ctr-aom-results {
   .jstree-default.jstree-focused {
     background: transparent;
+  }
+  
+  .icon-graph {
+    .icon-align-left;
+    .rotate-icon(-90deg);
   }
   
   .ctr-documents-tree {

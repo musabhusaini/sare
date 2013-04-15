@@ -46,8 +46,7 @@ widget =
 		
 		@_on $(window),
 			resize: (e) ->
-				@_summaryPlot?.replot
-					resetAxes: true
+				@_summaryPlot?.replot()
 
 		@_on @_$(@options.documentsTreeContainer),
 			"click a": (e) ->
@@ -58,6 +57,9 @@ widget =
 				data.inst.select_node $(data.inst.get_container_ul()).children "li:first"
 			
 			"select_node.jstree": (e, data) =>
+				roundPolarity = (polarity) ->
+					Math.round(polarity*1000)/1000
+				
 				@_summaryPlot?.destroy()
 				@_summaryPlot = null
 				@_$(@options.navContainer).find("ul.nav li").hide()
@@ -76,11 +78,11 @@ widget =
 				
 				if tableMap?
 					for title, value of tableMap
-						$(tbody).append "<tr><td>#{title}</td><td>#{Math.round(value*1000)/1000}</td></tr>"
+						$(tbody).append "<tr><td>#{title}</td><td>#{roundPolarity value}</td></tr>"
 						scoreMax = Math.max scoreMax, Math.abs value
 					@_$(@options.visualsNav).show()
 					graphData = [ (for title, value of tableMap
-						[title, value]) ]
+						[title, roundPolarity value]) ]
 				
 				if not graphData?[0].length
 					$(graphInnerContainer).text "Not enough data for a graph"
@@ -116,25 +118,28 @@ widget =
 				else if document?
 					if graphData?[0].length
 						@_summaryPlot = $.jqplot graphId, graphData,
+							axesDefaults:
+								labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+								tickRenderer: $.jqplot.CanvasAxisTickRenderer
 							seriesDefaults:
 								renderer: $.jqplot.BarRenderer
 								rendererOptions:
 									fillToZero: true
 							axes:
 								xaxis:
+									label: "Aspect name"
 									renderer: $.jqplot.CategoryAxisRenderer
-									tickRenderer: $.jqplot.CanvasAxisTickRenderer
-									tickOptions:
-										fontFamily: "Courier New"
-										fontSize: "9pt"
 								yaxis:
+									label: "Polarity score [-1, +1]"
 									min: -scoreMax
 									max: scoreMax
+									tickOptions:
+										formatString: "%1.3f"
 					
 					@_$(@options.documentNav).show()
 					@_$(@options.documentContainer).text document.content
 					$(thead).append "<tr><th>Aspect</th><th>Polarity</th></tr>"
-					$(tbody).append "<tr><td>Overall</td><td>#{value = Math.round(document.polarity*1000)/1000}</td></tr>"
+					$(tbody).append "<tr><td>Overall</td><td>#{roundPolarity document.polarity}</td></tr>"
 				
 		@_on @options.detailsContainer,
 			tabbedNavTabChanged: (e, data) ->
