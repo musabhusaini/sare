@@ -21,14 +21,12 @@
 
 package edu.sabanciuniv.sentilab.sare.models.opinion;
 
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 
 import javax.persistence.*;
 
-import org.apache.commons.lang3.ObjectUtils;
-
-import com.google.common.collect.Maps;
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
@@ -44,6 +42,21 @@ public class AspectOpinionMinedDocument
 		extends OpinionMinedDocument {
 
 	private static final long serialVersionUID = 1891874870536475030L;
+
+	private static class AspectPolarityTuple {
+		public AspectLexicon aspect;
+		public Double polarity;
+		
+		public AspectPolarityTuple(AspectLexicon aspect, Double polarity) {
+			this();
+			
+			this.aspect = aspect;
+			this.polarity = polarity;
+		}
+		
+		public AspectPolarityTuple() {
+		}
+	}
 	
 	/**
 	 * Creates an instance of {@link AspectOpinionMinedDocument}.
@@ -64,12 +77,18 @@ public class AspectOpinionMinedDocument
 	 * Gets the aspect-based opinion polarities of this document.
 	 * @return a {@link Map} of {@link AspectLexicon} objects and their polarities. The keys might only contain the most necessary information.
 	 */
-	@SuppressWarnings({ "serial", "unchecked" })
 	public Map<AspectLexicon, Double> getAspectPolarities() {
-		return ObjectUtils.defaultIfNull(
-			(Map<AspectLexicon, Double>)this.getProperty("aspectPolarities", new TypeToken<Map<String, Double>>() {}.getType()),
-			Maps.<AspectLexicon, Double>newHashMap()
-		);
+		AspectPolarityTuple[] aspectPolaritiesList = this.getProperty("aspectPolarities", AspectPolarityTuple[].class);
+		if (aspectPolaritiesList == null) {
+			return Maps.<AspectLexicon, Double>newHashMap();
+		}
+		
+		Map<AspectLexicon, Double> aspectPolarities = Maps.newHashMap();
+		for (AspectPolarityTuple tuple : aspectPolaritiesList) {
+			aspectPolarities.put(tuple.aspect, tuple.polarity);
+		}
+		
+		return aspectPolarities;
 	}
 
 	/**
@@ -78,7 +97,13 @@ public class AspectOpinionMinedDocument
 	 * @return the {@code this} object.
 	 */
 	public AspectOpinionMinedDocument setAspectPolarities(Map<AspectLexicon, Double> aspectPolarities) {
-		this.setProperty("aspectPolarities", aspectPolarities);
+		List<AspectPolarityTuple> tuples = Lists.newArrayList();
+		if (aspectPolarities != null) {
+			for (Entry<AspectLexicon, Double> entry : aspectPolarities.entrySet()) {
+				tuples.add(new AspectPolarityTuple(entry.getKey(), entry.getValue()));
+			}
+		}
+		this.setProperty("aspectPolarities", tuples.toArray(new AspectPolarityTuple[]{}));
 		return this;
 	}
 }

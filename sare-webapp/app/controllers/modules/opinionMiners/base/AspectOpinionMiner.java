@@ -124,7 +124,7 @@ public class AspectOpinionMiner
 		}
 		
 		AspectLexicon lexiconObj = lexicon != null ? fetchResource(lexicon, AspectLexicon.class) : null;
-		AspectLexiconModel lexiconVM = lexiconObj != null ? (AspectLexiconModel)createViewModel(lexiconObj): null;
+		AspectLexiconModel lexiconVM = lexiconObj != null ? new AspectLexiconModel(lexiconObj, false): null;
 		
 		return moduleRender(new AspectOpinionMiner(engine).setViewModels(Lists.<ViewModel>newArrayList(corpusVM, lexiconVM)),
 			aspectOpinionMiner.render(corpusVM, lexiconVM, engine), partial);
@@ -137,7 +137,7 @@ public class AspectOpinionMiner
 		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
 		
 		return ok(aspectOpinionMinerEditor.render((DocumentCorpusModel)createViewModel(corpusObj),
-				(AspectLexiconModel)createViewModel(lexiconObj), engine));
+				new AspectLexiconModel(lexiconObj, false), engine));
 	}
 	
 	public static Result resultsView(UUID corpus, UUID lexicon, String engine) {

@@ -44,17 +44,23 @@ widget =
 				if not $(e.target).closest(@_$ @options.documentsTreeContainer).length
 					$(@_$ @options.documentsTreeContainer).jstree "unset_focus"
 		
+		@_on $(window),
+			resize: (e) ->
+				@_summaryPlot?.replot
+					resetAxes: true
+
 		@_on @_$(@options.documentsTreeContainer),
 			"click a": (e) ->
 				$(e.target).focus()
-				
+		
 		@_$(@options.documentsTreeContainer).on
 			"loaded.jstree": (e, data) =>
 				data.inst.select_node $(data.inst.get_container_ul()).children "li:first"
 			
 			"select_node.jstree": (e, data) =>
-				@_$(@options.detailsContainer).children().removeClass "active"
 				@_summaryPlot?.destroy()
+				@_summaryPlot = null
+				@_$(@options.navContainer).find("ul.nav li").hide()
 				
 				type = $(data.rslt.obj).data @options.typeKey
 				summary = $(data.rslt.obj).data @options.summaryKey
@@ -72,7 +78,7 @@ widget =
 					for title, value of tableMap
 						$(tbody).append "<tr><td>#{title}</td><td>#{Math.round(value*1000)/1000}</td></tr>"
 						scoreMax = Math.max scoreMax, Math.abs value
-					@_$(@options.visualsContainer).addClass "active"
+					@_$(@options.visualsNav).show()
 					graphData = [ (for title, value of tableMap
 						[title, value]) ]
 				
@@ -84,14 +90,23 @@ widget =
 					$(tbody).append "<tr><td>Total</td><td>#{$(data.rslt.obj).data @options.sizeKey}</td></tr>"
 					
 					if graphData?[0].length
+						$(graphInnerContainer).addClass "pie"
 						@_summaryPlot = $.jqplot graphId, graphData,
 							seriesDefaults:
 								renderer: jQuery.jqplot.PieRenderer
 								rendererOptions:
 									showDataLabels: true
+							grid:
+								borderWidth: 0
+								shadow: false
+								background: "transparent"
 							legend:
 								show: true
 								location: 'e'
+								
+					activeNav = @_$(@options.detailsContainer).tabbedNav("getActiveNav")?.li
+					if not activeNav.length or not $(activeNav).is(@options.visualsNav)
+						@_$(@options.detailsContainer).tabbedNav "activate", @options.graphicalNavKey
 						
 				else if document?
 					if graphData?[0].length
@@ -111,10 +126,15 @@ widget =
 									min: -scoreMax
 									max: scoreMax
 					
-					@_$(@options.documentOuterContainer).addClass "active"
+					@_$(@options.documentNav).show()
 					@_$(@options.documentContainer).text document.content
 					$(thead).append "<tr><th>Aspect</th><th>Polarity</th></tr>"
 					$(tbody).append "<tr><td>Overall</td><td>#{value = Math.round(document.polarity*1000)/1000}</td></tr>"
+				
+		@_on @options.detailsContainer,
+			tabbedNavTabChanged: (e, data) ->
+				if data?.key is @options.graphicalNavKey
+					@_summaryPlot?.replot()
 		
 		@_$(@options.documentsTreeContainer).jstree
 			ui:
@@ -130,7 +150,7 @@ widget =
 							image: jsRoutes.controllers.Assets.at("/plugins/jstree/themes/misc/file.png").url
 			plugins: [ "themes", "html_data", "ui", "types", "hotkeys" ]
 		
-		@_$(@options.visualsContainer).tabbedNav()
+		@_$(@options.detailsContainer).tabbedNav()
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
@@ -150,11 +170,13 @@ widget =
 		engine: null
 		documentsTreeContainer: ".ctr-documents-tree"
 		detailsContainer: ".ctr-details"
-		documentOuterContainer: ".ctr-document-outer"
+		navContainer: ".ctr-nav"
+		documentNav: ".nav-document"
+		visualsNav: ".nav-visual"
 		documentContainer: ".ctr-document"
-		visualsContainer: ".ctr-visuals"
 		tableContainer: ".ctr-visual-table"
 		graphContainer: ".ctr-visual-graph"
+		graphicalNavKey: "graphical"
 		lexiconKey: "lexicon"
 		corpusKey: "corpus"
 		typeKey: "type"

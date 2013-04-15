@@ -21,19 +21,28 @@ along with SARE. If not, see <http://www.gnu.org/licenses/>.
 
 # define reusables
 $ = window.jQuery
-jsRoutes = window.jsRoutes
-JSON = window.JSON
 Sare = window.Sare
-Helpers = Sare.Helpers
-Page = Sare.Page
-Selectors = Page.Selectors
-Strings = Page.Strings
-Widgets = Page.Widgets
-
 Math = window.Math
 
 widget =
-	_activate: (li) ->
+	_findNav: (nav) ->
+		navKey = @options.navKey
+		@_$(@options.navContainer).children("li").filter ->
+			nav is $(@).data navKey
+	
+	_findTab: (nav) ->
+		navKey = @options.navKey
+		@_$(@options.tabsContainer).children(@options.tabContainer).filter ->
+			nav is $(@).data navKey
+	
+	getActiveNav: ->
+		li = @_$(@options.navContainer).children("li").filter(".#{@options.activeClass}")
+		nav: $(li).data @options.navKey
+		li: li
+	
+	activate: (li) ->
+		if typeof li is "string"
+			li = @_findNav li
 		if not $(li).length then return
 		
 		@_$(@options.navContainer).children("li")
@@ -45,19 +54,21 @@ widget =
 			.removeClass @options.activeClass
 		
 		nav = $(li).data @options.navKey	
-		navKey = @options.navKey
-		ctr = @_$(@options.tabsContainer).children(@options.tabContainer).filter ->
-			nav is $(@).data navKey
+		ctr = @_findTab nav
 		
 		$(ctr).addClass @options.activeClass
+		
+		$(@element).trigger "tabbedNavTabChanged",
+			key: nav
+			container: ctr
 		
 	_create: ->
 		@_on $(@element),
 			"click li": (e) ->
-				@_activate $(e.target).closest "#{@options.navContainer} li"
+				@activate $(e.target).closest "#{@options.navContainer} li"
 	
 	refresh: ->
-		@_activate @_$(@options.navContainer).find "li.#{@options.activeClass}"
+		@activate @_$(@options.navContainer).find "li.#{@options.activeClass}"
 	
 	_init: ->
 		@refresh()

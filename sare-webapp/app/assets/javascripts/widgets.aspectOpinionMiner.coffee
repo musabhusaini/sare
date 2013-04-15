@@ -56,13 +56,13 @@ widget =
 				refreshView e, data.updatedData
 		
 		storeLists
-			.storeList "option",
+			.storeList? "option",
 				suppressOutput: true
 		
 		if @options.corpus?
-			$(corporaList).storeList "disable"
+			$(corporaList).storeList? "disable"
 		if @options.lexicon?
-			$(lexicaList).storeList "disable"
+			$(lexicaList).storeList? "disable"
 		
 	refresh: ->
 		$(@element).data Strings.widgetKey, @

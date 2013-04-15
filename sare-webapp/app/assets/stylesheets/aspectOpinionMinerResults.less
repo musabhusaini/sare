@@ -24,35 +24,43 @@
 @import-once "utilities";
 @import-once "tabbedNav";
 
-@box-height: 300px;
-@full-height: (@box-height + @baseLineHeight + 2*@gridGutterWidth/4);
+@box-height: 350px;
+@full-height: @box-height; //(@box-height + @baseLineHeight + 2*@gridGutterWidth/4);
 
 .ctr-aom-results {
   .ctr-documents-tree {
     .boxed-display(@box-height);
   }
   
-  .ctr-details > div {
-    .hide;
+  .ctr-details {
+    width: 100%;
+    height: @full-height;
     
-    &.active {
-      .show;
+    .ctr-tab {
+      height: 100%;
+    }
+    
+    > div {
+      width: 100%;
     }
   }
   
   .ctr-document {
-    .boxed-display(@box-height);
-  }
-  
-  .ctr-visual {
-    height: @full-height;
-    .border-box;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   
   .ctr-visual-table table {
-    tbody tr:last-child {
-      font-weight: bold;
-    } 
+    min-width: 150px;
+    width: auto;
+  }
+  
+  .ctr-visual-graph > div {
+    width: 100%;
+    height: 100%;
+    
+    &.pie {
+      width: 50%;
+    }
   }
 }

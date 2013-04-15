@@ -274,15 +274,26 @@ public abstract class PersistentObject
 	 * Attaches an extra property to this object.
 	 * @param property the name of the property to attached.
 	 * @param value value of the property to be attached.
+	 * @param type the {@link Type} of the value being set.
 	 * @return the {@code this} object.
 	 */
-	public PersistentObject setProperty(String property, Object value) {
+	public PersistentObject setProperty(String property, Object value, Type type) {
 		if (value == null) {
 			this.getOtherData().remove(property);
 		} else {
-			this.getOtherData().add(property, new Gson().toJsonTree(value));
+			this.getOtherData().add(property, new Gson().toJsonTree(value, ObjectUtils.defaultIfNull(type, value.getClass())));
 		}
 		return this;
+	}
+	
+	/**
+	 * Attaches an extra property to this object.
+	 * @param property the name of the property to attached.
+	 * @param value value of the property to be attached.
+	 * @return the {@code this} object.
+	 */
+	public PersistentObject setProperty(String property, Object value) {
+		return this.setProperty(property, value, null);
 	}
 	
 	/**

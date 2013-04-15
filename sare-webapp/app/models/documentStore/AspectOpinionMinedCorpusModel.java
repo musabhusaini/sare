@@ -98,7 +98,7 @@ public class AspectOpinionMinedCorpusModel
 				this.id = this.corpus.id;
 			}
 			if (minedCorpus.getLexicon() != null && minedCorpus.getLexicon() instanceof AspectLexicon) {
-				this.lexicon = (AspectLexiconModel)createViewModel(minedCorpus.getLexicon());
+				this.lexicon = new AspectLexiconModel((AspectLexicon)minedCorpus.getLexicon(), false);
 			}
 			
 			this.engineCode = minedCorpus.getEngineCode();

@@ -54,7 +54,7 @@ public class AspectOpinionMinedDocumentModel
 			if (document.getAspectPolarities() != null) {
 				for (Entry<AspectLexicon, Double> aspectEntry : document.getAspectPolarities().entrySet()) {
 					if (aspectEntry.getKey() != null) {
-						this.aspectPolarities.put(new AspectLexiconModel(aspectEntry.getKey()), aspectEntry.getValue());
+						this.aspectPolarities.put(new AspectLexiconModel(aspectEntry.getKey(), false), aspectEntry.getValue());
 					} else {
 						this.polarity = aspectEntry.getValue();
 					}
@@ -72,7 +72,7 @@ public class AspectOpinionMinedDocumentModel
 		
 		Map<AspectLexiconModel, Double> tmpAspectPolarities = Maps.newHashMap();
 		for (Entry<AspectLexiconModel, Double> aspectEntry : this.aspectPolarities.entrySet()) {
-			tmpAspectPolarities.put(new AspectLexiconModel(fetchResource(UuidUtils.create(aspectEntry.getKey().id), AspectLexicon.class)),
+			tmpAspectPolarities.put(new AspectLexiconModel(fetchResource(UuidUtils.create(aspectEntry.getKey().id), AspectLexicon.class), false),
 					aspectEntry.getValue());
 		}
 		
