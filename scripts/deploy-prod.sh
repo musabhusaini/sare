@@ -12,6 +12,8 @@ echo "db.default.password=${SQL_PWD}" >> sare-webapp/conf/prod.conf
 
 xmlstarlet ed -L -N x="http://java.sun.com/xml/ns/persistence" -u "/x:persistence/x:persistence-unit/x:properties/x:property[@name='javax.persistence.jdbc.password']/@value" -v "${SQL_PWD}" sare-entitymanager/src/main/resources/META-INF/persistence.xml
 
+xmlstarlet ed -L -u "/configuration/appender[@name=DB]/connectionSource/dataSource/password" -v "${SQL_PWD}" sare-webapp/conf/prod-logger.xml
+
 mvn clean compile install
 rm -rf $PLAY_HOME/repository/cache/edu.sabanciuniv.sentilab
 cd sare-webapp

@@ -19,16 +19,17 @@
   ~ along with SARE. If not, see <http://www.gnu.org/licenses/>.
  -->
 
+<?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
 	<conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
 	
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-		  <!-- daily rollover -->
-		  <fileNamePattern>${application.home}/logs/application.%d{yyyy-MM-dd}.log</fileNamePattern>
-		
-		  <!-- keep 30 days' worth of history -->
-		  <maxHistory>30</maxHistory>
+			<!-- daily rollover -->
+			<fileNamePattern>${application.home}/logs/application.%d{yyyy-MM-dd}.log</fileNamePattern>
+			
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
 		</rollingPolicy>
 		
 		<file>${application.home}/logs/application.log</file>
@@ -36,12 +37,24 @@
 		<encoder>
 			<pattern>%date - [%level] - from %logger in %thread %n%message%n%xException%n</pattern>
 		</encoder>
-	 </appender>
-	
+	</appender>
+
+  <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+    <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
+      <dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">
+	      <driverClass>com.mysql.jdbc.Driver</driverClass>
+	      <jdbcUrl>jdbc:mysql://localhost/sare_log_db</jdbcUrl>
+	      <user>sare_user</user>
+	      <password></password>
+      </dataSource>
+    </connectionSource>
+  </appender>
+  	
 	<logger name="play" level="INFO" />
 	<logger name="application" level="INFO" />
 	
 	<root level="ERROR">
 	  <appender-ref ref="FILE" />
+	  <appender-ref ref="DB" />
 	</root>  
 </configuration>
