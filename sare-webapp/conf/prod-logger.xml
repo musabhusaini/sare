@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
   ~ Sentilab SARE: a Sentiment Analysis Research Environment
   ~ Copyright (C) 2013 Sabanci University Sentilab
@@ -19,7 +20,6 @@
   ~ along with SARE. If not, see <http://www.gnu.org/licenses/>.
  -->
 
-<?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
 	<conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
 	
