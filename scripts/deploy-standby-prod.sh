@@ -17,5 +17,5 @@ xmlstarlet ed -L -u "/configuration/appender[@name='DB']/connectionSource/dataSo
 mvn clean compile install
 cd sare-webapp
 play clean compile stage
-./target/start -Dconfig.resource=prod.conf -Dlogger.resource=prod-logger.xml &
+./target/start -Dhttp.port=9001 -Dconfig.resource=prod.conf -Dlogger.resource=prod-logger.xml &
 cd ..
