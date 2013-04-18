@@ -25,36 +25,46 @@ Sare = window.Sare
 Math = window.Math
 
 widget =
-	_findNav: (nav) ->
-		navKey = @options.navKey
-		@_$(@options.navContainer).children("li").filter ->
-			nav is $(@).data navKey
+	remove: (nav) ->
+		$(findNav nav).remove()
+		$(findTab nav).remove()
 	
-	_findTab: (nav) ->
+	getNavs: ->
+		@_$(@options.navContainer).children "li"
+	
+	findNav: (nav) ->
 		navKey = @options.navKey
-		@_$(@options.tabsContainer).children(@options.tabContainer).filter ->
+		$(@getNavs()).filter ->
 			nav is $(@).data navKey
 	
 	getActiveNav: ->
-		li = @_$(@options.navContainer).children("li").filter(".#{@options.activeClass}")
+		li = $(@getNavs()).filter(".#{@options.activeClass}")
 		nav: $(li).data @options.navKey
 		li: li
 	
+	getTabs: ->
+		@_$(@options.tabsContainer).children @options.tabContainer
+	
+	findTab: (nav) ->
+		navKey = @options.navKey
+		$(@getTabs()).filter ->
+			nav is $(@).data navKey
+	
 	activate: (li) ->
 		if typeof li is "string"
-			li = @_findNav li
+			li = @findNav li
 		if not $(li).length then return true
 		
-		@_$(@options.navContainer).children("li")
+		$(@getNavs())
 			.removeClass @options.activeClass
 		$(li)
 			.addClass @options.activeClass
 		
-		@_$(@options.tabsContainer).children(@options.tabContainer)
+		$(@getTabs())
 			.removeClass @options.activeClass
 		
 		nav = $(li).data @options.navKey	
-		ctr = @_findTab nav
+		ctr = @findTab nav
 		
 		$(ctr).addClass @options.activeClass
 		
@@ -70,7 +80,7 @@ widget =
 				@activate $(e.target).closest "#{@options.navContainer} li"
 	
 	refresh: ->
-		@activate @_$(@options.navContainer).find "li.#{@options.activeClass}"
+		@activate @getActiveNav()?.li
 	
 	_init: ->
 		@refresh()

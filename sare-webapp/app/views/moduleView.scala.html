@@ -26,6 +26,13 @@
 
 @contentHtml = {
 	<div id="ctr-module-manager" @if(module != null) { data-module="@module.asJson()" }>
+		<div class="ctr-module-header">
+			<div class="ctr-breadcrumbs">
+				<ul class="breadcrumb">
+					<li class="active"><a href="#">Start</a></li>
+				</ul>
+			</div>
+		</div>
 		<div class="ctr-module-content">@content</div>
 		<div class="page-footer">
 			<div class="ctr-module-controls row-fluid">
@@ -49,6 +56,7 @@
 @moreScripts = {
 	@helpers.script(
 			Seq(
+			"javascripts/widgets.tabbedNav.js",
 			"javascripts/widgets.moduleManager.js",
 			"javascripts/moduleView.html.js"
 		)

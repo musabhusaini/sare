@@ -79,8 +79,13 @@ public class AspectOpinionMiner
 	}
 
 	@Override
-	public String getDisplayName() {
+	public String getBaseDisplayName() {
 		return "Run Aspect-Based Opinion Miner";
+	}
+	
+	@Override
+	public String getDisplayName() {
+		return this.getBaseDisplayName();
 	}
 	
 	@Override
@@ -112,7 +117,7 @@ public class AspectOpinionMiner
 		AspectLexicon lexiconObj = lexicon != null ? fetchResource(lexicon, AspectLexicon.class) : null;
 		AspectLexiconModel lexiconVM = lexiconObj != null ? new AspectLexiconModel(lexiconObj, false): null;
 		
-		return moduleRender(new AspectOpinionMiner(engine).setViewModels(Lists.<ViewModel>newArrayList(corpusVM, lexiconVM)),
+		return moduleRender(createSubMiner(engine, AspectOpinionMiner.class).setViewModels(Lists.<ViewModel>newArrayList(corpusVM, lexiconVM)),
 			aspectOpinionMiner.render(corpusVM, lexiconVM, engine), partial);
 	}
 	

@@ -21,6 +21,7 @@
 
 package controllers.modules.opinionMiners.base;
 
+import java.lang.annotation.*;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -39,6 +40,32 @@ import play.Play;
 
 public abstract class OpinionMiner
 		extends Module {
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.TYPE})
+	public static @interface Coded {
+		public String value();
+	}
+	
+	public static <T extends OpinionMiner> Class<? extends T> findSubMiner(String code, Class<T> minerBase) {
+		for (Class<? extends T> subMiner : getSubMiners(minerBase)) {
+			Coded coded = subMiner.getAnnotation(Coded.class);
+			if (coded != null && StringUtils.equals(code, coded.value())) {
+				return subMiner;
+			}
+		}
+		
+		return null;
+	}
+	
+	public static <T extends OpinionMiner> T createSubMiner(String code, Class<T> minerBase) {
+		Class<? extends T> minerClass = findSubMiner(code, minerBase);
+		try {
+			return minerClass.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			return null;
+		}
+	}
 	
 	public static <T extends OpinionMiner> Set<Class<? extends T>> getSubMiners(Class<T> minerBase) {
 		Validate.notNull(minerBase);

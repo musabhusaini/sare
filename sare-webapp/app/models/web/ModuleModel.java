@@ -35,6 +35,7 @@ import models.base.ViewModel;
 public class ModuleModel extends ViewModel {
 
 	public String id;
+	public String baseName;
 	public String name;
 	public String url;
 	public boolean canPartiallyRender;
@@ -47,6 +48,7 @@ public class ModuleModel extends ViewModel {
 		
 		if (module != null) {
 			this.id = UuidUtils.normalize(module.getId());
+			this.baseName = module.getBaseDisplayName();
 			this.name = module.getDisplayName();
 			this.url = module.getRoute();
 			this.canPartiallyRender = module.canPartiallyRender();

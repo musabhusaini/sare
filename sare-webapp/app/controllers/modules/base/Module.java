@@ -118,6 +118,10 @@ public abstract class Module
 	
 	public abstract UUID getId();
 	
+	public String getBaseDisplayName() {
+		return null;
+	}
+	
 	public abstract String getDisplayName();
 	
 	public abstract String getRoute();

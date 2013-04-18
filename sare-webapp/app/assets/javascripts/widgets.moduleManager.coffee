@@ -33,151 +33,165 @@ history = window.history
 location = window.location
 localStorage = window.localStorage
 
-emptyModule =
+homeModule =
 	id: "20e7c8130d0c44dea90f5cc6427add0a"
-	name: "Empty module"
+	name: "Start"
 
 widget =
-	_prevState: ->
-		JSON.parse localStorage["previous"]
-		
-	_updatePrevState: (state) ->
-		state = $.extend {
-			url: window.location.href
-		}, state
-		localStorage["previous"] = JSON.stringify state
-		state
-		
-	_pageCounter: ->
-		counter = localStorage["counter"]
-		if counter?
-			counter = window.Number counter
-		counter ? 0
-		
-	_updatePageCounter: ->
-		counter = @_pageCounter()
-		localStorage["counter"] = counter + 1
-		counter
-		
 	_generateBrowserState: ->
-		uid: @_updatePageCounter()
+		uid: @_$(@options.breadcrumbsContainer).children("li").length
 		
 	_pushBrowserState: (module) ->
-		history.pushState state = @_generateBrowserState(), module.name, module.url
-		@_updatePrevState state
-		
+		history.pushState (state = @_generateBrowserState()), module.name, module.url
+	
 	_replaceBrowserState: (module) ->
-		history.replaceState state = @_generateBrowserState(), module.name, module.url
-		@_updatePrevState state
+		state = @_generateBrowserState()
+		state.uid--
+		history.replaceState state, module.name, module.url
+	
+	_getModule: (breadcrumb) ->
+		$(breadcrumb).data @options.moduleKey
+	
+	_getActiveBreadcrumb: ->
+		@_$(@options.breadcrumbsContainer).children "li.active:first"
+	
+	_getActiveModule: ->
+		@_getModule @_getActiveBreadcrumb()
+	
+	_createBreadcrumb: (module) ->
+		if not @_isModule(module) then return null
 		
-	_forwardModules: null
-	_backwardModules: null
-	_currentModule: null
+		name = if module.baseName? then "#{module.baseName} (#{module.name})" else module.name
+		(breadcrumb = $ "<li><a href='#'>#{name}</a></li>")
+			.data @options.moduleKey, module
+		module.breadcrumb = breadcrumb
 	
-	modules: ->
-		back = @_backwardModules ? []
-		current = if @_currentModule? then [ @_currentModules ] else []
-		next = @_forwardModules ? []
-		back.concat current, next
-	
-	replace: (module, noDisplay) ->
-		return null if not module? or typeof module isnt "object"
-		
-		@_replaceBrowserState module
-		@_currentModule = module
-		if not noDisplay then @display module
-	
-	push: (module) ->
-		return null if not module? or typeof module isnt "object"
-		
-		@_pushBrowserState module
-		
-		# clear previous modules.
-		for deletedModule in (@_forwardModules ? [])
-			@_callModule deletedModule, "destroy"
-			$(deletedModule.target).remove()
-		
-		@_forwardModules = [ module ]
-		@next()
-		
-	peek: ->
-		@_currentModule
-	
-	next: ->
-		if @_currentModule? then @_backwardModules.push oldModule = @_currentModule
-		@_currentModule = @_forwardModules.pop()
-		if @_currentModule?
-			@_callModule oldModule, "disable"
-			@_display @_currentModule
-		else
-			location.reload()
-		@_currentModule
-	
-	previous: ->
-		if @_currentModule? then @_forwardModules.push oldModule = @_currentModule
-		@_currentModule = @_backwardModules.pop()
-		if @_currentModule?
-			@_remove oldModule
-			@_display @_currentModule
-		else
-			location.reload()
-		@_currentModule
-	
-	_display: (module) ->
-		if module.id is emptyModule.id
-			@option "output", []
-		else
-			@option "output", null
-			
-		if not module.canPartiallyRender and module.url?
-			location.href = module.url
-			return
-			
-		if module.target? and @_$(@options.contentContainer).has($(module.target)).length
-			@_callModule module, "enable"
-			return @_callModule module, "refresh"
-		module.target ?= $("<div>")
-		$(module.target).empty().hide().appendTo @_$(@options.contentContainer)
-		if module.url?
-			$(module.target)
-				.load(module.url, "partial=true")
-				.show()
-			# TODO: add animations or whatever here.
-	
-	_remove: (module) ->
-		$(module.target).remove()
+	_isModule: (module) ->
+		module? and typeof module is "object" and module.id?
 	
 	_callModule: (module, call, data) ->
-		return null if not module? or not module.target?
-		target = $(module.target).filter(Selectors.moduleContainer)
+		if not @_isModule(module) then return null
+		
+		target = $(module.target).filter Selectors.moduleContainer
 		target = $(module.target).find(Selectors.moduleContainer) if not target.length
 		widget = $(target).first().data Strings.widgetKey
 		if widget? and typeof widget is "object"
 			widget[call] data
+	
+	_deactivateModule: (module) ->
+		if not @_isModule(module) then return null
+		
+		@_callModule module, "disable"
+		$(module.breadcrumb)
+			.removeClass("active")
+			.children("a").prop "href", module.url
+		$(module.target).removeClass "active"
+	
+	_activateModule: (module) ->
+		if not @_isModule(module) then return null
+		
+		@_deactivateModule @_getActiveModule()
+		@_callModule module, "enable"
+		$(module.breadcrumb)
+			.addClass("active")
+			.children("a").prop "href", null
+		$(module.target).addClass "active"
+		@_callModule module, "refresh"
+		
+	_removeModule: (module) ->
+		if not @_isModule(module) then return null
+		
+		@_callModule module, "destroy"
+		$(module.breadcrumb).remove()
+		$(module.target).remove()
+	
+	_replaceActive: (module, skipDisplay) ->
+		if not @_isModule(module) then return null
+		
+		newBreadcrumb = @_createBreadcrumb module
+		active = @_getActiveBreadcrumb()
+		@_replaceBrowserState module
+		$(active).replaceWith newBreadcrumb
+		if not skipDisplay then @display module
+	
+	go: (index) ->
+		if index is 0 then return
+		
+		active = @_getActiveModule()
+		if active?
+			gotoModule = @_getModule(if index > 0 then $(active.breadcrumb).nextAll().eq(index-1) else $(active.breadcrumb).prevAll().eq(-index-1))
+		if gotoModule?
+			@_deactivateModule active
+			@display gotoModule
+		else
+			location.reload()
+		gotoModule
+	
+	push: (module) ->
+		if not @_isModule(module) then return null
+		
+		# clear previous modules.
+		that = @
+		$(@_getActiveBreadcrumb()).nextAll().each ->
+			that._removeModule that._getModule @
+		
+		@_pushBrowserState module
+		
+		activeBreadcrumb = @_getActiveBreadcrumb()
+		if not $(activeBreadcrumb).children("span.divider").length
+			$(activeBreadcrumb).append " <span class='divider'>&gt;</span>"
+		(@_createBreadcrumb module).appendTo @_$ @options.breadcrumbsContainer
+		@go 1
+	
+	display: (module) ->
+		if not @_isModule(module) then return null
+		
+		if module.id is homeModule.id
+			@option "output", []
+		else
+			@option "output", null
+		
+		if module.target?
+			return @_activateModule module
+		
+		if not module.canPartiallyRender and module.url?
+			location.href = module.url
+			return
+				
+		module.target ?= $("<div>")
+			.appendTo @_$ @options.contentContainer
+		if module.url?
+			$(module.target)
+				.load(module.url, "partial=true")
+			@_activateModule module
 		
 	_create: ->
-		@_forwardModules = []
-		@_backwardModules = []
-		
-		# hide the controls as they get shown somewhere else.
+		# hide the controls as they get shown by something else.
 		@_$(@options.moduleControlsContainer).hide()
 		
 		window.addEventListener "popstate", (e) =>
-			state = e.state
-			uid = state?.uid
+			uid = e.state?.uid
 			if uid?
-				@next() if uid > @_prevState()?.uid
-				@previous() if uid < @_prevState()?.uid
-				@_updatePrevState state
-		
-		module = $.extend {}, emptyModule, (@options.entryModule ? {}),
+				@go uid - $(@_getActiveBreadcrumb()).index()
+
+		module = $.extend {}, homeModule, (@options.entryModule ? {}),
 			target: @_$(@options.contentContainer).children()
+			url: location.href
 		
-		@replace module, true
-		@_$(@options.nextModulesButtons).on "click", "button", (e) =>
-			module = $(e.target).data @options.moduleKey
-			return true if module.subModules? and module.subModules.length > 0
-			@push module
+		@_replaceActive module, true
+		@_activateModule module
+		
+		@_on @_$(@options.breadcrumbsContainer),
+			"click a": (e) ->
+				distance = $(e.target).closest("li").index() - $(@_getActiveBreadcrumb()).index()
+				history.go distance
+				false
+		
+		@_on @_$(@options.nextModulesButtons),
+			"click button": (e) ->
+				module = $(e.target).data @options.moduleKey
+				return true if module.subModules? and module.subModules.length > 0
+				@push module
 	
 	_setOption: (key, value) ->
 		switch key
@@ -195,8 +209,9 @@ widget =
 									.data @options.moduleKey, module
 						@_$(@options.moduleControlsContainer).hide()
 						@_$(@options.nextModulesButtons).empty()
+						activeModule = @_getActiveModule()
 						for module in modules
-							if module.id isnt @_currentModule.id or @_currentModule.allowSelfOutput
+							if module.id isnt activeModule?.id or activeModule?.allowSelfOutput
 								@_$(@options.moduleControlsContainer).show()
 								btn = makeButton module
 								if not module.subModules? or module.subModules.length < 1
@@ -219,6 +234,8 @@ widget =
 		
 	_getCreateOptions: ->
 		output: null
+		headerContainer: ".ctr-module-header"
+		breadcrumbsContainer: ".ctr-breadcrumbs > ul.breadcrumb"
 		contentContainer: ".ctr-module-content"
 		nextModulesButtons: ".btg-next-modules"
 		progressBarContainer: ".ctr-progress"

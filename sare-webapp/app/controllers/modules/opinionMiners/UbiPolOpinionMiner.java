@@ -30,6 +30,7 @@ import controllers.modules.opinionMiners.base.*;
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.aspectBased.UbiPolAspectBasedEngine;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
+@OpinionMiner.Coded("ubipol")
 @Module.Requires(UniqueModel.class)
 public class UbiPolOpinionMiner
 		extends AspectOpinionMiner {
