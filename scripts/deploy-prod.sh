@@ -26,7 +26,7 @@ do
 		echo "-cdc: clear Play's dependency cache"
 		echo "-stop: stop the web app before compiling it"
 		echo "-norun: do not run the web app after compile"
-		exit
+		return
 	fi
 done
 

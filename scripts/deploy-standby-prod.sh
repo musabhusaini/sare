@@ -8,7 +8,7 @@ do
 	fi
 done
 
-./scripts/deploy-prod.sh "$@" -norun
+. scripts/deploy-prod.sh "$@" -norun
 
 cd sare-webapp
 
