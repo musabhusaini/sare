@@ -80,7 +80,7 @@ public class AspectOpinionMiner
 
 	@Override
 	public String getBaseDisplayName() {
-		return "Run Aspect-Based Opinion Miner";
+		return "Run aspect-based opinion miner";
 	}
 	
 	@Override

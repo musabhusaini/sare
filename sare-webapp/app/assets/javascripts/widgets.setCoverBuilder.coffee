@@ -48,7 +48,14 @@ widget =
 				@_$(@options.setCoverEditorContainer)
 					.load @options.setCoverEditorViewRoute(@options.setcover.id).url
 		
-		if not @options.setcover?
+		# this store list is always disabled (for now, at least).
+		@_$(@options.corporaContainer).children(Selectors.moduleContainer)
+			.storeList? "disable"
+		
+		if @options.setcover?
+			@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
+				.storeList? "disable"
+		else
 			@_on @_$(@options.setCoversContainer).children(Selectors.moduleContainer),
 				storeListSelectionChange: (e, selected) ->
 					refreshView selected.data
@@ -85,6 +92,7 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
+		corporaContainer: ".ctr-corpora"
 		setCoversContainer: ".ctr-setcovers"
 		setCoverEditorContainer: ".ctr-setcover"
 		createSetCoverRoute: jsRoutes.controllers.modules.SetCoverBuilder.create

@@ -46,9 +46,10 @@ widget =
 		@options.lexicon ?= $(@element).data @options.lexiconKey
 		@options.corpus ?= $(@element).data @options.corpusKey
 		
-		refreshView = (lexicon) =>
+		refreshView = (corpus, lexicon) =>
 			@options.lexicon = lexicon
-			corpus = @options.corpus ? @options.lexicon?.baseCorpus
+			@options.corpus = corpus
+			corpus ?= @options.lexicon?.baseCorpus
 			@_sendModuleOutput @options.lexicon, corpus
 			
 			@_$(@options.documentsContainer).empty()
@@ -64,12 +65,25 @@ widget =
 				@_$(@options.lexiconContainer)
 					.load @options.lexiconViewRoute(@options.lexicon.id).url
 		
-		if not @options.lexicon?
+		if @options.corpus?
+			@_$(@options.corporaContainer).children(Selectors.moduleContainer)
+				.storeList? "disable"
+		else
+			@_on @_$(@options.corporaContainer).children(Selectors.moduleContainer),
+				storeListSelectionChange: (e, selected) ->
+					refreshView selected.data, @options.lexicon
+				storeUpdate: (e, data) ->
+					refreshView data.updatedData, @options.lexicon
+			
+		if @options.lexicon?
+			@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
+				.storeList? "disable"
+		else
 			@_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
 				storeListSelectionChange: (e, selected) ->
-					refreshView selected.data
+					refreshView @options.corpus, selected.data
 				storeUpdate: (e, data) ->
-					refreshView data.updatedData
+					refreshView @options.corpus, data.updatedData
 			
 			@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
 				.storeList "option",
@@ -96,6 +110,7 @@ widget =
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->
+		corporaContainer: ".ctr-corpora"
 		lexicaContainer: ".ctr-lexica"
 		documentsContainer: ".ctr-documents"
 		lexiconContainer: ".ctr-alex"

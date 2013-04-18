@@ -19,7 +19,7 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
 
-@(corpus: documentStore.DocumentCorpusModel, setcover: documentStore.DocumentSetCoverModel, posTags: Map[String, String] = null)
+@(corpus: documentStore.DocumentCorpusModel, setcover: documentStore.DocumentSetCoverModel = null, posTags: Map[String, String] = null)
 
 @import scala.util._
 
@@ -31,13 +31,13 @@
 <div id="ctr-sc-builder-@uid" class="ctr-module ctr-sc-builder" @if(corpus != null) { data-corpus="@corpus.asJson()" }
 	@if(setcover != null) { data-setcover="@setcover.asJson()" }>
 	
-	@if(setcover == null) {
-	<div class="row-fluid">
-		<div id="ctr-setcovers-@uid" class="ctr-setcovers">
-			@tags.storeList(stores = SetCoverBuilder.getSetCovers(corpus), editable = true, selectionPrompt = "Select an optimized corpus")
-		</div>
+	<div id="ctr-corpora-@uid" class="ctr-corpora row-fluid">
+		@tags.storeList(editable = true, selectedStore = corpus, selectionPrompt = "Select corpus to optimize")
 	</div>
-	}
+	
+	<div id="ctr-setcovers-@uid" class="ctr-setcovers row-fluid">
+		@tags.storeList(stores = SetCoverBuilder.getSetCovers(corpus), editable = true, selectedStore = setcover, selectionPrompt = "Select an optimized corpus")
+	</div>
 	
 	<div class="row-fluid">
 		<div id="ctr-setcover-@uid" class="ctr-setcover">

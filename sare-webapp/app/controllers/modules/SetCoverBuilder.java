@@ -70,7 +70,7 @@ public class SetCoverBuilder extends Module {
 	
 	@Override
 	public String getDisplayName() {
-		return "Optimize Corpus";
+		return "Optimize corpus";
 	}
 
 	@Override

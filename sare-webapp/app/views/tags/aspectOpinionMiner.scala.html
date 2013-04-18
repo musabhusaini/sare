@@ -31,16 +31,12 @@
 @defining(Random.nextInt(1000)) { uid =>
 <div id="ctr-aom-@uid" class="ctr-module ctr-aom" @if(lexicon != null) { data-lexicon="@lexicon.asJson()" }
 		@if(corpus != null) { data-corpus="@corpus.asJson()" }>
-	@if(lexicon == null) {
-	<div id="ctr-lexica-@uid" class="ctr-lexica row-fluid">
-		@tags.storeList(stores = AspectLexBuilder.getLexica(), selectionPrompt = "Select an aspect lexicon")
-	</div>
-	}
-	@if(corpus == null) {
 	<div id="ctr-corpora-@uid" class="ctr-corpora row-fluid">
-		@tags.storeList(stores = CorpusModule.getCorpora(), selectionPrompt = "Select a test corpus")
+		@tags.storeList(selectedStore = corpus, selectionPrompt = "Select a test corpus")
 	</div>
-	}
+	<div id="ctr-lexica-@uid" class="ctr-lexica row-fluid">
+		@tags.storeList(stores = AspectLexBuilder.getLexica(), selectedStore = lexicon, selectionPrompt = "Select an aspect lexicon")
+	</div>
 	<div id="ctr-aom-editor-outer-@uid" class="ctr-aom-editor-outer row-fluid">
 		@if(lexicon != null && corpus != null) {
 			@tags.aspectOpinionMinerEditor(corpus, lexicon, engine)

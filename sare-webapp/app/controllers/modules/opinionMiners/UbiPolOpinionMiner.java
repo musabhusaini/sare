@@ -42,7 +42,7 @@ public class UbiPolOpinionMiner
 
 	@Override
 	public String getDisplayName() {
-		return "UbiPOL Engine";
+		return "UbiPOL engine";
 	}
 	
 	@Override
