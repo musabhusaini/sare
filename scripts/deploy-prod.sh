@@ -13,8 +13,8 @@ echo "db.default.password=${SQL_PWD}" >> sare-webapp/conf/prod.conf
 skipBackend=false
 for arg in "$@"
 do
-	if [ "$arg" == "-sb" ] ; then
-		$skipBackend = true
+	if [ $arg == "-sb" ] ; then
+		skipBackend=true
 	fi
 done
 
