@@ -76,7 +76,7 @@ widget =
 		target = $(module.target).find(Selectors.moduleContainer) if not target.length
 		widget = $(target).first().data Strings.widgetKey
 		if widget? and typeof widget is "object"
-			widget[call] data
+			widget[call]? data
 	
 	_deactivateModule: (module) ->
 		if not @_isModule(module) then return null
