@@ -85,17 +85,17 @@ widget =
 		$(module.breadcrumb)
 			.removeClass("active")
 			.children("a").prop "href", module.url
-		$(module.target).removeClass "active"
+		$(module.target).hide @options.animationDuration
 	
 	_activateModule: (module) ->
 		if not @_isModule(module) then return null
 		
-		@_deactivateModule @_getActiveModule()
 		@_callModule module, "enable"
+		@_deactivateModule @_getActiveModule()
 		$(module.breadcrumb)
 			.addClass("active")
 			.children("a").prop "href", null
-		$(module.target).addClass "active"
+		$(module.target).show @options.animationDuration
 		@_callModule module, "refresh"
 		
 	_removeModule: (module) ->
@@ -159,11 +159,11 @@ widget =
 			return
 				
 		module.target ?= $("<div>")
+			.hide()
 			.appendTo @_$ @options.contentContainer
 		if module.url?
 			$(module.target)
-				.load(module.url, "partial=true")
-			@_activateModule module
+				.load module.url, "partial=true", => @_activateModule module
 		
 	_create: ->
 		# hide the controls as they get shown by something else.
@@ -242,5 +242,6 @@ widget =
 		moduleControlsContainer: ".ctr-module-controls"
 		moduleKey: "module"
 		moduleOptionsRoute: jsRoutes.controllers.ModuleController.options
+		animationDuration: 200
 
 $.widget "widgets.moduleManager", Sare.Widget, widget
