@@ -40,7 +40,7 @@
 	</div>
 	
 	<div class="row-fluid">
-		<div id="ctr-documents-@uid" class="ctr-documents span7">
+		<div id="ctr-documents-@uid" class="ctr-documents span7 hide">
 		@if(corpus != null && lexicon != null) {
 			@AspectLexBuilder.renderDocumentsView(corpus.id, lexicon.id)
 		}
@@ -53,6 +53,7 @@
 		</div>
 	</div>
 	
+	@helpers.stylesheet("stylesheets/aspectLexBuilder.css")
 	@helpers.script("javascripts/widgets.aspectLexBuilder.js")
 	<script type="text/javascript">
 		(function(window, $) {

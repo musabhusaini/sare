@@ -58,10 +58,10 @@ widget =
 			if @options.lexicon?
 				if corpus?
 					@_$(@options.documentsContainer)
-						.show()
+						.removeClass("hide")
 						.load @options.documentsViewRoute(corpus.id, @options.lexicon.id).url
 				else
-					@_$(@options.documentsContainer).hide()
+					@_$(@options.documentsContainer).addClass "hide"
 				@_$(@options.lexiconContainer)
 					.load @options.lexiconViewRoute(@options.lexicon.id).url
 		
@@ -106,7 +106,7 @@ widget =
 				@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
 					.storeList if value then "disable" else "enable"
 				for input in [ @options.documentsContainer, @options.lexiconContainer ]
-					if value then @_$(input).hide() else @_$(input).show()
+					if value then @_$(input).addClass("hide") else @_$(input).removeClass "hide"
 		$.Widget.prototype._setOption.apply @, arguments
 	
 	_getCreateOptions: ->

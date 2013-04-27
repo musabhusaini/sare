@@ -41,7 +41,10 @@ public class SessionedAction extends Action.Simple {
 	public static final String SARE_SESSION_HEADER = "x-sare-session";
 	
 	public static boolean isOwnerOf(Context ctx, PersistentObject object) {
-		ctx = ObjectUtils.defaultIfNull(ctx, Validate.notNull(Context.current()));
+		if (ctx == null) {
+			ctx = Validate.notNull(Context.current());
+		}
+		
 		return StringUtils.defaultString(object.getOwnerId()).equals(getUsername(ctx));
 	}
 	
@@ -50,7 +53,9 @@ public class SessionedAction extends Action.Simple {
 	}
 	
 	public static String getSessionKey(Context ctx) {
-		ctx = ObjectUtils.defaultIfNull(ctx, Validate.notNull(Context.current()));
+		if (ctx == null) {
+			ctx = Validate.notNull(Context.current());
+		}
 		
 		// get the session id and decrypt it.
 		String sessionId = StringUtils.defaultString(
@@ -92,7 +97,10 @@ public class SessionedAction extends Action.Simple {
 	}
 	
 	public static boolean isAuthenticated(Context ctx) {
-		ctx = ObjectUtils.defaultIfNull(ctx, Validate.notNull(Context.current()));
+		if (ctx == null) {
+			ctx = Validate.notNull(Context.current());
+		}
+		
 		return isAuthenticated(getWebSession(ctx));
 	}
 	
@@ -136,7 +144,9 @@ public class SessionedAction extends Action.Simple {
 	}
 	
 	public static WebSession createWebSession(Context ctx, WebUser owner) {
-		ctx = ObjectUtils.defaultIfNull(ctx, Validate.notNull(Context.current()));
+		if (ctx == null) {
+			ctx = Validate.notNull(Context.current());
+		}
 		
 		Logger.info(LoggedAction.getLogEntry(ctx,
 			String.format("starting a new session%s", owner != null ? " for user: " + owner.getProvierId() : "")));

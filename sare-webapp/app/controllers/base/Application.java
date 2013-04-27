@@ -216,7 +216,7 @@ public class Application extends Controller {
 
 	public static Result login(String redirectTo, boolean isGuest) {
 		if (isGuest) {
-			SessionedAction.createWebSession();
+			createWebSession();
 		} else {
 			String token = request().body().asFormUrlEncoded().get("token")[0];
 			String apiKey = Play.application().configuration().getString("rpx.apiKey");
@@ -251,14 +251,14 @@ public class Application extends Controller {
 				user.save();
 			}
 			
-			SessionedAction.createWebSession(user);
+			createWebSession(user);
 		}
 		
 		return postLoginRedirect(redirectTo);
 	}
 	
 	public static Result logout() {
-		WebSession session = SessionedAction.getWebSession();
+		WebSession session = getWebSession();
 		if (session != null) {
 			SessionCleaner.clean(session);
 		}
@@ -275,7 +275,7 @@ public class Application extends Controller {
 			return login(redirectTo, isGuest);
 		}
 		
-		if (SessionedAction.isAuthenticated()) {
+		if (isAuthenticated()) {
 			return postLoginRedirect(redirectTo);			
 		}
 		
@@ -295,6 +295,7 @@ public class Application extends Controller {
 			controllers.base.routes.javascript.Application.keepAlive(),
 			controllers.base.routes.javascript.Application.login(),
 			controllers.base.routes.javascript.Application.logout(),
+			controllers.base.routes.javascript.Application.loginPage(),
 			controllers.routes.javascript.CollectionsController.supportedLanguages(),
 			controllers.routes.javascript.CollectionsController.list(),
 			controllers.routes.javascript.CollectionsController.get(),

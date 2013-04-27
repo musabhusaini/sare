@@ -29,8 +29,17 @@ Sare = window.Sare = $.extend window.Sare,
     Strings: {}
     Objects: {}
     Widgets: {}
-    Methods: {}
-    Selectors: {}
+    Methods:
+    	alert: (html, type) ->
+    		type ?= "info"
+    		html ?= ""
+    		$("<div class='alert alert-#{type} fade in'>")
+    			.append($("<button type='button' class='close' data-dismiss='alert'>&times;</button>"))
+    			.append(html)
+    			.appendTo($(Sare.Page.Selectors.mainAlertContainer).empty())
+    			.alert()
+    Selectors:
+    	mainAlertContainer: "#ctr-main-alert"
     Images:
     	wait: jsRoutes.controllers.Assets.at("images/throbber.gif").url
   Helpers:
@@ -65,6 +74,12 @@ fixWindowHeight = ->
 
 $(window).resize ->
   fixWindowHeight()
+
+$(window.document).ajaxError (e, response, request, error) ->
+	if response.status is 401
+		loginLink = "<a href='#{jsRoutes.controllers.base.Application.loginPage(window.location.href).url}'>log in</a>"
+		message = "Looks like you have been signed out. To continue, please #{loginLink} again."
+		Sare.Page.Methods.alert message, "error"
 
 $ ->
   fixWindowHeight()
