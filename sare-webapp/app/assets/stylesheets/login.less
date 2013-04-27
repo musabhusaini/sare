@@ -1,4 +1,4 @@
-@*
+/*
  * Sentilab SARE: a Sentiment Analysis Research Environment
  * Copyright (C) 2013 Sabanci University Sentilab
  * http://sentilab.sabanciuniv.edu
@@ -17,16 +17,12 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
- *@
- 
-@()
+ */
 
-@import tags._
-
-@contentHtml = {
-	<div id="ctr-content">
-		<a href="@controllers.routes.ModuleController.landingPage" class="btn btn-primary">Get Started</a>
-	</div>
+.janrainContent {
+  margin: 0 auto!important;
 }
 
-@main(content = contentHtml)
+.ctr-guest {
+  text-align: center;
+}

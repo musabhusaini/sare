@@ -23,7 +23,8 @@ package controllers.base;
 
 import javax.persistence.OptimisticLockException;
 
-import models.web.WebSession;
+import models.web.*;
+import models.web.WebSession.SessionStatus;
 
 import org.apache.commons.lang3.*;
 
@@ -40,11 +41,7 @@ public class SessionedAction extends Action.Simple {
 	public static final String SARE_SESSION_HEADER = "x-sare-session";
 	
 	public static boolean isOwnerOf(Context ctx, PersistentObject object) {
-		if (ctx == null) {
-			ctx = Context.current();
-			Validate.notNull(ctx);
-		}
-		
+		ctx = ObjectUtils.defaultIfNull(ctx, Validate.notNull(Context.current()));
 		return StringUtils.defaultString(object.getOwnerId()).equals(getUsername(ctx));
 	}
 	
@@ -53,10 +50,7 @@ public class SessionedAction extends Action.Simple {
 	}
 	
 	public static String getSessionKey(Context ctx) {
-		if (ctx == null) {
-			ctx = Context.current();
-			Validate.notNull(ctx);
-		}
+		ctx = ObjectUtils.defaultIfNull(ctx, Validate.notNull(Context.current()));
 		
 		// get the session id and decrypt it.
 		String sessionId = StringUtils.defaultString(
@@ -76,53 +70,97 @@ public class SessionedAction extends Action.Simple {
 		return getSessionKey(null);
 	}
 	
-	public static String getUsername(Context ctx) {
-		if (ctx == null) {
-			ctx = Context.current();
-			Validate.notNull(ctx);
+	public static String getUsername(WebSession session) {
+		if (session == null) {
+			return null;
 		}
 		
-		return StringUtils.defaultIfEmpty(ctx.request().username(), getSessionKey(ctx));
+		WebUser user = session.getOwner();
+		return user == null ? UuidUtils.normalize(session.getId()) : user.getProvierId();
+	}
+	
+	public static String getUsername(Context ctx) {
+		return getUsername(getWebSession(ctx));
 	}
 	
 	public static String getUsername() {
-		return getUsername(null);
+		return getUsername((Context)null);
 	}
 	
 	public static boolean isAuthenticated(WebSession session) {
-		if (session == null) {
-			return false;
-		}
-		
-		return !UuidUtils.normalize(session.id).equals(session.ownerId);
+		return session == null ? false : session.getOwner() != null;
 	}
 	
 	public static boolean isAuthenticated(Context ctx) {
-		if (ctx == null) {
-			ctx = Context.current();
-			Validate.notNull(ctx);
-		}
-		
-		WebSession session = new WebSession();
-		session.id = UuidUtils.toBytes(getSessionKey(ctx));
-		session.ownerId = getUsername(ctx);
-		return isAuthenticated(session);
+		ctx = ObjectUtils.defaultIfNull(ctx, Validate.notNull(Context.current()));
+		return isAuthenticated(getWebSession(ctx));
 	}
 	
 	public static boolean isAuthenticated() {
 		return isAuthenticated((Context)null);
 	}
 	
+	public static boolean hasWebSession(Context ctx) {
+		return getWebSession(ctx) != null;
+	}
+	
+	public static boolean hasWebSession() {
+		return hasWebSession(null);
+	}
+	
 	public static WebSession getWebSession(Context ctx) {
-		if (ctx == null) {
-			ctx = Context.current();
+		String key = getSessionKey(ctx);
+		if (!UuidUtils.isUuid(key)) {
+			return null;
 		}
 		
-		return WebSession.find.byId(UuidUtils.toBytes(getSessionKey(ctx)));
+		return WebSession.find
+			.fetch("owner")
+			.where()
+				.eq("id", UuidUtils.toBytes(key))
+				.eq("status", SessionStatus.ALIVE)
+			.findUnique();
 	}
 	
 	public static WebSession getWebSession() {
 		return getWebSession(null);
+	}
+	
+	public static WebUser getWebUser(Context ctx) {
+		WebSession session = getWebSession(ctx);
+		return session == null ? null : session.getOwner();
+	}
+	
+	public static WebUser getWebUser() {
+		return getWebUser(null);
+	}
+	
+	public static WebSession createWebSession(Context ctx, WebUser owner) {
+		ctx = ObjectUtils.defaultIfNull(ctx, Validate.notNull(Context.current()));
+		
+		Logger.info(LoggedAction.getLogEntry(ctx,
+			String.format("starting a new session%s", owner != null ? " for user: " + owner.getProvierId() : "")));
+		WebSession session = new WebSession()
+			.setStatus(SessionStatus.ALIVE)
+			.setRemoteAddress(ctx.request().remoteAddress())
+			.setOwner(owner);
+		String sessionId = Crypto.encryptAES(UuidUtils.normalize(session.getId()));
+		ctx.session().put(SESSION_ID_KEY, sessionId);
+		
+		session.save();
+		return session;
+	}
+	
+	public static WebSession createWebSession(WebUser owner) {
+		return createWebSession(null, owner);
+	}
+	
+	public static WebSession createWebSession(Context ctx) {
+		return createWebSession(ctx, null);
+	}
+	
+	public static WebSession createWebSession() {
+		return createWebSession(null, null);
 	}
 	
 	@Override
@@ -149,17 +187,11 @@ public class SessionedAction extends Action.Simple {
 			}
 		}
 		
-		// create one if it doesn't exist.
 		if (session == null) {
-			Logger.info(LoggedAction.getLogEntry(ctx, "starting new session"));
-			session = new WebSession();
-			
-			String sessionId = Crypto.encryptAES(UuidUtils.normalize(session.id));
-			ctx.session().put(SESSION_ID_KEY, sessionId);
-			session.ownerId = getUsername(ctx);
-			session.remoteAddress = ctx.request().remoteAddress();
-			session.save();
+			return unauthorized(Application.renderLoginPage(ctx.request().uri()));
 		}
+		
+		ctx.request().setUsername(getUsername(ctx));
 		
 		return delegate.call(ctx);
 	}

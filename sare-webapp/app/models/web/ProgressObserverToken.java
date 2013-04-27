@@ -31,7 +31,8 @@ import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 
-@Entity(name="prog_obs_tokens")
+@Entity
+@Table(name="prog_obs_tokens")
 public class ProgressObserverToken
 	extends Model {
 

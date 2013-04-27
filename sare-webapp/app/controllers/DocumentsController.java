@@ -35,8 +35,9 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
-@With(SareTransactionalAction.class)
-public class DocumentsController extends Application {
+@With({ SessionedAction.class, SareTransactionalAction.class })
+public class DocumentsController
+		extends Application {
 
 	public static <T extends PersistentDocument> T fetchDocument(UUID collection, UUID document, Class<T> clazz) {
 		T documentObj = fetchResource(document, clazz);

@@ -56,8 +56,7 @@ delayedPing = ->
   window.setTimeout ping, 1000*60*Sare.Configuration.pingTimeout
 
 # start pinging
-if Sare.Configuration.pingTimeout isnt 0
-  delayedPing()
+if Sare.Configuration.pingTimeout > 0 then delayedPing()
 
 fixWindowHeight = ->
   $("body")

@@ -29,9 +29,9 @@ GET      /                                                                      
 # Authentication
 POST     /session.json                                                                 controllers.base.Application.keepAlive()
 DELETE   /session.json                                                                 controllers.base.Application.logout()
-POST     /session/login.json                                                           controllers.base.Application.login()
+POST     /session/login.json                                                           controllers.base.Application.login(redirectTo: String ?= null, isGuest: Boolean ?= false)
 
-GET      /session/login.html                                                           controllers.base.Application.loginPage()
+GET      /session/login.html                                                           controllers.base.Application.loginPage(redirectTo: String ?= null, isGuest: Boolean ?= false)
 GET      /session/logout.html                                                          controllers.base.Application.logoutPage()
 
 # Collections

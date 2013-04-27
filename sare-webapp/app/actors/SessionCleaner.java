@@ -30,6 +30,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import play.*;
 
 import models.web.*;
+import models.web.WebSession.SessionStatus;
 
 import com.avaje.ebean.*;
 
@@ -44,12 +45,12 @@ import akka.actor.*;
 public class SessionCleaner
 	extends UntypedActor {
 	
-	public static boolean clean(WebSession session) {
+	public static boolean clean(WebSession session, boolean timedout) {
 		if (session == null) {
 			return false;
 		}
 		
-		Logger.info("deleting session " + UuidUtils.normalize(session.id));
+		Logger.info("deleting session " + UuidUtils.normalize(session.getId()));
 		List<ProgressObserverToken> poTokens = ProgressObserverToken.find
 			.where()
 				.eq("session", session)
@@ -58,17 +59,17 @@ public class SessionCleaner
 			poToken.delete();
 		}
 		
-		session.delete();
+		session.setStatus(timedout ? SessionStatus.TIMEDOUT : SessionStatus.KILLED);
+		session.update();
 		
-		// if the owner id and session id are the same, it's a standalone session, so delete all stores owned.
+		// if the session is not authenticated, delete all stores owned.
 		if (!SessionedAction.isAuthenticated(session)) {
 			EntityManager em = SareTransactionalAction.createEntityManager();
 			em.getTransaction().begin();
 			
 			// delete all owned stores.
-			List<String> uuids = new PersistentDocumentStoreController().getAllUuids(em, session.ownerId);
-			for (String uuid : uuids) {
-				Logger.info("deleting store " + uuid + " owned by " + session.ownerId);
+			for (String uuid : new PersistentDocumentStoreController().getAllUuids(em, UuidUtils.normalize(session.getId()))) {
+				Logger.info("deleting store " + uuid + " owned by " + UuidUtils.normalize(session.getId()));
 				PersistentDocumentStore store = em.find(PersistentDocumentStore.class, UuidUtils.toBytes(uuid));
 				if (store != null) {
 					em.remove(store);
@@ -77,38 +78,45 @@ public class SessionCleaner
 			
 			em.getTransaction().commit();
 			em.close();
-		} else {
-			// TODO: add logic to handle user sign out.
 		}
 		
 		return true;
 	}
 	
+	public static boolean clean(WebSession session) {
+		return clean(session, false);
+	}
+	
 	@Override
 	public void onReceive(Object message) throws Exception {
-		Ebean.execute(new TxRunnable() {
-			@Override
-			public void run() {
-				Logger.info("cleaning sessions");
-				
-				Integer timeout = Play.application().configuration().getInt("application.session.timeout");
-				if (timeout == null) {
-					timeout = 60;
-				}
-				
-				if (timeout != 0) {
-					// get all old sessions.
-					List<WebSession> oldSessions =
-						WebSession.find.where()
-							.lt("updated", new Date(DateUtils.addMinutes(new Date(), -timeout).getTime()))
-							.findList();
+		try {
+			Ebean.execute(new TxRunnable() {
+				@Override
+				public void run() {
+					Logger.info("cleaning sessions");
 					
-					// delete each.
-					for (WebSession session : oldSessions) {
-						clean(session);
+					Integer timeout = Play.application().configuration().getInt("application.session.timeout");
+					if (timeout == null) {
+						timeout = 60;
+					}
+					
+					if (timeout != 0) {
+						// get all old sessions.
+						List<WebSession> oldSessions =
+							WebSession.find.where()
+								.eq("status", SessionStatus.ALIVE)
+								.lt("updated", new Date(DateUtils.addMinutes(new Date(), -timeout).getTime()))
+								.findList();
+						
+						// clean each.
+						for (WebSession session : oldSessions) {
+							clean(session, true);
+						}
 					}
 				}
-			}
-		});
+			});
+		} catch (Throwable e) {
+			Logger.error("error cleaning sessions", e);
+		}
 	}
 }

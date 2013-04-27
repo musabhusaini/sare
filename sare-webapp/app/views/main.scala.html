@@ -29,6 +29,7 @@
 @import play.mvc.Http._
 
 @import controllers._
+@import controllers.base.SessionedAction._
 @import controllers.base.Application._
 @import tags._
 
@@ -85,13 +86,15 @@
 		</script>
 		}
 		<script type="text/javascript">
-			var timeout = window.Number("@Play.application().configuration().getInt("application.session.browserPingTimeout")");
-			if (!timeout) {
-				timeout = 5;
-			} 
 			window.Sare = {
 				Configuration: {
-					pingTimeout: timeout
+					pingTimeout: (function() {
+						@if(hasWebSession) {
+							return window.Number("@Play.application().configuration().getInt("application.session.browserPingTimeout")" || "0") || 5;
+						} else {
+							return 0;
+						}
+					})()
 				}
 			};
 		</script>
@@ -120,26 +123,35 @@
 								<span class="icon-bar">
 								</span>
 							</a>
-							<a class="brand" href="@base.routes.Application.homePage()">
+							<a class="brand" href="@base.routes.Application.homePage">
 								<span>Sentilab SARE</span>
 								<sup><span class="label label-warning">BETA</span></sup>
 							</a>
 							<div class="nav-collapse collapse">
-								<p class="navbar-text pull-right">
-									Logged in as
-									<a href="#" class="navbar-link">
-										@if(Context.current().request().username() != null) {
-											Context.current().request().username()
-										} else {
-											anonymous
-										}
-									</a>
-								</p>
 								<ul class="nav">
-									@for((title, url) <- LinkedHashMap("Home" -> base.routes.Application.homePage(), "About" -> "#", "Contact" -> "#")) {
+									@for((title, url) <- LinkedHashMap("Home" -> base.routes.Application.homePage, "About" -> "#", "Contact" -> "#")) {
 										<li @if(title.equalsIgnoreCase(active)) { class="active" }>
 											<a href="@url">@title</a>
 										<li>
+									}
+								</ul>
+								<ul class="nav pull-right">
+									<li class="navbar-text">
+										@if(!hasWebSession) { Not logged in } else { Logged in @if(isAuthenticated) { as } }
+									</li>
+									@if(hasWebSession) {
+									<li class="dropdown">
+										<a class="dropdown-toggle" href="#" data-toggle="dropdown">
+											@if(isAuthenticated) { @getWebUser.getDisplayName } else { anonymously }
+											<b class="caret">
+											</b>
+										</a>
+										<ul class="dropdown-menu">
+											<li>
+												<a href="@base.routes.Application.logoutPage" class="navbar-link">Logout</a>
+											</li>
+										</ul>
+									</li>
 									}
 								</ul>
 							</div><!--/.nav-collapse -->

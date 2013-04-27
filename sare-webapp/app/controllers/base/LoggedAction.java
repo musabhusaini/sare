@@ -37,7 +37,7 @@ public class LoggedAction extends Action.Simple {
 		
 		return String.format("%s - { request-method: %s, request-uri: %s, username: %s, remote-address: %s, session: %s }",
 			message, ctx.request().method(), ctx.request().uri(), StringUtils.defaultIfEmpty(SessionedAction.getUsername(ctx), "anonymous"),
-			ctx.request().remoteAddress(), SessionedAction.getSessionKey(ctx));
+			ctx.request().remoteAddress(), StringUtils.defaultIfEmpty(SessionedAction.getSessionKey(ctx), "none"));
 	}
 	
 	public static String getLogEntry(String message) {

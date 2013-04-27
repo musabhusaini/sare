@@ -44,8 +44,9 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
 import edu.sabanciuniv.sentilab.utils.text.nlp.factory.LinguisticProcessorFactory;
 
-@With(SareTransactionalAction.class)
-public class CollectionsController extends Application {
+@With({ SessionedAction.class, SareTransactionalAction.class })
+public class CollectionsController
+		extends Application {
 
 	public static List<LinguisticProcessorInfo> getSupportedLanguages() {
 		return Lists.newArrayList(LinguisticProcessorFactory.getSupportedProcessors());

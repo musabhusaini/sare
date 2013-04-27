@@ -25,31 +25,23 @@ import java.util.*;
 
 import javax.persistence.*;
 
-import com.avaje.ebean.annotation.EnumValue;
+import org.codehaus.jackson.JsonNode;
 
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
-import play.db.ebean.*;
-import play.data.format.*;
-import play.data.validation.*;
+import play.data.format.Formats;
+import play.data.validation.Constraints;
+import play.db.ebean.Model;
+import play.libs.*;
 
 @Entity
-@Table(name="web_sessions")
-public class WebSession
+@Table(name="web_users")
+public class WebUser
 		extends Model {
 	
-	public enum SessionStatus {
-		@EnumValue("k")
-		KILLED,
-		@EnumValue("t")
-		TIMEDOUT,
-		@EnumValue("a")
-		ALIVE
-	}
-
-	private static final long serialVersionUID = -6111608082703517322L;
+	private static final long serialVersionUID = 5367279157710870947L;
 	
-	public static Finder<byte[], WebSession> find = new Finder<>(byte[].class, WebSession.class);
+	public static Finder<byte[], WebUser> find = new Finder<>(byte[].class, WebUser.class);
 	
 	@Id
 	@Lob
@@ -57,15 +49,16 @@ public class WebSession
 	@Constraints.MinLength(16)
 	@Column(name="uuid", columnDefinition="VARBINARY(16)", length=16, updatable=false, nullable=false)
 	private byte[] id;
-	
-	@ManyToOne
-	private WebUser owner;
-	
-	@Enumerated(EnumType.STRING)
-	private SessionStatus status;
-	
-	private String remoteAddress;
 
+	@Column(columnDefinition="VARCHAR(2048)", length=2048)
+	private String providerId;
+	
+	@Column(columnDefinition="TEXT")
+	private String profile;
+	
+	@OneToMany(cascade=CascadeType.ALL, mappedBy="owner")
+	private List<WebSession> sessions;
+	
 	@Formats.DateTime(pattern="yyyy/MM/dd HH:mm:ss.SSS")
 	private Date created;
 	
@@ -73,9 +66,7 @@ public class WebSession
 	@Formats.DateTime(pattern="yyyy/MM/dd HH:mm:ss.SSS")
 	private Date updated;
 	
-	private String refreshToken;
-	
-	public WebSession() {
+	public WebUser() {
 		this.id = UuidUtils.toBytes(UUID.randomUUID());
 	}
 	
@@ -83,58 +74,65 @@ public class WebSession
 		return this.id;
 	}
 	
-	public WebSession setId(byte[] id) {
+	public WebUser setId(byte[] id) {
 		this.id = id;
 		return this;
 	}
 	
-	public SessionStatus getStatus() {
-		return status;
+	public String getProvierId() {
+		return providerId;
 	}
 
-	public WebSession setStatus(SessionStatus status) {
-		this.status = status;
+	public WebUser setProviderId(String id) {
+		this.providerId = id;
 		return this;
 	}
 
-	public WebUser getOwner() {
-		return owner;
+	public String getProfile() {
+		return Crypto.decryptAES(profile);
 	}
 
-	public WebSession setOwner(WebUser owner) {
-		this.owner = owner;
+	public WebUser setProfile(String profile) {
+		this.profile = Crypto.encryptAES(profile);
 		return this;
 	}
-
-	public String getRemoteAddress() {
-		return remoteAddress;
+	
+	public JsonNode getProfileAsJson() {
+		if (this.profile == null) {
+			return null;
+		}
+		
+		return Json.parse(this.getProfile());
+	}
+	
+	public String getEmail() {
+		return this.getProfileAsJson().path("email").asText();
+	}
+	
+	public String getDisplayName() {
+		return this.getProfileAsJson().path("displayName").asText();
 	}
 
-	public WebSession setRemoteAddress(String remoteAddress) {
-		this.remoteAddress = remoteAddress;
+	public List<WebSession> getSessions() {
+		return sessions;
+	}
+	
+	public WebUser setSessions(List<WebSession> sessions) {
+		this.sessions = sessions;
 		return this;
 	}
-
+	
 	public Date getCreated() {
 		return created;
 	}
-
+	
 	public Date getUpdated() {
 		return updated;
 	}
 	
-	public String getRefreshToken() {
-		return refreshToken;
-	}
-
 	@Override
 	public void save() {
 		this.created = new Date();
 		super.save();
-	}
-	
-	public WebSession touch() {
-		this.refreshToken = UuidUtils.normalize(UUID.randomUUID());
-		return this;
 	}
 }

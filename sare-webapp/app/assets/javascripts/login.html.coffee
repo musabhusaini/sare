@@ -22,32 +22,45 @@ along with SARE. If not, see <http://www.gnu.org/licenses/>.
 # define reusables
 $ = window.jQuery
 jsRoutes = window.jsRoutes
-JSON = window.JSON
 Sare = window.Sare
 Page = Sare.Page
 Helpers = Sare.Helpers
 Selectors = Page.Selectors
-Selectors.contentContainer = "#ctr-content"
-Selectors.signonButton = "#btn-signon"
 Selectors.guestSignonButton = "#btn-guest"
 
-$ ->
-  init = ->
-    $(Selectors.signonButton)
-      .tooltip()
-    $(Selectors.guestSignonButton)
-      .tooltip()
+document = window.document
+location = window.location
 
-  init()
-  
-  $(Selectors.contentContainer).on "click", Selectors.signonButton,
-    (e) ->
-      e.preventDefault()
-      
-  $(Selectors.contentContainer).on "click", Selectors.guestSignonButton,
-    (e) ->
-#      e.preventDefault()
-#      $(Selectors.guestSignonButton).tooltip "destroy"
-#      $(Selectors.contentContainer).loadHtml
-#        revert: init
-#        route: $(e.target).attr "href"
+initJanrain = ->
+	if typeof window.janrain isnt "object"
+		window.janrain = {}
+	if typeof window.janrain.settings isnt "object"
+		window.janrain.settings = {}
+	
+	janrain.settings.tokenUrl = jsRoutes.controllers.base.Application.login(location.href)
+		.absoluteURL location.protocol is "https:"
+	
+	isReady = ->
+		janrain.ready = true
+	
+	if document.addEventListener
+	  document.addEventListener "DOMContentLoaded", isReady, false
+	else
+	  window.attachEvent "onload", isReady
+	
+	e = document.createElement "script"
+	e.type = "text/javascript"
+	e.id = "janrainAuthWidget"
+	
+	if location.protocol is "https:"
+	  e.src = "https://rpxnow.com/js/lib/sarenv/engage.js"
+	else
+	  e.src = "http://widget-cdn.rpxnow.com/js/lib/sarenv/engage.js"
+	
+	s = document.getElementsByTagName("script")[0];
+	s.parentNode.insertBefore e, s
+
+initJanrain()
+
+$ ->
+	$(Selectors.guestSignonButton).tooltip()

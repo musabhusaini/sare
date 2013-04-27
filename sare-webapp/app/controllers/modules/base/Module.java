@@ -30,16 +30,17 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 
 import play.api.templates.Html;
-import play.mvc.Result;
+import play.mvc.*;
 import views.html.moduleView;
 
-import controllers.base.Application;
+import controllers.base.*;
 
 import models.base.*;
 import models.web.ModuleModel;
 
+@With(SessionedAction.class)
 public abstract class Module
-	extends Application {
+		extends Application {
 	
 	/**
 	 * Annotates the types of ViewModel objects a module requires to function.

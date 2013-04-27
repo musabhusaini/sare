@@ -49,7 +49,9 @@ import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
-public class ModuleController extends Application {
+@With(SessionedAction.class)
+public class ModuleController
+		extends Application {
 
 	private static List<ModuleModel> getNextModules(String input) {
 		// get all the supplied view models.

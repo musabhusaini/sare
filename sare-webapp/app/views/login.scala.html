@@ -18,15 +18,41 @@
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  *@
- 
-@()
+
+@(redirectTo: String = null, partial: Boolean = false)
 
 @import tags._
 
+@moreStyles = {
+	@helpers.stylesheet("stylesheets/login.css")
+}
+
+@moreScripts = {
+	@helpers.script("javascripts/login.html.js")
+}
+
 @contentHtml = {
-	<div id="ctr-content">
-		<a href="@controllers.routes.ModuleController.landingPage" class="btn btn-primary">Get Started</a>
+	<div>
+		<p>
+			<div id="janrainEngageEmbed"></div>
+		</p>
+		<p class="ctr-guest">
+			<span>or</span>
+			<a id="btn-guest" class="btn-guest" href="@controllers.base.routes.Application.loginPage(redirectTo, true)"
+					title="Start a temporary guest session" data-placement="bottom">
+				start a guest session
+			</a>
+		</p>
+		
+		@if(partial) {
+			@moreStyles
+			@moreScripts
+		}
 	</div>
 }
 
-@main(content = contentHtml)
+@if(partial) {
+	@contentHtml
+} else {
+	@main(content = contentHtml, styles = moreStyles, scripts = moreScripts)
+}

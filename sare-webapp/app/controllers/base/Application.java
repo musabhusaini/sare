@@ -23,10 +23,13 @@ package controllers.base;
 
 import static controllers.base.SessionedAction.*;
 
+import java.io.*;
+import java.net.*;
 import java.util.UUID;
 
-import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.*;
 import org.apache.commons.lang3.*;
+import org.codehaus.jackson.JsonNode;
 
 import com.avaje.ebean.*;
 
@@ -37,12 +40,13 @@ import actors.*;
 import models.web.*;
 import play.*;
 import play.db.ebean.Transactional;
+import play.libs.Json;
 import play.mvc.*;
 
 import views.html.*;
 
 @Transactional
-@With({ SessionedAction.class, ErrorHandledAction.class, LoggedAction.class })
+@With({ ErrorHandledAction.class, LoggedAction.class })
 public class Application extends Controller {
 	
 	public static String minifyInProd(String file, Boolean neverMinify) {
@@ -192,31 +196,90 @@ public class Application extends Controller {
 		return watchProgress(remoteObject, null, id);
 	}
 	
+	@With(SessionedAction.class)
 	public static Result homePage() {
 		return ok(home.render());
 	}
 
+	@With(SessionedAction.class)
 	public static Result keepAlive() {
 		Logger.info(LoggedAction.getLogEntry("keeping session alive"));
 		return ok();
 	}
 	
-	public static Result login() {
-		return TODO;
+	private static Result postLoginRedirect(String redirectTo) {
+		if (redirectTo != null) {
+			return redirect(redirectTo);
+		}
+		return redirect(routes.Application.homePage());
 	}
 
-	public static Result logout() {
-		WebSession session = SessionedAction.getWebSession();
-		if (session == null) {
-			return badRequest();
+	public static Result login(String redirectTo, boolean isGuest) {
+		if (isGuest) {
+			SessionedAction.createWebSession();
+		} else {
+			String token = request().body().asFormUrlEncoded().get("token")[0];
+			String apiKey = Play.application().configuration().getString("rpx.apiKey");
+			String data;
+			String response = null;
+			try {
+				data = String.format("token=%s&apiKey=%s&format=json",
+						URLEncoder.encode(token, "UTF-8"), URLEncoder.encode(apiKey, "UTF-8"));
+				URL url = new URL("https://rpxnow.com/api/v2/auth_info");
+				HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+		        conn.setRequestMethod("POST");
+		        conn.setDoOutput(true);
+		        conn.connect();
+		        OutputStreamWriter osw = new OutputStreamWriter(
+		            conn.getOutputStream(), "UTF-8");
+		        osw.write(data);
+		        osw.close();
+		        response = IOUtils.toString(conn.getInputStream());
+			} catch (IOException e) {
+				throw new IllegalArgumentException(e);
+			}
+			
+			JsonNode profile = Json.parse(response).path("profile");
+			String identifier = profile.path("identifier").asText();
+			
+			WebUser user = WebUser.find.where().like("providerId", identifier).findUnique();
+			
+			if (user == null) {
+				user = new WebUser()
+					.setProviderId(identifier)
+					.setProfile(Json.stringify(profile));
+				user.save();
+			}
+			
+			SessionedAction.createWebSession(user);
 		}
 		
-		SessionCleaner.clean(session);
+		return postLoginRedirect(redirectTo);
+	}
+	
+	public static Result logout() {
+		WebSession session = SessionedAction.getWebSession();
+		if (session != null) {
+			SessionCleaner.clean(session);
+		}
+		
 		return ok();
 	}
 	
-	public static Result loginPage() {
-		return TODO;
+	public static Content renderLoginPage(String redirectTo) {
+		return login.render(redirectTo, false);
+	}
+	
+	public static Result loginPage(String redirectTo, boolean isGuest) {
+		if (isGuest) {
+			return login(redirectTo, isGuest);
+		}
+		
+		if (SessionedAction.isAuthenticated()) {
+			return postLoginRedirect(redirectTo);			
+		}
+		
+		return ok(renderLoginPage(redirectTo));
 	}
 
 	public static Result logoutPage() {
