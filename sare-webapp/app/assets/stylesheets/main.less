@@ -20,6 +20,7 @@
  */
 
 @import-once "bootstrap/variables";
+@import-once "utilities";
 
 html,
 body {
@@ -103,6 +104,12 @@ textarea[readonly],
 .uneditable-input,
 .uneditable-textarea {
   cursor: default;
+}
+
+.brand {
+  > div {
+    .inline-block(middle);
+  }
 }
 
 #ctr-main-alert > .alert {

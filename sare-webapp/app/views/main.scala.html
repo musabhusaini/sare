@@ -124,8 +124,8 @@
 								</span>
 							</a>
 							<a class="brand" href="@base.routes.Application.homePage">
-								<span>Sentilab SARE</span>
-								<sup><span class="label label-warning">BETA</span></sup>
+								<div>Sentilab SARE</div>
+								<div class="label label-warning">ALPHA</div>
 							</a>
 							<div class="nav-collapse collapse">
 								<ul class="nav">
@@ -136,8 +136,14 @@
 									}
 								</ul>
 								<ul class="nav pull-right">
-									<li class="navbar-text">
-										@if(!hasWebSession) { Not logged in } else { Logged in @if(isAuthenticated) { as } }
+									<li>
+										@if(!hasWebSession) {
+											<a href="@base.routes.Application.loginPage(request.uri)">Log in</a>
+										} else {
+											<span class="navbar-text">
+												Logged in @if(isAuthenticated) { as }
+											</span>
+										}
 									</li>
 									@if(hasWebSession) {
 									<li class="dropdown">
@@ -148,7 +154,7 @@
 										</a>
 										<ul class="dropdown-menu">
 											<li>
-												<a href="@base.routes.Application.logoutPage" class="navbar-link">Logout</a>
+												<a href="@base.routes.Application.logoutPage" class="navbar-link">Log out</a>
 											</li>
 										</ul>
 									</li>
