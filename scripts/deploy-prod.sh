@@ -37,10 +37,10 @@ if ! $bypassRepo ; then
 fi
 
 SECRET_KEY=$(<../secret.key)
-echo "application.secret=${SECRET_KEY}" >> sare-webapp/conf/prod.conf
+echo "application.secret=\"${SECRET_KEY}\"" >> sare-webapp/conf/prod.conf
 
 SQL_PWD=$(<../sql.pwd)
-echo "db.default.password=${SQL_PWD}" >> sare-webapp/conf/prod.conf
+echo "db.default.password=\"${SQL_PWD}\"" >> sare-webapp/conf/prod.conf
 
 if ! $skipBackend ; then
 	xmlstarlet ed -L -N x="http://java.sun.com/xml/ns/persistence" -u "/x:persistence/x:persistence-unit/x:properties/x:property[@name='javax.persistence.jdbc.password']/@value" -v "${SQL_PWD}" sare-entitymanager/src/main/resources/META-INF/persistence.xml
