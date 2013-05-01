@@ -36,6 +36,7 @@
 					<div class="row-fluid">
 						<div class="span6">
 							<select id="lst-store-@uid" class="lst-store span6" autofocus="autofocus" title="List of existing items" data-placement="top">
+								<option>--</option>
 								@for(store <- stores) {
 									<option value="@store.id" data-store="@store.asJson()"
 											@if(selectedStore != null && selectedStore.id == store.id) { selected="selected" }>

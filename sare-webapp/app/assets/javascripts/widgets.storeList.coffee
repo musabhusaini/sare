@@ -177,15 +177,14 @@ widget =
 	refresh: ->
 		$(@element).data Strings.widgetKey, @
 		
-		if not @selected().item?.length
-			# select the first store, if any
-			firstItem = @_$(@options.list).children("option:first")
-			if firstItem.length
-				@_$(@options.list)
-					.val($(firstItem).data @options.storeKey)?.id
+		selected = @selected()
+		toSelect =
+			if not selected?.item?.length or not selected?.data?
+				@_$(@options.list).children("option").eq 1
+			else selected.item
 		
-		window.setTimeout =>
-			@_$(@options.list).change()
+		@_delay ->
+			@select ($(toSelect).data @options.storeKey)?.id
 		, 0
 		
 	_init: ->
