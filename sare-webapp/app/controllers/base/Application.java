@@ -46,7 +46,7 @@ import play.mvc.*;
 import views.html.*;
 
 @Transactional
-@With({ ErrorHandledAction.class, LoggedAction.class })
+@With({ ErrorHandledAction.class, LoggedAction.class, SecuredAction.class })
 public class Application extends Controller {
 	
 	public static String minifyInProd(String file, Boolean neverMinify) {
