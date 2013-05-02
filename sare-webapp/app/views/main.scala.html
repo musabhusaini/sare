@@ -47,6 +47,7 @@
 		
 		@helpers.stylesheet(
 			Seq(
+				"http://fonts.googleapis.com/css?family=PT+Sans%7CPT+Serif%7CBigshot+One",
 				"stylesheets/bootstrap/bootstrap.min.css",
 				"stylesheets/bootstrap/responsive.min.css"
 			), true
@@ -56,8 +57,8 @@
 		
 		@helpers.script(
 			Seq(
-				"javascripts/jquery-1.9.1.min.js",
-				"plugins/jquery-ui/js/jquery-ui-1.10.1.min.js",
+				"http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js",
+				"http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js",
 				"javascripts/bootstrap/bootstrap-affix.min.js",
 				"javascripts/bootstrap/bootstrap-alert.min.js",
 				"javascripts/bootstrap/bootstrap-button.min.js",
@@ -124,7 +125,7 @@
 								</span>
 							</a>
 							<a class="brand" href="@base.routes.Application.homePage">
-								<div>Sentilab SARE</div>
+								<div class="title">Sentilab SARE</div>
 								<div class="label label-warning">ALPHA</div>
 							</a>
 							<div class="nav-collapse collapse">
@@ -138,10 +139,10 @@
 								<ul class="nav pull-right">
 									<li>
 										@if(!hasWebSession) {
-											<a href="@base.routes.Application.loginPage(request.uri)">Log in</a>
+											<a href="@base.routes.Application.loginPage(request.uri)">Sign in</a>
 										} else {
 											<span class="navbar-text">
-												Logged in @if(isAuthenticated) { as }
+												Signed in @if(isAuthenticated) { as }
 											</span>
 										}
 									</li>
@@ -154,7 +155,7 @@
 										</a>
 										<ul class="dropdown-menu">
 											<li>
-												<a href="@base.routes.Application.logoutPage" class="navbar-link">Log out</a>
+												<a href="@base.routes.Application.logoutPage" class="navbar-link">Sign out</a>
 											</li>
 										</ul>
 									</li>

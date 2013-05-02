@@ -22,6 +22,8 @@
 @import-once "bootstrap/variables";
 @import-once "utilities";
 
+@brandFontFamily: "Bigshot One", @baseFontFamily;
+
 html,
 body {
   height: 100%;
@@ -92,6 +94,20 @@ footer {
     padding-top: 20px;
     border-bottom: 1px solid #ccc;
     background: #EFEFFF;
+    
+    h1 {
+      font-family: @brandFontFamily;
+    }
+  }
+}
+
+.brand {
+  > div {
+    .inline-block(middle);
+  }
+  
+  > .title {
+    font-family: @brandFontFamily;
   }
 }
 
@@ -104,12 +120,6 @@ textarea[readonly],
 .uneditable-input,
 .uneditable-textarea {
   cursor: default;
-}
-
-.brand {
-  > div {
-    .inline-block(middle);
-  }
 }
 
 #ctr-main-alert > .alert {

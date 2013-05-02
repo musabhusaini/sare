@@ -49,9 +49,8 @@ widget =
 			progress ?= 0
 			$(@element).children(@options.bar)
 				.animate
-					width: "#{progress}%"
-				, duration, ->
-					callback?()
+					width: Math.round progress * $(@element).width() / 100
+				, duration, "linear", callback
 
 		redeem = =>
 			@_delay ->
@@ -64,8 +63,7 @@ widget =
 									@options.callback? progressToken
 								, @options.pingTimeout
 						else
-							animateProgress Math.round(100 * progressToken.progress)
-							redeem()
+							animateProgress Math.round(100 * progressToken.progress), null, redeem
 			, @options.pingTimeout
 		
 		@reset()
