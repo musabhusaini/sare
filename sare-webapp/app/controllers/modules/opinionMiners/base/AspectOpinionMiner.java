@@ -29,7 +29,7 @@ import java.util.concurrent.Callable;
 
 import javax.persistence.EntityManager;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.*;
 
 import com.google.common.collect.*;
 
@@ -93,8 +93,13 @@ public class AspectOpinionMiner
 		DocumentCorpusModel corpusVM = this.findViewModel(DocumentCorpusModel.class, new DocumentCorpusModel());
 		AspectLexiconModel lexiconVM = this.findViewModel(AspectLexiconModel.class, new AspectLexiconModel());
 		
+		String engine = ObjectUtils.defaultIfNull(this.getCode(), this.engine);
+		if (StringUtils.isEmpty(engine)) {
+			return null;
+		}
+		
 		return controllers.modules.opinionMiners.base.routes.AspectOpinionMiner.modulePage(
-			corpusVM.getIdentifier(), lexiconVM.getIdentifier(), ObjectUtils.defaultIfNull(this.getCode(), this.engine), false).url();
+			corpusVM.getIdentifier(), lexiconVM.getIdentifier(), engine, false).url();
 	}
 	
 	protected static AspectOpinionMiningEngine getEngine(String engine) {

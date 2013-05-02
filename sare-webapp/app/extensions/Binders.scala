@@ -21,28 +21,54 @@
 
 package extensions
 
-import play.api.mvc.{PathBindable, QueryStringBindable}
 import java.util.UUID
+
+import play.api.mvc.{PathBindable, QueryStringBindable, JavascriptLitteral}
+
 import edu.sabanciuniv.sentilab.utils.UuidUtils
-import play.api.mvc.JavascriptLitteral
 
 object Binders {
-  implicit def uuidPathBinder = new PathBindable[UUID] {
-    override def bind(key: String, value: String): Either[String, UUID] = {
-      if (value == null || UuidUtils.isUuid(value))
-        Right(if (value == null) null else UuidUtils.create(value))
-      else
-        Left(value + " is not a UUID")
+  class UuidBinder {
+    def parse(value: String): Either[String, UUID] = {
+      value match {
+        case null => Right(null)
+        case _ => {
+          if (UuidUtils.isUuid(value))
+            Right(UuidUtils.create(value))
+          else
+            Left(s"$value is not a valid UUID")
+        }
+      }
     }
     
-    override def unbind(key: String, id: UUID): String = {
-      if (id == null) null else UuidUtils.normalize(id.toString())
+    def serialize(id: UUID): String = {
+      id match {
+        case null => null
+        case _ => UuidUtils.normalize(id)
+      }
     }
   }
   
-  implicit def uuidJavaScriptLitteral = new JavascriptLitteral[UUID] {
-    override def to(id: UUID): String = {
-      if (id == null) null else UuidUtils.normalize(id.toString())
+  implicit object javascriptLitteralUuid extends UuidBinder with JavascriptLitteral[UUID] {
+    override def to(id: UUID): String = serialize(id)
+  }
+  
+  implicit object pathBindableUuid extends UuidBinder with PathBindable[UUID] {
+    override def bind(key: String, value: String): Either[String, UUID] = parse(value)
+    
+    override def unbind(key: String, id: UUID): String = serialize(id)
+  }
+  
+  implicit object queryStringBindableUuid extends UuidBinder with QueryStringBindable[UUID] {
+    override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, UUID]] = {
+      params.get(key).flatMap(_.headOption).map { p => parse(p) }
+    }
+    
+    override def unbind(key: String, id: UUID): String = {
+      serialize(id) match {
+        case null => null
+        case value => s"$key=$value"
+      }
     }
   }
 }

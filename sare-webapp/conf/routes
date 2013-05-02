@@ -24,105 +24,102 @@
 # ~~~~
 
 # Home page
-GET      /                                                                             controllers.base.Application.homePage()
+GET      /                                                                   controllers.base.Application.homePage()
 
 # Authentication
-POST     /session.json                                                                 controllers.base.Application.keepAlive()
-DELETE   /session.json                                                                 controllers.base.Application.logout()
-POST     /session/login.json                                                           controllers.base.Application.login(redirectTo: String ?= null, isGuest: Boolean ?= false)
+POST     /api/v1/session.json                                                controllers.base.Application.keepAlive()
+DELETE   /api/v1/session.json                                                controllers.base.Application.logout()
+POST     /api/v1/session/login.json                                          controllers.base.Application.login(redirectTo: String ?= null, isGuest: Boolean ?= false)
 
-GET      /session/login.html                                                           controllers.base.Application.loginPage(redirectTo: String ?= null, isGuest: Boolean ?= false)
-GET      /session/logout.html                                                          controllers.base.Application.logoutPage()
+GET      /session/login.html                                                 controllers.base.Application.loginPage(redirectTo: String ?= null, isGuest: Boolean ?= false)
+GET      /session/logout.html                                                controllers.base.Application.logoutPage()
 
 # Collections
-GET      /collections.json                                                             controllers.CollectionsController.list()
-GET      /collections/:collection.json                                                 controllers.CollectionsController.get(collection: UUID)
-DELETE   /collections/:collection.json                                                 controllers.CollectionsController.delete(collection: UUID)
-GET      /collections/:collection/form.html                                            controllers.CollectionsController.detailsForm(collection: UUID)
+GET      /api/v1/collections.json                                            controllers.CollectionsController.list()
+GET      /api/v1/collections/:collection.json                                controllers.CollectionsController.get(collection: UUID)
+DELETE   /api/v1/collections/:collection.json                                controllers.CollectionsController.delete(collection: UUID)
+
+GET      /collections/:collection/form.html                                  controllers.CollectionsController.detailsForm(collection: UUID)
 
 # Documents
-GET      /collections/:collection/documents.json                                       controllers.DocumentsController.list(collection: UUID)
-GET      /collections/:collection/documents/:document.json                             controllers.DocumentsController.get(collection: UUID, document: UUID)
+GET      /api/v1/collections/:collection/documents.json                      controllers.DocumentsController.list(collection: UUID)
+GET      /api/v1/collections/:collection/documents/:document.json            controllers.DocumentsController.get(collection: UUID, document: UUID)
 
 # Modules
-GET      /modules/options/:input.json                                                  controllers.ModuleController.options(input: String)
-GET      /modules.html                                                                 controllers.ModuleController.landingPage()
+GET      /api/v1/modules/options/:input.json                                 controllers.ModuleController.options(input: String)
+
+GET      /modules.html                                                       controllers.ModuleController.landingPage()
 
 # Corpus module
-GET      /modules/corpora.html                                                         controllers.modules.CorpusModule.modulePage(partial: Boolean ?= false)
-GET      /modules/corpora/:corpus/twitterGrabber.html                                  controllers.modules.CorpusModule.twitterGrabberView(corpus: UUID)
+GET      /modules/corpora.html                                               controllers.modules.CorpusModule.modulePage(partial: Boolean ?= false)
+GET      /modules/corpora/:corpus/twitterGrabber.html                        controllers.modules.CorpusModule.twitterGrabberView(corpus: UUID)
 
 # Opinions (special corpus)
-POST     /modules/opinions.json                                                        controllers.modules.CorpusModule.create()
-POST     /modules/opinions/:corpus.json                                                controllers.modules.CorpusModule.update(corpus: UUID)
-POST     /modules/opinions/:corpus/documents.json                                      controllers.modules.CorpusModule.addDocument(corpus: UUID)
-POST     /modules/opinions/:corpus/documents/:document.json                            controllers.modules.CorpusModule.updateDocument(corpus: UUID, document: UUID)
-DELETE   /modules/opinions/:corpus/documents/:document.json                            controllers.modules.CorpusModule.deleteDocument(corpus: UUID, document: UUID)
+POST     /api/v1/modules/opinions.json                                       controllers.modules.CorpusModule.create()
+POST     /api/v1/modules/opinions/:corpus.json                               controllers.modules.CorpusModule.update(corpus: UUID)
+POST     /api/v1/modules/opinions/:corpus/documents.json                     controllers.modules.CorpusModule.addDocument(corpus: UUID)
+POST     /api/v1/modules/opinions/:corpus/documents/:document.json           controllers.modules.CorpusModule.updateDocument(corpus: UUID, document: UUID)
+DELETE   /api/v1/modules/opinions/:corpus/documents/:document.json           controllers.modules.CorpusModule.deleteDocument(corpus: UUID, document: UUID)
 
 # Aspect lexicon builder module
-POST     /modules/lexica.json                                                          controllers.modules.AspectLexBuilder.create(corpus: UUID = null)
-POST     /modules/corpora/:corpus/lexica.json                                          controllers.modules.AspectLexBuilder.create(corpus: UUID)
-POST     /modules/lexica/:lexicon.json                                                 controllers.modules.AspectLexBuilder.update(corpus: UUID = null, lexicon: UUID)
-POST     /modules/corpora/:corpus/lexica/:lexicon.json                                 controllers.modules.AspectLexBuilder.update(corpus: UUID, lexicon: UUID)
+POST     /api/v1/modules/alexica.json                                        controllers.modules.AspectLexBuilder.create(corpus: UUID ?= null)
+POST     /api/v1/modules/alexica/:lexicon.json                               controllers.modules.AspectLexBuilder.update(corpus: UUID ?= null, lexicon: UUID)
 
-GET      /modules/corpora/:corpus/lexica/:lexicon/documents/next.json                  controllers.modules.AspectLexBuilder.getDocument(corpus: UUID, lexicon: UUID, emphasis: String ?= null, rank: Long = -1)
-GET      /modules/corpora/:corpus/lexica/:lexicon/documents/:rank.json                 controllers.modules.AspectLexBuilder.getDocument(corpus: UUID, lexicon: UUID, emphasis: String ?= null, rank: Long)
-POST     /modules/corpora/:corpus/lexica/:lexicon/documents/next.json                  controllers.modules.AspectLexBuilder.seeDocument(corpus: UUID, lexicon: UUID, emphasis: String ?= null, rank: Long = -1)
-POST     /modules/corpora/:corpus/lexica/:lexicon/documents/:rank.json                 controllers.modules.AspectLexBuilder.seeDocument(corpus: UUID, lexicon: UUID, emphasis: String ?= null, rank: Long)
+GET      /api/v1/modules/corpora/:corpus/alex-builder/documents/next.json    controllers.modules.AspectLexBuilder.getDocument(corpus: UUID, lexicon: UUID, emphasis: String ?= null, rank: Long = -1)
+GET      /api/v1/modules/corpora/:corpus/alex-builder/documents/:rank.json   controllers.modules.AspectLexBuilder.getDocument(corpus: UUID, lexicon: UUID, emphasis: String ?= null, rank: Long)
+POST     /api/v1/modules/corpora/:corpus/alex-builder/documents/next.json    controllers.modules.AspectLexBuilder.seeDocument(corpus: UUID, lexicon: UUID, emphasis: String ?= null, rank: Long = -1)
+POST     /api/v1/modules/corpora/:corpus/alex-builder/documents/:rank.json   controllers.modules.AspectLexBuilder.seeDocument(corpus: UUID, lexicon: UUID, emphasis: String ?= null, rank: Long)
 
-GET      /modules/lexica/aspects/:aspect.json                                          controllers.modules.AspectLexBuilder.getAspect(lexicon: UUID = null, aspect: String, recursive: Boolean ?= false)
-GET      /modules/lexica/:lexicon/aspects/:aspect.json                                 controllers.modules.AspectLexBuilder.getAspect(lexicon: UUID, aspect: String, recursive: Boolean ?= false)
-GET      /modules/lexica/:lexicon/aspects.json                                         controllers.modules.AspectLexBuilder.getAspects(lexicon: UUID)
-POST     /modules/lexica/aspects/:aspect.json                                          controllers.modules.AspectLexBuilder.updateAspect(lexicon: UUID = null, aspect: UUID)
-POST     /modules/lexica/:lexicon/aspects/:aspect.json                                 controllers.modules.AspectLexBuilder.updateAspect(lexicon: UUID, aspect: UUID)
-POST     /modules/lexica/:lexicon/aspects.json                                         controllers.modules.AspectLexBuilder.addAspect(lexicon: UUID)
-DELETE   /modules/lexica/aspects/:aspect.json                                          controllers.modules.AspectLexBuilder.deleteAspect(lexicon: UUID = null, aspect: UUID)
-DELETE   /modules/lexica/:lexicon/aspects/:aspect.json                                 controllers.modules.AspectLexBuilder.deleteAspect(lexicon: UUID, aspect: UUID)
+GET      /api/v1/modules/alexica/aspects/:aspect.json                        controllers.modules.AspectLexBuilder.getAspect(lexicon: UUID = null, aspect: String, recursive: Boolean ?= false)
+GET      /api/v1/modules/alexica/:lexicon/aspects/:aspect.json               controllers.modules.AspectLexBuilder.getAspect(lexicon: UUID, aspect: String, recursive: Boolean ?= false)
+GET      /api/v1/modules/alexica/:lexicon/aspects.json                       controllers.modules.AspectLexBuilder.getAspects(lexicon: UUID)
+POST     /api/v1/modules/alexica/aspects/:aspect.json                        controllers.modules.AspectLexBuilder.updateAspect(lexicon: UUID = null, aspect: UUID)
+POST     /api/v1/modules/alexica/:lexicon/aspects/:aspect.json               controllers.modules.AspectLexBuilder.updateAspect(lexicon: UUID, aspect: UUID)
+POST     /api/v1/modules/alexica/:lexicon/aspects.json                       controllers.modules.AspectLexBuilder.addAspect(lexicon: UUID)
+DELETE   /api/v1/modules/alexica/aspects/:aspect.json                        controllers.modules.AspectLexBuilder.deleteAspect(lexicon: UUID = null, aspect: UUID)
+DELETE   /api/v1/modules/alexica/:lexicon/aspects/:aspect.json               controllers.modules.AspectLexBuilder.deleteAspect(lexicon: UUID, aspect: UUID)
 
-GET      /modules/lexica/aspects/keywords/:expression.json                             controllers.modules.AspectLexBuilder.getExpression(aspect: UUID = null, expression: String, recursive: Boolean ?= false)
-GET      /modules/lexica/aspects/:aspect/keywords/:expression.json                     controllers.modules.AspectLexBuilder.getExpression(aspect: UUID, expression: String, recursive: Boolean ?= false)
-GET      /modules/lexica/aspects/:aspect/keywords.json                                 controllers.modules.AspectLexBuilder.getExpressions(aspect: UUID)
-POST     /modules/lexica/aspects/keywords/:expression.json                             controllers.modules.AspectLexBuilder.updateExpression(aspect: UUID = null, expression: UUID)
-POST     /modules/lexica/aspects/:aspect/keywords/:expression.json                     controllers.modules.AspectLexBuilder.updateExpression(aspect: UUID, expression: UUID)
-POST     /modules/lexica/aspects/:aspect/keywords.json                                 controllers.modules.AspectLexBuilder.addExpression(aspect: UUID)
-DELETE   /modules/lexica/aspects/keywords/:expression.json                             controllers.modules.AspectLexBuilder.deleteExpression(aspect: UUID = null, expression: UUID)
-DELETE   /modules/lexica/aspects/:aspect/keywords/:expression.json                     controllers.modules.AspectLexBuilder.deleteExpression(aspect: UUID, expression: UUID)
+GET      /api/v1/modules/alexica/aspects/keywords/:expression.json           controllers.modules.AspectLexBuilder.getExpression(aspect: UUID = null, expression: String, recursive: Boolean ?= false)
+GET      /api/v1/modules/alexica/aspects/:aspect/keywords/:expression.json   controllers.modules.AspectLexBuilder.getExpression(aspect: UUID, expression: String, recursive: Boolean ?= false)
+GET      /api/v1/modules/alexica/aspects/:aspect/keywords.json               controllers.modules.AspectLexBuilder.getExpressions(aspect: UUID)
+POST     /api/v1/modules/alexica/aspects/keywords/:expression.json           controllers.modules.AspectLexBuilder.updateExpression(aspect: UUID = null, expression: UUID)
+POST     /api/v1/modules/alexica/aspects/:aspect/keywords/:expression.json   controllers.modules.AspectLexBuilder.updateExpression(aspect: UUID, expression: UUID)
+POST     /api/v1/modules/alexica/aspects/:aspect/keywords.json               controllers.modules.AspectLexBuilder.addExpression(aspect: UUID)
+DELETE   /api/v1/modules/alexica/aspects/keywords/:expression.json           controllers.modules.AspectLexBuilder.deleteExpression(aspect: UUID = null, expression: UUID)
+DELETE   /api/v1/modules/alexica/aspects/:aspect/keywords/:expression.json   controllers.modules.AspectLexBuilder.deleteExpression(aspect: UUID, expression: UUID)
 
-GET      /modules/lexica/builder.html                                                  controllers.modules.AspectLexBuilder.modulePage(corpus: UUID = null, lexicon: UUID = null, partial: Boolean ?= false)
-GET      /modules/lexica/:lexicon/builder.html                                         controllers.modules.AspectLexBuilder.modulePage(corpus: UUID = null, lexicon: UUID, partial: Boolean ?= false)
-GET      /modules/corpora/:corpus/lexica/builder.html                                  controllers.modules.AspectLexBuilder.modulePage(corpus: UUID, lexicon: UUID = null, partial: Boolean ?= false)
-GET      /modules/corpora/:corpus/lexica/:lexicon/builder.html                         controllers.modules.AspectLexBuilder.modulePage(corpus: UUID, lexicon: UUID, partial: Boolean ?= false)
+GET      /modules/alexica/builder.html                                       controllers.modules.AspectLexBuilder.modulePage(corpus: UUID ?= null, lexicon: UUID = null, partial: Boolean ?= false)
+GET      /modules/alexica/:lexicon/builder.html                              controllers.modules.AspectLexBuilder.modulePage(corpus: UUID ?= null, lexicon: UUID, partial: Boolean ?= false)
 
-GET      /modules/corpora/:corpus/lexica/:lexicon/documents.html                       controllers.modules.AspectLexBuilder.documentsView(corpus: UUID, lexicon: UUID)
-GET      /modules/lexica/:lexicon.html                                                 controllers.modules.AspectLexBuilder.lexiconView(lexicon: UUID)
+GET      /modules/corpora/:corpus/alex-builder/documents.html                controllers.modules.AspectLexBuilder.documentsView(corpus: UUID, lexicon: UUID)
+GET      /modules/alexica/:lexicon.html                                      controllers.modules.AspectLexBuilder.lexiconView(lexicon: UUID)
 
 # Corpus optimization module
-GET      /modules/corpora/optimizations/:setcover.html                                 controllers.modules.SetCoverBuilder.modulePage(corpus: UUID = null, setcover: UUID, partial: Boolean ?= false)
-GET      /modules/corpora/:corpus/optimizations.html                                   controllers.modules.SetCoverBuilder.modulePage(corpus: UUID, setcover: UUID = null, partial: Boolean ?= false)
-GET      /modules/corpora/:corpus/optimizations/:setcover.html                         controllers.modules.SetCoverBuilder.modulePage(corpus: UUID, setcover: UUID, partial: Boolean ?= false)
-GET      /modules/corpora/optimizations/:setcover/editor.html                          controllers.modules.SetCoverBuilder.editorView(setcover: UUID)
-GET      /modules/corpora/optimizations/:setcover.json                                 controllers.modules.SetCoverBuilder.getSetCover(setcover: UUID, includeMatrix: Boolean ?= false)
-POST     /modules/corpora/optimizations/:setcover.json                                 controllers.modules.SetCoverBuilder.update(corpus: UUID = null, setcover: UUID)
-POST     /modules/corpora/:corpus/optimizations/:setcover.json                         controllers.modules.SetCoverBuilder.update(corpus: UUID, setcover: UUID)
-POST     /modules/corpora/:corpus/optimizations.json                                   controllers.modules.SetCoverBuilder.create(corpus: UUID)
-POST     /modules/corpora/optimizations/:setcover/redeemer.json                        controllers.modules.SetCoverBuilder.redeem(setcover: UUID)
+GET      /modules/corpora/optimizations/:setcover.html                       controllers.modules.SetCoverBuilder.modulePage(corpus: UUID = null, setcover: UUID, partial: Boolean ?= false)
+GET      /modules/corpora/:corpus/optimizations.html                         controllers.modules.SetCoverBuilder.modulePage(corpus: UUID, setcover: UUID = null, partial: Boolean ?= false)
+GET      /modules/corpora/:corpus/optimizations/:setcover.html               controllers.modules.SetCoverBuilder.modulePage(corpus: UUID, setcover: UUID, partial: Boolean ?= false)
+GET      /modules/corpora/optimizations/:setcover/editor.html                controllers.modules.SetCoverBuilder.editorView(setcover: UUID)
+
+GET      /api/v1/modules/corpora/optimizations/:setcover.json                controllers.modules.SetCoverBuilder.getSetCover(setcover: UUID, includeMatrix: Boolean ?= false)
+POST     /api/v1/modules/corpora/optimizations/:setcover.json                controllers.modules.SetCoverBuilder.update(corpus: UUID = null, setcover: UUID)
+POST     /api/v1/modules/corpora/:corpus/optimizations/:setcover.json        controllers.modules.SetCoverBuilder.update(corpus: UUID, setcover: UUID)
+POST     /api/v1/modules/corpora/:corpus/optimizations.json                  controllers.modules.SetCoverBuilder.create(corpus: UUID)
+POST     /api/v1/modules/corpora/optimizations/:setcover/redeemer.json       controllers.modules.SetCoverBuilder.redeem(setcover: UUID)
 
 # Aspect-based opinion miner modules
-GET      /modules/opminers/aspect-based.html                                           controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID = null, engine: String ?= null, partial: Boolean ?= false)
-GET      /modules/lexica/:lexicon/opminers/aspect-based.html                           controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID = null, lexicon: UUID, engine: String ?= null, partial: Boolean ?= false)
-GET      /modules/corpora/:corpus/opminers/aspect-based.html                           controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID, lexicon: UUID = null, engine: String ?= null, partial: Boolean ?= false)
-GET      /modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based.html           controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID, lexicon: UUID, engine: String ?= null, partial: Boolean ?= false)
-GET      /modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based/editor.html    controllers.modules.opinionMiners.base.AspectOpinionMiner.editorView(corpus: UUID, lexicon: UUID, engine: String ?= null)
-GET      /modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based/results.html   controllers.modules.opinionMiners.base.AspectOpinionMiner.resultsView(corpus: UUID, lexicon: UUID, engine: String ?= null)
-GET      /modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based.json           controllers.modules.opinionMiners.base.AspectOpinionMiner.getMined(corpus: UUID, lexicon: UUID, engine: String ?= null)
-POST     /modules/corpora/:corpus/lexica/:lexicon/opminers/aspect-based.json           controllers.modules.opinionMiners.base.AspectOpinionMiner.mine(corpus: UUID, lexicon: UUID, engine: String ?= null)
-POST     /modules/opminers/aspect-based/redeemer/:token.json                           controllers.modules.opinionMiners.base.AspectOpinionMiner.redeem(token: UUID)
+GET      /modules/opinion-miners/aspect-based/:engine.html                   controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID ?= null, lexicon: UUID ?= null, engine: String, partial: Boolean ?= false)
+GET      /modules/opinion-miners/aspect-based/:engine/editor.html            controllers.modules.opinionMiners.base.AspectOpinionMiner.editorView(corpus: UUID, lexicon: UUID, engine: String)
+GET      /modules/opinion-miners/aspect-based/:engine/results.html           controllers.modules.opinionMiners.base.AspectOpinionMiner.resultsView(corpus: UUID, lexicon: UUID, engine: String)
+
+GET      /api/v1/modules/opinion-miners/aspect-based/:engine/results.json    controllers.modules.opinionMiners.base.AspectOpinionMiner.getMined(corpus: UUID, lexicon: UUID, engine: String)
+POST     /api/v1/modules/opinion-miners/aspect-based/:engine/results.json    controllers.modules.opinionMiners.base.AspectOpinionMiner.mine(corpus: UUID, lexicon: UUID, engine: String)
+POST     /api/v1/modules/opinion-miners/aspect-based/redeemer/:token.json    controllers.modules.opinionMiners.base.AspectOpinionMiner.redeem(token: UUID)
 
 # Support queries
-GET      /support/languages.json                                                       controllers.CollectionsController.supportedLanguages()
+GET      /api/v1/support/languages.json                                      controllers.CollectionsController.supportedLanguages()
 
 # Javascript routes file
-GET      /assets/javascripts/routes.js                                                 controllers.base.Application.javascriptRoutes()
+GET      /assets/javascripts/routes.js                                       controllers.base.Application.javascriptRoutes()
 
 # Map static resources from the /public folder to the /assets URL path
-GET      /assets/*file                                                                 controllers.Assets.at(path="/public", file)
+GET      /assets/*file                                                       controllers.Assets.at(path="/public", file)
