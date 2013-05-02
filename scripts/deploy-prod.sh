@@ -17,7 +17,7 @@ do
 	elif [ $arg == "-stop" ] ; then
 		stopApp=true
 	elif [ $arg == "-norun" ] ; then
-		noRun=false
+		noRun=true
 	elif [ $arg == "--help" ] ; then
 		echo "Options:"
 		echo "--help: display this help message"

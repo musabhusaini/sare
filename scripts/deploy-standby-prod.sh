@@ -4,7 +4,7 @@ noRun=false
 for arg in "$@"
 do
 	if [ $arg == "-norun" ] ; then
-		noRun=false
+		noRun=true
 	fi
 done
 
