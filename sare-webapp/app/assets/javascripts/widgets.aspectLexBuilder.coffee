@@ -31,11 +31,9 @@ Strings = Page.Strings
 Widgets = Page.Widgets
 
 widget =
-	_currentCorpus: null
-	
 	_sendModuleOutput: (lexicon, corpus) ->
 		lexicon ?= @options.lexicon
-		@_currentCorpus = (corpus ?= @_currentCorpus ? @options.corpus)
+		corpus ?= @options.corpus
 		output = null
 		if lexicon?
 			output = [ @options.lexicon ]
