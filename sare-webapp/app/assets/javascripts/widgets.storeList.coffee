@@ -184,7 +184,7 @@ widget =
 			else selected.item
 		
 		@_delay ->
-			@select ($(toSelect).data @options.storeKey)?.id
+			@select ($(toSelect).data @options.storeKey)?.id ? "--"
 		, 0
 		
 	_init: ->

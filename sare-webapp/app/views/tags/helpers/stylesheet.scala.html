@@ -21,6 +21,8 @@
 
 @(src: Any, neverMinify: Boolean = false)
 
+@import java.net.URI
+
 @import controllers.base.Application._
 
 @src match {
@@ -29,7 +31,7 @@
 		}
 	}
 	case _ => {<link rel="stylesheet" href="@src match {
-			case path:String => {@controllers.routes.Assets.at(minifyInProd(path, neverMinify))}
+			case path:String => {@if(new URI(path).isAbsolute) {@path} else {@controllers.routes.Assets.at(minifyInProd(path, neverMinify))}}
 			case _ => {@src}
 		}"></link>
 	}
