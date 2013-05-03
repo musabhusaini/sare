@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. scripts/deploy-prod.sh "$@" -norun
+
 noRun=false
 for arg in "$@"
 do
@@ -7,8 +9,6 @@ do
 		noRun=true
 	fi
 done
-
-. scripts/deploy-prod.sh "$@" -norun
 
 cd sare-webapp
 
