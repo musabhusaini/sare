@@ -157,16 +157,12 @@ public class AspectOpinionMiner
 		return getMined(corpus, lexicon, engine, false);
 	}
 	
-	public static Result getMined(UUID corpus, UUID lexicon, String engine) {
-		AspectLexicon lexiconObj = fetchResource(lexicon, AspectLexicon.class);
-		DocumentCorpus corpusObj = fetchResource(corpus, DocumentCorpus.class);
-		AspectOpinionMinedCorpus minedCorpus = new AspectOpinionMinedCorpusController().findMinedCorpus(em(), corpusObj, lexiconObj, engine);
-		if (minedCorpus == null) {
+	public static Result getMined(UUID corpus, UUID lexicon, String engine, boolean detailed) {
+		AspectOpinionMinedCorpusModel minedCorpusVM = getMined(corpus.toString(), lexicon.toString(), engine, detailed);
+		if (minedCorpusVM == null) {
 			return notFoundEntity(String.format("mined corpus for lexicon %s and corpus %s", UuidUtils.normalize(lexicon), UuidUtils.normalize(corpus)));
 		}
 		
-		AspectOpinionMinedCorpusModel minedCorpusVM = (AspectOpinionMinedCorpusModel)createViewModel(minedCorpus);
-		minedCorpusVM.populateDocuments(minedCorpus);
 		return ok(minedCorpusVM.asJson());
 	}
 	

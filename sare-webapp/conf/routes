@@ -111,7 +111,7 @@ GET      /modules/opinion-miners/aspect-based/:engine.html                   con
 GET      /modules/opinion-miners/aspect-based/:engine/editor.html            controllers.modules.opinionMiners.base.AspectOpinionMiner.editorView(corpus: UUID, lexicon: UUID, engine: String)
 GET      /modules/opinion-miners/aspect-based/:engine/results.html           controllers.modules.opinionMiners.base.AspectOpinionMiner.resultsView(corpus: UUID, lexicon: UUID, engine: String)
 
-GET      /api/v1/modules/opinion-miners/aspect-based/:engine/results.json    controllers.modules.opinionMiners.base.AspectOpinionMiner.getMined(corpus: UUID, lexicon: UUID, engine: String)
+GET      /api/v1/modules/opinion-miners/aspect-based/:engine/results.json    controllers.modules.opinionMiners.base.AspectOpinionMiner.getMined(corpus: UUID, lexicon: UUID, engine: String, detailed: Boolean ?= true)
 POST     /api/v1/modules/opinion-miners/aspect-based/:engine/results.json    controllers.modules.opinionMiners.base.AspectOpinionMiner.mine(corpus: UUID, lexicon: UUID, engine: String)
 POST     /api/v1/modules/opinion-miners/aspect-based/redeemer/:token.json    controllers.modules.opinionMiners.base.AspectOpinionMiner.redeem(token: UUID)
 

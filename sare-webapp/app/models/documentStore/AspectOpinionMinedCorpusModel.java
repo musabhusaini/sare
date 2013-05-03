@@ -29,9 +29,11 @@ import java.util.Map.Entry;
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 
+import models.base.ViewModel;
 import models.document.AspectOpinionMinedDocumentModel;
 
 import org.apache.commons.lang3.*;
+import org.codehaus.jackson.annotate.*;
 
 import scala.util.*;
 
@@ -54,9 +56,27 @@ public class AspectOpinionMinedCorpusModel
 		aspect
 	}
 	
-	public static class GroupedDocuments {
+	public static class GroupedDocuments extends ViewModel  {
+		@JsonProperty("grouping")
 		public Object key;
+		
+		@JsonIgnore
 		public Either<List<GroupedDocuments>, List<AspectOpinionMinedDocumentModel>> value;
+	
+		public GroupedDocuments() {
+			this.type = "GroupedDocuments";
+		}
+		
+		@JsonProperty("documents")
+		public List<? extends ViewModel> getValue() {
+			if (this.value == null) {
+				return null;
+			} else if (this.value.isRight()) {
+				return this.value.right().get();
+			}
+			
+			return this.value.left().get();
+		}
 		
 		public long size() {
 			long size = 0;
@@ -73,6 +93,7 @@ public class AspectOpinionMinedCorpusModel
 			return size;
 		}
 		
+		@JsonIgnore
 		public Map<Object, Long> getSummary() {
 			Map<Object, Long> summary = Maps.newLinkedHashMap();
 			if (this.value != null && this.value.isLeft()) {
