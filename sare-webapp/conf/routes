@@ -46,6 +46,7 @@ GET      /api/v1/collections/:collection/documents.json                      con
 GET      /api/v1/collections/:collection/documents/:document.json            controllers.DocumentsController.get(collection: UUID, document: UUID)
 
 # Modules
+GET		 /api/v1/modules/options.json										 controllers.ModuleController.options(input: String = "[]")
 GET      /api/v1/modules/options/:input.json                                 controllers.ModuleController.options(input: String)
 
 GET      /modules.html                                                       controllers.ModuleController.landingPage()

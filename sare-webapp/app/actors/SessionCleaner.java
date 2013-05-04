@@ -45,7 +45,7 @@ import akka.actor.*;
 public class SessionCleaner
 	extends UntypedActor {
 	
-	public static boolean clean(WebSession session, boolean timedout) {
+	public static boolean clean(WebSession session, boolean timedout, boolean forceCleanup) {
 		if (session == null) {
 			return false;
 		}
@@ -59,28 +59,34 @@ public class SessionCleaner
 			poToken.delete();
 		}
 		
-		session.setStatus(timedout ? SessionStatus.TIMEDOUT : SessionStatus.KILLED);
-		session.update();
-		
-		// if the session is not authenticated, delete all stores owned.
-		if (!SessionedAction.isAuthenticated(session)) {
-			EntityManager em = SareTransactionalAction.createEntityManager();
-			em.getTransaction().begin();
+		if (session.getStatus() == SessionStatus.ALIVE || forceCleanup) {
+			session.setStatus(timedout ? SessionStatus.TIMEDOUT : SessionStatus.KILLED);
+			session.update();
 			
-			// delete all owned stores.
-			for (String uuid : new PersistentDocumentStoreController().getAllUuids(em, UuidUtils.normalize(session.getId()))) {
-				Logger.info("deleting store " + uuid + " owned by " + UuidUtils.normalize(session.getId()));
-				PersistentDocumentStore store = em.find(PersistentDocumentStore.class, UuidUtils.toBytes(uuid));
-				if (store != null) {
-					em.remove(store);
+			// if the session is not authenticated, delete all stores owned.
+			if (!SessionedAction.isAuthenticated(session)) {
+				EntityManager em = SareTransactionalAction.createEntityManager();
+				em.getTransaction().begin();
+				
+				// delete all owned stores.
+				for (String uuid : new PersistentDocumentStoreController().getAllUuids(em, UuidUtils.normalize(session.getId()))) {
+					Logger.info("deleting store " + uuid + " owned by " + UuidUtils.normalize(session.getId()));
+					PersistentDocumentStore store = em.find(PersistentDocumentStore.class, UuidUtils.toBytes(uuid));
+					if (store != null) {
+						em.remove(store);
+					}
 				}
+				
+				em.getTransaction().commit();
+				em.close();
 			}
-			
-			em.getTransaction().commit();
-			em.close();
 		}
 		
 		return true;
+	}
+	
+	public static boolean clean(WebSession session, boolean timedout) {
+		return clean(session, timedout, false);
 	}
 	
 	public static boolean clean(WebSession session) {

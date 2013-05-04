@@ -57,14 +57,29 @@ public class SessionedAction extends Action.Simple {
 			ctx = Validate.notNull(Context.current());
 		}
 		
-		// get the session id and decrypt it.
-		String sessionId = StringUtils.defaultString(
-			StringUtils.defaultString(ctx.request().getHeader(SARE_SESSION_HEADER), ctx.session().get(SESSION_ID_KEY)));
-		if (StringUtils.isNotEmpty(sessionId)) {
-			try {
-				sessionId = Crypto.decryptAES(sessionId);
-			} catch (Throwable e) {
+		String sessionId = null;
+		
+		// try to get the session id from the query string.
+		String[] param = ctx.request().queryString().get("session");
+		if (param != null && param.length > 0) {
+			sessionId = param[0];
+			WebSession session = getWebSession(sessionId);
+			if (session == null || session.getStatus() != SessionStatus.IMMORTALIZED) {
 				sessionId = null;
+			}
+		}
+		
+		// if not, try to get the session id from headers or cookies.
+		if (StringUtils.isEmpty(sessionId)) {
+			// decrypt it.
+			sessionId = StringUtils.defaultString(
+				StringUtils.defaultString(ctx.request().getHeader(SARE_SESSION_HEADER), ctx.session().get(SESSION_ID_KEY)));
+			if (StringUtils.isNotEmpty(sessionId)) {
+				try {
+					sessionId = Crypto.decryptAES(sessionId);
+				} catch (Throwable e) {
+					sessionId = null;
+				}
 			}
 		}
 		
@@ -116,8 +131,7 @@ public class SessionedAction extends Action.Simple {
 		return hasWebSession(null);
 	}
 	
-	public static WebSession getWebSession(Context ctx) {
-		String key = getSessionKey(ctx);
+	public static WebSession getWebSession(String key) {
 		if (!UuidUtils.isUuid(key)) {
 			return null;
 		}
@@ -126,12 +140,17 @@ public class SessionedAction extends Action.Simple {
 			.fetch("owner")
 			.where()
 				.eq("id", UuidUtils.toBytes(key))
-				.eq("status", SessionStatus.ALIVE)
+				.or(WebSession.find.getExpressionFactory().eq("status", SessionStatus.ALIVE),
+					WebSession.find.getExpressionFactory().eq("status", SessionStatus.IMMORTALIZED))
 			.findUnique();
 	}
 	
+	public static WebSession getWebSession(Context ctx) {
+		return getWebSession(getSessionKey(ctx));
+	}
+	
 	public static WebSession getWebSession() {
-		return getWebSession(null);
+		return getWebSession((Context)null);
 	}
 	
 	public static WebUser getWebUser(Context ctx) {
@@ -141,6 +160,21 @@ public class SessionedAction extends Action.Simple {
 	
 	public static WebUser getWebUser() {
 		return getWebUser(null);
+	}
+	
+	public static void embedSession(Context ctx, String sessionId) {
+		if (ctx == null) {
+			ctx = Validate.notNull(Context.current());
+		}
+		
+		sessionId = Crypto.encryptAES(UuidUtils.normalize(sessionId));
+		if (!ctx.session().containsKey(SESSION_ID_KEY) || !sessionId.equals(ctx.session().get(SESSION_ID_KEY))) {
+			ctx.session().put(SESSION_ID_KEY, sessionId);
+		}
+	}
+	
+	public static void embedSession(Context ctx, byte[] sessionId) {
+		embedSession(ctx, UuidUtils.normalize(sessionId));
 	}
 	
 	public static WebSession createWebSession(Context ctx, WebUser owner) {
@@ -154,8 +188,7 @@ public class SessionedAction extends Action.Simple {
 			.setStatus(SessionStatus.ALIVE)
 			.setRemoteAddress(ctx.request().remoteAddress())
 			.setOwner(owner);
-		String sessionId = Crypto.encryptAES(UuidUtils.normalize(session.getId()));
-		ctx.session().put(SESSION_ID_KEY, sessionId);
+		embedSession(ctx, session.getId());
 		
 		session.save();
 		return session;
@@ -171,6 +204,18 @@ public class SessionedAction extends Action.Simple {
 	
 	public static WebSession createWebSession() {
 		return createWebSession(null, null);
+	}
+	
+	public static void clearSession(Context ctx) {
+		if (ctx == null) {
+			ctx = Validate.notNull(Context.current());
+		}
+		
+		ctx.session().remove(SESSION_ID_KEY);
+	}
+	
+	public static void clearSession() {
+		clearSession(null);
 	}
 	
 	@Override
@@ -201,6 +246,8 @@ public class SessionedAction extends Action.Simple {
 			return unauthorized(Application.renderLoginPage(ctx.request().uri()));
 		}
 		
+		// embed the session.
+		embedSession(ctx, session.getId());
 		ctx.request().setUsername(getUsername(ctx));
 		
 		return delegate.call(ctx);

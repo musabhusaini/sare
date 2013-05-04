@@ -261,6 +261,7 @@ public class Application extends Controller {
 		WebSession session = getWebSession();
 		if (session != null) {
 			SessionCleaner.clean(session);
+			clearSession();
 		}
 		
 		return ok();

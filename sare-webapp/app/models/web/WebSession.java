@@ -44,7 +44,9 @@ public class WebSession
 		@EnumValue("t")
 		TIMEDOUT,
 		@EnumValue("a")
-		ALIVE
+		ALIVE,
+		@EnumValue("i")
+		IMMORTALIZED
 	}
 
 	private static final long serialVersionUID = -6111608082703517322L;

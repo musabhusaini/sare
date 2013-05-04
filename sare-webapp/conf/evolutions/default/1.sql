@@ -20,7 +20,7 @@ create table web_sessions (
   created                   datetime,
   refresh_token             varchar(255),
   updated                   datetime not null,
-  constraint ck_web_sessions_status check (status in ('a','t','k')),
+  constraint ck_web_sessions_status check (status in ('i','a','t','k')),
   constraint pk_web_sessions primary key (uuid))
 ;
 
