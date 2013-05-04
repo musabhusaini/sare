@@ -110,7 +110,7 @@ POST     /api/v1/modules/corpora/optimizations/:setcover/redeemer.json       con
 # Aspect-based opinion miner modules
 GET      /modules/opinion-miners/aspect-based/:engine.html                   controllers.modules.opinionMiners.base.AspectOpinionMiner.modulePage(corpus: UUID ?= null, lexicon: UUID ?= null, engine: String, partial: Boolean ?= false)
 GET      /modules/opinion-miners/aspect-based/:engine/editor.html            controllers.modules.opinionMiners.base.AspectOpinionMiner.editorView(corpus: UUID, lexicon: UUID, engine: String)
-GET      /modules/opinion-miners/aspect-based/:engine/results.html           controllers.modules.opinionMiners.base.AspectOpinionMiner.resultsView(corpus: UUID, lexicon: UUID, engine: String)
+GET      /modules/opinion-miners/aspect-based/:engine/results.html           controllers.modules.opinionMiners.base.AspectOpinionMiner.resultsView(corpus: UUID, lexicon: UUID, engine: String, standalone: Boolean ?= false)
 
 GET      /api/v1/modules/opinion-miners/aspect-based/:engine/results.json    controllers.modules.opinionMiners.base.AspectOpinionMiner.getMined(corpus: UUID, lexicon: UUID, engine: String, detailed: Boolean ?= true)
 POST     /api/v1/modules/opinion-miners/aspect-based/:engine/results.json    controllers.modules.opinionMiners.base.AspectOpinionMiner.mine(corpus: UUID, lexicon: UUID, engine: String)

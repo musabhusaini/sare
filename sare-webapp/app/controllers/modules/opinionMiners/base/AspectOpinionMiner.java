@@ -41,6 +41,7 @@ import play.Logger;
 import play.libs.Akka;
 import play.mvc.*;
 import play.mvc.Http.Context;
+import views.html.standaloneView;
 import views.html.tags.*;
 
 import controllers.base.*;
@@ -136,8 +137,12 @@ public class AspectOpinionMiner
 				new AspectLexiconModel(lexiconObj, false), engine));
 	}
 	
-	public static Result resultsView(UUID corpus, UUID lexicon, String engine) {
+	public static Result resultsView(UUID corpus, UUID lexicon, String engine, boolean standalone) {
 		AspectOpinionMinedCorpusModel minedCorpusFull = getMined(corpus.toString(), lexicon.toString(), engine, true);
+		if (standalone) {
+			return ok(standaloneView.render("", aspectOpinionMinerResults.render(minedCorpusFull), null, null));
+		}
+		
 		return ok(aspectOpinionMinerResults.render(minedCorpusFull));
 	}
 	

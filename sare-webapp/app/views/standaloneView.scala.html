@@ -1,0 +1,47 @@
+@*
+ * Sentilab SARE: a Sentiment Analysis Research Environment
+ * Copyright (C) 2013 Sabanci University Sentilab
+ * http://sentilab.sabanciuniv.edu
+ * 
+ * This file is part of SARE.
+ * 
+ * SARE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *  
+ * SARE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with SARE. If not, see <http://www.gnu.org/licenses/>.
+ *@
+
+@(title: String = "", content: Html, scripts: Html = null, styles: Html = null)
+
+@import tags._
+
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<title>@title</title>
+		
+		<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+		<link rel="wait image" type="image/gif" href="@routes.Assets.at("images/throbber.gif")">
+		
+		@essentialStylesheets()
+		@styles
+		
+		@essentialScripts()
+		@scripts
+	</head>
+	<body>
+		@content
+	</body>
+</html>

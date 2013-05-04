@@ -1,0 +1,79 @@
+@*
+ * Sentilab SARE: a Sentiment Analysis Research Environment
+ * Copyright (C) 2013 Sabanci University Sentilab
+ * http://sentilab.sabanciuniv.edu
+ * 
+ * This file is part of SARE.
+ * 
+ * SARE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *  
+ * SARE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with SARE. If not, see <http://www.gnu.org/licenses/>.
+ *@
+
+@()
+
+@import play._
+
+@import controllers._
+@import controllers.base.SessionedAction._
+@import controllers.base.Application._
+
+@helpers.script(
+	Seq(
+		"http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js",
+		"http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js",
+		"javascripts/bootstrap/bootstrap-affix.min.js",
+		"javascripts/bootstrap/bootstrap-alert.min.js",
+		"javascripts/bootstrap/bootstrap-button.min.js",
+		"javascripts/bootstrap/bootstrap-carousel.min.js",
+		"javascripts/bootstrap/bootstrap-collapse.min.js",
+		"javascripts/bootstrap/bootstrap-dropdown.min.js",
+		"javascripts/bootstrap/bootstrap-transition.min.js",
+		"javascripts/bootstrap/bootstrap-tooltip.min.js",
+		"javascripts/bootstrap/bootstrap-popover.min.js",
+		"javascripts/bootstrap/bootstrap-modal.min.js",
+		"javascripts/bootstrap/bootstrap-scrollspy.min.js",
+		"javascripts/bootstrap/bootstrap-tab.min.js",
+		"javascripts/bootstrap/bootstrap-typeahead.min.js",
+		base.routes.Application.javascriptRoutes()
+	), true
+)
+@if(Play.isProd()) {
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-40402679-1', 'sabanciuniv.edu');
+  ga('send', 'pageview');
+</script>
+}
+<script type="text/javascript">
+	window.Sare = {
+		Configuration: {
+			pingTimeout: (function() {
+				@if(hasWebSession) {
+					return window.Number("@Play.application().configuration().getInt("application.session.browserPingTimeout")" || "0") || 5;
+				} else {
+					return 0;
+				}
+			})()
+		}
+	};
+</script>
+@helpers.script(
+	Seq(
+		"javascripts/main.html.js",
+		"javascripts/Sare.Widget.js"
+	)
+)

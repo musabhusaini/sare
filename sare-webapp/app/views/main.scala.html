@@ -33,205 +33,132 @@
 @import controllers.base.Application._
 @import tags._
 
-<!DOCTYPE html>
-
-<html>
-	<head>
-		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		
-		<title>@title</title>
-		
-		<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-		<link rel="wait image" type="image/gif" href="@routes.Assets.at("images/throbber.gif")">
-		
-		@helpers.stylesheet(
-			Seq(
-				"http://fonts.googleapis.com/css?family=PT+Sans%7CPT+Serif%7CAveria+Serif+Libre",
-				"stylesheets/bootstrap/bootstrap.min.css",
-				"stylesheets/bootstrap/responsive.min.css"
-			), true
-		)
-		@helpers.stylesheet("stylesheets/main.css")
-		@styles
-		
-		@helpers.script(
-			Seq(
-				"http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js",
-				"http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js",
-				"javascripts/bootstrap/bootstrap-affix.min.js",
-				"javascripts/bootstrap/bootstrap-alert.min.js",
-				"javascripts/bootstrap/bootstrap-button.min.js",
-				"javascripts/bootstrap/bootstrap-carousel.min.js",
-				"javascripts/bootstrap/bootstrap-collapse.min.js",
-				"javascripts/bootstrap/bootstrap-dropdown.min.js",
-				"javascripts/bootstrap/bootstrap-transition.min.js",
-				"javascripts/bootstrap/bootstrap-tooltip.min.js",
-				"javascripts/bootstrap/bootstrap-popover.min.js",
-				"javascripts/bootstrap/bootstrap-modal.min.js",
-				"javascripts/bootstrap/bootstrap-scrollspy.min.js",
-				"javascripts/bootstrap/bootstrap-tab.min.js",
-				"javascripts/bootstrap/bootstrap-typeahead.min.js",
-				base.routes.Application.javascriptRoutes()
-			), true
-		)
-		@if(Play.isProd()) {
-		<script type="text/javascript">
-		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		
-		  ga('create', 'UA-40402679-1', 'sabanciuniv.edu');
-		  ga('send', 'pageview');
-		</script>
-		}
-		<script type="text/javascript">
-			window.Sare = {
-				Configuration: {
-					pingTimeout: (function() {
-						@if(hasWebSession) {
-							return window.Number("@Play.application().configuration().getInt("application.session.browserPingTimeout")" || "0") || 5;
-						} else {
-							return 0;
-						}
-					})()
-				}
-			};
-		</script>
-		@helpers.script(
-			Seq(
-				"javascripts/main.html.js",
-				"javascripts/Sare.Widget.js"
-			)
-		)
-		@scripts
-	</head>
-	<body>
-		<div class="navbar navbar-inverse navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container-fluid">
-					<div class="row-fluid">
-						<div class="span@((12-contentWidth)/2)">
-						</div>
-						
-						<div class="span@contentWidth">
-							<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-								<span class="icon-bar">
-								</span>
-								<span class="icon-bar">
-								</span>
-								<span class="icon-bar">
-								</span>
-							</a>
-							<a class="brand" href="@base.routes.Application.homePage">
-								<div class="title">Sentilab SARE</div>
-								<div class="label label-warning">ALPHA</div>
-							</a>
-							<div class="nav-collapse collapse">
-								<ul class="nav">
-									@for((title, url) <- LinkedHashMap("Home" -> base.routes.Application.homePage, "About" -> "#", "Contact" -> "#")) {
-										<li @if(title.equalsIgnoreCase(active)) { class="active" }>
-											<a href="@url">@title</a>
-										<li>
-									}
-								</ul>
-								<ul class="nav pull-right">
+@fullContent = {
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<div class="span@((12-contentWidth)/2)">
+					</div>
+					
+					<div class="span@contentWidth">
+						<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+							<span class="icon-bar">
+							</span>
+							<span class="icon-bar">
+							</span>
+							<span class="icon-bar">
+							</span>
+						</a>
+						<a class="brand" href="@base.routes.Application.homePage">
+							<div class="title">Sentilab SARE</div>
+							<div class="label label-warning">ALPHA</div>
+						</a>
+						<div class="nav-collapse collapse">
+							<ul class="nav">
+								@for((title, url) <- LinkedHashMap("Home" -> base.routes.Application.homePage, "About" -> "#", "Contact" -> "#")) {
+									<li @if(title.equalsIgnoreCase(active)) { class="active" }>
+										<a href="@url">@title</a>
 									<li>
-										@if(!hasWebSession) {
-											<a href="@base.routes.Application.loginPage(request.uri)">Sign in</a>
-										} else {
-											<span class="navbar-text">
-												Signed in @if(isAuthenticated) { as }
-											</span>
-										}
-									</li>
-									@if(hasWebSession) {
-									<li class="dropdown">
-										<a class="dropdown-toggle" href="#" data-toggle="dropdown">
-											@if(isAuthenticated) { @getWebUser.getDisplayName } else { anonymously }
-											<b class="caret">
-											</b>
-										</a>
-										<ul class="dropdown-menu">
-											<li>
-												<a href="@base.routes.Application.logoutPage" class="navbar-link">Sign out</a>
-											</li>
-										</ul>
-									</li>
+								}
+							</ul>
+							<ul class="nav pull-right">
+								<li>
+									@if(!hasWebSession) {
+										<a href="@base.routes.Application.loginPage(request.uri)">Sign in</a>
+									} else {
+										<span class="navbar-text">
+											Signed in @if(isAuthenticated) { as }
+										</span>
 									}
-								</ul>
-							</div><!--/.nav-collapse -->
-						</div>
-						
-						<div class="span@((12-contentWidth)/2)">
-						</div>
+								</li>
+								@if(hasWebSession) {
+								<li class="dropdown">
+									<a class="dropdown-toggle" href="#" data-toggle="dropdown">
+										@if(isAuthenticated) { @getWebUser.getDisplayName } else { anonymously }
+										<b class="caret">
+										</b>
+									</a>
+									<ul class="dropdown-menu">
+										<li>
+											<a href="@base.routes.Application.logoutPage" class="navbar-link">Sign out</a>
+										</li>
+									</ul>
+								</li>
+								}
+							</ul>
+						</div><!--/.nav-collapse -->
+					</div>
+					
+					<div class="span@((12-contentWidth)/2)">
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<div id="wrap">
-			@if(showPageHeader) {
-				<div class="container-fluid page-header-container">
-					<div class="row-fluid page-header">
-						<div class="offset@((12-contentWidth)/2) span@contentWidth">
-							<h1>Sentilab SARE</h1>
-							<p class="lead">
-								A Sentiment Analysis Research Environment
-							</p>
-						</div>
-					</div>
-				</div>
-			}
-	
-			<div class="container-fluid">
-				<div class="row-fluid">
-					<div class="span@((12-contentWidth)/2) leftbar">
-						@leftbar
-					</div>
-					
-					<div class="span@contentWidth centerbody">
-						<div id="ctr-main-alert">
-						</div>
-						@content
-					</div>
-					
-					<div class="span@((12-contentWidth)/2) rightbar">
-						@rightbar
+	<div id="wrap">
+		@if(showPageHeader) {
+			<div class="container-fluid page-header-container">
+				<div class="row-fluid page-header">
+					<div class="offset@((12-contentWidth)/2) span@contentWidth">
+						<h1>Sentilab SARE</h1>
+						<p class="lead">
+							A Sentiment Analysis Research Environment
+						</p>
 					</div>
 				</div>
 			</div>
-			
-			<div id="push"></div>
+		}
+
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span@((12-contentWidth)/2) leftbar">
+					@leftbar
+				</div>
+				
+				<div class="span@contentWidth centerbody">
+					<div id="ctr-main-alert">
+					</div>
+					@content
+				</div>
+				
+				<div class="span@((12-contentWidth)/2) rightbar">
+					@rightbar
+				</div>
+			</div>
 		</div>
 		
-		<footer>
-			<div class="container-fluid">
-				<div class="row-fluid">
-					<div class="offset@((12-contentWidth)/2) span@contentWidth">
-						<p>
-							Copyright &copy; <a href="http://www.sabanciuniv.edu" target="_blank">Sabanc&#305; University</a> 2013.
-							All rights reserved.
-						</p>
-						<p>
-							A <a href="http://www.sentilab.sabanciuniv.edu" target="_blank">Sabanc&#305; Sentilab</a> project.
-						</p>
-						<p>
-							Source code is available under <a href="http://www.gnu.org/licenses/gpl-3.0.html.en" target="_blank">GNU GPL v3.0</a>
-							from <a href="https://bitbucket.org/sentilab/sare" target="_blank">Bitbucket</a>.
-						</p>
-						<ul class="footer-links">
-							<li>
-								<a href="#">About</a>
-							</li>
-							<li>
-								<a href="#">Contact</a>
-							</li>
-						</ul>
-					</div>
+		<div id="push"></div>
+	</div>
+	
+	<footer>
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="offset@((12-contentWidth)/2) span@contentWidth">
+					<p>
+						Copyright &copy; <a href="http://www.sabanciuniv.edu" target="_blank">Sabanc&#305; University</a> 2013.
+						All rights reserved.
+					</p>
+					<p>
+						A <a href="http://www.sentilab.sabanciuniv.edu" target="_blank">Sabanc&#305; Sentilab</a> project.
+					</p>
+					<p>
+						Source code is available under <a href="http://www.gnu.org/licenses/gpl-3.0.html.en" target="_blank">GNU GPL v3.0</a>
+						from <a href="https://bitbucket.org/sentilab/sare" target="_blank">Bitbucket</a>.
+					</p>
+					<ul class="footer-links">
+						<li>
+							<a href="#">About</a>
+						</li>
+						<li>
+							<a href="#">Contact</a>
+						</li>
+					</ul>
 				</div>
 			</div>
-		</footer>
-	</body>
-</html>
+		</div>
+	</footer>	
+}
+
+@standaloneView(title, fullContent, scripts, styles)
