@@ -116,11 +116,18 @@ widget =
 						@_$(@options.detailsContainer).tabbedNav "activate", @options.graphicalNavKey
 						
 				else if document?
+					fontFamily = $(graphInnerContainer).css "font-family"
 					if graphData?[0].length
 						@_summaryPlot = $.jqplot graphId, graphData,
 							axesDefaults:
 								labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+								labelOptions:
+									# this should get picked up automatically, but it's not.
+									fontFamily: fontFamily
 								tickRenderer: $.jqplot.CanvasAxisTickRenderer
+								tickOptions:
+									# this should get picked up automatically, but it's not.
+									fontFamily: fontFamily
 							seriesDefaults:
 								renderer: $.jqplot.BarRenderer
 								rendererOptions:

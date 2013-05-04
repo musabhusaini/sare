@@ -126,6 +126,9 @@ widget =
 		@_tolerancePlot = $.jqplot id, [ matrix ],
 			axesDefaults:
 				labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+				labelOptions:
+					# this should get picked up automatically, but it's not.
+					fontFamily: @_$(@options.coverageMatrixContainer).css "font-family"
 			seriesDefaults:
 				rendererOptions:
 					smooth: true
