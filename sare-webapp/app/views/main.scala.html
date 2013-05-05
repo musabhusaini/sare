@@ -56,7 +56,7 @@
 						</a>
 						<div class="nav-collapse collapse">
 							<ul class="nav">
-								@for((title, url) <- LinkedHashMap("Home" -> base.routes.Application.homePage, "About" -> "#", "Contact" -> "#")) {
+								@for((title, url) <- LinkedHashMap("Home" -> base.routes.Application.homePage, "Analyze" -> routes.ModuleController.landingPage, "About" -> "#", "Contact" -> "#")) {
 									<li @if(title.equalsIgnoreCase(active)) { class="active" }>
 										<a href="@url">@title</a>
 									<li>

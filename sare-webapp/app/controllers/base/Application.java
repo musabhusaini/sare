@@ -196,7 +196,6 @@ public class Application extends Controller {
 		return watchProgress(remoteObject, null, id);
 	}
 	
-	@With(SessionedAction.class)
 	public static Result homePage() {
 		return ok(home.render());
 	}
