@@ -69,31 +69,41 @@ widget =
 				document = $(data.rslt.obj).data @options.documentKey
 				
 				tableMap = summary or document?.aspectPolarities
-				graphData = null
 				scoreMax = 0
+				if tableMap?
+					tableArray = (for title, value of tableMap
+						scoreMax = Math.max scoreMax, Math.abs value
+						[ title, roundPolarity value ])
+				
+				if tableArray?.length
+					tableArray.sort (a, b) -> b[1] - a[1]
+					if summary?
+						others = tableArray.splice 4, tableArray.length-4
+						othersTotal = 0
+						for [ _, value ] in others
+							othersTotal += value
+						if othersTotal and others.length
+							tableArray.push [ "Others", othersTotal ]
+				
 				graphInnerContainer = @_$(@options.graphContainer).children("div").first()
 				graphId = $(graphInnerContainer).empty().removeClass().attr "id"
 				thead = @_$(@options.tableContainer).find("table thead").empty()
 				tbody = @_$(@options.tableContainer).find("table tbody").empty()
 				
-				if tableMap?
-					for title, value of tableMap
+				@_$(@options.visualsNav).show()
+				if tableArray?.length
+					for [title, value] in tableArray
 						$(tbody).append "<tr><td>#{title}</td><td>#{roundPolarity value}</td></tr>"
-						scoreMax = Math.max scoreMax, Math.abs value
-					@_$(@options.visualsNav).show()
-					graphData = [ (for title, value of tableMap
-						[title, roundPolarity value]) ]
-				
-				if not graphData?[0].length
+				else
 					$(graphInnerContainer).text "Not enough data for a graph"
 				
 				if summary?
 					$(thead).append "<tr><th>Category</th><th>Count</th></tr>"
 					$(tbody).append "<tr><td>Total</td><td>#{$(data.rslt.obj).data @options.sizeKey}</td></tr>"
 					
-					if graphData?[0].length
+					if tableArray?.length
 						$(graphInnerContainer).addClass "pie"
-						@_summaryPlot = $.jqplot graphId, graphData,
+						@_summaryPlot = $.jqplot graphId, [ tableArray ],
 							seriesDefaults:
 								renderer: jQuery.jqplot.PieRenderer
 								rendererOptions:
@@ -117,8 +127,8 @@ widget =
 						
 				else if document?
 					fontFamily = $(graphInnerContainer).css "font-family"
-					if graphData?[0].length
-						@_summaryPlot = $.jqplot graphId, graphData,
+					if tableArray?.length
+						@_summaryPlot = $.jqplot graphId, [ tableArray ],
 							axesDefaults:
 								labelRenderer: $.jqplot.CanvasAxisLabelRenderer
 								labelOptions:
