@@ -67,6 +67,7 @@ widget =
 				type = $(data.rslt.obj).data @options.typeKey
 				summary = $(data.rslt.obj).data @options.summaryKey
 				document = $(data.rslt.obj).data @options.documentKey
+				visualTitle = if type is "orientation" then "<strong>Top 4 Emerging Aspects<strong>"
 				
 				tableMap = summary or document?.aspectPolarities
 				scoreMax = 0
@@ -87,6 +88,8 @@ widget =
 				
 				graphInnerContainer = @_$(@options.graphContainer).children("div").first()
 				graphId = $(graphInnerContainer).empty().removeClass().attr "id"
+				@_$(@options.tableContainer).find("table caption")
+					.html visualTitle
 				thead = @_$(@options.tableContainer).find("table thead").empty()
 				tbody = @_$(@options.tableContainer).find("table tbody").empty()
 				
@@ -98,12 +101,18 @@ widget =
 					$(graphInnerContainer).text "Not enough data for a graph"
 				
 				if summary?
-					$(thead).append "<tr><th>Category</th><th>Count</th></tr>"
+					categoryHeader = switch type
+						when "corpus" then "Orientation"
+						when "orientation" then "Aspect"
+						else ""
+					
+					$(thead).append "<tr><th>#{categoryHeader}</th><th>Count</th></tr>"
 					$(tbody).append "<tr><td>Total</td><td>#{$(data.rslt.obj).data @options.sizeKey}</td></tr>"
 					
 					if tableArray?.length
 						$(graphInnerContainer).addClass "pie"
 						@_summaryPlot = $.jqplot graphId, [ tableArray ],
+							title: visualTitle
 							seriesDefaults:
 								renderer: jQuery.jqplot.PieRenderer
 								rendererOptions:
@@ -128,7 +137,11 @@ widget =
 				else if document?
 					fontFamily = $(graphInnerContainer).css "font-family"
 					if tableArray?.length
-						@_summaryPlot = $.jqplot graphId, [ tableArray ],
+						graphData = [(
+							for [ title, value ] in tableArray
+								[ Helpers.String.truncate(title, 100/tableArray.length, true), value ]
+						)]
+						@_summaryPlot = $.jqplot graphId, graphData,
 							axesDefaults:
 								labelRenderer: $.jqplot.CanvasAxisLabelRenderer
 								labelOptions:

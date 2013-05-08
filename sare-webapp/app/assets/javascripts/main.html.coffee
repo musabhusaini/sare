@@ -43,6 +43,18 @@ Sare = window.Sare = $.extend window.Sare,
 		Images:
 			wait: jsRoutes.controllers.Assets.at("images/throbber.gif").url
 	Helpers:
+		String:
+			truncate: (str, n, useWordBoundary) ->
+				ellipses = $("<div>").html("&hellip;").text();
+				str ?= ""
+				isTooLong = str.length > n
+				str = if isTooLong then str.substr(0, n-1) else str
+				lastSpaceIndex = str.lastIndexOf " "
+				str =
+					if useWordBoundary and isTooLong and lastSpaceIndex > -1 
+						str.substr(0, lastSpaceIndex)
+					else str
+				if isTooLong then str + ellipses else str
 		ContentTypes:
 			json: "application/json; charset=utf-8"
 		MimeTypes:

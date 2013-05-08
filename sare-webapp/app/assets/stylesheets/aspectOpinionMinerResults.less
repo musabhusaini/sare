@@ -27,6 +27,7 @@
 @import-once "tabbedNav";
 
 @full-height: 350px;
+@nav-height: 50px;
 
 .ctr-aom-results {
   .jstree-default.jstree-focused {
@@ -43,11 +44,21 @@
   }
   
   .ctr-details {
+    position: relative;
     width: 100%;
+    max-height: @full-height;
     height: @full-height;
+    padding-top: @nav-height;
+    
+    .ctr-nav {
+      position: absolute;
+      top: 0;
+    }
     
     .ctr-tab {
-      height: 100%;
+      max-height: (@full-height - @nav-height);
+      overflow-x: hidden;
+      overflow-y: auto;
     }
     
     > div {
@@ -55,14 +66,15 @@
     }
   }
   
-  .ctr-document, .ctr-visual-graph {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-  
   .ctr-visual-table table {
     min-width: 150px;
     width: auto;
+    
+    caption {
+      padding-top: @gridGutterWidth/2;
+      caption-side: bottom;
+      text-align: center;
+    }
     
     tbody tr:last-child:not(:first-child) {
       font-weight: bold;
