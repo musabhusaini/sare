@@ -80,27 +80,14 @@
 	
 	@helpers.stylesheet("plugins/jqplot/jquery.jqplot.min.css", true)
 	@helpers.stylesheet("stylesheets/setCoverEditor.css")
-	@helpers.script(
-		Seq(
-			"plugins/jqplot/jquery.jqplot.min.js",
-			"plugins/jqplot/plugins/jqplot.canvasTextRenderer.min.js",
-			"plugins/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js",
-			"plugins/jqplot/plugins/jqplot.highlighter.min.js",
-			"plugins/jqplot/plugins/jqplot.permHighlighter.min.js"
-		), true
-	)
-	@helpers.script(
-		Seq(
-			"javascripts/widgets.progress.js",
-			"javascripts/widgets.setCoverEditor.js"
-		)
-	)
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-sc-editor-@uid").setCoverEditor();
+		(function(window, require) {
+			require([ "jquery", window.RjsHelpers.minifiableDep("widgets.setCoverEditor") ], function($) {
+				$(function() {
+					$("#ctr-sc-editor-@uid").setCoverEditor();
+				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

@@ -19,24 +19,32 @@ You should have received a copy of the GNU General Public License
 along with SARE. If not, see <http://www.gnu.org/licenses/>.
 ###
 
-#define reusables
-location = window.location
-$ = window.jQuery
-jsRoutes = window.jsRoutes
-Sare = window.Sare
-Page = Sare.Page
-Widgets = Page.Widgets
-Selectors = Page.Selectors
-Strings = Page.Strings
+minifiableDep = window.RjsHelpers.minifiableDep
+define = window.define
 
-#define page constants
-Strings.widgetKey = "moduleWidget"
-Strings.moduleOutputDataKey = "output"
-Selectors.moduleManagerContainer = "#ctr-module-manager"
-
-$ ->
-	entryModule = $(Selectors.moduleManagerContainer).data "module"
-	Widgets.moduleManager = $.proxy $(Selectors.moduleManagerContainer).moduleManager, $(Selectors.moduleManagerContainer)
-	Widgets.moduleManager
-		entryModule: entryModule
-	if not entryModule? then Widgets.moduleManager "option", "output", []
+define [
+	"jquery"
+	minifiableDep "main.html"
+	minifiableDep "widgets.moduleManager"
+], ->
+	#define reusables
+	location = window.location
+	$ = window.jQuery
+	
+	Sare = window.Sare
+	Page = Sare.Page
+	Widgets = Page.Widgets
+	Selectors = Page.Selectors
+	Strings = Page.Strings
+	
+	#define page constants
+	Strings.widgetKey = "moduleWidget"
+	Strings.moduleOutputDataKey = "output"
+	Selectors.moduleManagerContainer = "#ctr-module-manager"
+	
+	$ ->
+		entryModule = $(Selectors.moduleManagerContainer).data "module"
+		Widgets.moduleManager = $.proxy $(Selectors.moduleManagerContainer).moduleManager, $(Selectors.moduleManagerContainer)
+		Widgets.moduleManager
+			entryModule: entryModule
+		if not entryModule? then Widgets.moduleManager "option", "output", []

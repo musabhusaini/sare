@@ -27,26 +27,8 @@
 @import controllers.base.SessionedAction._
 @import controllers.base.Application._
 
-@helpers.script(
-	Seq(
-		"http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js",
-		"http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js",
-		"javascripts/bootstrap/bootstrap-affix.min.js",
-		"javascripts/bootstrap/bootstrap-alert.min.js",
-		"javascripts/bootstrap/bootstrap-button.min.js",
-		"javascripts/bootstrap/bootstrap-carousel.min.js",
-		"javascripts/bootstrap/bootstrap-collapse.min.js",
-		"javascripts/bootstrap/bootstrap-dropdown.min.js",
-		"javascripts/bootstrap/bootstrap-transition.min.js",
-		"javascripts/bootstrap/bootstrap-tooltip.min.js",
-		"javascripts/bootstrap/bootstrap-popover.min.js",
-		"javascripts/bootstrap/bootstrap-modal.min.js",
-		"javascripts/bootstrap/bootstrap-scrollspy.min.js",
-		"javascripts/bootstrap/bootstrap-tab.min.js",
-		"javascripts/bootstrap/bootstrap-typeahead.min.js",
-		base.routes.Application.javascriptRoutes()
-	), true
-)
+@helpers.script("javascripts/require.js", true)
+
 @if(Play.isProd()) {
 <script type="text/javascript">
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -59,21 +41,83 @@
 </script>
 }
 <script type="text/javascript">
-	window.Sare = {
-		Configuration: {
-			pingTimeout: (function() {
-				@if(hasWebSession) {
-					return window.Number("@Play.application().configuration().getInt("application.session.browserPingTimeout")" || "0") || 5;
-				} else {
-					return 0;
-				}
-			})()
-		}
-	};
+	(function(window, require, requirejs) {
+		var RjsHelpers = window.RjsHelpers = {};
+		var minifiableDep = RjsHelpers.minifiableDep = function(path) {
+			var match = path.match(/^((.*?)(?:\.min)?(\.js)?)$/);
+			return @if(Play.isProd()) {match[2] + ".min" + (match[3] || "")} else {match[1]}
+		};
+		
+		var cleanDepPath = RjsHelpers.cleanDepPath = function(path) {
+			var match = path.match(/^(.*?)(?:\.js)?$/);
+			return match[1];
+		};
+
+		var Sare = window.Sare = {
+			Configuration: {
+				pingTimeout: (function() {
+					@if(hasWebSession) {
+						return window.Number("@Play.application().configuration().getInt("application.session.browserPingTimeout")" || "0") || 5;
+					} else {
+						return 0;
+					}
+				})()
+			}
+		};
+		
+		requirejs.config({
+			baseUrl: "@routes.Assets.at("javascripts")",
+			paths: {
+				jquery: "http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
+				"jquery-ui": "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min",
+				jsRoutes: cleanDepPath("@base.routes.Application.javascriptRoutes"),
+				"bootstrap-affix": "bootstrap/bootstrap-affix.min",
+				"bootstrap-alert": "bootstrap/bootstrap-alert.min",
+				"bootstrap-button": "bootstrap/bootstrap-button.min",
+				"bootstrap-carousel": "bootstrap/bootstrap-carousel.min",
+				"bootstrap-collapse": "bootstrap/bootstrap-collapse.min",
+				"bootstrap-dropdown": "bootstrap/bootstrap-dropdown.min",
+				"bootstrap-transition": "bootstrap/bootstrap-transition.min",
+				"bootstrap-tooltip": "bootstrap/bootstrap-tooltip.min",
+				"bootstrap-popover": "bootstrap/bootstrap-popover.min",
+				"bootstrap-modal": "bootstrap/bootstrap-modal.min",
+				"bootstrap-scrollspy": "bootstrap/bootstrap-scrollspy.min",
+				"bootstrap-tab": "bootstrap/bootstrap-tab.min",
+				"bootstrap-typeahead": "bootstrap/bootstrap-typeahead.min",
+				"bootstrap-all": "bootstrap/bootstrap-all",
+				"jsplugins": "@routes.Assets.at("plugins")"
+			},
+			
+			shim: {
+				"jquery-ui": [ "jquery" ],
+				"bootstrap-affix": [ "jquery", "" ],
+				"bootstrap-alert": [ "jquery" ],
+				"bootstrap-button": [ "jquery", "jquery-ui" ],
+				"bootstrap-carousel": [ "jquery" ],
+				"bootstrap-collapse": [ "jquery", "bootstrap-transition" ],
+				"bootstrap-dropdown": [ "jquery", "jquery-ui" ],
+				"bootstrap-transition": [ "jquery", "jquery-ui" ],
+				"bootstrap-tooltip": [ "jquery", "jquery-ui" ],
+				"bootstrap-popover": [ "jquery", "bootstrap-tooltip" ],
+				"bootstrap-modal": [ "jquery" ],
+				"bootstrap-scrollspy": [ "jquery" ],
+				"bootstrap-tab": [ "jquery", "jquery-ui" ],
+				"bootstrap-typeahead": [ "jquery" ],
+				"jsplugins/plupload/js/plupload.full": [ "jquery", "jquery-ui" ],
+				"jsplugins/jqplot/jquery.jqplot.min": [ "jquery" ],
+				"jsplugins/jqplot/plugins/jqplot.pieRenderer.min": [ "jquery", "jsplugins/jqplot/jquery.jqplot.min" ],
+				"jsplugins/jqplot/plugins/jqplot.barRenderer.min": [ "jquery", "jsplugins/jqplot/jquery.jqplot.min" ],
+				"jsplugins/jqplot/plugins/jqplot.canvasTextRenderer.min": [ "jquery", "jsplugins/jqplot/jquery.jqplot.min" ],
+				"jsplugins/jqplot/plugins/jqplot.categoryAxisRenderer.min": [ "jquery", "jsplugins/jqplot/jquery.jqplot.min" ],
+				"jsplugins/jqplot/plugins/jqplot.canvasAxisTickRenderer.min": [ "jquery", "jsplugins/jqplot/jquery.jqplot.min" ],
+				"jsplugins/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min": [ "jquery", "jsplugins/jqplot/jquery.jqplot.min" ],
+				"jsplugins/jqplot/plugins/jqplot.highlighter.min": [ "jquery", "jsplugins/jqplot/jquery.jqplot.min" ],
+				"jsplugins/jqplot/plugins/jqplot.permHighlighter.min": [ "jquery", "jsplugins/jqplot/jquery.jqplot.min" ],
+				"jsplugins/jstree/_lib/jquery.hotkeys": [ "jquery" ],
+				"jsplugins/jstree/jquery.jstree": [ "jquery", "jsplugins/jstree/_lib/jquery.hotkeys" ]
+			}
+		});
+		
+		require([ "jquery", "jquery-ui", "bootstrap-all", minifiableDep("main.html") ]);
+	})(window, window.require, window.requirejs);
 </script>
-@helpers.script(
-	Seq(
-		"javascripts/main.html.js",
-		"javascripts/Sare.Widget.js"
-	)
-)

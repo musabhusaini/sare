@@ -54,13 +54,11 @@
 }
 
 @moreScripts = {
-	@helpers.script(
-			Seq(
-			"javascripts/widgets.tabbedNav.js",
-			"javascripts/widgets.moduleManager.js",
-			"javascripts/moduleView.html.js"
-		)
-	)
+	<script type="text/javascript">
+		(function(window, require) {
+			require([ window.RjsHelpers.minifiableDep("moduleView.html") ]);
+		})(window, window.require);
+	</script>
 	@scripts
 }
 

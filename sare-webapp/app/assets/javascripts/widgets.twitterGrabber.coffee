@@ -19,41 +19,50 @@ You should have received a copy of the GNU General Public License
 along with SARE. If not, see <http://www.gnu.org/licenses/>.
 ###
 
-# define reusables
-$ = window.jQuery
-jsRoutes = window.jsRoutes
-JSON = window.JSON
-Sare = window.Sare
-Helpers = Sare.Helpers
-Page = Sare.Page
-Selectors = Page.Selectors
-Strings = Page.Strings
+minifiableDep = window.RjsHelpers.minifiableDep
+define = window.define
 
-widget =
-	getData: ->
-		query = @_$(@options.queryInput).val()
-		return false if not query
-		limit = @_$(@options.limitInput).val()
-		limit = if window.isNaN(limit) then null else window.parseInt limit, 10
-		twitter:
-			query: query
-			limit: limit 
+define [
+	"jquery"
+	minifiableDep "main.html"
+	minifiableDep "Sare.Widget"
+], ->
+	# define reusables
+	$ = window.jQuery
+	jsRoutes = window.jsRoutes
+	JSON = window.JSON
 
-	_create: ->
-		
-	refresh: ->
-		$(@element).data Strings.widgetKey, @
-		
-	_init: ->
-		@refresh()
-		
-	_destroy: ->
-		
-	_setOption: (key, value) ->
-		$.Widget.prototype._setOption.apply @, arguments
+	Sare = window.Sare
+	Helpers = Sare.Helpers
+	Page = Sare.Page
+	Selectors = Page.Selectors
+	Strings = Page.Strings
 	
-	_getCreateOptions: ->
-		queryInput: ".input-query"
-		limitInput: ".input-limit"
-
-$.widget "widgets.twitterGrabber", Sare.Widget, widget
+	widget =
+		getData: ->
+			query = @_$(@options.queryInput).val()
+			return false if not query
+			limit = @_$(@options.limitInput).val()
+			limit = if window.isNaN(limit) then null else window.parseInt limit, 10
+			twitter:
+				query: query
+				limit: limit 
+	
+		_create: ->
+			
+		refresh: ->
+			$(@element).data Strings.widgetKey, @
+			
+		_init: ->
+			@refresh()
+			
+		_destroy: ->
+			
+		_setOption: (key, value) ->
+			$.Widget.prototype._setOption.apply @, arguments
+		
+		_getCreateOptions: ->
+			queryInput: ".input-query"
+			limitInput: ".input-limit"
+	
+	$.widget "widgets.twitterGrabber", Sare.Widget, widget

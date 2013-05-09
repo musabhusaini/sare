@@ -73,15 +73,16 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/storeList.css")
-	@helpers.script("javascripts/widgets.storeList.js")
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-store-list-@uid").storeList({
-					editable: @editable
+		(function(window, require) {
+			require([ "jquery", window.RjsHelpers.minifiableDep("widgets.storeList") ], function($) {
+				$(function() {
+					$("#ctr-store-list-@uid").storeList({
+						editable: @editable
+					});
 				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

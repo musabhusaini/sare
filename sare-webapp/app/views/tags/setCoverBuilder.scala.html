@@ -28,8 +28,8 @@
 @import tags._
 
 @defining(Random.nextInt(1000)) { uid =>
-<div id="ctr-sc-builder-@uid" class="ctr-module ctr-sc-builder" @if(corpus != null) { data-corpus="@corpus.asJson()" }
-	@if(setcover != null) { data-setcover="@setcover.asJson()" }>
+<div id="ctr-sc-builder-@uid" class="ctr-module ctr-sc-builder" @if(corpus != null) { data-corpus="@corpus.asJson" }
+	@if(setcover != null) { data-setcover="@setcover.asJson" }>
 	
 	<div id="ctr-corpora-@uid" class="ctr-corpora row-fluid">
 		@tags.storeList(editable = true, selectedStore = corpus, selectionPrompt = "Select corpus to optimize")
@@ -48,13 +48,14 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/setCoverBuilder.css")
-	@helpers.script("javascripts/widgets.setCoverBuilder.js")
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-sc-builder-@uid").setCoverBuilder();
+		(function(window, require) {
+			require([ "jquery", window.RjsHelpers.minifiableDep("widgets.setCoverBuilder") ], function($) {
+				$(function() {
+					$("#ctr-sc-builder-@uid").setCoverBuilder();
+				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

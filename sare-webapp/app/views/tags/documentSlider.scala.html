@@ -56,13 +56,14 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/documentSlider.css")
-	@helpers.script("javascripts/widgets.documentSlider.js")
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-doc-slider-@uid").documentSlider();
+		(function(window, require) {
+			require([ "jquery", window.RjsHelpers.minifiableDep("widgets.documentSlider") ], function($) {
+				$(function() {
+					$("#ctr-doc-slider-@uid").documentSlider();
+				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

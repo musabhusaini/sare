@@ -28,7 +28,11 @@
 }
 
 @moreScripts = {
-	@helpers.script("javascripts/login.html.js")
+	<script type="text/javascript">
+		(function(window, require) {
+			require([ window.RjsHelpers.minifiableDep("login.html") ]);
+		})(window, window.require);
+	</script>
 }
 
 @contentHtml = {

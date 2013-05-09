@@ -18,70 +18,77 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with SARE. If not, see <http://www.gnu.org/licenses/>.
 ###
-
-# define reusables
-$ = window.jQuery
-jsRoutes = window.jsRoutes
-JSON = window.JSON
-Sare = window.Sare
-Helpers = Sare.Helpers
-Page = Sare.Page
-Selectors = Page.Selectors
-Strings = Page.Strings
-Widgets = Page.Widgets
-
-Math = window.Math
-
-widget =
-	show: ->
-		$(@element).show()
+minifiableDep = window.RjsHelpers.minifiableDep
+define = window.define
+define [
+	"jquery"
+	"jquery-ui"
+	minifiableDep "Sare.Widget"
+	minifiableDep "main.html"
+], ->
+	# define reusables
+	$ = window.jQuery
+	jsRoutes = window.jsRoutes
+	JSON = window.JSON
+	Sare = window.Sare
+	Helpers = Sare.Helpers
+	Page = Sare.Page
+	Selectors = Page.Selectors
+	Strings = Page.Strings
+	Widgets = Page.Widgets
 	
-	hide: ->
-		$(@element).hide()
+	Math = window.Math
 	
-	reset: ->
-		$(@element).children(@options.bar)
-			.width "0%"
+	widget =
+		show: ->
+			$(@element).show()
 		
-	animate: ->
-		animateProgress = (progress, duration, callback) =>
-			duration ?= @options.animationTimeout
-			progress ?= 0
+		hide: ->
+			$(@element).hide()
+		
+		reset: ->
 			$(@element).children(@options.bar)
-				.animate
-					width: Math.round progress * $(@element).width() / 100
-				, duration, "linear", callback
-
-		redeem = =>
-			@_delay ->
-				@options.redeemAjax
-					success: (progressToken) =>
-						if not progressToken.progress?
-							animateProgress 100, null, =>
-								@_delay ->
-									@hide()
-									@options.callback? progressToken
-								, @options.pingTimeout
-						else
-							animateProgress Math.round(100 * progressToken.progress), null, redeem
-			, @options.pingTimeout
-		
-		@reset()
-		@show()
-		redeem()
-
-	_create: ->
-		
-	_destroy: ->
-		
-	_setOption: (key, value) ->
-		$.Widget.prototype._setOption.apply @, arguments
+				.width "0%"
+			
+		animate: ->
+			animateProgress = (progress, duration, callback) =>
+				duration ?= @options.animationTimeout
+				progress ?= 0
+				$(@element).children(@options.bar)
+					.animate
+						width: Math.round progress * $(@element).width() / 100
+					, duration, "linear", callback
 	
-	_getCreateOptions: ->
-		bar: ".bar"
-		animationTimeout: 500
-		pingTimeout: 500
-		callback: (data) -> return
-		redeemAjax: -> return
-
-$.widget "widgets.progress", Sare.Widget, widget
+			redeem = =>
+				@_delay ->
+					@options.redeemAjax
+						success: (progressToken) =>
+							if not progressToken.progress?
+								animateProgress 100, null, =>
+									@_delay ->
+										@hide()
+										@options.callback? progressToken
+									, @options.pingTimeout
+							else
+								animateProgress Math.round(100 * progressToken.progress), null, redeem
+				, @options.pingTimeout
+			
+			@reset()
+			@show()
+			redeem()
+	
+		_create: ->
+			
+		_destroy: ->
+			
+		_setOption: (key, value) ->
+			$.Widget.prototype._setOption.apply @, arguments
+		
+		_getCreateOptions: ->
+			bar: ".bar"
+			animationTimeout: 500
+			pingTimeout: 500
+			callback: (data) -> return
+			redeemAjax: -> return
+	
+	$.widget "widgets.progress", Sare.Widget, widget

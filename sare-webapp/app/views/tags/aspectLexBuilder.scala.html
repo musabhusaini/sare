@@ -54,13 +54,14 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/aspectLexBuilder.css")
-	@helpers.script("javascripts/widgets.aspectLexBuilder.js")
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-alex-builder-@uid").aspectLexBuilder();
+		(function(window, require) {
+			require([ "jquery", window.RjsHelpers.minifiableDep("widgets.aspectLexBuilder") ], function($) {
+				$(function() {
+					$("#ctr-alex-builder-@uid").aspectLexBuilder();
+				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

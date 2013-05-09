@@ -129,32 +129,14 @@
 	
 	@helpers.stylesheet("plugins/jqplot/jquery.jqplot.min.css", true)
 	@helpers.stylesheet("stylesheets/aspectOpinionMinerResults.css")
-	@helpers.script(
-		Seq(
-			"plugins/jqplot/jquery.jqplot.min.js",
-			"plugins/jqplot/plugins/jqplot.pieRenderer.min.js",
-			"plugins/jqplot/plugins/jqplot.barRenderer.min.js",
-			"plugins/jqplot/plugins/jqplot.categoryAxisRenderer.min.js",
-			"plugins/jqplot/plugins/jqplot.canvasTextRenderer.min.js",
-			"plugins/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js",
-			"plugins/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js",
-			
-			"plugins/jstree/jquery.jstree.js",
-			"plugins/jstree/_lib/jquery.hotkeys.js"
-		), true
-	)
-	@helpers.script(
-		Seq(
-			"javascripts/widgets.tabbedNav.js",
-			"javascripts/widgets.aspectOpinionMinerResults.js"
-		)
-	)
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-aom-results-@uid").aspectOpinionMinerResults();
+		(function(window, require) {
+			require([ "jquery", window.RjsHelpers.minifiableDep("widgets.aspectOpinionMinerResults") ], function($) {
+				$(function() {
+					$("#ctr-aom-results-@uid").aspectOpinionMinerResults();
+				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

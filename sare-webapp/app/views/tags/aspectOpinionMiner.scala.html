@@ -44,15 +44,16 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/aspectOpinionMiner.css")
-	@helpers.script("javascripts/widgets.aspectOpinionMiner.js")
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-aom-@uid").aspectOpinionMiner({
-					engine: "@engine"
+		(function(window, require) {
+			require([ "jquery", window.RjsHelpers.minifiableDep("widgets.aspectOpinionMiner") ], function($) {
+				$(function() {
+					$("#ctr-aom-@uid").aspectOpinionMiner({
+						engine: "@engine"
+					});
 				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

@@ -19,44 +19,54 @@ You should have received a copy of the GNU General Public License
 along with SARE. If not, see <http://www.gnu.org/licenses/>.
 ###
 
-$ = window.jQuery
-Sare = window.Sare
+minifiableDep = window.RjsHelpers.minifiableDep
+define = window.define
 
-class Sare.Widget extends $.Widget
-	constructor: ->
-		super()
+define [
+	"jquery"
+	"jquery-ui"
+	"bootstrap-tooltip"
+	"bootstrap-button"
+	minifiableDep "main.html"
+], ->
+	$ = window.jQuery
+	Sare = window.Sare
 	
-	_$: (s) ->
-		$(@element).find s
-	
-	_tooltipCache: {}
-	
-	_removeTooltip: (input) ->
-		id = @_$(input).attr "id"
-		if id?
-			@_tooltipCache[id] = @_$(input).data("tooltip")?.options
-		@_$(input).tooltip "destroy"
-	
-	_restoreTooltip: (input) ->
-		options = {}
-		id = @_$(input).attr "id"
-		if id?
-			options = @_tooltipCache[id]
-			delete @_tooltipCache[id]
-		@_$(input).tooltip options
-	
-	_changeInputState: (input, state, value) ->
-		value ?= true
-		switch state
-			when "enabled"
-				@_restoreTooltip input
-				@_$(input).prop "disabled", not value
-			when "disabled"
-				@_removeTooltip input
-				@_$(input).prop "disabled", value
-			when "loading"
-				@_removeTooltip input
-				@_$(input).button state
-			when "reset"
-				@_restoreTooltip input
-				@_$(input).button state
+	class Sare.Widget extends $.Widget
+		constructor: ->
+			super()
+		
+		_$: (s) ->
+			$(@element).find s
+		
+		_tooltipCache: {}
+		
+		_removeTooltip: (input) ->
+			id = @_$(input).attr "id"
+			if id?
+				@_tooltipCache[id] = @_$(input).data("tooltip")?.options
+			@_$(input).tooltip "destroy"
+		
+		_restoreTooltip: (input) ->
+			options = {}
+			id = @_$(input).attr "id"
+			if id?
+				options = @_tooltipCache[id]
+				delete @_tooltipCache[id]
+			@_$(input).tooltip options
+		
+		_changeInputState: (input, state, value) ->
+			value ?= true
+			switch state
+				when "enabled"
+					@_restoreTooltip input
+					@_$(input).prop "disabled", not value
+				when "disabled"
+					@_removeTooltip input
+					@_$(input).prop "disabled", value
+				when "loading"
+					@_removeTooltip input
+					@_$(input).button state
+				when "reset"
+					@_restoreTooltip input
+					@_$(input).button state

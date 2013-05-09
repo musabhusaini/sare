@@ -78,21 +78,16 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/aspectLexicon.css")
-	@helpers.script(
-		Seq(
-			"plugins/jstree/jquery.jstree.js",
-			"plugins/jstree/_lib/jquery.hotkeys.js"
-		), true
-	)
-	@helpers.script("javascripts/widgets.aspectLexicon.js")
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-lexicon-@uid").aspectLexicon({
-					editable: @editable
+		(function(window, require) {
+			require([ "jquery", window.RjsHelpers.minifiableDep("widgets.aspectLexicon") ], function($) {
+				$(function() {
+					$("#ctr-lexicon-@uid").aspectLexicon({
+						editable: @editable
+					});
 				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

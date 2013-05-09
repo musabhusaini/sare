@@ -51,20 +51,16 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/aspectOpinionMinerEditor.css")
-	@helpers.script(
-		Seq(
-			"javascripts/widgets.progress.js",
-			"javascripts/widgets.aspectOpinionMinerEditor.js"
-		)
-	)
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-aom-editor-@uid").aspectOpinionMinerEditor({
-					engine: "@engine"
+		(function(window, require) {
+				require([ "jquery", window.RjsHelpers.minifiableDep("widgets.aspectOpinionMinerEditor") ], function($) {
+					$(function() {
+						$("#ctr-aom-editor-@uid").aspectOpinionMinerEditor({
+							engine: "@engine"
+						});
+					});
 				});
-			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

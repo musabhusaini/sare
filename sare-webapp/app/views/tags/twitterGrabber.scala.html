@@ -37,13 +37,14 @@
 	<input id="input-limit-@uid" type="text" class="input-limit span3" placeholder="Limit"
 		title="Enter maximum number of results to retrieve" />
 	
-	@helpers.script("javascripts/widgets.twitterGrabber.js")
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-twitter-grabber-@uid").twitterGrabber();
+		(function(window, require) {
+			require([ "jquery", window.RjsHelpers.minifiableDep("widgets.twitterGrabber") ], function($) {
+				$(function() {
+					$("#ctr-twitter-grabber-@uid").twitterGrabber();
+				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }

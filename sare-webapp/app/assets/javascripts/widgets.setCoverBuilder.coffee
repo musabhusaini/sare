@@ -19,85 +19,98 @@ You should have received a copy of the GNU General Public License
 along with SARE. If not, see <http://www.gnu.org/licenses/>.
 ###
 
-# define reusables
-$ = window.jQuery
-jsRoutes = window.jsRoutes
-JSON = window.JSON
-Sare = window.Sare
-Helpers = Sare.Helpers
-Page = Sare.Page
-Selectors = Page.Selectors
-Strings = Page.Strings
-Widgets = Page.Widgets
-
-widget =
-	_create: ->
-		@options.setcover ?= $(@element).data @options.setCoverKey
-		@options.corpus ?= $(@element).data(@options.corpusKey) ? @options.setcover?.baseCorpus
-		if not @options.corpus?
-			return false
-		
-		refreshView = (setcover) =>
-			@options.setcover = setcover
-			
-			@_$(@options.setCoverEditorContainer).empty()
-			if not setcover?
-				Widgets.moduleManager "option", "output", null
-			else
-				@options.corpus = @options.setcover?.baseCorpus
-				@_$(@options.setCoverEditorContainer)
-					.load @options.setCoverEditorViewRoute(@options.setcover.id).url
-		
-		# this store list is always disabled (for now, at least).
-		@_$(@options.corporaContainer).children(Selectors.moduleContainer)
-			.storeList? "disable"
-		
-		if @options.setcover?
-			@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
-				.storeList? "disable"
-		else
-			@_on @_$(@options.setCoversContainer).children(Selectors.moduleContainer),
-				storeListSelectionChange: (e, selected) ->
-					refreshView selected.data
-				storeUpdate: (e, data) ->
-					refreshView data.updatedData
-			
-			@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
-				.storeList "option",
-					suppressOutput: true
-					addRoute: =>
-						@options.createSetCoverRoute @options.corpus.id
-		
-		@_on @_$(@options.setCoverEditorContainer),
-			setCoverUpdated: (e, setcover) ->
-				return if not setcover?.id?
-				@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
-					.storeList "updateItem", setcover.id, setcover
-		
-	refresh: ->
-		$(@element).data Strings.widgetKey, @
-		
-	_init: ->
-		@refresh()
-		
-	_destroy: ->
-		
-	_setOption: (key, value) ->
-		switch key
-			when "disabled"
-				@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
-					.storeList if value then "disable" else "enable"
-				editor = @_$(@options.setCoverEditorContainer).children().first().data Strings.widgetKey
-				if value then editor?.disable() else editor?.enable()
-		$.Widget.prototype._setOption.apply @, arguments
+minifiableDep = window.RjsHelpers.minifiableDep
+define = window.define
+define [
+	"jquery"
+	minifiableDep "main.html"
+	minifiableDep "Sare.Widget"
+	minifiableDep "widgets.storeList"
+	minifiableDep "moduleView.html"
+], ->
+	# define reusables
+	$ = window.jQuery
+	jsRoutes = window.jsRoutes
+	JSON = window.JSON
+	Sare = window.Sare
+	Helpers = Sare.Helpers
+	Page = Sare.Page
+	Selectors = Page.Selectors
+	Strings = Page.Strings
+	Widgets = Page.Widgets
 	
-	_getCreateOptions: ->
-		corporaContainer: ".ctr-corpora"
-		setCoversContainer: ".ctr-setcovers"
-		setCoverEditorContainer: ".ctr-setcover"
-		createSetCoverRoute: jsRoutes.controllers.modules.SetCoverBuilder.create
-		setCoverEditorViewRoute: jsRoutes.controllers.modules.SetCoverBuilder.editorView
-		corpusKey: "corpus"
-		setCoverKey: "setcover"
-
-$.widget "widgets.setCoverBuilder", Sare.Widget, widget
+	widget =
+		_create: ->
+			@options.setcover ?= $(@element).data @options.setCoverKey
+			@options.corpus ?= $(@element).data(@options.corpusKey) ? @options.setcover?.baseCorpus
+			if not @options.corpus?
+				return false
+			
+			refreshView = (setcover) =>
+				@options.setcover = setcover
+				
+				@_$(@options.setCoverEditorContainer).empty()
+				if not setcover?
+					Widgets.moduleManager "option", "output", null
+				else
+					@options.corpus = @options.setcover?.baseCorpus
+					@_$(@options.setCoverEditorContainer)
+						.load @options.setCoverEditorViewRoute(@options.setcover.id).url
+			
+			# this store list is always disabled (for now, at least).
+			@_$(@options.corporaContainer).children(Selectors.moduleContainer)
+				.storeList "disable"
+			
+			if @options.setcover?
+				@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
+					.storeList "disable"
+			else
+				@_on @_$(@options.setCoversContainer).children(Selectors.moduleContainer),
+					storeListSelectionChange: (e, selected) ->
+						refreshView selected.data
+					storeUpdate: (e, data) ->
+						refreshView data.updatedData
+				
+				@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
+					.storeList "option",
+						suppressOutput: true
+						addRoute: =>
+							@options.createSetCoverRoute @options.corpus.id
+			
+			@_on @_$(@options.setCoverEditorContainer),
+				setCoverUpdated: (e, setcover) ->
+					return if not setcover?.id?
+					@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
+						.storeList "updateItem", setcover.id, setcover
+			
+			refreshView @_$(@options.setCoversContainer)
+				.children(Selectors.moduleContainer)
+					.storeList("selected").data
+		
+		refresh: ->
+			$(@element).data Strings.widgetKey, @
+			
+		_init: ->
+			@refresh()
+			
+		_destroy: ->
+			
+		_setOption: (key, value) ->
+			switch key
+				when "disabled"
+					@_$(@options.setCoversContainer).children(Selectors.moduleContainer)
+						.storeList if value then "disable" else "enable"
+					editor = @_$(@options.setCoverEditorContainer).children().first().data Strings.widgetKey
+					if value then editor?.disable() else editor?.enable()
+			$.Widget.prototype._setOption.apply @, arguments
+		
+		_getCreateOptions: ->
+			corporaContainer: ".ctr-corpora"
+			setCoversContainer: ".ctr-setcovers"
+			setCoverEditorContainer: ".ctr-setcover"
+			createSetCoverRoute: jsRoutes.controllers.modules.SetCoverBuilder.create
+			setCoverEditorViewRoute: jsRoutes.controllers.modules.SetCoverBuilder.editorView
+			corpusKey: "corpus"
+			setCoverKey: "setcover"
+	
+	$.widget "widgets.setCoverBuilder", Sare.Widget, widget

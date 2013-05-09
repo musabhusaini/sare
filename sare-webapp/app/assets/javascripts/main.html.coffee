@@ -19,76 +19,82 @@ You should have received a copy of the GNU General Public License
 along with SARE. If not, see <http://www.gnu.org/licenses/>.
 ###
 
-# define reusables
-$ = window.jQuery
-jsRoutes = window.jsRoutes
-
-Sare = window.Sare = $.extend window.Sare,
-	Page:
-		Configuration: {}
-		Strings: {}
-		Objects: {}
-		Widgets: {}
-		Methods:
-			alert: (html, type) ->
-				type ?= "info"
-				html ?= ""
-				$("<div class='alert alert-#{type} fade in'>")
-					.append($("<button type='button' class='close' data-dismiss='alert'>&times;</button>"))
-					.append(html)
-					.appendTo($(Sare.Page.Selectors.mainAlertContainer).empty())
-					.alert()
-		Selectors:
-			mainAlertContainer: "#ctr-main-alert"
-		Images:
-			wait: jsRoutes.controllers.Assets.at("images/throbber.gif").url
-	Helpers:
-		String:
-			truncate: (str, n, useWordBoundary) ->
-				ellipses = $("<div>").html("&hellip;").text();
-				str ?= ""
-				isTooLong = str.length > n
-				str = if isTooLong then str.substr(0, n-1) else str
-				lastSpaceIndex = str.lastIndexOf " "
-				str =
-					if useWordBoundary and isTooLong and lastSpaceIndex > -1 
-						str.substr(0, lastSpaceIndex)
-					else str
-				if isTooLong then str + ellipses else str
-		ContentTypes:
-			json: "application/json; charset=utf-8"
-		MimeTypes:
-			json: "application/json"
-		Guid: 
-			random: ->
-				"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace /[xy]/g, (c) ->
-					r = window.Math.random() * 16|0 
-					v = if c is "x" then r else (r & 0x3|0x8)
-					v.toString 16
-
-# function that pings the server repeatedly.
-ping = ->
-	jsRoutes.controllers.base.Application.keepAlive().ajax
-		success: -> delayedPing()
-
-# function to generate delayed pings.
-delayedPing = ->
-	window.setTimeout ping, 1000*60*Sare.Configuration.pingTimeout
-
-# start pinging
-if Sare.Configuration.pingTimeout > 0 then delayedPing()
-
-fixWindowHeight = ->
-	$("body")
-		.css("height", "100%")
-		.height($("body").height() - 111)
-
-$(window).resize -> fixWindowHeight()
-
-$(window.document).ajaxError (e, response, request, error) ->
-	if response.status is 401
-		loginLink = "<a href='#{jsRoutes.controllers.base.Application.loginPage(window.location.href).url}'>log in</a>"
-		message = "Looks like you have been signed out. To continue, please #{loginLink} again."
-		Sare.Page.Methods.alert message, "error"
-
-$ -> fixWindowHeight()
+define [
+	"jquery"
+	"jsRoutes"
+	"bootstrap-alert"
+], ->
+	# define reusables
+	$ = window.jQuery
+	jsRoutes = window.jsRoutes
+	
+	Sare = window.Sare = $.extend true,
+		Page:
+			Configuration: {}
+			Strings: {}
+			Objects: {}
+			Widgets: {}
+			Methods:
+				alert: (html, type) ->
+					type ?= "info"
+					html ?= ""
+					$("<div class='alert alert-#{type} fade in'>")
+						.append($("<button type='button' class='close' data-dismiss='alert'>&times;</button>"))
+						.append(html)
+						.appendTo($(Sare.Page.Selectors.mainAlertContainer).empty())
+						.alert()
+			Selectors:
+				mainAlertContainer: "#ctr-main-alert"
+			Images:
+				wait: jsRoutes.controllers.Assets.at("images/throbber.gif").url
+		Helpers:
+			String:
+				truncate: (str, n, useWordBoundary) ->
+					ellipses = $("<div>").html("&hellip;").text();
+					str ?= ""
+					isTooLong = str.length > n
+					str = if isTooLong then str.substr(0, n-1) else str
+					lastSpaceIndex = str.lastIndexOf " "
+					str =
+						if useWordBoundary and isTooLong and lastSpaceIndex > -1 
+							str.substr(0, lastSpaceIndex)
+						else str
+					if isTooLong then str + ellipses else str
+			ContentTypes:
+				json: "application/json; charset=utf-8"
+			MimeTypes:
+				json: "application/json"
+			Guid: 
+				random: ->
+					"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace /[xy]/g, (c) ->
+						r = window.Math.random() * 16|0 
+						v = if c is "x" then r else (r & 0x3|0x8)
+						v.toString 16
+	, window.Sare
+	
+	# function that pings the server repeatedly.
+	ping = ->
+		jsRoutes.controllers.base.Application.keepAlive().ajax
+			success: -> delayedPing()
+	
+	# function to generate delayed pings.
+	delayedPing = ->
+		window.setTimeout ping, 1000*60*Sare.Configuration.pingTimeout
+	
+	# start pinging
+	if Sare.Configuration.pingTimeout > 0 then delayedPing()
+	
+	fixWindowHeight = ->
+		$("body")
+			.css("height", "100%")
+			.height($("body").height() - 111)
+	
+	$(window).resize -> fixWindowHeight()
+	
+	$(window.document).ajaxError (e, response, request, error) ->
+		if response.status is 401
+			loginLink = "<a href='#{jsRoutes.controllers.base.Application.loginPage(window.location.href).url}'>log in</a>"
+			message = "Looks like you have been signed out. To continue, please #{loginLink} again."
+			Sare.Page.Methods.alert message, "error"
+	
+	$ -> fixWindowHeight()

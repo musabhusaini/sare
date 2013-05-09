@@ -111,25 +111,25 @@
 	</div>
 	
 	@helpers.stylesheet("stylesheets/storeDetails.css")
-	@helpers.script("plugins/plupload/js/plupload.full.js", true)
-	@helpers.script("javascripts/widgets.storeDetails.js")
 	<script type="text/javascript">
-		(function(window, $) {
-			$(function() {
-				$("#ctr-store-details-@uid").storeDetails({
-					updateRoute: @store match {
-						case _:documentStore.DocumentSetCoverModel => { function(setcover) {
-							return jsRoutes.controllers.modules.SetCoverBuilder.update(null, setcover);
-						} }
-						case _:documentStore.AspectLexiconModel => { function(lexicon) {
-							return jsRoutes.controllers.modules.AspectLexBuilder.update(null, lexicon);
-						} }
-						case _ => { jsRoutes.controllers.modules.CorpusModule.update }
-					},
-					isDerived: @isDerived
+		(function(window, require) {
+			require([ "jquery", "jsRoutes", window.RjsHelpers.minifiableDep("widgets.storeDetails") ], function($) {
+				$(function() {
+					$("#ctr-store-details-@uid").storeDetails({
+						updateRoute: @store match {
+							case _:documentStore.DocumentSetCoverModel => { function(setcover) {
+								return window.jsRoutes.controllers.modules.SetCoverBuilder.update(null, setcover);
+							} }
+							case _:documentStore.AspectLexiconModel => { function(lexicon) {
+								return window.jsRoutes.controllers.modules.AspectLexBuilder.update(null, lexicon);
+							} }
+							case _ => { window.jsRoutes.controllers.modules.CorpusModule.update }
+						},
+						isDerived: @isDerived
+					});
 				});
 			});
-		})(window, window.jQuery);
+		})(window, window.require);
 	</script>
 </div>
 }
