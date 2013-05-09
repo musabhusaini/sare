@@ -95,32 +95,33 @@
 			<div class="ctr-details">
 				<div class="ctr-nav">
 						<ul class="nav nav-pills">
-							<li class="nav-document" data-nav="document">
-								<a href="#"><i class="icon-align-justify"></i> Text</a>
+							<li class="nav-document">
+								<a href="#tab-document-@uid" data-toggle="pill"><i class="icon-align-justify"></i> Text</a>
 							</li>
-							<li class="nav-visual" data-nav="tabular">
-								<a href="#"><i class="icon-th-list"></i> Table</a>
+							<li class="nav-visual nav-table">
+								<a href="#tab-table-@uid" data-toggle="pill"><i class="icon-th-list"></i> Table</a>
 							</li>
-							<li class="nav-visual active" data-nav="graphical">
-								<a href="#"><i class="icon-graph"></i> Graph</a>
+							<li class="nav-visual nav-graph active">
+								<a href="#tab-graph-@uid" data-toggle="pill"><i class="icon-graph"></i> Graph</a>
 							</li>
 						</ul>
 				</div>
-				<div class="ctr-tabs">
-					<div class="ctr-tab ctr-document" data-nav="document">
+				<div class="tab-content">
+					<div id="tab-document-@uid" class="ctr-document tab-pane fade">
 					</div>
-					<div class="ctr-tab ctr-visual-graph" data-nav="graphical">
-						<div id="ctr-summary-plot-@uid">
-						</div>
-					</div>
-					<div class="ctr-tab ctr-visual-table" data-nav="tabular">
+					<div id="tab-table-@uid" class="ctr-visual-table tab-pane fade">
 						<table class="table table-bordered table-condensed table-hover">
-							<caption></caption>
+							<caption>
+							</caption>
 							<thead>
 							</thead>
 							<tbody>
 							</tbody>
 						</table>
+					</div>
+					<div id="tab-graph-@uid" class="ctr-visual-graph tab-pane fade in active">
+						<div id="ctr-summary-plot-@uid">
+						</div>
 					</div>
 				</div>
 			</div>

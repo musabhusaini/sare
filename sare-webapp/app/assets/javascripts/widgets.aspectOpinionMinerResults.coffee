@@ -28,7 +28,6 @@ define [
 	minifiableDep "Sare.Widget"
 	minifiableDep "widgets.storeList"
 	minifiableDep "widgets.progress"
-	minifiableDep "widgets.tabbedNav"
 	"jsplugins/jqplot/jquery.jqplot.min"
 	"jsplugins/jqplot/plugins/jqplot.pieRenderer.min"
 	"jsplugins/jqplot/plugins/jqplot.barRenderer.min"
@@ -149,9 +148,10 @@ define [
 								@_summaryPlot.replot()
 							, 0
 									
-						activeNav = @_$(@options.detailsContainer).tabbedNav("getActiveNav")?.li
+						activeNav = @_$(@options.detailsContainer)
+							.find "ul.nav li.active"
 						if not activeNav.length or not $(activeNav).is(@options.visualsNav)
-							@_$(@options.detailsContainer).tabbedNav "activate", @options.graphicalNavKey
+							@_$(@options.detailsContainer).find("ul.nav li.#{@options.graphNav}").tab "show"
 							
 					else if document?
 						fontFamily = $(graphInnerContainer).css "font-family"
@@ -190,9 +190,9 @@ define [
 						$(thead).append "<tr><th>Aspect</th><th>Polarity</th></tr>"
 						$(tbody).append "<tr><td>Overall</td><td>#{roundPolarity document.polarity}</td></tr>"
 					
-			@_on @options.detailsContainer,
-				tabbedNavTabChanged: (e, data) ->
-					if data?.key is @options.graphicalNavKey
+			@_on @_$(@options.detailsContainer).find("ul.nav a"),
+				shown: (e) ->
+					if $(e.target).closest("li").is @options.graphNav
 						@_summaryPlot?.replot()
 			
 			@_$(@options.documentsTreeContainer).jstree
@@ -208,8 +208,6 @@ define [
 							icon:
 								image: jsRoutes.controllers.Assets.at("plugins/jstree/themes/misc/file.png").url
 				plugins: [ "themes", "html_data", "ui", "types", "hotkeys" ]
-			
-			@_$(@options.detailsContainer).tabbedNav()
 			
 		refresh: ->
 			$(@element).data Strings.widgetKey, @
@@ -231,11 +229,12 @@ define [
 			detailsContainer: ".ctr-details"
 			navContainer: ".ctr-nav"
 			documentNav: ".nav-document"
+			tableNav: ".nav-table"
+			graphNav: ".nav-graph"
 			visualsNav: ".nav-visual"
 			documentContainer: ".ctr-document"
 			tableContainer: ".ctr-visual-table"
 			graphContainer: ".ctr-visual-graph"
-			graphicalNavKey: "graphical"
 			lexiconKey: "lexicon"
 			corpusKey: "corpus"
 			typeKey: "type"
