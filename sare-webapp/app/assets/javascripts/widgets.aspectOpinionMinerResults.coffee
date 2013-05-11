@@ -28,6 +28,7 @@ define [
 	minifiableDep "Sare.Widget"
 	minifiableDep "widgets.storeList"
 	minifiableDep "widgets.progress"
+	"bootstrap-tab"
 	"jsplugins/jqplot/jquery.jqplot.min"
 	"jsplugins/jqplot/plugins/jqplot.pieRenderer.min"
 	"jsplugins/jqplot/plugins/jqplot.barRenderer.min"
