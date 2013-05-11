@@ -199,7 +199,23 @@ public class Application extends Controller {
 	public static Result homePage() {
 		return ok(home.render());
 	}
-
+	
+	public static Result indexPage() {
+		return redirect(routes.Application.homePage());
+	}
+	
+	public static Result aboutPage() {
+		return TODO;
+	}
+	
+	public static Result contactPage() {
+		return TODO;
+	}
+	
+	public static Result privacyPage() {
+		return TODO;
+	}
+	
 	@With(SessionedAction.class)
 	public static Result keepAlive() {
 		Logger.info(LoggedAction.getLogEntry("keeping session alive"));
