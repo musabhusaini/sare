@@ -86,7 +86,7 @@ define [
 					type = $(data.rslt.obj).data @options.typeKey
 					summary = $(data.rslt.obj).data @options.summaryKey
 					document = $(data.rslt.obj).data @options.documentKey
-					visualTitle = if type is "orientation" then "<strong>Top 4 Emerging Aspects<strong>"
+					visualTitle = if type is "orientation" then "<strong>Top 4 Emerging Aspects<strong>" else ""
 					
 					tableMap = summary or document?.aspectPolarities
 					scoreMax = 0
