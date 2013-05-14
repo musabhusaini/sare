@@ -28,6 +28,8 @@ import models.web.WebSession.SessionStatus;
 
 import org.apache.commons.lang3.*;
 
+import actors.SessionCleaner;
+
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 import play.Logger;
@@ -136,13 +138,13 @@ public class SessionedAction extends Action.Simple {
 			return null;
 		}
 		
-		return WebSession.find
+		WebSession session = WebSession.find
 			.fetch("owner")
 			.where()
 				.eq("id", UuidUtils.toBytes(key))
-				.or(WebSession.find.getExpressionFactory().eq("status", SessionStatus.ALIVE),
-					WebSession.find.getExpressionFactory().eq("status", SessionStatus.IMMORTALIZED))
 			.findUnique();
+		
+		return SessionCleaner.isSessionValid(session) ? session : null;
 	}
 	
 	public static WebSession getWebSession(Context ctx) {

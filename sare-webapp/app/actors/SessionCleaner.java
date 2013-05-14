@@ -44,6 +44,11 @@ import akka.actor.*;
 
 public class SessionCleaner
 	extends UntypedActor {
+
+	private static int getTimeout() {
+		Integer timeout = Play.application().configuration().getInt("application.session.timeout");
+		return timeout == null ? 60 : timeout;
+	}
 	
 	public static boolean clean(WebSession session, boolean timedout, boolean forceCleanup) {
 		if (session == null) {
@@ -93,6 +98,16 @@ public class SessionCleaner
 		return clean(session, false);
 	}
 	
+	public static boolean isSessionValid(WebSession session) {
+		if (session == null) {
+			return false;
+		}
+		
+		return session.getStatus() == SessionStatus.IMMORTALIZED
+				|| (session.getStatus() == SessionStatus.ALIVE
+					&& session.getUpdated().after(DateUtils.addMinutes(new Date(), -getTimeout())));
+	}
+	
 	@Override
 	public void onReceive(Object message) throws Exception {
 		try {
@@ -101,11 +116,7 @@ public class SessionCleaner
 				public void run() {
 					Logger.info("cleaning sessions");
 					
-					Integer timeout = Play.application().configuration().getInt("application.session.timeout");
-					if (timeout == null) {
-						timeout = 60;
-					}
-					
+					int timeout = getTimeout();
 					if (timeout != 0) {
 						// get all old sessions.
 						List<WebSession> oldSessions =
