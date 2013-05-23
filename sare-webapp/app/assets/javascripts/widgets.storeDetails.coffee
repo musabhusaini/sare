@@ -146,7 +146,7 @@ define [
 					.tooltip("destroy")
 					.tooltip
 						title: @options.dropFileTip
-				@_changeInputState @_$(@options.updateButton), "reset"
+				@_changeInputState @_$(@options.storeUpdateButton), "reset"
 				@_fixButtons()
 				@_trigger "uploadError", up, error
 		
@@ -190,11 +190,54 @@ define [
 		_fixButtons: ->
 			# delay execution so that this happens at the end.
 			window.setTimeout =>
-				for input in [ @options.updateButton, @options.resetButton ]
+				for input in [ @options.storeUpdateButton, @options.storeResetButton ]
 					@_changeInputState input, "enabled", not not @_getUpdated()
 			, 0
 			false
-	
+		
+		_populateDocument: (id, elem, callback) ->
+			elem ?= @_$(@options.documentsList)
+				.children("option")
+					.filter -> $(@).val() is id
+			if $(elem).length > 1
+				id = $(elem).map(-> $(@).val()).get()
+			else
+				id ?= $(elem).val()
+			
+			if not elem? or not $(elem).length or not id? then return
+			
+			@options.getDocumentRoute(@options.store.id, JSON.stringify id).ajax
+				success: (documents) =>
+					$(elem).each (index, elem) =>
+						document = $.grep(documents, (document) => document.id is $(elem).val())?[0]
+						$(elem)
+							.text(document.summarizedContent or document.content)
+							.data @options.documentKey, document
+					callback? documents
+		
+		_populateDocuments: (refreshList) ->
+			if not @options.populateDocuments then return
+			
+			if refreshList
+				@options.listDocumentsRoute(@options.store.id).ajax
+					success: (ids) =>
+						documents = @_$(@options.documentsList).children "option"
+						newIds = $.grep ids, (id) =>
+							$(documents).is -> $(@).val() is id
+						, true
+						$.each newIds, (index, id) =>
+							@_$(@options.documentsList).append "<option value='#{id}'>#{id}</option>"
+						@_populateDocuments()
+				return
+			
+			that = @
+			next = @_$(@options.documentsList)
+				.children("option")
+					.filter(-> not $(@).data(that.options.documentKey)?)
+						.slice 0, 20
+			if not $(next).length then return
+			@_populateDocument null, $(next), => if @options.populateDocuments then @_populateDocuments()
+		
 		_create: ->
 			@options.store ?= $(@element).data @options.dataKey
 			@options.isDerived ?= not @_$(@options.browseButton).length
@@ -205,6 +248,7 @@ define [
 					finalizeUpdate = (updatedStore) =>
 						$(@element).data @options.dataKey, @options.store = updatedStore
 						@_form "populate", updatedStore
+						@_populateDocuments true
 						callback?()
 						$(@element).trigger "storeUpdate",
 							data: store
@@ -218,15 +262,15 @@ define [
 							success: (updatedStore) =>
 								finalizeUpdate updatedStore
 							complete: =>
-								@_changeInputState @_$(@options.updateButton), "reset"
+								@_changeInputState @_$(@options.storeUpdateButton), "reset"
 								@_fixButtons()
 					else
-						@_changeInputState @_$(@options.updateButton), "reset"
+						@_changeInputState @_$(@options.storeUpdateButton), "reset"
 						if updatedStore?
 							finalizeUpdate updatedStore
 							@_fixButtons()
 				
-				@_changeInputState @_$(@options.updateButton), "loading"
+				@_changeInputState @_$(@options.storeUpdateButton), "loading"
 				if not @options.isDerived and @_uploader?.files.length
 					@_uploader.settings.url = @options.updateRoute(@options.store?.id).url
 					uploadComplete = (up, file, response) =>
@@ -238,14 +282,14 @@ define [
 				else updateStore @options.store
 			
 			# handle update button click
-			@_on @_$(@options.updateButton),
+			@_on @_$(@options.storeUpdateButton),
 				click: (e) ->
 					applyStoreChanges e, =>
 						@_destroyGrabbers()
 					false
 			
 			# handle reset
-			@_on @_$(@options.resetButton),
+			@_on @_$(@options.storeResetButton),
 				click: (e) ->
 					if not @options.isDerived and @_uploader?
 						@_uploader.removeFile file for file in @_uploader.files
@@ -278,6 +322,20 @@ define [
 				"closed .alert": ->
 					@_destroyGrabbers()
 			
+			@_on @_$(@options.documentsList),
+				change: (e) ->
+					show = (document) =>
+						@_$(@options.documentEditorContainer)
+							.empty()
+							.load @options.documentEditorRoute(@options.store.id, document.id).url
+					
+					target = $(e.target).children ":selected"					
+					document = $(target).data @options.documentKey
+					if not document?
+						@_populateDocument null, target, show
+					else
+						show document
+			
 			# we want to make sure the right buttons are enabled.
 			@_on @element,
 				"keyup input": ->
@@ -286,12 +344,16 @@ define [
 					@_fixButtons()
 			
 			# do the inits.
+			@_populateDocuments()
 			@_form (if @options.store? then "enabled" else "disabled")
-			@_changeInputState @_$(@options.updateButton), (if @options.store? then "enabled" else "disabled")
+			@_changeInputState @_$(@options.storeUpdateButton), (if @options.store? then "enabled" else "disabled")
+			@_$(@options.documentsList)
+				.val(@_$(@options.documentsList).children("option").first().val())
+				.change()
 			
 			inputs = [
-				@options.updateButton
-				@options.resetButton
+				@options.storeUpdateButton
+				@options.storeResetButton
 				@options.titleInput
 				@options.descriptionInput
 				@options.languageList
@@ -317,8 +379,8 @@ define [
 			
 		_destroy: ->
 			inputs = [
-				@options.updateButton
-				@options.resetButton
+				@options.storeUpdateButton
+				@options.storeResetButton
 				@options.titleInput
 				@options.descriptionInput
 				@options.languageList
@@ -329,6 +391,7 @@ define [
 			@_$(input).tooltip("destroy") for input in inputs
 			@_destroyGrabbers()
 			@_destroyUploader()
+			@options.populateDocuments = off
 			
 		_setOption: (key, value) ->
 			switch key
@@ -350,14 +413,22 @@ define [
 				dropFileContainer: ".ctr-store-dropfile"
 				browseButton: ".btn-store-browse"
 				twitterButton: ".btn-twitter-grab"
-				updateButton: ".btn-apply"
-				resetButton: ".btn-reset"
+				storeUpdateButton: ".btn-store-apply"
+				storeResetButton: ".btn-store-reset"
+				documentsContainer: ".ctr-documents"
+				documentsList: ".lst-documents"
+				documentEditorContainer: ".ctr-document"
 				acceptingFilesClass: "accepting-files"
-				updateRoute: jsRoutes.controllers.modules.CorpusModule.update
-				twitterGrabberViewRoute: jsRoutes.controllers.modules.CorpusModule.twitterGrabberView
+				updateRoute: jsRoutes?.controllers?.modules?.CorpusModule?.update
+				listDocumentsRoute: jsRoutes?.controllers?.DocumentsController?.list
+				getDocumentRoute: jsRoutes?.controllers?.DocumentsController?.get
+				documentEditorRoute: jsRoutes?.controllers?.DocumentsController?.editorView
+				twitterGrabberViewRoute: jsRoutes?.controllers?.modules?.CorpusModule?.twitterGrabberView
+				populateDocuments: on
 				uploadFileCount: 1
 				dataKey: "store"
 				filenameKey: "file"
+				documentKey: "document"
 				uploadFileMessage: "Upload file"
 				dropFileMessage: "Drop file or browse"
 				dropFileTip: "A file can be dragged and dropped here"

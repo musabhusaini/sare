@@ -24,15 +24,26 @@ package controllers;
 import static models.base.ViewModel.*;
 import static controllers.base.SareTransactionalAction.*;
 
-import java.util.UUID;
+import java.util.*;
 
+import javax.annotation.Nullable;
+
+import org.codehaus.jackson.JsonNode;
+
+import models.base.ViewModel;
+import models.document.PersistentDocumentModel;
+
+import com.google.common.base.*;
+import com.google.common.collect.*;
+
+import play.libs.Json;
 import play.mvc.*;
+import views.html.tags.documentEditor;
 
 import controllers.base.*;
 
-import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.PersistentDocumentController;
 import edu.sabanciuniv.sentilab.sare.models.base.document.PersistentDocument;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
 @With({ SessionedAction.class, SareTransactionalAction.class })
@@ -41,7 +52,7 @@ public class DocumentsController
 
 	public static <T extends PersistentDocument> T fetchDocument(UUID collection, UUID document, Class<T> clazz) {
 		T documentObj = fetchResource(document, clazz);
-		if (!UuidUtils.normalize(collection).equals(UuidUtils.normalize(documentObj.getStore().getIdentifier()))) {
+		if (collection != null && !collection.equals(documentObj.getStore().getIdentifier())) {
 			throw new IllegalArgumentException();
 		}
 		return documentObj;
@@ -51,14 +62,48 @@ public class DocumentsController
 		return fetchDocument(collection, document, PersistentDocument.class);
 	}
 	
-	public static Result list(UUID collection) {
-		// make sure we have access to this collection.
-		fetchResource(collection, PersistentDocumentStore.class);
-		
-		return ok(play.libs.Json.toJson(new PersistentDocumentController().getAllUuids(em(), collection.toString())));
+	public static PersistentDocumentModel fetchDocumentViewModel(UUID collection, UUID document) {
+		return (PersistentDocumentModel)createViewModel(fetchDocument(collection, document));
 	}
 	
-	public static Result get(UUID collection, UUID document) {
-		return ok(createViewModel(fetchDocument(collection, document)).asJson());
+	public static Iterable<UUID> fetchDocumentIds(UUID store) {
+		PersistentDocumentStore storeObj = fetchResource(store, PersistentDocumentStore.class);
+		return Iterables.transform(storeObj.getDocumentIds(em()), UuidUtils.uuidBytesToUUIDFunction());
+	}
+	
+	public static Result list(UUID collection) {
+		return ok(Json.toJson(
+			Lists.newArrayList(Iterables.transform(fetchDocumentIds(collection), UuidUtils.uuidToStringFunction()))));
+	}
+	
+	public static Result get(final UUID collection, String document) {
+		JsonNode documentNode = Json.parse(document);
+		if (documentNode.isTextual()) {
+			document = String.format("[%s]", document);
+			documentNode = Json.parse(document);
+		}
+		
+		if (documentNode.isArray()) {
+			Iterator<ViewModel> documents = Iterators.transform(documentNode.getElements(),
+				new Function<JsonNode, ViewModel>() {
+					@Override
+					@Nullable
+					public ViewModel apply(@Nullable JsonNode input) {
+						if (!input.isTextual()) {
+							throw new IllegalArgumentException();
+						}
+						return createViewModel(fetchDocument(collection, UuidUtils.create(input.asText())));
+					}
+				}
+			);
+			
+			return ok(Json.toJson(Iterators.toArray(Iterators.filter(documents, Predicates.notNull()), ViewModel.class)));
+		}
+		
+		throw new IllegalArgumentException();
+	}
+	
+	public static Result editorView(UUID collection, UUID document) {
+		return ok(documentEditor.render((PersistentDocumentModel)createViewModel(fetchDocument(collection, document))));
 	}
 }

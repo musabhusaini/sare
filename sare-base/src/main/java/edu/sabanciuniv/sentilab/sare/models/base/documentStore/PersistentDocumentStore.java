@@ -24,6 +24,7 @@ package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 import java.util.*;
 
 import javax.persistence.*;
+import javax.persistence.criteria.*;
 
 import org.apache.commons.lang3.Validate;
 
@@ -232,6 +233,25 @@ public abstract class PersistentDocumentStore
 		return Iterables.filter(this.getDocuments(), ofType);
 	}
 
+	/**
+	 * Gets identifiers of documents in this store.
+	 * @param em the {@link EntityManager} to get the documents from.
+	 * @return an {@link Iterable} of document identifiers.
+	 */
+	public Iterable<byte[]> getDocumentIds(EntityManager em) {
+		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
+		
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<byte[]> cq = cb.createQuery(byte[].class);
+		Root<PersistentDocument> doc = cq.from(PersistentDocument.class);
+		cq
+			.multiselect(doc.get("id"))
+			.where(cb.equal(doc.get("store"), cb.parameter(PersistentDocumentStore.class, "store")));
+		TypedQuery<byte[]> tq = em.createQuery(cq);
+		tq.setParameter("store", this);
+		return tq.getResultList();		
+	}
+	
 	/**
 	 * Sets the documents in this store.
 	 * @param documents the {@link Iterable} of documents to set.

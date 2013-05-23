@@ -24,7 +24,6 @@ package edu.sabanciuniv.sentilab.sare.controllers.entitymanagers;
 import java.util.*;
 
 import javax.persistence.*;
-import javax.persistence.criteria.*;
 
 import org.apache.commons.lang3.Validate;
 
@@ -51,15 +50,7 @@ public class PersistentDocumentController
 		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
 		Validate.notNull(storeId, CannedMessages.NULL_ARGUMENT, "storeId");
 		
-		byte[] uuidBytes = UuidUtils.toBytes(storeId);
-		PersistentDocumentStore store = em.find(PersistentDocumentStore.class, uuidBytes);
-		
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<byte[]> cq = cb.createQuery(byte[].class);
-		Root<PersistentDocument> doc = cq.from(PersistentDocument.class);
-		cq.multiselect(doc.get("id")).where(cb.equal(doc.get("store"), cb.parameter(PersistentDocumentStore.class, "store")));
-		TypedQuery<byte[]> tq = em.createQuery(cq);
-		tq.setParameter("store", store);
-		return Lists.newArrayList(Iterables.transform(tq.getResultList(), UuidUtils.uuidBytesToStringFunction()));
+		PersistentDocumentStore store = em.find(PersistentDocumentStore.class, UuidUtils.toBytes(storeId));
+		return Lists.newArrayList(Iterables.transform(store.getDocumentIds(em), UuidUtils.uuidBytesToStringFunction()));
 	}
 }

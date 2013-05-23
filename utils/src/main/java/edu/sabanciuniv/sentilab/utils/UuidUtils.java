@@ -40,6 +40,32 @@ public final class UuidUtils {
 	private UuidUtils() {
 		// prevent instantiation.
 	}
+
+	/**
+	 * Gets a function for converting {@link UUID} objects to strings.
+	 * @return the {@link Function} for such conversion.
+	 */
+	public static Function<UUID, String> uuidToStringFunction() {
+		return new Function<UUID, String>() {
+			@Override
+			public String apply(UUID input) {
+				return normalize(input);
+			}
+		};
+	}
+	
+	/**
+	 * Gets a function for converting {@link UUID} objects to UUID bytes.
+	 * @return the {@link Function} for such conversion.
+	 */
+	public static Function<UUID, byte[]> uuidToUuidBytesFunction() {
+		return new Function<UUID, byte[]>() {
+			@Override
+			public byte[] apply(UUID input) {
+				return toBytes(input);
+			}
+		};
+	}
 	
 	/**
 	 * Gets a function for converting UUID bytes to strings.
@@ -50,6 +76,19 @@ public final class UuidUtils {
 			@Override
 			public String apply(byte[] input) {
 				return normalize(create(input));
+			}
+		};
+	}
+	
+	/**
+	 * Gets a function for converting UUID bytes to {@link UUID} objects.
+	 * @return the {@link Function} for such conversion.
+	 */
+	public static Function<byte[], UUID> uuidBytesToUUIDFunction() {
+		return new Function<byte[], UUID>() {
+			@Override
+			public UUID apply(byte[] input) {
+				return create(input);
 			}
 		};
 	}

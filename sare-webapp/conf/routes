@@ -27,10 +27,10 @@
 GET      /                                                                   controllers.base.Application.homePage()
 
 # Pages
-GET		 /pages/index.html													 controllers.base.Application.indexPage()
-GET		 /pages/about.html													 controllers.base.Application.aboutPage()
-GET		 /pages/contact.html												 controllers.base.Application.contactPage()
-GET		 /pages/privacy.html												 controllers.base.Application.privacyPage()
+GET      /pages/index.html                                                   controllers.base.Application.indexPage()
+GET      /pages/about.html                                                   controllers.base.Application.aboutPage()
+GET      /pages/contact.html                                                 controllers.base.Application.contactPage()
+GET      /pages/privacy.html                                                 controllers.base.Application.privacyPage()
 
 # Authentication
 POST     /api/v1/session.json                                                controllers.base.Application.keepAlive()
@@ -49,10 +49,14 @@ GET      /collections/:collection/form.html                                  con
 
 # Documents
 GET      /api/v1/collections/:collection/documents.json                      controllers.DocumentsController.list(collection: UUID)
-GET      /api/v1/collections/:collection/documents/:document.json            controllers.DocumentsController.get(collection: UUID, document: UUID)
+GET      /api/v1/collections/documents/:document.json                        controllers.DocumentsController.get(collection: UUID = null, document: String)
+GET      /api/v1/collections/:collection/documents/:document.json            controllers.DocumentsController.get(collection: UUID, document: String)
+
+GET      /collections/documents/:document.html                               controllers.DocumentsController.editorView(collection: UUID = null, document: UUID)
+GET      /collections/:collection/documents/:document.html                   controllers.DocumentsController.editorView(collection: UUID, document: UUID)
 
 # Modules
-GET		 /api/v1/modules/options.json										 controllers.ModuleController.options(input: String = "[]")
+GET      /api/v1/modules/options.json                                        controllers.ModuleController.options(input: String = "[]")
 GET      /api/v1/modules/options/:input.json                                 controllers.ModuleController.options(input: String)
 
 GET      /modules.html                                                       controllers.ModuleController.landingPage()

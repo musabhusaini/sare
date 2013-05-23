@@ -24,6 +24,7 @@ package edu.sabanciuniv.sentilab.sare.models.setcover;
 import java.util.*;
 
 import javax.persistence.*;
+import javax.persistence.criteria.*;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.*;
@@ -34,6 +35,7 @@ import com.google.common.collect.*;
 import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
+import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**
  * The class for a document set cover.
@@ -132,6 +134,22 @@ public class DocumentSetCover
 				return false;
 			}
 		});
+	}
+	
+	@Override
+	public Iterable<byte[]> getDocumentIds(EntityManager em) {
+		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
+		
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<byte[]> cq = cb.createQuery(byte[].class);
+		Root<PersistentDocument> doc = cq.from(PersistentDocument.class);
+		cq
+			.multiselect(doc.get("id"))
+			.where(cb.equal(doc.get("store"), cb.parameter(PersistentDocumentStore.class, "store")))
+			.where(cb.equal(doc.get("flag"), true));
+		TypedQuery<byte[]> tq = em.createQuery(cq);
+		tq.setParameter("store", this);
+		return tq.getResultList();		
 	}
 
 	/**

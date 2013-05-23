@@ -319,6 +319,7 @@ public class Application extends Controller {
 			controllers.routes.javascript.CollectionsController.detailsForm(),
 			controllers.routes.javascript.DocumentsController.list(),
 			controllers.routes.javascript.DocumentsController.get(),
+			controllers.routes.javascript.DocumentsController.editorView(),
 			controllers.routes.javascript.ModuleController.options(),
 			controllers.routes.javascript.ModuleController.landingPage(),
 			controllers.modules.routes.javascript.CorpusModule.create(),

@@ -12,33 +12,24 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package models.document;
+@import-once "bootstrap/variables";
+@import-once "utilities";
 
-import org.apache.commons.lang3.StringUtils;
-
-import edu.sabanciuniv.sentilab.sare.models.base.document.FullTextDocument;
-
-public class FullTextDocumentModel
-	extends PersistentDocumentModel {
-	
-	public String summarizedContent;
-	
-	public FullTextDocumentModel(FullTextDocument document) {
-		super(document);
-		
-		if (document != null) {
-			this.summarizedContent = StringUtils.abbreviate(document.getContent(), 20);
-		}
-	}
-
-	public FullTextDocumentModel() {
-		this(null);
-	}
+.ctr-doc-editor {
+  .ctr-document-text-outer {
+    height: 270px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    
+    .ctr-document-text {
+      padding: 0 @gridGutterWidth/2 @gridGutterWidth/2 0;
+    }
+  }
 }
