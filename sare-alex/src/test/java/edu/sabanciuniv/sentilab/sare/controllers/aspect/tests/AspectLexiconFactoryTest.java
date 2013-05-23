@@ -31,11 +31,11 @@ import org.junit.*;
 import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
-import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconController;
+import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconFactory;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionCorpus;
 
-public class AspectLexiconControllerTest {
+public class AspectLexiconFactoryTest {
 
 	private OpinionCorpus testCorpus = new OpinionCorpus();
 	
@@ -103,7 +103,7 @@ public class AspectLexiconControllerTest {
 		
 		AspectLexicon actualLexicon = null;
 		try {
-			actualLexicon = new AspectLexiconController()
+			actualLexicon = new AspectLexiconFactory()
 				.setFile(new File(getClass().getResource(testLexiconFilename).getPath()))
 				.create();
 		} catch (IllegalFactoryOptionsException e) {
@@ -130,7 +130,7 @@ public class AspectLexiconControllerTest {
 		
 		AspectLexicon actualLexicon = null;
 		try {
-			actualLexicon = new AspectLexiconController()
+			actualLexicon = new AspectLexiconFactory()
 				.setFile(new File(getClass().getResource(testLexiconFilename).getPath()))
 				.create();
 		} catch (IllegalFactoryOptionsException e) {
@@ -143,7 +143,7 @@ public class AspectLexiconControllerTest {
 	
 	@Test
 	public void testCreateSetsBaseCorpus() {
-		AspectLexicon actualLexicon = new AspectLexiconController()
+		AspectLexicon actualLexicon = new AspectLexiconFactory()
 			.setBaseStore(testCorpus)
 			.create();
 		
@@ -153,7 +153,7 @@ public class AspectLexiconControllerTest {
 	
 	@Test
 	public void testCreateSetsTitle() {
-		AspectLexiconController testController = (AspectLexiconController)new AspectLexiconController()
+		AspectLexiconFactory testController = (AspectLexiconFactory)new AspectLexiconFactory()
 			.setTitle("test");
 		AspectLexicon actualLexicon = testController.create();
 		
@@ -163,7 +163,7 @@ public class AspectLexiconControllerTest {
 	
 	@Test
 	public void testCreateSetsDescription() {
-		AspectLexiconController testController = (AspectLexiconController)new AspectLexiconController()
+		AspectLexiconFactory testController = (AspectLexiconFactory)new AspectLexiconFactory()
 			.setDescription("test lexicon");
 		AspectLexicon actualLexicon = testController.create();
 		
@@ -173,7 +173,7 @@ public class AspectLexiconControllerTest {
 	
 	@Test
 	public void testCreateSetsLanguage() {
-		AspectLexiconController testController = (AspectLexiconController)new AspectLexiconController()
+		AspectLexiconFactory testController = (AspectLexiconFactory)new AspectLexiconFactory()
 			.setLanguage("tr");
 		AspectLexicon actualLexicon = testController.create();
 		

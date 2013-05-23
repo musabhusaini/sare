@@ -23,7 +23,7 @@ package models.documentStore;
 
 import controllers.base.SareTransactionalAction;
 
-import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconController;
+import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.PersistentDocumentStore;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
 
@@ -32,7 +32,7 @@ public class AspectLexiconFactoryModel
 	
 	public PersistentDocumentStoreModel baseStore;
 	
-	public AspectLexiconFactoryModel(AspectLexiconController factory) {
+	public AspectLexiconFactoryModel(AspectLexiconFactory factory) {
 		super(factory);
 		
 		if (factory != null) {
@@ -46,8 +46,8 @@ public class AspectLexiconFactoryModel
 		this(null);
 	}
 	
-	public AspectLexiconController toFactory() {
-		AspectLexiconController factory = (AspectLexiconController)new AspectLexiconController()
+	public AspectLexiconFactory toFactory() {
+		AspectLexiconFactory factory = (AspectLexiconFactory)new AspectLexiconFactory()
 			.setTitle(this.title)
 			.setDescription(this.description);
 		

@@ -50,7 +50,7 @@ import models.web.*;
 import controllers.base.*;
 import controllers.modules.base.Module;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.DocumentSetCoverController;
-import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
+import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
@@ -194,7 +194,7 @@ public class SetCoverBuilder extends Module {
 		
 		DocumentSetCoverModel setCoverVM = null;
 		setCoverVM = Json.fromJson(jsonBody, DocumentSetCoverModel.class);
-		final SetCoverController factory = (SetCoverController)setCoverVM.toFactory()
+		final SetCoverFactory factory = (SetCoverFactory)setCoverVM.toFactory()
 			.setOwnerId(getUsername());
 		
 		// set the default title.
@@ -202,7 +202,7 @@ public class SetCoverBuilder extends Module {
 			factory.setTitle("Optimized " + corpusObj.getTitle());
 		}
 		
-		SetCoverController tmpFactory = (SetCoverController)new SetCoverController()
+		SetCoverFactory tmpFactory = (SetCoverFactory)new SetCoverFactory()
 			.setStore(corpusObj)
 			.setTitle(factory.getTitle())
 			.setDescription(factory.getDescription())
@@ -216,7 +216,7 @@ public class SetCoverBuilder extends Module {
 			
 			// if this is a simple change, just return from here.
 			if (ObjectUtils.equals(ObjectUtils.defaultIfNull(factory.getTokenizingOptions(), new TokenizingOptions()), new TokenizingOptions())
-				&& factory.getWeightCoverage() == SetCoverController.DEFAULT_WEIGHT_COVERAGE) {
+				&& factory.getWeightCoverage() == SetCoverFactory.DEFAULT_WEIGHT_COVERAGE) {
 				return created(setCoverVM.asJson());
 			}
 			setcover = setCoverObj.getIdentifier();
@@ -235,7 +235,7 @@ public class SetCoverBuilder extends Module {
 			if (ObjectUtils.equals(ObjectUtils.defaultIfNull(factory.getTokenizingOptions(), new TokenizingOptions()),
 					ObjectUtils.defaultIfNull(setCoverObj.getTokenizingOptions(), new TokenizingOptions()))
 				&& ObjectUtils.equals(factory.getWeightCoverage(),
-					ObjectUtils.defaultIfNull(setCoverObj.getWeightCoverage(), SetCoverController.DEFAULT_WEIGHT_COVERAGE))) {
+					ObjectUtils.defaultIfNull(setCoverObj.getWeightCoverage(), SetCoverFactory.DEFAULT_WEIGHT_COVERAGE))) {
 				return ok(setCoverVM.asJson());
 			}
 		}

@@ -31,20 +31,20 @@ import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
-import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
+import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.document.TokenizingOptions;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.sare.tests.PersistenceTestsBase;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
 
-public class SetCoverControllerTest
+public class SetCoverFactoryTest
 		extends PersistenceTestsBase {
 
 	private String testXmlCorpusFilename;
 	private OpinionCorpus testCorpus;
 	private TokenizingOptions testTokenizingOptions;
-	private SetCoverController testController;
+	private SetCoverFactory testController;
 
 	@Before
 	public void setUp() throws Exception {
@@ -58,7 +58,7 @@ public class SetCoverControllerTest
 			.setLemmatized(true)
 			.setTags(PosTag.NOUN);
 		
-		testController = new SetCoverController();
+		testController = new SetCoverFactory();
 	}
 
 	@Test

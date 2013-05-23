@@ -32,7 +32,7 @@ import org.apache.commons.lang3.tuple.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
+import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
@@ -245,7 +245,7 @@ public class DocumentSetCover
 	 */
 	public DocumentSetCover adjustCoverage(double weightCoverage) {
 		// a quick way of checking if the weight coverage is valid or not. the setter will throw an exception if not.
-		new SetCoverController()
+		new SetCoverFactory()
 			.setWeightCoverage(weightCoverage);
 
 		// apply the weight ratio.

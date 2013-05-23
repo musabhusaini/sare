@@ -32,13 +32,13 @@ import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.OpinionCorpusFactory;
-import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverController;
+import edu.sabanciuniv.sentilab.sare.controllers.setcover.SetCoverFactory;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.sare.models.setcover.*;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
 
-public class SetCoverControllerTest {
+public class SetCoverFactoryTest {
 
 	private String testXmlCorpusFilename;
 	private OpinionCorpus testCorpus;
@@ -66,7 +66,7 @@ public class SetCoverControllerTest {
 		String testTitle = "a test";
 		DocumentSetCover setcover;
 		try {
-			SetCoverController testController = (SetCoverController)new SetCoverController()
+			SetCoverFactory testController = (SetCoverFactory)new SetCoverFactory()
 				.setStore(testCorpus).setTitle(testTitle);
 			setcover = testController.create();
 		} catch (IllegalFactoryOptionsException e) {
@@ -84,7 +84,7 @@ public class SetCoverControllerTest {
 	public void testClearClears() {
 		DocumentSetCover setcover;
 		try {
-			setcover = new SetCoverController()
+			setcover = new SetCoverFactory()
 				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions)
 				.create();
 		} catch (IllegalFactoryOptionsException e) {
@@ -103,7 +103,7 @@ public class SetCoverControllerTest {
 	public void testCreateWithTokenizingOptions() {
 		DocumentSetCover setcover;
 		try {
-			setcover = new SetCoverController()
+			setcover = new SetCoverFactory()
 				.setStore(testCorpus).setTokenizingOptions(testTokenizingOptions)
 				.create();
 		} catch (IllegalFactoryOptionsException e) {
@@ -131,7 +131,7 @@ public class SetCoverControllerTest {
 		double weightCoverage = 0.8;
 		DocumentSetCover setCover;
 		try {
-			setCover = new SetCoverController()
+			setCover = new SetCoverFactory()
 				.setStore(testCorpus)
 				.setTokenizingOptions(testTokenizingOptions)
 				.setWeightCoverage(weightCoverage)
@@ -162,7 +162,7 @@ public class SetCoverControllerTest {
 		double weightCoverage = 0.5;
 		DocumentSetCover setcover;
 		try {
-			setcover = new SetCoverController()
+			setcover = new SetCoverFactory()
 				.setStore(testCorpus)
 				.setTokenizingOptions(testTokenizingOptions)
 				.setWeightCoverage(weightCoverage)
@@ -199,7 +199,7 @@ public class SetCoverControllerTest {
 	public void testCalculateCoverageMatrix() {
 		DocumentSetCover setcover;
 		try {
-			setcover = new SetCoverController()
+			setcover = new SetCoverFactory()
 				.setStore(testCorpus)
 				.setTokenizingOptions(testTokenizingOptions)
 				.create();

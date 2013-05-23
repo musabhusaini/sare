@@ -25,7 +25,7 @@
 	<groupId>edu.sabanciuniv.sentilab</groupId>
 	<artifactId>sare</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<name>Sentilab SARE</name>
 	<description>Sentiment Analysis Research Environment</description>
 	<licenses>

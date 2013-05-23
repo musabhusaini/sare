@@ -39,7 +39,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  * A class that can work on {@link SetCoverDocument} objects.
  * @author Mus'ab Husaini
  */
-public class SetCoverController
+public class SetCoverFactory
 		extends PersistentDocumentStoreFactory<DocumentSetCover>
 		implements IDocumentStoreController, ProgressObservable {
 
@@ -52,9 +52,9 @@ public class SetCoverController
 	private Set<ProgressObserver> progressObservers;
 	
 	/**
-	 * Creates an instance of the {@link SetCoverController}.
+	 * Creates an instance of the {@link SetCoverFactory}.
 	 */
-	public SetCoverController() {
+	public SetCoverFactory() {
 		this.weightCoverage = DEFAULT_WEIGHT_COVERAGE;
 		this.progressObservers = Sets.newHashSet();
 	}
@@ -179,7 +179,7 @@ public class SetCoverController
 	 * @param store the {@link PersistentDocumentStore} object from which the set cover is to be created.
 	 * @return the {@code this} object.
 	 */
-	public SetCoverController setStore(PersistentDocumentStore store) {
+	public SetCoverFactory setStore(PersistentDocumentStore store) {
 		this.store = store;
 		return this;
 	}
@@ -197,7 +197,7 @@ public class SetCoverController
 	 * @param tokenizingOptions the {@link TokenizingOptions} object containing the tokenizing options.
 	 * @return the {@code this} object.
 	 */
-	public SetCoverController setTokenizingOptions(TokenizingOptions tokenizingOptions) {
+	public SetCoverFactory setTokenizingOptions(TokenizingOptions tokenizingOptions) {
 		this.tokenizingOptions = tokenizingOptions;
 		return this;
 	}
@@ -215,7 +215,7 @@ public class SetCoverController
 	 * @param weightCoverage the desired token weight coverage; must be in [0.0, 1.0].
 	 * @return the {@code this} object.
 	 */
-	public SetCoverController setWeightCoverage(double weightCoverage) {
+	public SetCoverFactory setWeightCoverage(double weightCoverage) {
 		Validate.isTrue(weightCoverage >= 0.0 && weightCoverage <= 1.0, "weight coverage must be in the interval [0.0, 1.0].");
 
 		this.weightCoverage = weightCoverage;

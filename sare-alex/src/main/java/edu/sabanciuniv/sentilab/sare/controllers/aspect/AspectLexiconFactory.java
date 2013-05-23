@@ -40,16 +40,16 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
 /**
- * A controller for creating and manipulating {@link AspectLexicon} objects.
+ * A factory for creating {@link AspectLexicon} objects.
  * @author Mus'ab Husaini
  */
-public class AspectLexiconController
+public class AspectLexiconFactory
 		extends NonDerivedStoreFactory<AspectLexicon> {
 
 	private PersistentDocumentStore baseStore;
 
 	@Override
-	protected AspectLexiconController addXmlPacket(AspectLexicon lexicon, InputStream input)
+	protected AspectLexiconFactory addXmlPacket(AspectLexicon lexicon, InputStream input)
 		throws ParserConfigurationException, SAXException, IOException, XPathException {
 		
 		Validate.notNull(lexicon, CannedMessages.NULL_ARGUMENT, "lexicon");
@@ -85,7 +85,7 @@ public class AspectLexiconController
 	    return this.addXmlAspect(lexicon, lexiconNode);
 	}
 	
-	protected AspectLexiconController addXmlAspect(AspectLexicon lexicon, Node aspectNode)
+	protected AspectLexiconFactory addXmlAspect(AspectLexicon lexicon, Node aspectNode)
 		throws XPathExpressionException {
 		
 		Validate.notNull(lexicon, CannedMessages.NULL_ARGUMENT, "lexicon");
@@ -135,7 +135,7 @@ public class AspectLexiconController
 	}
 	
 	@Override
-	protected AspectLexiconController addTextPacket(AspectLexicon lexicon, InputStream input, String delimiter)
+	protected AspectLexiconFactory addTextPacket(AspectLexicon lexicon, InputStream input, String delimiter)
 			throws IOException {
 		Validate.notNull(lexicon, CannedMessages.NULL_ARGUMENT, "lexicon");
 		Validate.notNull(input, CannedMessages.NULL_ARGUMENT, "input");
@@ -200,7 +200,7 @@ public class AspectLexiconController
 	 * @param baseStore the {@link PersistentDocumentStore} object representing the base store to be set.
 	 * @return the {@code this} object.
 	 */
-	public AspectLexiconController setBaseStore(PersistentDocumentStore baseStore) {
+	public AspectLexiconFactory setBaseStore(PersistentDocumentStore baseStore) {
 		this.baseStore = baseStore;
 		return this;
 	}

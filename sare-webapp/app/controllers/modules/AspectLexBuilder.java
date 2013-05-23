@@ -50,7 +50,7 @@ import models.documentStore.*;
 import controllers.CollectionsController;
 import controllers.base.*;
 import controllers.modules.base.Module;
-import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconController;
+import edu.sabanciuniv.sentilab.sare.controllers.aspect.AspectLexiconFactory;
 import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.*;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
@@ -148,7 +148,7 @@ public class AspectLexBuilder extends Module {
 			lexiconObj = fetchResource(lexicon, AspectLexicon.class);
 		}
 		
-		AspectLexiconController factory = null;
+		AspectLexiconFactory factory = null;
 		
 		MultipartFormData formData = request().body().asMultipartFormData();
 		if (formData != null) {
@@ -158,7 +158,7 @@ public class AspectLexBuilder extends Module {
 				FilePart filePart = ObjectUtils.defaultIfNull(formData.getFile("file"),
 					Iterables.getFirst(formData.getFiles(), null));
 				if (filePart != null) {
-					factory = (AspectLexiconController)new AspectLexiconController()
+					factory = (AspectLexiconFactory)new AspectLexiconFactory()
 						.setFile(filePart.getFile())
 						.setFormat(FilenameUtils.getExtension(filePart.getFilename()));
 				}
@@ -181,7 +181,7 @@ public class AspectLexBuilder extends Module {
 				}
 			} else {
 				// if not json, then just create empty options.
-				factory = new AspectLexiconController();
+				factory = new AspectLexiconFactory();
 			}
 		}
 		
