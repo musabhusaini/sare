@@ -227,6 +227,10 @@ define [
 						, true
 						$.each newIds, (index, id) =>
 							@_$(@options.documentsList).append "<option value='#{id}'>#{id}</option>"
+						if not @_$(@options.documentsList).children("option:selected").length
+							@_$(@options.documentsList)
+								.val(@_$(@options.documentsList).children("option").first().val())
+								.change()
 						@_populateDocuments()
 				return
 			
@@ -325,6 +329,7 @@ define [
 			@_on @_$(@options.documentsList),
 				change: (e) ->
 					show = (document) =>
+						if $.isArray document then document = document[0]
 						@_$(@options.documentEditorContainer)
 							.empty()
 							.load @options.documentEditorRoute(@options.store.id, document.id).url
