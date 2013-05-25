@@ -27,3 +27,6 @@ local.properties
 
 # Maven
 target/
+
+# Symbolic link
+sare-webapp/sare-lib

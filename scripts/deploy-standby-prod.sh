@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. scripts/deploy-prod.sh "$@" -norun
+./scripts/deploy-prod.sh "$@" -norun
 
 noRun=false
 for arg in "$@"
