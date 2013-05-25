@@ -21,4 +21,8 @@
 
 name := "sare-alex"
 
-libraryDependencies += "org.apache.lucene" % "lucene-analyzers" % "3.6.2"
+libraryDependencies ++= Seq(
+	"org.apache.lucene" % "lucene-analyzers" % "3.6.2",
+	"nz.ac.waikato.cms.weka" % "weka-stable" % "3.6.9",
+	"nz.ac.waikato.cms.weka" % "LibSVM" % "1.0.5"
+)
