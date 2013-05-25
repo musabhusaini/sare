@@ -29,17 +29,29 @@ object ApplicationBuild extends Build {
     val appVersion      = "2.0.0-SNAPSHOT"
 
     val appDependencies = Seq(
-			javaCore, javaJdbc, javaEbean,
-			// Add your project dependencies here,
-			("edu.sabanciuniv.sentilab" % "sare-entitymanager" % "2.0.1")
-				.exclude("org.apache.commons", "commons-lang3")
-				.exclude("com.google.guava", "guava")
-				.exclude("org.reflections", "reflections")
-				.exclude("joda-time", "joda-time")
-				.exclude("junit", "junit"),
-			"org.twitter4j" % "twitter4j-core" % "[3.0,)",
-			"com.mchange" % "c3p0" % "0.9.2.1"
+		javaCore,
+		javaJdbc,
+		javaEbean,
+		"org.twitter4j" % "twitter4j-core" % "[3.0,)",
+		"com.mchange" % "c3p0" % "0.9.2.1"
     )
+
+	val core = Project(id = "core", base = file("sare-lib/modules/core"))
+	val utils = Project(id = "utils", base = file("sare-lib/modules/utils"))
+		.dependsOn(core)
+	val sareBase = Project(id = "sare-base", base = file("sare-lib/modules/sare-base"))
+		.dependsOn(utils)
+	val sareAlex = Project(id = "sare-alex", base = file("sare-lib/modules/sare-alex"))
+		.dependsOn(sareBase)
+	val sareEntityManager = Project(id = "sare-entitymanager", base = file("sare-lib/modules/sare-entitymanager"))
+		.dependsOn(sareBase, sareAlex)
+	
+	val sareLibrary = Project(id = "sare-lib", base = file("sare-lib"))
+		.settings(
+		    scalaVersion in ThisBuild := "2.10.0",
+		    exportJars in ThisBuild := true
+		)
+		.aggregate(core, utils, sareBase, sareAlex, sareEntityManager)
 
 	// Only compile the bootstrap bootstrap.less file and any other *.less file in the stylesheets directory
 	def customLessEntryPoints(base: File): PathFinder = (
@@ -50,9 +62,10 @@ object ApplicationBuild extends Build {
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
     	// Add your own project settings here
+        organization := "edu.sabanciuniv.sentilab",
         routesImport ++= Seq("java.util.UUID", "extensions.Binders._"),
     	lessEntryPoints <<= baseDirectory(customLessEntryPoints),
-    	resolvers += "Local Maven Respository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository"      
-    )
+    	resolvers += "Local Maven Respository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository"
+    ).dependsOn(sareEntityManager)
 
 }

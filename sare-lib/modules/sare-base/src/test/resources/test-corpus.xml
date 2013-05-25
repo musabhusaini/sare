@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<corpus title="test-xml-corpus" description="test" language="en">
+	<document polarity="0.7">nice hotel</document>
+	<document polarity="-0.8">terrible hotel</document>
+</corpus>
