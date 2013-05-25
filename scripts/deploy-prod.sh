@@ -34,7 +34,7 @@ echo "application.secret=\"${SECRET_KEY}\"" >> ./sare-webapp/conf/prod.conf
 SQL_PWD=$(<../sql.pwd)
 echo "db.default.password=\"${SQL_PWD}\"" >> ./sare-webapp/conf/prod.conf
 
-xmlstarlet ed -L -N x="http://java.sun.com/xml/ns/persistence" -u "/x:persistence/x:persistence-unit/x:properties/x:property[@name='javax.persistence.jdbc.password']/@value" -v "${SQL_PWD}" ./sare-lib/sare-entitymanager/src/main/resources/META-INF/persistence.xml
+xmlstarlet ed -L -N x="http://java.sun.com/xml/ns/persistence" -u "/x:persistence/x:persistence-unit/x:properties/x:property[@name='javax.persistence.jdbc.password']/@value" -v "${SQL_PWD}" ./sare-lib/modules/sare-entitymanager/src/main/resources/META-INF/persistence.xml
 
 xmlstarlet ed -L -u "/configuration/appender[@name='DB']/connectionSource/dataSource/password" -v "${SQL_PWD}" ./sare-webapp/conf/prod-logger.xml
 
