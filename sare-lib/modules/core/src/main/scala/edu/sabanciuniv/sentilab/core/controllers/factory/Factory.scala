@@ -37,6 +37,5 @@ trait Factory[T] extends CoreController {
 	 * @return the created object.
 	 * @throws IllegalFactoryOptionsException when the options are not sufficient to create the object.
 	 */
-	@throws[IllegalFactoryOptionsException]("when the options are not sufficient to create the object")
 	def create(): T
 }
