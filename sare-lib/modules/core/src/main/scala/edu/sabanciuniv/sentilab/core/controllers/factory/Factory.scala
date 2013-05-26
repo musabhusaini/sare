@@ -12,25 +12,31 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.core.models;
+package edu.sabanciuniv.sentilab.core.controllers.factory
 
-import java.util.UUID;
+import edu.sabanciuniv.sentilab.core.controllers.CoreController
+import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException
 
 /**
- * An object that has a UUID.
+ * A class that implements this trait provides a method to create objects of a certain type.
  * @author Mus'ab Husaini
+ *
+ * @param <T> the type of objects created by this implementation.
  */
-public interface IUniquelyIdentifiable {
+trait Factory[T] extends CoreController {
+	
 	/**
-	 * Gets the identifier of this instance.
-	 * @return The identifier of this instance.
+	 * Creates an object of type {@code T}.
+	 * @return the created object.
+	 * @throws IllegalFactoryOptionsException when the options are not sufficient to create the object.
 	 */
-	public UUID getIdentifier();
+	@throws[IllegalFactoryOptionsException]("when the options are not sufficient to create the object")
+	def create(): T
 }

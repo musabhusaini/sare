@@ -19,25 +19,11 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.core.controllers.factory;
-
-import edu.sabanciuniv.sentilab.core.controllers.IController;
-import edu.sabanciuniv.sentilab.core.models.factory.*;
+package edu.sabanciuniv.sentilab.core.models
 
 /**
- * A class that extends this interface provides a method to create objects of a certain type.
+ * The nominal trait for all models.
  * @author Mus'ab Husaini
- *
- * @param <T> the type of objects created by this implementation.
- * @param <O> the type of options accepted by this factory; must implement {@link IFactoryOptions}.
  */
-public interface IFactory<T>
-		extends IController {
-
-	/**
-	 * Creates an object of type {@code T}.
-	 * @return the created object.
-	 * @throws IllegalFactoryOptionsException when the options are not sufficient to create the object.
-	 */
-	public T create() throws IllegalFactoryOptionsException;
+trait CoreModel {
 }

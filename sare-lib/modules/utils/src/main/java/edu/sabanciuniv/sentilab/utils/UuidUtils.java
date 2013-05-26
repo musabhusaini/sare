@@ -29,7 +29,7 @@ import org.apache.commons.lang3.*;
 
 import com.google.common.base.*;
 
-import edu.sabanciuniv.sentilab.core.models.IUniquelyIdentifiable;
+import edu.sabanciuniv.sentilab.core.models.UniquelyIdentifiable;
 
 /**
  * Provides some basic utilities for manipulating UUIDs.
@@ -94,10 +94,10 @@ public final class UuidUtils {
 	}
 
 	/**
-	 * Gets a function for converting {@link IUniquelyIdentifiable} instances to their {@link UUID} identifiers.
+	 * Gets a function for converting {@link UniquelyIdentifiable} instances to their {@link UUID} identifiers.
 	 * @return the {@link Function} for such conversion.
 	 */
-	public static <T extends IUniquelyIdentifiable> Function<T, UUID> toUuidFunction() {
+	public static <T extends UniquelyIdentifiable> Function<T, UUID> toUuidFunction() {
 		return new Function<T, UUID>() {
 			@Override
 			public UUID apply(T input) {
@@ -107,11 +107,11 @@ public final class UuidUtils {
 	}
 	
 	/**
-	 * Gets a function for converting {@link IUniquelyIdentifiable} instances to normalized {@link String}
+	 * Gets a function for converting {@link UniquelyIdentifiable} instances to normalized {@link String}
 	 * representations of their {@link UUID} identifiers.
 	 * @return the {@link Function} for such conversion.
 	 */
-	public static <T extends IUniquelyIdentifiable> Function<T, String> toUuidStringFunction() {
+	public static <T extends UniquelyIdentifiable> Function<T, String> toUuidStringFunction() {
 		return new Function<T, String>() {
 			@Override
 			public String apply(T input) {
@@ -121,11 +121,11 @@ public final class UuidUtils {
 	} 
 	
 	/**
-	 * Gets a predicate for testing equality of {@link IUniquelyIdentifiable} instances with a given identifier.
+	 * Gets a predicate for testing equality of {@link UniquelyIdentifiable} instances with a given identifier.
 	 * @param identifier the {@link UUID} to test against.
 	 * @return a {@link Predicate} that can be used for this test.
 	 */
-	public static <T extends IUniquelyIdentifiable> Predicate<T> identifierEqualsPredicate(final UUID identifier) {
+	public static <T extends UniquelyIdentifiable> Predicate<T> identifierEqualsPredicate(final UUID identifier) {
 		Validate.notNull(identifier, CannedMessages.NULL_ARGUMENT, "uuid");
 		
 		return new Predicate<T>() {

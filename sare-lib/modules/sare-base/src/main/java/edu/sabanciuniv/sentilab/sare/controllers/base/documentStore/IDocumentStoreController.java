@@ -21,7 +21,7 @@
 
 package edu.sabanciuniv.sentilab.sare.controllers.base.documentStore;
 
-import edu.sabanciuniv.sentilab.core.controllers.IController;
+import edu.sabanciuniv.sentilab.core.controllers.CoreController;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDocumentStore;
 
 /**
@@ -29,6 +29,6 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDocumentStore;
  * @author Mus'ab Husaini
  */
 public interface IDocumentStoreController
-	extends IController {
+	extends CoreController {
 
 }

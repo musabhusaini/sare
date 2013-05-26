@@ -21,7 +21,7 @@
 
 package edu.sabanciuniv.sentilab.sare.models.base.document;
 
-import edu.sabanciuniv.sentilab.core.models.IModel;
+import edu.sabanciuniv.sentilab.core.models.CoreModel;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDocumentStore;
 
 /**
@@ -29,7 +29,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDocumentStore;
  * @author Mus'ab Husaini
  */
 public interface IDocument
-	extends IModel {
+	extends CoreModel {
 	
 	/**
 	 * Gets the textual content of this document.

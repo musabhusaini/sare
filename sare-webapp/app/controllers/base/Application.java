@@ -161,7 +161,7 @@ public class Application extends Controller {
 		return redeemProgress(UuidUtils.toBytes(id));
 	}
 	
-	public static ProgressObserver watchProgress(ProgressObservable remoteObject, final String watchedMessage, final byte[] id) {
+	public static ProgressObserver watchProgress(ProgressObservablePrimitive remoteObject, final String watchedMessage, final byte[] id) {
 		if (remoteObject == null || id == null) {
 			return null;
 		}
@@ -192,7 +192,7 @@ public class Application extends Controller {
 		return observer;
 	}
 	
-	public static ProgressObserver watchProgress(ProgressObservable remoteObject, final byte[] id) {
+	public static ProgressObserver watchProgress(ProgressObservablePrimitive remoteObject, final byte[] id) {
 		return watchProgress(remoteObject, null, id);
 	}
 	

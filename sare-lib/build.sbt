@@ -29,6 +29,4 @@ libraryDependencies in ThisBuild += "com.novocode" % "junit-interface" % "0.10-M
 
 EclipseKeys.createSrc in ThisBuild := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
 
-EclipseKeys.projectFlavor in ThisBuild := EclipseProjectFlavor.Java
-
 EclipseKeys.withSource in ThisBuild := true

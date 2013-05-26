@@ -28,7 +28,7 @@ import org.reflections.Reflections;
 
 import com.google.common.collect.Lists;
 
-import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
+import edu.sabanciuniv.sentilab.core.controllers.factory.Factory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
@@ -38,7 +38,7 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
  * @author Mus'ab Husaini
  */
 public class LinguisticProcessorFactory
-		implements IFactory<ILinguisticProcessor> {
+		implements Factory<ILinguisticProcessor> {
 	
 	/**
 	 * Gets a list of all supported linguistic processors.

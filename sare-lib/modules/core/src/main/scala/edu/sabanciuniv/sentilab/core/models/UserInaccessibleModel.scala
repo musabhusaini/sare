@@ -12,18 +12,24 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.core.controllers;
+package edu.sabanciuniv.sentilab.core.models;
 
 /**
- * The nominal base interface for all controllers.
+ * A model that implements this interface is inaccessible to the user.
  * @author Mus'ab Husaini
  */
-public interface IController {
+trait UserInaccessibleModel extends CoreModel {
+	
+	/**
+	 * Gets a user accessible version of this model; {@code null} if no such version can be obtained.
+	 * @return a {@link Model} object which is accessible by the user.
+	 */
+	def getAccessible(): CoreModel
 }

@@ -19,25 +19,18 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.core.controllers;
+package edu.sabanciuniv.sentilab.core.models
+
+import java.util.UUID
 
 /**
- * A class that implements this interface allows for observing the progress of the last invoked action.
+ * Represents an object with a UUID.
  * @author Mus'ab Husaini
  */
-public interface ProgressObservable {
-	
+trait UniquelyIdentifiable {
 	/**
-	 * Adds a progress observer for this object.
-	 * @param observer the {@link ProgressObserver} to add as a listener.
-	 * @return the {@code this} object.
+	 * Gets the identifier of this instance.
+	 * @return The identifier of this instance.
 	 */
-	public ProgressObservable addProgessObserver(ProgressObserver observer);
-	
-	/**
-	 * Removes a progress observer from this object.
-	 * @param observer the {@link ProgressObserver} to remove.
-	 * @return {@code true} if the observer was removed; {@code false} otherwise.
-	 */
-	public boolean removeProgressObserver(ProgressObserver observer);
+	def getIdentifier: UUID
 }

@@ -39,7 +39,7 @@ import edu.sabanciuniv.sentilab.utils.*;
  */
 @MappedSuperclass
 public class UniquelyIdentifiableObject
-	implements IModel, IUniquelyIdentifiable, Serializable {
+	implements CoreModel, UniquelyIdentifiable, Serializable {
 	
 	/**
 	 * 

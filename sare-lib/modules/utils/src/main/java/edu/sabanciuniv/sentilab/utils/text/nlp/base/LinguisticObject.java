@@ -23,14 +23,14 @@ package edu.sabanciuniv.sentilab.utils.text.nlp.base;
 
 import org.apache.commons.lang3.Validate;
 
-import edu.sabanciuniv.sentilab.core.models.IModel;
+import edu.sabanciuniv.sentilab.core.models.CoreModel;
 
 /**
  * The base class for all objects produced by an {@link ILinguisticProcessor}.
  * @author Mus'ab Husaini
  */
 public abstract class LinguisticObject
-	implements IModel {
+	implements CoreModel {
 	
 	/**
 	 * The {@link ILinguisticProcessor} object that was used to produce this data.

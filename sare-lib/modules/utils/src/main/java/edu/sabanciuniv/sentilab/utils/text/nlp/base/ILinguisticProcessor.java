@@ -23,14 +23,14 @@ package edu.sabanciuniv.sentilab.utils.text.nlp.base;
 
 import java.util.Map;
 
-import edu.sabanciuniv.sentilab.core.controllers.IController;
+import edu.sabanciuniv.sentilab.core.controllers.CoreController;
 
 /**
  * A class that implements this interface will be able to provide NLP capabilities.
  * @author Mus'ab Husaini
  */
 public interface ILinguisticProcessor
-	extends IController {
+	extends CoreController {
 	
 	/**
 	 * Gets the basic POS tags of this language.
