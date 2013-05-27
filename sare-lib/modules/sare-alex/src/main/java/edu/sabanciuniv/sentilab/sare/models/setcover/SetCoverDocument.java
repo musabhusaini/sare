@@ -33,7 +33,7 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticText;
 @Entity
 @DiscriminatorValue("setcover-document")
 public class SetCoverDocument
-	extends MergableDocument implements IWeightedDocument {
+	extends MergableDocument implements WeightedDocument {
 
 	/**
 	 * 

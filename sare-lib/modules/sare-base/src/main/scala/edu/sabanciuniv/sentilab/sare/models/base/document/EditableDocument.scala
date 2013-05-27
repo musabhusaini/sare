@@ -19,19 +19,18 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.document;
+package edu.sabanciuniv.sentilab.sare.models.base.document
 
 /**
  * A class that implemnts this interface has editable content.
  * @author Mus'ab Husaini
  */
-public interface EditableDocument
-	extends IDocument {
+trait EditableDocument extends DocumentLike {
 	
 	/**
 	 * Sets the content of this document.
 	 * @param content the content to set.
 	 * @return the {@code this} object.
 	 */
-	public EditableDocument setContent(String content);
+	def setContent(content: String): EditableDocument
 }

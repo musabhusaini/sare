@@ -19,27 +19,17 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.document;
-
-import edu.sabanciuniv.sentilab.core.models.ModelLike;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDocumentStore;
+package edu.sabanciuniv.sentilab.sare.models.base.document
 
 /**
- * The base interface for all documents.
+ * A class that implements this interface is a document with a calculated weight.
  * @author Mus'ab Husaini
  */
-public interface IDocument
-	extends ModelLike {
-	
+trait WeightedDocument extends DocumentLike {
+
 	/**
-	 * Gets the textual content of this document.
-	 * @return the textual content of this document.
+	 * Gets the weight of the document.
+	 * @return the weight of the document.
 	 */
-	public String getContent();
-	
-	/**
-	 * Gets the document store that this document is stored under.
-	 * @return the {@link IDocumentStore} object that this document is stored under.
-	 */
-	public IDocumentStore getStore();
+	def getWeight: java.lang.Double
 }

@@ -22,7 +22,7 @@
 package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 
 import edu.sabanciuniv.sentilab.core.models.ModelLike;
-import edu.sabanciuniv.sentilab.sare.models.base.document.IDocument;
+import edu.sabanciuniv.sentilab.sare.models.base.document.DocumentLike;
 
 /**
  * The base interface for all document stores.
@@ -51,7 +51,7 @@ public interface IDocumentStore
 	
 	/**
 	 * Gets the documents in this store.
-	 * @return the {@link Iterable} containing {@link IDocument} objects stored in this store.
+	 * @return the {@link Iterable} containing {@link DocumentLike} objects stored in this store.
 	 */
-	public Iterable<? extends IDocument> getDocuments();
+	public Iterable<? extends DocumentLike> getDocuments();
 }

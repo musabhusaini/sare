@@ -12,25 +12,33 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.document;
+package edu.sabanciuniv.sentilab.sare.models.base.document
+
+import edu.sabanciuniv.sentilab.core.models.ModelLike
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDocumentStore
 
 /**
- * A class that implements this interface is a document with a calculated weight.
+ * The base interface for all documents.
  * @author Mus'ab Husaini
  */
-public interface IWeightedDocument
-	extends IDocument {
-
+trait DocumentLike extends ModelLike {
+	
 	/**
-	 * Gets the weight of the document.
-	 * @return the weight of the document.
+	 * Gets the textual content of this document.
+	 * @return the textual content of this document.
 	 */
-	public Double getWeight();
+	def getContent: String
+	
+	/**
+	 * Gets the document store that this document is stored under.
+	 * @return the {@link IDocumentStore} object that this document is stored under.
+	 */
+	def getStore: IDocumentStore
 }

@@ -40,7 +40,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
 @Entity
 public abstract class PersistentDocument
 	extends PersistentObject
-	implements IDocument {
+	implements DocumentLike {
 
 	/**
 	 * 

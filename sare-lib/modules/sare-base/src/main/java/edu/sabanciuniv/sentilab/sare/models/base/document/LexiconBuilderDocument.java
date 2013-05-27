@@ -33,7 +33,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.LexiconBuilderDoc
 @Entity
 @DiscriminatorValue("lex-builder-doc")
 public class LexiconBuilderDocument
-		extends ShadowFullTextDocument implements UserInaccessibleModel, IWeightedDocument {
+		extends ShadowFullTextDocument implements UserInaccessibleModel, WeightedDocument {
 
 	private static final long serialVersionUID = -2107212900717706813L;
 	
@@ -48,8 +48,8 @@ public class LexiconBuilderDocument
 		super(baseDocument);
 		
 		if (baseDocument != null) {
-			this.weight = baseDocument instanceof IWeightedDocument ?
-				((IWeightedDocument)baseDocument).getWeight() : baseDocument.weight;
+			this.weight = baseDocument instanceof WeightedDocument ?
+				((WeightedDocument)baseDocument).getWeight() : baseDocument.weight;
 		}
 	}
 	
