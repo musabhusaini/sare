@@ -48,7 +48,7 @@ public class StanfordText extends LinguisticText {
 		return Iterables.transform(document.get(SentencesAnnotation.class), new Function<CoreMap, LinguisticSentence>() {
 			@Override
 			public LinguisticSentence apply(CoreMap input) {
-				return new StanfordSentence(processor, input);
+				return new StanfordSentence(processor(), input);
 			}
 		});
 	}
@@ -58,7 +58,7 @@ public class StanfordText extends LinguisticText {
 		return Iterables.transform(document.get(TokensAnnotation.class), new Function<CoreLabel, LinguisticToken>() {
 			@Override
 			public LinguisticToken apply(CoreLabel input) {
-				return new StanfordToken(processor, input);
+				return new StanfordToken(processor(), input);
 			}
 		});
 	}

@@ -19,37 +19,18 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.utils.text.nlp.base;
+package edu.sabanciuniv.sentilab.utils.text.nlp.base
 
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.Validate._
 
-import edu.sabanciuniv.sentilab.core.models.ModelLike;
+import edu.sabanciuniv.sentilab.core.models.ModelLike
 
 /**
  * The base class for all objects produced by an {@link LinguisticProcessorLike}.
  * @author Mus'ab Husaini
  */
-public abstract class LinguisticObject
-	implements ModelLike {
+abstract class LinguisticObject(val processor: LinguisticProcessorLike)
+	extends ModelLike {
 	
-	/**
-	 * The {@link LinguisticProcessorLike} object that was used to produce this data.
-	 */
-	protected LinguisticProcessorLike processor;
-	
-	/**
-	 * Creates an instance of the {@code LinguisticObject} object.
-	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this data.
-	 */
-	protected LinguisticObject(LinguisticProcessorLike processor) {
-		this.processor = Validate.notNull(processor, "The argument 'processor' must not be null");
-	}
-	
-	/**
-	 * Gets the linguistic processor used to create this object.
-	 * @return the {@link LinguisticProcessorLike} used.
-	 */
-	public LinguisticProcessorLike getProcessor() {
-		return this.processor;
-	}
+	notNull(processor, "The argument 'processor' must not be null")
 }

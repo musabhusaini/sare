@@ -19,43 +19,43 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.utils.text.nlp.base;
+package edu.sabanciuniv.sentilab.utils.text.nlp.base
 
-import java.util.Map;
+import java.util.Map
 
-import edu.sabanciuniv.sentilab.core.controllers.ControllerLike;
+import edu.sabanciuniv.sentilab.core.controllers.ControllerLike
 
 /**
  * A class that implements this interface will be able to provide NLP capabilities.
  * @author Mus'ab Husaini
  */
-public interface LinguisticProcessorLike
+trait LinguisticProcessorLike
 	extends ControllerLike {
 	
 	/**
 	 * Gets the basic POS tags of this language.
 	 * @return a {@link Map} where the keys are internal POS tag names and the values are their respective pluralized display names.
 	 */
-	public Map<String, String> getBasicPosTags();
+	def getBasicPosTags: Map[String, String]
 	
 	/**
 	 * Decomposes a given text using NLP to its sentences and tokens.
 	 * @param text the text to decompose.
 	 * @return a {@link LinguisticText} object containing the decomposed text.
 	 */
-	public LinguisticText decompose(String text);
+	def decompose(text: String): LinguisticText
 	
 	/**
 	 * Tags a given text with POS tags.
 	 * @param text the text to tag.
 	 * @return a {@link LinguisticText} object containing the tagged text.
 	 */
-	public LinguisticText tag(String text);
+	def tag(text: String): LinguisticText
 	
 	/**
 	 * Parses a given text for linguistic dependencies.
 	 * @param text the text to parse.
 	 * @return a {@link LinguisticText} object containing the parsed text.
 	 */
-	public LinguisticText parse(String text);
+	def parse(text: String): LinguisticText
 }

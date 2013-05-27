@@ -19,37 +19,30 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.utils.text.nlp.stanford;
+package edu.sabanciuniv.sentilab.utils.text.nlp.base
 
-import org.apache.commons.lang3.Validate;
+/**
+ * The base class for objects that 
+ * @author Mus'ab Husaini
+ */
+abstract class LinguisticDependency(processor: LinguisticProcessorLike)
+	extends LinguisticObject(processor) {
 
-import edu.sabanciuniv.sentilab.utils.CannedMessages;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
-
-public class StanfordPosTag extends PosTag {
-
-	public StanfordPosTag(LinguisticProcessorLike processor, String tag) {
-		super(processor, Validate.notNull(tag, CannedMessages.NULL_ARGUMENT, "tag"));
-	}
-
-	@Override
-	public String getSimpleTag() {
-		if (this.tag.startsWith("JJ")) {
-			return ADJECTIVE;
-		}
-		
-		if (this.tag.startsWith("NN")) {
-			return NOUN;
-		}
-		
-		if (this.tag.startsWith("RB") || this.tag.endsWith("RB")) {
-			return ADVERB;
-		}
-		
-		if (this.tag.startsWith("VB")) {
-			return VERB;
-		}
-		
-		return this.tag;
-	}
+	/**
+	 * Gets the relation of this dependency.
+	 * @return the relation.
+	 */
+	def getRelation: String
+	
+	/**
+	 * Gets the governor token of this dependency.
+	 * @return the governor.
+	 */
+	def getGovernor: LinguisticToken
+	
+	/**
+	 * Gets the dependent token of this dependency.
+	 * @return the dependent.
+	 */
+	def getDependent: LinguisticToken
 }

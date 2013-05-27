@@ -19,76 +19,53 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.utils.text.nlp.base;
+package edu.sabanciuniv.sentilab.utils.text.nlp.base
 
 /**
  * The base class for a linguistic token.
  * @author Mus'ab Husaini
  */
-public abstract class LinguisticToken
-	extends LinguisticEntity {
+abstract class LinguisticToken(processor: LinguisticProcessorLike)
+	extends LinguisticEntity(processor) {
 	
 	/**
 	 * A flag indicating whether this token is lemmatized or not.
 	 */
-	protected boolean isLemmatized;
+	protected var isLemmatized: Boolean = _
 	
-	/**
-	 * Creates an instance of the {@code LinguisticToken} class.
-	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this data.
-	 */
-	protected LinguisticToken(LinguisticProcessorLike processor) {
-		super(processor);
-	}
-	
-	/**
-	 * Gets a flag indicating whether this token is lemmatized or not.
-	 * @return the flag.
-	 */
-	public boolean isLemmatized() {
-		return this.isLemmatized;
-	}
-
 	/**
 	 * Sets the flag indicating whether this token is lemmatized or not.
 	 * @param isLemmatized the flag to set.
 	 * @return this object.
 	 */
-	public LinguisticToken setLemmatized(boolean isLemmatized) {
-		this.isLemmatized = isLemmatized;
-		return this;
+	def setLemmatized(isLemmatized: Boolean) = {
+	  	this.isLemmatized = isLemmatized
+		this
 	}
 
 	/**
 	 * Gets the lemma of this token.
 	 * @return The lemma.
 	 */
-	public abstract String getLemma();
+	def getLemma: String
 
 	/**
 	 * Gets the POS tag of this token.
 	 * @return A {@link PosTag} object representing the POS tag.
 	 */
-	public abstract PosTag getPosTag();
+	def getPosTag: PosTag
 	
 	/**
 	 * Gets the word that this token represents. Might be lemmatized depending on the value of the {@code isLemmatized} property.
 	 * @return the word that this token represents.
 	 */
-	public String getWord() {
-		return !this.isLemmatized() ? this.getText() : this.getLemma();
-	}
+	def getWord = if (isLemmatized) getLemma else getText
 	
 	/**
 	 * Gets the whitespace character that separates this token from the next one.
 	 * @return the trailing whitespace character.
 	 */
-	public String getTrailingSeparator() {
-		return " ";
-	}
+	def getTrailingSeparator = " "
 	
-	@Override
-	public String toString() {
-		return this.getWord() + "/" + this.getPosTag();
-	}
+	override def toString = "%s/%s".format(getWord, getPosTag)
 }

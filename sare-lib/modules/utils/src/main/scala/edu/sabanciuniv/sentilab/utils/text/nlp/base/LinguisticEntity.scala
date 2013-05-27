@@ -19,60 +19,36 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.utils.text.nlp.base;
+package edu.sabanciuniv.sentilab.utils.text.nlp.base
 
 /**
  * Abstract class for any linguistic entity of a text.
  * @author Mus'ab Husaini
  */
-public abstract class LinguisticEntity
-	extends LinguisticObject
-	implements Comparable<LinguisticEntity> {
-	
-	/**
-	 * Creates an instance of {@link LinguisticEntity} with the specified text value.
-	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this data.
-	 */
-	protected LinguisticEntity(LinguisticProcessorLike processor) {
-		super(processor);
-	}
+abstract class LinguisticEntity(processor: LinguisticProcessorLike)
+	extends LinguisticObject(processor) with Comparable[LinguisticEntity] {
 	
 	/**
 	 * Gets the text value of this entity.
 	 * @return The text value of this entity.
 	 */
-	public abstract String getText();
+	def getText: String
 	
-	@Override
-	public String toString() {
-		return this.getText();
-	}
+	override def toString = getText
 	
 	/**
 	 * Gets a string representation of this entity, possibly an information rich version.
 	 * @param enhanced {@code true} if an NLP-enhanced version is needed; {@code false} otherwise.
 	 * @return the {@link String} representation of this entity.
 	 */
-	public String toString(boolean enhanced) {
-		return this.toString();
+	def toString(enhanced: Boolean): String = toString
+	
+	override def equals(other: Any) = other match {
+	  	case ling: LinguisticEntity => compareTo(ling) == 0
+	  	case _ => super.equals(other)
 	}
 	
-	@Override
-	public boolean equals(Object other) {
-		if (other instanceof LinguisticEntity) {
-			return this.compareTo((LinguisticEntity)other) == 0;
-		}
-		
-		return super.equals(other);
-	}
+	override def hashCode = toString.hashCode
 	
-	@Override
-	public int hashCode() {
-		return this.toString().hashCode();
-	}
-	
-	@Override
-	public int compareTo(LinguisticEntity other) {
-		return this.toString().compareTo(other.toString());
-	}
+	override def compareTo(other: LinguisticEntity) = toString.compareTo(other.toString)
 }

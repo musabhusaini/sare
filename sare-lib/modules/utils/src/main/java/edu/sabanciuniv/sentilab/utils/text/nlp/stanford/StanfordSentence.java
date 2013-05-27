@@ -51,7 +51,7 @@ public class StanfordSentence
 		return Iterables.transform(this.sentence.get(TokensAnnotation.class), new Function<CoreLabel, LinguisticToken>() {
 			@Override
 			public LinguisticToken apply(CoreLabel input) {
-				return new StanfordToken(processor, input);
+				return new StanfordToken(processor(), input);
 			}
 		});
 	}
@@ -66,7 +66,7 @@ public class StanfordSentence
 		return Iterables.transform(graph.typedDependencies(), new Function<TypedDependency, LinguisticDependency>() {
 			@Override
 			public LinguisticDependency apply(TypedDependency input) {
-				return new StanfordDependency(processor, input);
+				return new StanfordDependency(processor(), input);
 			}
 		});
 	}
