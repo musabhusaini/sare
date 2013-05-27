@@ -182,7 +182,7 @@ public abstract class FullTextDocument
 				this.getTokenizingOptions().getTags().size() == 0 ||
 				nlpToken.getPosTag().is(this.getTokenizingOptions().getTags())) {
 				
-				nlpToken.setLemmatized(this.getTokenizingOptions().isLemmatized());
+				nlpToken.setIsLemmatized(this.getTokenizingOptions().isLemmatized());
 				MapsExtensions.increment(this.getTokenWeightMap(true, true), nlpToken);
 			}
 		}

@@ -21,6 +21,8 @@
 
 package edu.sabanciuniv.sentilab.utils.text.nlp.base
 
+import scala.beans.BooleanBeanProperty
+
 /**
  * The base class for a linguistic token.
  * @author Mus'ab Husaini
@@ -31,18 +33,9 @@ abstract class LinguisticToken(processor: LinguisticProcessorLike)
 	/**
 	 * A flag indicating whether this token is lemmatized or not.
 	 */
+	@BooleanBeanProperty
 	protected var isLemmatized: Boolean = _
 	
-	/**
-	 * Sets the flag indicating whether this token is lemmatized or not.
-	 * @param isLemmatized the flag to set.
-	 * @return this object.
-	 */
-	def setLemmatized(isLemmatized: Boolean) = {
-	  	this.isLemmatized = isLemmatized
-		this
-	}
-
 	/**
 	 * Gets the lemma of this token.
 	 * @return The lemma.

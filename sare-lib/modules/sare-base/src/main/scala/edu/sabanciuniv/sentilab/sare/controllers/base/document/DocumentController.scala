@@ -12,22 +12,21 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.controllers.base.document;
+package edu.sabanciuniv.sentilab.sare.controllers.base.document
 
-import edu.sabanciuniv.sentilab.core.controllers.ControllerLike;
-import edu.sabanciuniv.sentilab.sare.models.base.document.IDocument;
+import edu.sabanciuniv.sentilab.core.controllers.ControllerLike
+import edu.sabanciuniv.sentilab.sare.models.base.document.IDocument
 
 /**
  * The base interface for all controllers that work on {@link IDocument} objects.
  * @author Mus'ab Husaini
  */
-public interface IDocumentController
-	extends ControllerLike {
+trait DocumentController extends ControllerLike {
 }

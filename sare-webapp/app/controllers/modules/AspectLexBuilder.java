@@ -193,11 +193,10 @@ public class AspectLexBuilder extends Module {
 			factory.setTitle("Untitled aspect lexicon");
 		}
 		
-		factory
-			.setBaseStore(corpusObj)
-			.setOwnerId(SessionedAction.getUsername(ctx()))
-			.setExistingId(lexicon)
-			.setEm(em());
+		factory.setBaseStore(corpusObj);
+		factory.setOwnerId(SessionedAction.getUsername(ctx()));
+		factory.setExistingId(lexicon);
+		factory.setEm(em());
 		
 		AspectLexiconModel lexiconVM = null;
 		lexiconObj = factory.create();

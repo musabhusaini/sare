@@ -47,12 +47,13 @@ public class OpinionCorpusFactoryModel
 	}
 	
 	public OpinionCorpusFactory toFactory() {
-		return (OpinionCorpusFactory)new OpinionCorpusFactory()
-			.setContent(this.content)
-			.setFormat(this.format)
-			.setTextDelimiter(this.delimiter)
-			.setTitle(this.title)
-			.setDescription(this.description)
-			.setLanguage(this.language);
+		OpinionCorpusFactory factory = new OpinionCorpusFactory();
+		factory.setContent(this.content);
+		factory.setFormat(this.format);
+		factory.setTextDelimiter(this.delimiter);
+		factory.setTitle(this.title);
+		factory.setDescription(this.description);
+		factory.setLanguage(this.language);
+		return factory;
 	}
 }

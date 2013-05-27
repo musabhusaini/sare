@@ -41,7 +41,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  */
 public class SetCoverFactory
 		extends PersistentDocumentStoreFactory<DocumentSetCover>
-		implements IDocumentStoreController, ProgressObservablePrimitive {
+		implements DocumentStoreController, ProgressObservablePrimitive {
 
 	public static final double DEFAULT_WEIGHT_COVERAGE = 1.0;
 
