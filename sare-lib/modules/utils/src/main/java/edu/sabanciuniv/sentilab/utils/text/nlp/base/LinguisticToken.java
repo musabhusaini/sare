@@ -35,9 +35,9 @@ public abstract class LinguisticToken
 	
 	/**
 	 * Creates an instance of the {@code LinguisticToken} class.
-	 * @param processor the {@link ILinguisticProcessor} that was used to produce this data.
+	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this data.
 	 */
-	protected LinguisticToken(ILinguisticProcessor processor) {
+	protected LinguisticToken(LinguisticProcessorLike processor) {
 		super(processor);
 	}
 	

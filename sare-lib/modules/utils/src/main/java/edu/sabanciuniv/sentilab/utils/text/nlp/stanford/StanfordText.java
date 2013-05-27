@@ -37,7 +37,7 @@ public class StanfordText extends LinguisticText {
 	
 	private Annotation document;
 	
-	public StanfordText(ILinguisticProcessor processor, Annotation text) {
+	public StanfordText(LinguisticProcessorLike processor, Annotation text) {
 		super(processor);
 		
 		this.document = Validate.notNull(text, CannedMessages.NULL_ARGUMENT, "text");

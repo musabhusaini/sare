@@ -31,14 +31,14 @@ import com.google.common.collect.Lists;
 import edu.sabanciuniv.sentilab.core.controllers.factory.Factory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticProcessorLike;
 
 /**
- * The factory class for creating {@link ILinguisticProcessor} objects.
+ * The factory class for creating {@link LinguisticProcessorLike} objects.
  * @author Mus'ab Husaini
  */
 public class LinguisticProcessorFactory
-		implements Factory<ILinguisticProcessor> {
+		implements Factory<LinguisticProcessorLike> {
 	
 	/**
 	 * Gets a list of all supported linguistic processors.
@@ -48,8 +48,8 @@ public class LinguisticProcessorFactory
 		List<LinguisticProcessorInfo> languages = Lists.newArrayList();
 		
 		Reflections reflections = new Reflections("edu.sabanciuniv.sentilab");
-		Set<Class<? extends ILinguisticProcessor>> subTypes = reflections.getSubTypesOf(ILinguisticProcessor.class);
-		for (Class<? extends ILinguisticProcessor> c : subTypes) {
+		Set<Class<? extends LinguisticProcessorLike>> subTypes = reflections.getSubTypesOf(LinguisticProcessorLike.class);
+		for (Class<? extends LinguisticProcessorLike> c : subTypes) {
 			LinguisticProcessorInfo info = c.getAnnotation(LinguisticProcessorInfo.class);
 			if (info == null || Modifier.isAbstract(c.getModifiers())) {
 				continue;
@@ -158,13 +158,13 @@ public class LinguisticProcessorFactory
 	}
 	
 	@Override
-	public ILinguisticProcessor create()
+	public LinguisticProcessorLike create()
 			throws IllegalFactoryOptionsException {
 		
-		Class<? extends ILinguisticProcessor> processorClass = null;
+		Class<? extends LinguisticProcessorLike> processorClass = null;
 		Reflections reflections = new Reflections("edu.sabanciuniv.sentilab");
-		Set<Class<? extends ILinguisticProcessor>> subTypes = reflections.getSubTypesOf(ILinguisticProcessor.class);
-		for (Class<? extends ILinguisticProcessor> c : subTypes) {
+		Set<Class<? extends LinguisticProcessorLike>> subTypes = reflections.getSubTypesOf(LinguisticProcessorLike.class);
+		for (Class<? extends LinguisticProcessorLike> c : subTypes) {
 			LinguisticProcessorInfo info = c.getAnnotation(LinguisticProcessorInfo.class);
 			if (info == null || Modifier.isAbstract(c.getModifiers())) {
 				continue;

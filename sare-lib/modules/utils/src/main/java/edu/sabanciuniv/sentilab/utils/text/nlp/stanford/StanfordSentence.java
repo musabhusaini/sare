@@ -40,7 +40,7 @@ public class StanfordSentence
 
 	private CoreMap sentence;
 	
-	public StanfordSentence(ILinguisticProcessor processor, CoreMap sentence) {
+	public StanfordSentence(LinguisticProcessorLike processor, CoreMap sentence) {
 		super(processor);
 		
 		this.sentence = Validate.notNull(sentence, CannedMessages.NULL_ARGUMENT, "sentence");

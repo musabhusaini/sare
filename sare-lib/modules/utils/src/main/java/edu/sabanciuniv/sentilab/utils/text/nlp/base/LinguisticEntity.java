@@ -31,9 +31,9 @@ public abstract class LinguisticEntity
 	
 	/**
 	 * Creates an instance of {@link LinguisticEntity} with the specified text value.
-	 * @param processor the {@link ILinguisticProcessor} that was used to produce this data.
+	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this data.
 	 */
-	protected LinguisticEntity(ILinguisticProcessor processor) {
+	protected LinguisticEntity(LinguisticProcessorLike processor) {
 		super(processor);
 	}
 	

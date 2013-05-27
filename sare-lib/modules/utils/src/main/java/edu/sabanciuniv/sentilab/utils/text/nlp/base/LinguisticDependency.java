@@ -30,9 +30,9 @@ public abstract class LinguisticDependency
 
 	/**
 	 * Creates an instance of the {@code LinguisticDependency} object.
-	 * @param processor the {@link ILinguisticProcessor} that was used to produce this dependency.
+	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this dependency.
 	 */
-	protected LinguisticDependency(ILinguisticProcessor processor) {
+	protected LinguisticDependency(LinguisticProcessorLike processor) {
 		super(processor);
 	}
 	

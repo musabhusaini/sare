@@ -25,11 +25,11 @@ package edu.sabanciuniv.sentilab.core.models;
  * A model that implements this interface is inaccessible to the user.
  * @author Mus'ab Husaini
  */
-trait UserInaccessibleModel extends CoreModel {
+trait UserInaccessibleModel extends ModelLike {
 	
 	/**
 	 * Gets a user accessible version of this model; {@code null} if no such version can be obtained.
 	 * @return a {@link Model} object which is accessible by the user.
 	 */
-	def getAccessible(): CoreModel
+	def getAccessible(): ModelLike
 }

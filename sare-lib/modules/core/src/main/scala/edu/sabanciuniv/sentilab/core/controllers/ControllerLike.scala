@@ -19,11 +19,11 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.core.models
+package edu.sabanciuniv.sentilab.core.controllers
 
 /**
- * The nominal trait for all models.
+ * The nominal base for all controllers.
  * @author Mus'ab Husaini
  */
-trait CoreModel {
+trait ControllerLike {
 }

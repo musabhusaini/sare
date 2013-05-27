@@ -32,7 +32,7 @@ public class StanfordDependency
 
 	private TypedDependency dependency;
 	
-	public StanfordDependency(ILinguisticProcessor processor, TypedDependency dependency) {
+	public StanfordDependency(LinguisticProcessorLike processor, TypedDependency dependency) {
 		super(processor);
 		
 		this.dependency = Validate.notNull(dependency, CannedMessages.NULL_ARGUMENT, "dependency");

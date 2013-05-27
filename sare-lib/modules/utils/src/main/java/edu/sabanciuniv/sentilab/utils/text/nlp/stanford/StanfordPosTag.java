@@ -28,7 +28,7 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.*;
 
 public class StanfordPosTag extends PosTag {
 
-	public StanfordPosTag(ILinguisticProcessor processor, String tag) {
+	public StanfordPosTag(LinguisticProcessorLike processor, String tag) {
 		super(processor, Validate.notNull(tag, CannedMessages.NULL_ARGUMENT, "tag"));
 	}
 

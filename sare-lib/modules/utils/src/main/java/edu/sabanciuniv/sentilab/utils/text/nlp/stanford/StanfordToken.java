@@ -32,7 +32,7 @@ public class StanfordToken
 
 	private CoreLabel token;
 	
-	public StanfordToken(ILinguisticProcessor processor, CoreLabel token) {
+	public StanfordToken(LinguisticProcessorLike processor, CoreLabel token) {
 		super(processor);
 		
 		this.token = Validate.notNull(token, CannedMessages.NULL_ARGUMENT, "token");

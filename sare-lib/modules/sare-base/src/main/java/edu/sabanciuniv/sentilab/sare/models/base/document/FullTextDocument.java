@@ -169,7 +169,7 @@ public abstract class FullTextDocument
 		this.setTokenWeightMap(new HashMap<LinguisticToken, Double>());
 		
 		// get the right NLP based on the language of the corpus.
-		ILinguisticProcessor nlp = new LinguisticProcessorFactory()
+		LinguisticProcessorLike nlp = new LinguisticProcessorFactory()
 			.setMustTag(true)
 			.setLanguage(this.getStore().getLanguage())
 			.create();

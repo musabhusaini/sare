@@ -21,7 +21,7 @@
 
 package edu.sabanciuniv.sentilab.core.controllers.factory
 
-import edu.sabanciuniv.sentilab.core.controllers.CoreController
+import edu.sabanciuniv.sentilab.core.controllers.ControllerLike
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException
 
 /**
@@ -30,7 +30,7 @@ import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsExcepti
  *
  * @param <T> the type of objects created by this implementation.
  */
-trait Factory[T] extends CoreController {
+trait Factory[T] extends ControllerLike {
 	
 	/**
 	 * Creates an object of type {@code T}.

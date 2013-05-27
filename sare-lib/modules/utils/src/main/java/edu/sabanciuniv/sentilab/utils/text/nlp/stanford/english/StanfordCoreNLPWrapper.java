@@ -26,7 +26,7 @@ import java.util.*;
 import com.google.common.base.Joiner;
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.core.controllers.CoreController;
+import edu.sabanciuniv.sentilab.core.controllers.ControllerLike;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.*;
 import edu.stanford.nlp.pipeline.*;
@@ -37,7 +37,7 @@ import edu.stanford.nlp.util.CoreMap;
  * @author Mus'ab Husaini
  */
 public class StanfordCoreNLPWrapper
-	implements CoreController {
+	implements ControllerLike {
 	
 	private static List<String> basicAnnotators = ImmutableList.of(StanfordCoreNLP.STANFORD_TOKENIZE, StanfordCoreNLP.STANFORD_SSPLIT);
 	private static StanfordCoreNLPWrapper basic;

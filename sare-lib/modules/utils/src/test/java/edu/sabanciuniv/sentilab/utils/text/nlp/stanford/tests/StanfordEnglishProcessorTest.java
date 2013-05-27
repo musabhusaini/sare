@@ -67,7 +67,7 @@ public class StanfordEnglishProcessorTest {
 	
 	@Test
 	public void testFactoryCreate() {
-		ILinguisticProcessor processor = new LinguisticProcessorFactory()
+		LinguisticProcessorLike processor = new LinguisticProcessorFactory()
 			.setLanguage("en")
 			.create();
 		assertNotNull(processor);

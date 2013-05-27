@@ -26,11 +26,11 @@ import java.lang.annotation.Annotation;
 import edu.sabanciuniv.sentilab.utils.text.nlp.annotations.LinguisticProcessorInfo;
 
 /**
- * The base implementation of {@link ILinguisticProcessor}.
+ * The base implementation of {@link LinguisticProcessorLike}.
  * @author Mus'ab Husaini
  */
 public abstract class LinguisticProcessor
-	implements ILinguisticProcessor {
+	implements LinguisticProcessorLike {
 
 	private LinguisticProcessorInfo infoAnnotation;
 	

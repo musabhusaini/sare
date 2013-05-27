@@ -23,33 +23,33 @@ package edu.sabanciuniv.sentilab.utils.text.nlp.base;
 
 import org.apache.commons.lang3.Validate;
 
-import edu.sabanciuniv.sentilab.core.models.CoreModel;
+import edu.sabanciuniv.sentilab.core.models.ModelLike;
 
 /**
- * The base class for all objects produced by an {@link ILinguisticProcessor}.
+ * The base class for all objects produced by an {@link LinguisticProcessorLike}.
  * @author Mus'ab Husaini
  */
 public abstract class LinguisticObject
-	implements CoreModel {
+	implements ModelLike {
 	
 	/**
-	 * The {@link ILinguisticProcessor} object that was used to produce this data.
+	 * The {@link LinguisticProcessorLike} object that was used to produce this data.
 	 */
-	protected ILinguisticProcessor processor;
+	protected LinguisticProcessorLike processor;
 	
 	/**
 	 * Creates an instance of the {@code LinguisticObject} object.
-	 * @param processor the {@link ILinguisticProcessor} that was used to produce this data.
+	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this data.
 	 */
-	protected LinguisticObject(ILinguisticProcessor processor) {
+	protected LinguisticObject(LinguisticProcessorLike processor) {
 		this.processor = Validate.notNull(processor, "The argument 'processor' must not be null");
 	}
 	
 	/**
 	 * Gets the linguistic processor used to create this object.
-	 * @return the {@link ILinguisticProcessor} used.
+	 * @return the {@link LinguisticProcessorLike} used.
 	 */
-	public ILinguisticProcessor getProcessor() {
+	public LinguisticProcessorLike getProcessor() {
 		return this.processor;
 	}
 }
