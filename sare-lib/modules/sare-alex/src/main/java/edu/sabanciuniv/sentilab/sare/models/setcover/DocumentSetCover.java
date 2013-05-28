@@ -24,7 +24,6 @@ package edu.sabanciuniv.sentilab.sare.models.setcover;
 import java.util.*;
 
 import javax.persistence.*;
-import javax.persistence.criteria.*;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.*;
@@ -140,16 +139,11 @@ public class DocumentSetCover
 	public Iterable<byte[]> getDocumentIds(EntityManager em) {
 		Validate.notNull(em, CannedMessages.NULL_ARGUMENT, "em");
 		
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<byte[]> cq = cb.createQuery(byte[].class);
-		Root<PersistentDocument> doc = cq.from(PersistentDocument.class);
-		cq
-			.multiselect(doc.get("id"))
-			.where(cb.equal(doc.get("store"), cb.parameter(PersistentDocumentStore.class, "store")))
-			.where(cb.equal(doc.get("flag"), true));
-		TypedQuery<byte[]> tq = em.createQuery(cq);
-		tq.setParameter("store", this);
-		return tq.getResultList();		
+		TypedQuery<byte[]> query = em.createQuery("SELECT scd.id FROM SetCoverDocument scd " +
+			"WHERE scd.store=:sc " +
+			"AND scd.flag=true", byte[].class);
+		query.setParameter("sc", this);
+		return query.getResultList();		
 	}
 
 	/**
