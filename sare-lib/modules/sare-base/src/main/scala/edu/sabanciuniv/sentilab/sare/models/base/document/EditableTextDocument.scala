@@ -12,27 +12,36 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.document;
+package edu.sabanciuniv.sentilab.sare.models.base.document
 
-import javax.persistence.Entity;
+import javax.persistence._
 
 /**
- * A class that holds partial text documents.
+ * A class for documents containing editable textual content.
  * @author Mus'ab Husaini
  */
 @Entity
-public abstract class PartialTextDocument
-	extends PersistentDocument {
+abstract class EditableTextDocument
+	extends FullTextDocument
+	with EditableDocument {
 
+	override def getContent = title
+	
 	/**
-	 * 
+	 * Sets the content of this document.
+	 * @param content the content to set.
+	 * @return the {@code this} object.
 	 */
-	private static final long serialVersionUID = -7988392404417624579L;
+	override def setContent(content: String): EditableTextDocument = {
+		title = content
+		weight = (Option(getContent) map { _.length.toDouble } getOrElse 0.0).asInstanceOf[Double]
+		this
+	}
 }

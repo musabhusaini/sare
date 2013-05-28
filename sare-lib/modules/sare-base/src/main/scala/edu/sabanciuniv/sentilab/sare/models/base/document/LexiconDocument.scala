@@ -12,45 +12,24 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.document;
+package edu.sabanciuniv.sentilab.sare.models.base.document
 
-import javax.persistence.*;
+import javax.persistence._
 
 /**
- * A class for documents containing editable textual content.
+ * The basic unit of a lexicon.
  * @author Mus'ab Husaini
  */
 @Entity
-public abstract class EditableTextDocument
-	extends FullTextDocument
-	implements EditableDocument {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5392373511223975393L;
-
-	@Override
-	public String getContent() {
-		return this.title;
-	}
-	
-	/**
-	 * Sets the content of this document.
-	 * @param content the content to set.
-	 * @return the {@code this} object.
-	 */
-	@Override
-	public EditableTextDocument setContent(String content) {
-		this.title = content;
-		this.weight = content != null ? (double)this.getContent().length() : 0.0;
-		return this;
-	}
+@DiscriminatorValue("lex-doc")
+class LexiconDocument extends EditablePartialDocument {
+	override def setContent(content: String): LexiconDocument =
+		super.setContent(Option(content) map { _.toLowerCase.trim } getOrElse null).asInstanceOf[LexiconDocument]
 }

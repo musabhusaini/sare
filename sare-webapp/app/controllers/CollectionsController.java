@@ -87,6 +87,6 @@ public class CollectionsController
 		PersistentDocumentStoreModel storeVM = (PersistentDocumentStoreModel)createViewModel(store);
 		storeVM.populateSize(em(), store);
 		
-		return ok(storeDetails.render(storeVM, store instanceof IDerivedStore, store instanceof DocumentCorpus));
+		return ok(storeDetails.render(storeVM, store instanceof DerivedStoreLike, store instanceof DocumentCorpus));
 	}
 }

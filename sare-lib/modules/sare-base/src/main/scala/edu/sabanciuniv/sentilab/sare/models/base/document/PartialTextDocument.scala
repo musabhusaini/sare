@@ -12,31 +12,21 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.document;
+package edu.sabanciuniv.sentilab.sare.models.base.document
 
-import javax.persistence.*;
+import javax.persistence.Entity
 
 /**
- * The basic unit of a lexicon.
+ * A class that holds partial text documents.
  * @author Mus'ab Husaini
  */
 @Entity
-@DiscriminatorValue("lex-doc")
-public class LexiconDocument
-	extends EditablePartialDocument {
-
-	private static final long serialVersionUID = -4658589725445481595L;
-
-	@Override
-	public LexiconDocument setContent(String content) {
-		super.setContent(content == null ? content : content.toLowerCase().trim());
-		return this;
-	}
+abstract class PartialTextDocument extends PersistentDocument {
 }

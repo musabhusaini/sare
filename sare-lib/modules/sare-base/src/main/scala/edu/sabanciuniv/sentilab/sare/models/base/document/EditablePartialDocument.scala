@@ -12,44 +12,30 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.document;
+package edu.sabanciuniv.sentilab.sare.models.base.document
 
-import javax.persistence.Entity;
+import javax.persistence.Entity
 
 /**
  * A class that represents editable partial documents.
  * @author Mus'ab Husaini
  */
 @Entity
-public abstract class EditablePartialDocument
+abstract class EditablePartialDocument
 	extends PartialTextDocument
-	implements EditableDocument {
+	with EditableDocument {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1135997891869496330L;
-
-	@Override
-	public String getContent() {
-		return this.title;
-	}
+	override def getContent = title
 	
-	/**
-	 * Sets the content of this document.
-	 * @param content the content to set.
-	 * @return the {@code this} object.
-	 */
-	@Override
-	public EditablePartialDocument setContent(String content) {
-		this.title = content;
-		return this;
+	override def setContent(content: String): EditablePartialDocument = {
+		title = content
+		this
 	}
 }

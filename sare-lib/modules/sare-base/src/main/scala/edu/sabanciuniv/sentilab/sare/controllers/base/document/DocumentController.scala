@@ -22,7 +22,6 @@
 package edu.sabanciuniv.sentilab.sare.controllers.base.document
 
 import edu.sabanciuniv.sentilab.core.controllers.ControllerLike
-import edu.sabanciuniv.sentilab.sare.models.base.document.IDocument
 
 /**
  * The base interface for all controllers that work on {@link IDocument} objects.

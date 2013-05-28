@@ -22,7 +22,7 @@
 package edu.sabanciuniv.sentilab.sare.models.base.document
 
 import edu.sabanciuniv.sentilab.core.models.ModelLike
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDocumentStore
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentStoreLike
 
 /**
  * The base interface for all documents.
@@ -40,5 +40,5 @@ trait DocumentLike extends ModelLike {
 	 * Gets the document store that this document is stored under.
 	 * @return the {@link IDocumentStore} object that this document is stored under.
 	 */
-	def getStore: IDocumentStore
+	def getStore: DocumentStoreLike
 }

@@ -12,20 +12,19 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
+package edu.sabanciuniv.sentilab.sare.models.base.documentStore
 
 /**
  * A class that implements this interface derives its documents from another store and therefore,
  * should not be edited directly by the user.
  * @author Mus'ab Husaini
  */
-public interface IDerivedStore
-	extends IDocumentStore {
+trait DerivedStoreLike extends DocumentStoreLike {
 }

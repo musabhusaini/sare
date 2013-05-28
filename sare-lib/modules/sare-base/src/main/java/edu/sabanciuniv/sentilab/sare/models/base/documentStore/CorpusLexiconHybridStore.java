@@ -22,7 +22,7 @@
 package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 
 import com.google.common.base.*;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.*;
 
 import edu.sabanciuniv.sentilab.sare.models.base.document.*;
 
@@ -43,7 +43,7 @@ public abstract class CorpusLexiconHybridStore<L extends Lexicon>
 	 */
 	protected <T extends ShadowFullTextDocument> CorpusLexiconHybridStore(DocumentCorpus corpus, L lexicon,
 			Function<PersistentDocument, T> shadowize) {
-		super(corpus, lexicon);
+		super(Lists.newArrayList(corpus, lexicon));
 		this.setBaseStore(corpus);
 		
 		if (corpus != null && shadowize != null) {

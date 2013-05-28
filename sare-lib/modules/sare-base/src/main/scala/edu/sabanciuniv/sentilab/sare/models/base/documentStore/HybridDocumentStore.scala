@@ -12,68 +12,50 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
+package edu.sabanciuniv.sentilab.sare.models.base.documentStore
 
-import javax.persistence.Entity;
+import scala.collection.JavaConversions._
 
-import org.apache.commons.lang3.ObjectUtils;
+import javax.persistence.Entity
 
-import com.google.common.collect.*;
+import org.apache.commons.lang3.ObjectUtils._
+
+import com.google.common.collect._
 
 /**
  * Base class for stores that combine two or more stores, possibly of various types.
  * @author Mus'ab Husaini
  */
 @Entity
-public abstract class HybridDocumentStore
-		extends PersistentDocumentStore implements IDerivedStore {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3075937879542916348L;
+abstract class HybridDocumentStore(stores: java.lang.Iterable[PersistentDocumentStore])
+	extends PersistentDocumentStore
+	with DerivedStoreLike {
+	
+	Option(stores) foreach { _ foreach { addReference _ } }
 	
 	/**
 	 * Creates a new instance of the {@link HybridDocumentStore}.
 	 * @param stores the {@link PersistentDocumentStore} objects this hybrid is based on.
 	 */
-	public HybridDocumentStore(PersistentDocumentStore... stores) {
-		if (stores != null) {
-			for (PersistentDocumentStore store : stores) {
-				this.addReference(store);
-			}
-		}
-	}
-	
-	/**
-	 * Creates a new instance of the {@link HybridDocumentStore}.
-	 * @param stores the {@link PersistentDocumentStore} objects this hybrid is based on.
-	 */
-	public HybridDocumentStore(Iterable<PersistentDocumentStore> stores) {
-		this(Iterables.toArray(ObjectUtils.defaultIfNull(stores, Lists.<PersistentDocumentStore>newArrayList()),
-			PersistentDocumentStore.class));
-	}
+	def this(stores: PersistentDocumentStore*) = this(stores.toSeq)
 	
 	/**
 	 * Creates a new instance of the {@link HybridDocumentStore}.
 	 */
-	public HybridDocumentStore() {
-		this(new PersistentDocumentStore[]{});
-	}
+	def this() = this(Seq())
 	
 	/**
 	 * Gets all the base stores of a given type.
 	 * @param clazz the type of base stores to find.
 	 * @return an {@link Iterable} containing all the base stores of the given type.
 	 */
-	public <T extends PersistentDocumentStore> Iterable<T> getBaseStores(Class<T> clazz) {
-		return Iterables.filter(this.referencedObjects, clazz);
-	}
+	def getBaseStores[T <: PersistentDocumentStore](clazz: Class[T]): java.lang.Iterable[T] =
+	  	referencedObjects filter { clazz.getClass isAssignableFrom _.getClass } map { _.asInstanceOf[T] }
 }
