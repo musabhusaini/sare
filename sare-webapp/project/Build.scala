@@ -48,7 +48,6 @@ object ApplicationBuild extends Build {
 	
 	val sareLibrary = Project(id = "sare-lib", base = file("sare-lib"))
 		.settings(
-		    scalaVersion in ThisBuild := "2.10.0",
 		    exportJars in ThisBuild := true
 		)
 		.aggregate(core, utils, sareBase, sareAlex, sareEntityManager)
