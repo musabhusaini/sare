@@ -19,11 +19,11 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinion;
+package edu.sabanciuniv.sentilab.sare.models.opinion
 
-import javax.persistence.*;
+import javax.persistence._
 
-import edu.sabanciuniv.sentilab.sare.models.base.document.*;
+import edu.sabanciuniv.sentilab.sare.models.base.document._
 
 /**
  * Represents an opinion document (review).
@@ -31,18 +31,12 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
  */
 @Entity
 @DiscriminatorValue("opinion-document")
-public class OpinionDocument
-	extends EditableTextDocument implements IOpinionDocument {
+class OpinionDocument extends EditableTextDocument with IOpinionDocument {
 
-	private static final long serialVersionUID = -2242899151250566895L;
-
-	@Override
-	public Double getPolarity() {
-		Double polarity = this.getProperty("polarity", Double.class);
-		if (polarity != null && polarity.isNaN()) {
-			return null;
-		}
-		return polarity;
+	override def getPolarity = getProperty("polarity", classOf[java.lang.Double]) match {
+	  	case null => null
+	  	case polarity if polarity.isNaN => null
+	  	case polarity => polarity
 	}
 
 	/**
@@ -50,16 +44,8 @@ public class OpinionDocument
 	 * @param polarity the opinion polarity to set.
 	 * @return the {@code this} object.
 	 */
-	public OpinionDocument setPolarity(Double polarity) {
-		if (polarity != null && polarity.isNaN()) {
-			polarity = null;
-		}
-		this.setProperty("polarity", polarity);
-		return this;
-	}
+	def setPolarity(polarity: java.lang.Double) =
+		setProperty("polarity", Option(polarity) filter { !_.isNaN } getOrElse null).asInstanceOf[OpinionDocument]
 	
-	@Override
-	public String toString() {
-		return String.format("%s [polarity = %1.2f]", super.toString(), this.getPolarity());
-	}
+	override def toString = "%s [polarity = %1.2f]".format(super.toString, getPolarity)
 }

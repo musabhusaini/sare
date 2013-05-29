@@ -24,6 +24,7 @@ name := "utils"
 libraryDependencies ++= Seq(
 	"edu.stanford.nlp" % "stanford-corenlp" % "1.3.4",
 	"edu.stanford.nlp" % "stanford-corenlp" % "1.3.4" classifier "models",
+	"com.google.code.findbugs" % "annotations" % "2.0.1",
 	"com.google.guava" % "guava" % "14.0.1",
 	"org.apache.commons" % "commons-lang3" % "3.1",
 	"commons-io" % "commons-io" % "2.4",
