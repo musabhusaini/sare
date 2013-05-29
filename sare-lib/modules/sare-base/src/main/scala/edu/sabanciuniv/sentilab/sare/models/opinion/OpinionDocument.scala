@@ -31,7 +31,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document._
  */
 @Entity
 @DiscriminatorValue("opinion-document")
-class OpinionDocument extends EditableTextDocument with IOpinionDocument {
+class OpinionDocument extends EditableTextDocument with OpinionDocumentLike {
 
 	override def getPolarity = Option(getProperty("polarity", classOf[java.lang.Double])) map {
 	  	case polarity if polarity.isNaN => null

@@ -19,21 +19,17 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinion;
+package edu.sabanciuniv.sentilab.sare.models.opinion
 
-import edu.sabanciuniv.sentilab.core.models.UserInaccessibleModel;
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDerivedStore;
+import javax.persistence._
+
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus
 
 /**
- * A class that implements this interface contains opinion mining results of a corpus.
+ * Represents an opinion corpus.
  * @author Mus'ab Husaini
  */
-public interface IOpinionMinedCorpus
-		extends UserInaccessibleModel, IDerivedStore {
-	
-	/**
-	 * Gets the engine code of the engine that was used to mine opinions.
-	 * @return
-	 */
-	public String getEngineCode();
+@Entity
+@DiscriminatorValue("opinion-corpus")
+class OpinionCorpus extends DocumentCorpus {
 }

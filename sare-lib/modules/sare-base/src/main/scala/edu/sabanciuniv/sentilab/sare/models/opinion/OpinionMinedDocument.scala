@@ -19,12 +19,12 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinion;
+package edu.sabanciuniv.sentilab.sare.models.opinion
 
-import javax.persistence.*;
+import javax.persistence._
 
-import edu.sabanciuniv.sentilab.core.models.*;
-import edu.sabanciuniv.sentilab.sare.models.base.document.*;
+import edu.sabanciuniv.sentilab.core.models._
+import edu.sabanciuniv.sentilab.sare.models.base.document._
 
 /**
  * A document that contains the result of opinion mining.
@@ -32,47 +32,29 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
  */
 @Entity
 @DiscriminatorValue("opinion-mined-doc")
-public class OpinionMinedDocument
-		extends ShadowFullTextDocument
-		implements UserInaccessibleModel, IOpinionDocument {
-	
-	private static final long serialVersionUID = 4247797717350293911L;
-	
-	/**
-	 * Creates an instance of {@link OpinionMinedDocument}.
-	 * @param baseDocument the {@link FullTextDocument} to base this instance on.
-	 */
-	public OpinionMinedDocument(FullTextDocument baseDocument) {
-		super(baseDocument);
-	}
+class OpinionMinedDocument(baseDocument: FullTextDocument)
+	extends ShadowFullTextDocument(baseDocument)
+	with UserInaccessibleModel with OpinionDocumentLike {
 	
 	/**
 	 * Creates an instance of {@link OpinionMinedDocument}.
 	 */
-	public OpinionMinedDocument() {
-		this(null);
-	}
-
-	@Override
-	public Double getPolarity() {
-		return this.getProperty("polarity", Double.class);
-	}
+	def this() = this(null)
+	
+	override def getPolarity = getProperty("polarity", classOf[java.lang.Double])
 
 	/**
 	 * Sets the opinion polarity of this document.
 	 * @param polarity the opinion polarity to set.
 	 * @return the {@code this} object.
 	 */
-	public OpinionMinedDocument setPolarity(Double polarity) {
-		if (polarity != null && polarity.isNaN()) {
-			polarity = null;
-		}
-		this.setProperty("polarity", polarity);
-		return this;
+	def setPolarity(polarity: java.lang.Double) = {
+		setProperty("polarity", Option(polarity) map {
+		  	case polarity if polarity.isNaN => null
+		  	case polarity => polarity
+		} getOrElse null)
+		this
 	}
 
-	@Override
-	public FullTextDocument getAccessible() {
-		return this.getFullTextDocument();
-	}
+	override def getAccessible = getFullTextDocument
 }

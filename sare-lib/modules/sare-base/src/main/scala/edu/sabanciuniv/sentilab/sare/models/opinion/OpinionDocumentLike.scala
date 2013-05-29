@@ -19,20 +19,19 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.opinion;
+package edu.sabanciuniv.sentilab.sare.models.opinion
 
-import edu.sabanciuniv.sentilab.sare.models.base.document.IDocument;
+import edu.sabanciuniv.sentilab.sare.models.base.document.IDocument
 
 /**
  * A class that implements this interface is an opinion document with a polarity.
  * @author Mus'ab Husaini
  */
-public interface IOpinionDocument
-		extends IDocument {
+trait OpinionDocumentLike extends IDocument {
 	
 	/**
 	 * Gets the opinion polarity of this document.
 	 * @return the opinion polarity of this document.
 	 */
-	public Double getPolarity();
+	def getPolarity: java.lang.Double;
 }
