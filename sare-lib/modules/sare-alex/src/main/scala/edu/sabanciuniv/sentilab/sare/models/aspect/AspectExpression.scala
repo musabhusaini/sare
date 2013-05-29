@@ -19,11 +19,11 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.aspect;
+package edu.sabanciuniv.sentilab.sare.models.aspect
 
-import javax.persistence.*;
+import javax.persistence._
 
-import edu.sabanciuniv.sentilab.sare.models.base.document.*;
+import edu.sabanciuniv.sentilab.sare.models.base.document._
 
 /**
  * A class that represents an aspect expression.
@@ -31,22 +31,15 @@ import edu.sabanciuniv.sentilab.sare.models.base.document.*;
  */
 @Entity
 @DiscriminatorValue("aspect-expression")
-public class AspectExpression
+class AspectExpression
 	extends LexiconDocument {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8749649591681294449L;
 
 	/**
 	 * Gets the aspect this expression belongs to.
 	 * @return the {@link AspectLexicon} object this expression belongs to; {@code null} if none.
 	 */
-	public AspectLexicon getAspect() {
-		if (this.getStore() instanceof AspectLexicon) {
-			return (AspectLexicon)this.getStore();
-		}
-		return null;
+	def getAspect = getStore match {
+	  	case store: AspectLexicon => store
+	  	case _ => null
 	}
 }
