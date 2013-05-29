@@ -12,26 +12,26 @@
  *  
  * SARE is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.utils.tests;
+package edu.sabanciuniv.sentilab.utils.tests
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.runner.RunWith
+import org.junit.runners.Suite
+import org.junit.runners.Suite.SuiteClasses
 
-import edu.sabanciuniv.sentilab.utils.text.nlp.factory.tests.LinguisticProcessorFactoryTest;
-import edu.sabanciuniv.sentilab.utils.text.nlp.stanford.tests.StanfordEnglishProcessorTest;
+import edu.sabanciuniv.sentilab.utils.text.nlp.factory.tests.LinguisticProcessorFactoryTest
+import edu.sabanciuniv.sentilab.utils.text.nlp.stanford.tests.StanfordEnglishProcessorTest
 
-@RunWith(Suite.class)
-@SuiteClasses({
-	LinguisticProcessorFactoryTest.class,
-	StanfordEnglishProcessorTest.class
-})
-public class UtilsTest {
+@RunWith(classOf[Suite])
+@SuiteClasses(Array[Class[_]](
+	classOf[LinguisticProcessorFactoryTest],
+	classOf[StanfordEnglishProcessorTest]
+))
+class UtilsTest {
 }

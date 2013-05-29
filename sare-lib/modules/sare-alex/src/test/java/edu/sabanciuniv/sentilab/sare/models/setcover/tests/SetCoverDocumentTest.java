@@ -37,6 +37,8 @@ public class SetCoverDocumentTest {
 	@Before
 	public void setUp() throws Exception {
 		testCorpus = new OpinionCorpus();
+		testCorpus.setLanguage("en");
+		
 		testOpinion = (OpinionDocument)new OpinionDocument()
 			.setContent("this is a test document.")
 			.setStore(testCorpus);
