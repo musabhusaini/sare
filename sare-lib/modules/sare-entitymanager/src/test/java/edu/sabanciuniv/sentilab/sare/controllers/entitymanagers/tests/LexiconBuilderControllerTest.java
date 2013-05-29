@@ -57,6 +57,8 @@ public class LexiconBuilderControllerTest
 	@Before
 	public void setUp() throws Exception {
 		testCorpus = new OpinionCorpus();
+		testCorpus.setLanguage("en");
+		
 		testDocument1 = (OpinionDocument)new OpinionDocument()
 			.setContent("this is the first test document. it's ok.")
 			.setStore(testCorpus);
