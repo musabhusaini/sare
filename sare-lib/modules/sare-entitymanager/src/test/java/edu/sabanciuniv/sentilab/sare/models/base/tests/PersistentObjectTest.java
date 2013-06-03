@@ -337,7 +337,7 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 		assertNotNull(actualObject1);
 		
 		assertNotNull(actualObject1.getLastUpdatedDate());
-		assertEquals(timeThen.getTime(), actualObject1.getLastUpdatedDate().getTime(), 500);
+		assertEquals(timeThen.getTime(), actualObject1.getLastUpdatedDate().getTime(), 1000);
 	}
 	
 	@Test
