@@ -27,8 +27,6 @@ organization in ThisBuild := "edu.sabanciuniv.sentilab"
 
 version in ThisBuild := "2.0.1"
 
-libraryDependencies in ThisBuild += "com.novocode" % "junit-interface" % "0.10-M4" % "test"
-
 parallelExecution in Test in ThisBuild := false
 
 EclipseKeys.createSrc in ThisBuild := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
