@@ -57,7 +57,7 @@ public class OpinionDocumentControllerTest
 		testDocument = testFactory.create();
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -70,7 +70,7 @@ public class OpinionDocumentControllerTest
 	@Test
 	public void testCreateWithExistingIdGetsExistingObject() {
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -99,7 +99,7 @@ public class OpinionDocumentControllerTest
 	@Test
 	public void testCreateWithExistingIdUpdatesObject() {
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		em.clear();
 

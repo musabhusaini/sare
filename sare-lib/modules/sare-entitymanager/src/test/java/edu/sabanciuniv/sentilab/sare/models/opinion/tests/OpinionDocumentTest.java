@@ -52,7 +52,7 @@ public class OpinionDocumentTest
 			.setLanguage("en");
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		
 		testDocument = (OpinionDocument)new OpinionDocument().setStore(testCorpus);
@@ -68,7 +68,7 @@ public class OpinionDocumentTest
 		testDocument.setContent(testContent1);
 		
 		em.getTransaction().begin();
-		persist(testDocument);
+		em.persist(testDocument);
 		em.getTransaction().commit();
 		
 		em.clear();
@@ -83,7 +83,7 @@ public class OpinionDocumentTest
 		testDocument.setContent(testContent1);
 		
 		em.getTransaction().begin();
-		persist(testDocument);
+		em.persist(testDocument);
 		em.getTransaction().commit();
 		
 		em.clear();
@@ -106,7 +106,7 @@ public class OpinionDocumentTest
 		testDocument.setPolarity(testPolarity1);
 		
 		em.getTransaction().begin();
-		persist(testDocument);
+		em.persist(testDocument);
 		em.getTransaction().commit();
 		
 		em.clear();
@@ -129,7 +129,7 @@ public class OpinionDocumentTest
 		testDocument.setPolarity(testPolarity1);
 		
 		em.getTransaction().begin();
-		persist(testDocument);
+		em.persist(testDocument);
 		em.getTransaction().commit();
 		
 		em.clear();
@@ -142,7 +142,7 @@ public class OpinionDocumentTest
 	@Test
 	public void testStore() {
 		em.getTransaction().begin();
-		persist(testDocument);
+		em.persist(testDocument);
 		em.getTransaction().commit();
 		
 		UUID testStoreGuid = testDocument.getStore().getIdentifier();
@@ -162,8 +162,8 @@ public class OpinionDocumentTest
 		testDocument.setBaseDocument(testBaseDocument);
 		
 		em.getTransaction().begin();
-		persist(testBaseDocument);
-		persist(testDocument);
+		em.persist(testBaseDocument);
+		em.persist(testDocument);
 		em.getTransaction().commit();
 		
 		em.clear();

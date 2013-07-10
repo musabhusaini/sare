@@ -58,8 +58,8 @@ public class SetCoverDocumentTest
 		testCorpus.addDocument(testDocument);
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
-		persist(testDocument);
+		em.persist(testCorpus);
+		em.persist(testDocument);
 		em.getTransaction().commit();
 		
 		testSetCover = new DocumentSetCover(testCorpus);
@@ -81,8 +81,8 @@ public class SetCoverDocumentTest
 	@Test
 	public void testWeight() {
 		em.getTransaction().begin();
-		persist(testSetCover);
-		persist(testSetCoverDocument);
+		em.persist(testSetCover);
+		em.persist(testSetCoverDocument);
 		em.getTransaction().commit();
 		
 		assertEquals(testSetCoverDocument.getTotalTokenWeight(), testSetCoverDocument.getWeight(), 0);
@@ -106,8 +106,8 @@ public class SetCoverDocumentTest
 		assertFalse(testSetCoverDocument.getWeight() == testDocument.getTotalTokenWeight());
 		
 		em.getTransaction().begin();
-		persist(testSetCover);
-		persist(testSetCoverDocument);
+		em.persist(testSetCover);
+		em.persist(testSetCoverDocument);
 		em.getTransaction().commit();
 		
 		em.clear();
@@ -126,9 +126,10 @@ public class SetCoverDocumentTest
 	@Test
 	public void testEnrichedContentChangesWithBase() {
 		em.getTransaction().begin();
-		persist(testSetCover);
-		persist(testSetCoverDocument);
+		em.persist(testSetCover);
+		em.persist(testSetCoverDocument);
 		em.getTransaction().commit();
+		em.refresh(testDocument);
 		
 		testDocument.setContent("this is a modified test document.");
 		em.getTransaction().begin();

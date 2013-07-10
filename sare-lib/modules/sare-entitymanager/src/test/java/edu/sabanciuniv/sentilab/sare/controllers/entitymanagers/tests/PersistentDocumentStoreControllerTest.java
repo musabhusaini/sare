@@ -59,7 +59,7 @@ public class PersistentDocumentStoreControllerTest extends PersistenceTestsBase 
 		
 		em.getTransaction().begin();
 		for (OpinionCorpus testCorpus : testCorpora) {
-			persist(testCorpus);
+			em.persist(testCorpus);
 		}
 		em.getTransaction().commit();
 		em.clear();
