@@ -20,3 +20,5 @@
 //
 
 name := "core"
+
+libraryDependencies += "com.novocode" % "junit-interface" % "0.10-M4" % "test"

@@ -50,7 +50,7 @@ public class PersistentDocumentControllerTest
 			.addDocument(new OpinionDocument());
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		em.clear();
 	}

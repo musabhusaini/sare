@@ -69,8 +69,8 @@ public class LexiconBuilderControllerTest
 		testLexicon = new AspectLexicon();
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
-		persist(testLexicon);
+		em.persist(testCorpus);
+		em.persist(testLexicon);
 		em.getTransaction().commit();
 		
 		testBuilder = new LexiconBuilderDocumentStore(testCorpus, testLexicon);
@@ -93,7 +93,7 @@ public class LexiconBuilderControllerTest
 	@Test
 	public void testFindBuilderFindsWithValidBuilder() {
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -111,7 +111,7 @@ public class LexiconBuilderControllerTest
 	@Test
 	public void testGetDocuments() {
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -140,7 +140,7 @@ public class LexiconBuilderControllerTest
 		testLBDocument2.setStore(null);
 		
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -152,7 +152,7 @@ public class LexiconBuilderControllerTest
 	@Test
 	public void testGetSeenTokens() {
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -167,7 +167,7 @@ public class LexiconBuilderControllerTest
 		testToken2.setStore(null);
 		
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -181,7 +181,7 @@ public class LexiconBuilderControllerTest
 		testToken2.setStore(null);
 		
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -192,7 +192,7 @@ public class LexiconBuilderControllerTest
 	@Test
 	public void testGetDocument() {
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -210,7 +210,7 @@ public class LexiconBuilderControllerTest
 		testLBDocument1.setSeen(false);
 		
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 
@@ -225,7 +225,7 @@ public class LexiconBuilderControllerTest
 		testLBDocument2.setSeen(true);
 		
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 
@@ -239,7 +239,7 @@ public class LexiconBuilderControllerTest
 		testLBDocument1.setSeen(false);
 		
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -261,14 +261,14 @@ public class LexiconBuilderControllerTest
 	@Test
 	public void testRefreshBuilder() {
 		em.getTransaction().begin();
-		persist(testBuilder);
+		em.persist(testBuilder);
 		em.getTransaction().commit();
 		
 		final OpinionDocument anotherDocument = (OpinionDocument)new OpinionDocument()
 			.setContent("whatever")
 			.setStore(testCorpus);
 		em.getTransaction().begin();
-		persist(anotherDocument);
+		em.persist(anotherDocument);
 		em.getTransaction().commit();
 		em.clear();
 		

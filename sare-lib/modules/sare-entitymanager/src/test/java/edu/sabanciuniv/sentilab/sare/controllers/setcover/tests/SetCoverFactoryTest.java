@@ -63,6 +63,11 @@ public class SetCoverFactoryTest
 
 	@Test
 	public void testSetCoverControllerWithExistingIdGetsExisting() {
+		em.getTransaction().begin();
+		em.persist(testCorpus);
+		em.getTransaction().commit();
+		em.refresh(testCorpus);
+
 		DocumentSetCover setcover;
 		try {
 			setcover = testController
@@ -73,10 +78,9 @@ public class SetCoverFactoryTest
 			fail("could not create set cover");
 			return;
 		}
-		
+
 		em.getTransaction().begin();
-		persist(testCorpus);
-		persist(setcover);
+		em.persist(setcover);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -99,6 +103,11 @@ public class SetCoverFactoryTest
 	
 	@Test
 	public void testCreateWithDifferentCoverageAdjusts() {
+		em.getTransaction().begin();
+		em.persist(testCorpus);
+		em.getTransaction().commit();
+		em.refresh(testCorpus);
+		
 		DocumentSetCover setcover;
 		try {
 			setcover = testController
@@ -113,8 +122,7 @@ public class SetCoverFactoryTest
 		assertEquals(3, Iterables.size(setcover.getDocuments()));
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
-		persist(setcover);
+		em.persist(setcover);
 		em.getTransaction().commit();
 		em.clear();
 		
