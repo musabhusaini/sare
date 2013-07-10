@@ -27,6 +27,8 @@ organization in ThisBuild := "edu.sabanciuniv.sentilab"
 
 version in ThisBuild := "2.0.1"
 
+testOptions in ThisBuild += Tests.Argument(TestFrameworks.JUnit, "-q", "-a", "--ignore-runners=org.junit.runners.Suite")
+
 parallelExecution in Test in ThisBuild := false
 
 EclipseKeys.createSrc in ThisBuild := EclipseCreateSrc.Default + EclipseCreateSrc.Resource

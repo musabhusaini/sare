@@ -28,11 +28,11 @@ object SareBuild extends Build {
 	
 	lazy val core = Project(id = "core", base = file("modules/core"))
 	lazy val utils = Project(id = "utils", base = file("modules/utils"))
-		.dependsOn(core)
+		.dependsOn(core % "test->test;compile")
 	lazy val sareBase = Project(id = "sare-base", base = file("modules/sare-base"))
-		.dependsOn(utils)
+		.dependsOn(utils % "test->test;compile")
 	lazy val sareAlex = Project(id = "sare-alex", base = file("modules/sare-alex"))
-		.dependsOn(sareBase)
+		.dependsOn(sareBase % "test->test;compile")
 	lazy val sareEntityManager = Project(id = "sare-entitymanager", base = file("modules/sare-entitymanager"))
-		.dependsOn(sareBase, sareAlex)
+		.dependsOn(sareBase % "test->test;compile", sareAlex % "test->test;compile")
 }

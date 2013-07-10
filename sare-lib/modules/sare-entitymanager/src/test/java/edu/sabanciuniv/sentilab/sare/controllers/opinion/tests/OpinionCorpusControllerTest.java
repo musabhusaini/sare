@@ -54,7 +54,7 @@ public class OpinionCorpusControllerTest
 	@Test
 	public void testCreateWithExistingIdGetsExistingObject() {
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -79,7 +79,7 @@ public class OpinionCorpusControllerTest
 	@Test
 	public void testCreateWithExistingIdUpdatesObject() {
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -96,7 +96,7 @@ public class OpinionCorpusControllerTest
 		
 		em.getTransaction().begin();
 		for (OpinionDocument doc : actualCorpus.getDocuments(OpinionDocument.class)) {
-			persist(doc);
+			em.persist(doc);
 		}
 		em.merge(actualCorpus);
 		em.getTransaction().commit();

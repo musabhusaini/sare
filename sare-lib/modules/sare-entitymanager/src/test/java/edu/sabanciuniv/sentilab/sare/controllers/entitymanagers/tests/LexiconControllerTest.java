@@ -51,7 +51,7 @@ public class LexiconControllerTest
 		testLexicon.addAspect("test aspect 2");
 		
 		em.getTransaction().begin();
-		persist(testLexicon);
+		em.persist(testLexicon);
 		em.getTransaction().commit();
 		em.clear();
 	}

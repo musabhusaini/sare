@@ -142,7 +142,7 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 		testObject1.setOtherData(testOtherData);
 		
 		em.getTransaction().begin();
-		persist(testObject1);
+		em.persist(testObject1);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -157,7 +157,7 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 	@Test
 	public void testOtherDataGetsSetOnUpdate() {
 		em.getTransaction().begin();
-		persist(testObject1);
+		em.persist(testObject1);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -184,8 +184,8 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 		wrappedTestObject1.addReference(testObject2);
 		
 		em.getTransaction().begin();
-		persist(testObject1);
-		persist(testObject2);
+		em.persist(testObject1);
+		em.persist(testObject2);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -202,8 +202,8 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 		wrappedTestObject1.addReference(testObject2);
 		
 		em.getTransaction().begin();
-		persist(testObject1);
-		persist(testObject2);
+		em.persist(testObject1);
+		em.persist(testObject2);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -232,8 +232,8 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 		wrappedTestObject1.addReferer(testObject2);
 		
 		em.getTransaction().begin();
-		persist(testObject1);
-		persist(testObject2);
+		em.persist(testObject1);
+		em.persist(testObject2);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -250,8 +250,8 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 		wrappedTestObject1.addReferer(testObject2);
 		
 		em.getTransaction().begin();
-		persist(testObject1);
-		persist(testObject2);
+		em.persist(testObject1);
+		em.persist(testObject2);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -281,7 +281,7 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 		
 		em.getTransaction().begin();
 		Date timeThen = new Date();
-		persist(testObject1);
+		em.persist(testObject1);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -295,7 +295,7 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 	@Test
 	public void testFirstCreatedDateDoesNotGetResetOnUpdate() {
 		em.getTransaction().begin();
-		persist(testObject1);
+		em.persist(testObject1);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -329,7 +329,7 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 		
 		em.getTransaction().begin();
 		Date timeThen = new Date();
-		persist(testObject1);
+		em.persist(testObject1);
 		em.getTransaction().commit();
 		em.clear();
 		
@@ -343,7 +343,7 @@ public class PersistentObjectTest extends PersistenceTestsBase {
 	@Test
 	public void testLastUpdateDateGetsSetOnUpdate() {
 		em.getTransaction().begin();
-		persist(testObject1);
+		em.persist(testObject1);
 		em.getTransaction().commit();
 		em.clear();
 		

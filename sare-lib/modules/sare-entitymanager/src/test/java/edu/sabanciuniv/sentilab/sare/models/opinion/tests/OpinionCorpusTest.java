@@ -54,8 +54,8 @@ public class OpinionCorpusTest
 		testCorpus.setDocuments(Lists.newArrayList(testDocument));
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
-		persist(testDocument);
+		em.persist(testCorpus);
+		em.persist(testDocument);
 		em.getTransaction().commit();
 		
 		em.clear();
@@ -91,8 +91,8 @@ public class OpinionCorpusTest
 		assertTrue(testBaseCorpus.hasDerivedStore(testCorpus));
 		
 		em.getTransaction().begin();
-		persist(testBaseCorpus);
-		persist(testCorpus);
+		em.persist(testBaseCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		
 		em.clear();
@@ -108,7 +108,7 @@ public class OpinionCorpusTest
 		testCorpus.setTitle("test corpus");
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		
 		em.clear();
@@ -123,7 +123,7 @@ public class OpinionCorpusTest
 		testCorpus.setLanguage("en");
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		
 		em.clear();
@@ -138,8 +138,9 @@ public class OpinionCorpusTest
 		testCorpus.setLanguage("en");
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
+		em.refresh(testCorpus);
 		
 		testCorpus.setLanguage("tr");
 		em.getTransaction().begin();
@@ -158,8 +159,9 @@ public class OpinionCorpusTest
 		testCorpus.setDescription("this is a test corpus");
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
+		em.refresh(testCorpus);
 		
 		testCorpus.setDescription("this is also test corpus");
 		em.getTransaction().begin();
@@ -178,7 +180,7 @@ public class OpinionCorpusTest
 		testCorpus.setDescription("this is a test corpus");
 		
 		em.getTransaction().begin();
-		persist(testCorpus);
+		em.persist(testCorpus);
 		em.getTransaction().commit();
 		
 		em.clear();
