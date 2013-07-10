@@ -33,7 +33,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.document._
 @Entity
 @DiscriminatorValue("setcover-document")
 class SetCoverDocument(baseDocument: PersistentDocument)
-	extends MergableDocument with IWeightedDocument {
+	extends MergableDocument with WeightedDocument {
 
 	setCovered(true)
 	setBaseDocument(baseDocument)

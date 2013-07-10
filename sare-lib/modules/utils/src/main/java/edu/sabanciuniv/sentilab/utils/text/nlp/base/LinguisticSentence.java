@@ -30,9 +30,9 @@ public abstract class LinguisticSentence
 	
 	/**
 	 * Creates an instance of {@code LinguisticSentence}.
-	 * @param processor the {@link ILinguisticProcessor} that was used to produce this data.
+	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this data.
 	 */
-	protected LinguisticSentence(ILinguisticProcessor processor) {
+	protected LinguisticSentence(LinguisticProcessorLike processor) {
 		super(processor);
 	}
 	

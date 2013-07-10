@@ -72,7 +72,7 @@ public class LinguisticProcessorFactoryTest {
 	@Test
 	public void testCreateWithOnlyLanguage() {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory().setLanguage("xx");
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -81,7 +81,7 @@ public class LinguisticProcessorFactoryTest {
 	@Test
 	public void testCreateWithOnlyLanguageCased() {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory().setLanguage("Xx");
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -90,7 +90,7 @@ public class LinguisticProcessorFactoryTest {
 	@Test
 	public void testCreateWithOnlyName() {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory().setName("test");
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -101,7 +101,7 @@ public class LinguisticProcessorFactoryTest {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("TEsT")
 			.setIgnoreNameCase(true);
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -112,7 +112,7 @@ public class LinguisticProcessorFactoryTest {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("TET")
 			.setIgnoreNameCase(true);
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNull(processor);
 	}
@@ -122,7 +122,7 @@ public class LinguisticProcessorFactoryTest {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("TEsT")
 			.setIgnoreNameCase(false);
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNull(processor);
 	}
@@ -132,7 +132,7 @@ public class LinguisticProcessorFactoryTest {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test")
 			.setLanguage("xx");
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -143,7 +143,7 @@ public class LinguisticProcessorFactoryTest {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test")
 			.setLanguage("xy");
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNull(processor);
 	}
@@ -153,7 +153,7 @@ public class LinguisticProcessorFactoryTest {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test1")
 			.setLanguage("xx");
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNull(processor);
 	}
@@ -163,7 +163,7 @@ public class LinguisticProcessorFactoryTest {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory()
 			.setName("test1")
 			.setLanguage("xy");
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNull(processor);
 	}
@@ -171,7 +171,7 @@ public class LinguisticProcessorFactoryTest {
 	@Test
 	public void testCreateWithNoNameAndLanguage() {
 		LinguisticProcessorFactory factory = new LinguisticProcessorFactory();
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNotNull(processor);
 	}
@@ -182,7 +182,7 @@ public class LinguisticProcessorFactoryTest {
 			.setName("test")
 			.setLanguage("xx")
 			.setMustTag(true);
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNotNull(processor);
 		assertEquals(processor.getClass(), TestLinguisticProcessor.class);
@@ -195,7 +195,7 @@ public class LinguisticProcessorFactoryTest {
 			.setLanguage("xx")
 			.setMustTag(true)
 			.setMustParse(true);
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNull(processor);
 	}
@@ -206,7 +206,7 @@ public class LinguisticProcessorFactoryTest {
 			.setName("test")
 			.setLanguage("xx")
 			.setMustParse(true);
-		ILinguisticProcessor processor = factory.create();
+		LinguisticProcessorLike processor = factory.create();
 		
 		assertNull(processor);
 	}

@@ -41,7 +41,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  */
 public class SetCoverFactory
 		extends PersistentDocumentStoreFactory<DocumentSetCover>
-		implements IDocumentStoreController, ProgressObservable {
+		implements DocumentStoreController, ProgressObservablePrimitive {
 
 	public static final double DEFAULT_WEIGHT_COVERAGE = 1.0;
 
@@ -120,9 +120,7 @@ public class SetCoverFactory
 			}
 		
 			progress += 1.0 / storeSize;
-			for (ProgressObserver progressObserver : this.progressObservers) {
-				progressObserver.observe(progress, "create");
-			}
+			this.notifyProgress(progress, "create");
 		}
 		
 		setcover.setDocuments(setCoverDocuments);
@@ -221,9 +219,9 @@ public class SetCoverFactory
 		this.weightCoverage = weightCoverage;
 		return this;
 	}
-
+	
 	@Override
-	public ProgressObservable addProgessObserver(ProgressObserver observer) {
+	public ProgressObservablePrimitive addProgessObserver(ProgressObserver observer) {
 		this.progressObservers.add(observer);
 		return this;
 	}
@@ -231,5 +229,12 @@ public class SetCoverFactory
 	@Override
 	public boolean removeProgressObserver(ProgressObserver observer) {
 		return this.progressObservers.remove(observer);
+	}
+
+	@Override
+	public void notifyProgress(double progress, String message) {
+		for (ProgressObserver progressObserver : this.progressObservers) {
+			progressObserver.observe(progress, message);
+		}
 	}
 }

@@ -21,17 +21,17 @@
 
 package edu.sabanciuniv.sentilab.sare.models.opinion
 
-import edu.sabanciuniv.sentilab.sare.models.base.document.IDocument
+import edu.sabanciuniv.sentilab.sare.models.base.document.DocumentLike
 
 /**
  * A class that implements this interface is an opinion document with a polarity.
  * @author Mus'ab Husaini
  */
-trait OpinionDocumentLike extends IDocument {
+trait OpinionDocumentLike extends DocumentLike {
 	
 	/**
 	 * Gets the opinion polarity of this document.
 	 * @return the opinion polarity of this document.
 	 */
-	def getPolarity: java.lang.Double;
+	def getPolarity: java.lang.Double
 }

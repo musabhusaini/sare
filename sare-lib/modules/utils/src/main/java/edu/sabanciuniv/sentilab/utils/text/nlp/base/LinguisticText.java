@@ -30,9 +30,9 @@ public abstract class LinguisticText
 	
 	/**
 	 * Creates an instance of {@code LinguisticText}.
-	 * @param processor the {@link ILinguisticProcessor} that was used to produce this data.
+	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this data.
 	 */
-	protected LinguisticText(ILinguisticProcessor processor) {
+	protected LinguisticText(LinguisticProcessorLike processor) {
 		super(processor);
 	}
 	

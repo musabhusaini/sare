@@ -43,7 +43,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
 @Entity
 @DiscriminatorValue("setcover-corpus")
 public class DocumentSetCover
-		extends DocumentCorpus implements IDerivedStore {
+		extends DocumentCorpus implements DerivedStoreLike {
 
 	/**
 	 * 

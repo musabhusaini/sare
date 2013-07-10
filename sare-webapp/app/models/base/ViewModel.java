@@ -27,13 +27,13 @@ import org.codehaus.jackson.annotate.*;
 import org.codehaus.jackson.node.ObjectNode;
 
 import controllers.factories.ViewModelFactory;
-import edu.sabanciuniv.sentilab.core.models.IModel;
+import edu.sabanciuniv.sentilab.core.models.ModelLike;
 
 import play.libs.Json;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ViewModel 
-		implements IModel {
+		implements ModelLike {
 
 	public static <T> ViewModel createViewModel(T model) {
 		ViewModel viewModel = new ViewModelFactory()

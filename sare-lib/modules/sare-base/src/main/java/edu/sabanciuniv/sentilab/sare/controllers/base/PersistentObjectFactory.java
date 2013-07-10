@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 
-import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
+import edu.sabanciuniv.sentilab.core.controllers.factory.Factory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.models.base.*;
 import edu.sabanciuniv.sentilab.utils.UuidUtils;
@@ -42,7 +42,7 @@ import edu.sabanciuniv.sentilab.utils.UuidUtils;
  * @param <T> the type of object that will be created; must derive from {@link PersistentObject}.
  */
 public abstract class PersistentObjectFactory<T extends PersistentObject>
-		extends ControllerBase implements IFactory<T> {
+		extends ControllerBase implements Factory<T> {
 	
 	protected byte[] existingId;
 	protected String otherData;

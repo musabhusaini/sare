@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
 
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.base.PersistentObjectFactory;
-import edu.sabanciuniv.sentilab.sare.controllers.base.document.IDocumentController;
+import edu.sabanciuniv.sentilab.sare.controllers.base.document.DocumentController;
 import edu.sabanciuniv.sentilab.sare.models.opinion.*;
 import edu.sabanciuniv.sentilab.utils.CannedMessages;
 
@@ -38,7 +38,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
  */
 public class OpinionDocumentFactory
 		extends PersistentObjectFactory<OpinionDocument>
-		implements IDocumentController {
+		implements DocumentController {
 
 	private OpinionCorpus corpus;
 	private Node xmlNode;

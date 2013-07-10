@@ -103,9 +103,9 @@ public class AspectLexiconFactoryTest {
 		
 		AspectLexicon actualLexicon = null;
 		try {
-			actualLexicon = new AspectLexiconFactory()
-				.setFile(new File(getClass().getResource(testLexiconFilename).getPath()))
-				.create();
+			AspectLexiconFactory factory = new AspectLexiconFactory();
+			factory.setFile(new File(getClass().getResource(testLexiconFilename).getPath()));
+			actualLexicon = factory.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not open file");
 		}
@@ -153,8 +153,8 @@ public class AspectLexiconFactoryTest {
 	
 	@Test
 	public void testCreateSetsTitle() {
-		AspectLexiconFactory testController = (AspectLexiconFactory)new AspectLexiconFactory()
-			.setTitle("test");
+		AspectLexiconFactory testController = new AspectLexiconFactory();
+		testController.setTitle("test");
 		AspectLexicon actualLexicon = testController.create();
 		
 		assertNotNull(actualLexicon);
@@ -163,8 +163,8 @@ public class AspectLexiconFactoryTest {
 	
 	@Test
 	public void testCreateSetsDescription() {
-		AspectLexiconFactory testController = (AspectLexiconFactory)new AspectLexiconFactory()
-			.setDescription("test lexicon");
+		AspectLexiconFactory testController = new AspectLexiconFactory();
+		testController.setDescription("test lexicon");
 		AspectLexicon actualLexicon = testController.create();
 		
 		assertNotNull(actualLexicon);
@@ -173,8 +173,8 @@ public class AspectLexiconFactoryTest {
 	
 	@Test
 	public void testCreateSetsLanguage() {
-		AspectLexiconFactory testController = (AspectLexiconFactory)new AspectLexiconFactory()
-			.setLanguage("tr");
+		AspectLexiconFactory testController = new AspectLexiconFactory();
+		testController.setLanguage("tr");
 		AspectLexicon actualLexicon = testController.create();
 		
 		assertNotNull(actualLexicon);

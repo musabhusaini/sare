@@ -23,7 +23,7 @@ package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
 
 import javax.persistence.Entity;
 
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.ILinguisticProcessor;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticProcessorLike;
 import edu.sabanciuniv.sentilab.utils.text.nlp.factory.*;
 
 /**
@@ -41,9 +41,9 @@ public abstract class DocumentCorpus
 	
 	/**
 	 * Gets the basic linguistic processor that can be used for this corpus.
-	 * @return the {@link ILinguisticProcessor} object that can be used.
+	 * @return the {@link LinguisticProcessorLike} object that can be used.
 	 */
-	public ILinguisticProcessor getLinguisticProcessor() {
+	public LinguisticProcessorLike getLinguisticProcessor() {
 		return new LinguisticProcessorFactory()
 			.setLanguage(this.getLanguage())
 			.create();

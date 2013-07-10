@@ -25,7 +25,7 @@ import java.util.*;
 
 import com.google.common.collect.*;
 
-import edu.sabanciuniv.sentilab.core.models.IModel;
+import edu.sabanciuniv.sentilab.core.models.ModelLike;
 import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
 
 /**
@@ -33,7 +33,7 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
  * @author Mus'ab Husaini
  */
 public class TokenizingOptions
-	implements IModel {
+	implements ModelLike {
 	
 	private List<String> tags;
 	private boolean isLemmatized;

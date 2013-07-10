@@ -22,13 +22,13 @@
 package edu.sabanciuniv.sentilab.sare.models.opinion
 
 import edu.sabanciuniv.sentilab.core.models.UserInaccessibleModel
-import edu.sabanciuniv.sentilab.sare.models.base.documentStore.IDerivedStore
+import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DerivedStoreLike
 
 /**
  * A class that implements this interface contains opinion mining results of a corpus.
  * @author Mus'ab Husaini
  */
-trait OpinionMinedCorpusLike extends UserInaccessibleModel with IDerivedStore {
+trait OpinionMinedCorpusLike extends UserInaccessibleModel with DerivedStoreLike {
 	
 	/**
 	 * Gets the engine code of the engine that was used to mine opinions.
