@@ -37,7 +37,7 @@ public class StanfordText extends LinguisticText {
 	
 	private Annotation document;
 	
-	public StanfordText(ILinguisticProcessor processor, Annotation text) {
+	public StanfordText(LinguisticProcessorLike processor, Annotation text) {
 		super(processor);
 		
 		this.document = Validate.notNull(text, CannedMessages.NULL_ARGUMENT, "text");
@@ -48,7 +48,7 @@ public class StanfordText extends LinguisticText {
 		return Iterables.transform(document.get(SentencesAnnotation.class), new Function<CoreMap, LinguisticSentence>() {
 			@Override
 			public LinguisticSentence apply(CoreMap input) {
-				return new StanfordSentence(processor, input);
+				return new StanfordSentence(processor(), input);
 			}
 		});
 	}
@@ -58,7 +58,7 @@ public class StanfordText extends LinguisticText {
 		return Iterables.transform(document.get(TokensAnnotation.class), new Function<CoreLabel, LinguisticToken>() {
 			@Override
 			public LinguisticToken apply(CoreLabel input) {
-				return new StanfordToken(processor, input);
+				return new StanfordToken(processor(), input);
 			}
 		});
 	}

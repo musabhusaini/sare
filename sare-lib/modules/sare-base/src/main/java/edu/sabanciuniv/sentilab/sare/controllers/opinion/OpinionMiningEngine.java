@@ -28,7 +28,7 @@ import org.reflections.Reflections;
 
 import edu.sabanciuniv.sentilab.sare.controllers.base.ControllerBase;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.DocumentCorpus;
-import edu.sabanciuniv.sentilab.sare.models.opinion.IOpinionMinedCorpus;
+import edu.sabanciuniv.sentilab.sare.models.opinion.OpinionMinedCorpusLike;
 
 /**
  * The base class for all opinion mining engines.
@@ -134,11 +134,11 @@ public abstract class OpinionMiningEngine
 	 * Gets the corpus that does or will contain mined results.
 	 * @return the {@link IOpinionMinedCorpus} object. If called before {@code mine}, this will not contain any actual results.
 	 */
-	public abstract IOpinionMinedCorpus getTargetMinedCorpus();
+	public abstract OpinionMinedCorpusLike getTargetMinedCorpus();
 	
 	/**
 	 * Applies the opinion mining engine to the provided test corpus.
 	 * @return the {@link IOpinionMinedCorpus} object containing mined results.
 	 */
-	public abstract IOpinionMinedCorpus mine();
+	public abstract OpinionMinedCorpusLike mine();
 }

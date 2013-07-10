@@ -38,12 +38,12 @@ import play.libs.Json;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import edu.sabanciuniv.sentilab.core.controllers.factory.IFactory;
+import edu.sabanciuniv.sentilab.core.controllers.factory.Factory;
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.models.base.PersistentObject;
 
 public class ViewModelFactory
-		implements IFactory<ViewModel> {
+		implements Factory<ViewModel> {
 
 	public static final String MODEL_SUFFIX = "Model";
 	

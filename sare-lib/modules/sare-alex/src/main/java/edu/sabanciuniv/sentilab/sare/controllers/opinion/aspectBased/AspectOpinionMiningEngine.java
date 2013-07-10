@@ -37,7 +37,7 @@ import edu.sabanciuniv.sentilab.sare.models.opinion.*;
  * @author Mus'ab Husaini
  */
 public abstract class AspectOpinionMiningEngine
-		extends OpinionMiningEngine implements ProgressObservable {
+		extends OpinionMiningEngine implements ProgressObservablePrimitive {
 
 	protected AspectOpinionMinedCorpus targetMinedCorpus;
 	protected AspectLexicon aspectLexicon;
@@ -46,13 +46,7 @@ public abstract class AspectOpinionMiningEngine
 	protected AspectOpinionMiningEngine() {
 		this.progressObservers = Lists.newArrayList();
 	}
-	
-	protected void notifyProgress(double progress, String message) {
-		for (ProgressObserver observer : this.progressObservers) {
-			observer.observe(progress, message);
-		}
-	}
-	
+		
 	/**
 	 * Gets the aspect lexicon used for opinion mining.
 	 * @return the {@link AspectLexicon} used.
@@ -88,7 +82,14 @@ public abstract class AspectOpinionMiningEngine
 	public abstract AspectOpinionMinedCorpus mine();
 	
 	@Override
-	public ProgressObservable addProgessObserver(ProgressObserver observer) {
+	public void notifyProgress(double progress, String message) {
+		for (ProgressObserver observer : this.progressObservers) {
+			observer.observe(progress, message);
+		}
+	}
+	
+	@Override
+	public ProgressObservablePrimitive addProgessObserver(ProgressObserver observer) {
 		this.progressObservers.add(observer);
 		return this;
 	}

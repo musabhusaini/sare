@@ -47,9 +47,9 @@ public class AspectLexiconFactoryModel
 	}
 	
 	public AspectLexiconFactory toFactory() {
-		AspectLexiconFactory factory = (AspectLexiconFactory)new AspectLexiconFactory()
-			.setTitle(this.title)
-			.setDescription(this.description);
+		AspectLexiconFactory factory = new AspectLexiconFactory();
+		factory.setTitle(this.title);
+		factory.setDescription(this.description);
 		
 		if (this.baseStore != null && SareTransactionalAction.em() != null) {
 			factory.setBaseStore(SareTransactionalAction.fetchResource(UuidUtils.create(this.baseStore.id), PersistentDocumentStore.class));

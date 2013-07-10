@@ -41,7 +41,7 @@ import edu.sabanciuniv.sentilab.utils.CannedMessages;
 @Entity
 public abstract class PersistentDocumentStore
 	extends PersistentObject
-	implements IDocumentStore {
+	implements DocumentStoreLike {
 
 	/**
 	 * 

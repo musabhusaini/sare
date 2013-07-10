@@ -169,7 +169,7 @@ public abstract class FullTextDocument
 		this.setTokenWeightMap(new HashMap<LinguisticToken, Double>());
 		
 		// get the right NLP based on the language of the corpus.
-		ILinguisticProcessor nlp = new LinguisticProcessorFactory()
+		LinguisticProcessorLike nlp = new LinguisticProcessorFactory()
 			.setMustTag(true)
 			.setLanguage(this.getStore().getLanguage())
 			.create();
@@ -182,7 +182,7 @@ public abstract class FullTextDocument
 				this.getTokenizingOptions().getTags().size() == 0 ||
 				nlpToken.getPosTag().is(this.getTokenizingOptions().getTags())) {
 				
-				nlpToken.setLemmatized(this.getTokenizingOptions().isLemmatized());
+				nlpToken.setIsLemmatized(this.getTokenizingOptions().isLemmatized());
 				MapsExtensions.increment(this.getTokenWeightMap(true, true), nlpToken);
 			}
 		}

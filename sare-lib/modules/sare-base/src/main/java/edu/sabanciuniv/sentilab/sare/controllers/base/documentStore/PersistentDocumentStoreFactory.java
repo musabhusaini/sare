@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.base.PersistentObjectFactory;
-import edu.sabanciuniv.sentilab.sare.controllers.base.document.IDocumentController;
+import edu.sabanciuniv.sentilab.sare.controllers.base.document.DocumentController;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
 
 /**
@@ -35,7 +35,7 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
  * @param <O> the type of options that will be used to create the objects; must derive from {@link PersistentDocumentStoreFactoryOptions}.
  */
 public abstract class PersistentDocumentStoreFactory<T extends PersistentDocumentStore>
-		extends PersistentObjectFactory<T> implements IDocumentController {
+		extends PersistentObjectFactory<T> implements DocumentController {
 
 	protected String title;
 	protected String description;

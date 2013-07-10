@@ -66,8 +66,8 @@ public class SetCoverFactoryTest {
 		String testTitle = "a test";
 		DocumentSetCover setcover;
 		try {
-			SetCoverFactory testController = (SetCoverFactory)new SetCoverFactory()
-				.setStore(testCorpus).setTitle(testTitle);
+			SetCoverFactory testController = new SetCoverFactory();
+			testController.setStore(testCorpus).setTitle(testTitle);
 			setcover = testController.create();
 		} catch (IllegalFactoryOptionsException e) {
 			fail("could not create set cover");

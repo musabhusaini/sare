@@ -76,11 +76,11 @@ public class DocumentSetCoverModel
 	}
 	
 	public SetCoverFactory toFactory() {
-		SetCoverFactory factory = (SetCoverFactory)new SetCoverFactory()
-			.setWeightCoverage(ObjectUtils.defaultIfNull(this.weightCoverage, 1.0))
-			.setTitle(this.title)
-			.setDescription(this.description)
-			.setExistingId(this.id);
+		SetCoverFactory factory = new SetCoverFactory();
+		factory.setWeightCoverage(ObjectUtils.defaultIfNull(this.weightCoverage, 1.0));
+		factory.setTitle(this.title);
+		factory.setDescription(this.description);
+		factory.setExistingId(this.id);
 		
 		if (this.tokenizingOptions != null) {
 			factory.setTokenizingOptions(this.tokenizingOptions.toTokenizingOptions());
