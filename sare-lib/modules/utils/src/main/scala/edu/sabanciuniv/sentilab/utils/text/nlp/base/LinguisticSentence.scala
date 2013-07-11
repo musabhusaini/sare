@@ -19,45 +19,35 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.utils.text.nlp.base;
+package edu.sabanciuniv.sentilab.utils.text.nlp.base
+
+import scala.collection.JavaConversions._
 
 /**
  * The base class for all linguistic sentences.
  * @author Mus'ab Husaini
  */
-public abstract class LinguisticSentence
-	extends LinguisticEntity {
-	
-	/**
-	 * Creates an instance of {@code LinguisticSentence}.
-	 * @param processor the {@link LinguisticProcessorLike} that was used to produce this data.
-	 */
-	protected LinguisticSentence(LinguisticProcessorLike processor) {
-		super(processor);
-	}
+abstract class LinguisticSentence(processor: LinguisticProcessorLike)
+	extends LinguisticEntity(processor) {
 	
 	/**
 	 * Gets all the tokens in this sentence.
 	 * @return the tokens in this sentence.
 	 */
-	public abstract Iterable<LinguisticToken> getTokens();
+	def getTokens: java.lang.Iterable[LinguisticToken]
 	
 	/**
 	 * Gets all the linguistic dependencies in this sentence.
 	 * @return the linguistic dependencies in this sentence.
 	 */
-	public abstract Iterable<LinguisticDependency> getDependencies();
+	def getDependencies: java.lang.Iterable[LinguisticDependency]
 	
-	@Override
-	public String toString(boolean enhanced) {
-		if (!enhanced) {
-			return super.toString(enhanced);
-		}
-		
-		StringBuilder sb = new StringBuilder();
-		for (LinguisticToken token : this.getTokens()) {
-			sb.append(token.toString(enhanced));
-		}
-		return sb.toString();
+	override def toString(enhanced: Boolean) = enhanced match {
+	  	case false => super.toString(enhanced)
+	  	case _ => {
+	  		val sb = new StringBuilder
+	  		getTokens foreach { sb append _.toString(enhanced) }
+	  		sb.toString
+	  	}
 	}
 }
