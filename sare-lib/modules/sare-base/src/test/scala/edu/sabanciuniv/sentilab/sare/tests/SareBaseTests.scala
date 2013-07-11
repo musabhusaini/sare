@@ -29,6 +29,7 @@ import edu.sabanciuniv.sentilab.sare.controllers.opinion.tests._
 import edu.sabanciuniv.sentilab.sare.models.base.document.tests._
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.tests._
 import edu.sabanciuniv.sentilab.sare.models.base.tests._
+import edu.sabanciuniv.sentilab.sare.models.opinion.tests._
 
 @RunWith(classOf[Suite])
 @SuiteClasses(Array[Class[_]](
@@ -41,7 +42,9 @@ import edu.sabanciuniv.sentilab.sare.models.base.tests._
 	classOf[PersistentDocumentStoreTest],
 	classOf[LexiconBuilderDocumentStoreTest],
 	classOf[OpinionDocumentFactoryTest],
-	classOf[OpinionCorpusFactoryTest]
+	classOf[OpinionCorpusFactoryTest],
+	classOf[SentimentLexiconTest],
+	classOf[SentimentExpressionTest]
 ))
 class SareBaseTests {
 }

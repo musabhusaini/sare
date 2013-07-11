@@ -33,7 +33,6 @@ import org.apache.commons.lang3.text.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import edu.sabanciuniv.sentilab.core.models.factory.IllegalFactoryOptionsException;
 import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore.NonDerivedStoreFactory;
 import edu.sabanciuniv.sentilab.sare.models.aspect.*;
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
@@ -66,9 +65,9 @@ public class AspectLexiconFactory
 	    	return this.addXmlAspect(lexicon, doc.getDocumentElement());
 	    }
 	    
-	    Node lexiconNode = (Node)xpath.compile("/lexicon").evaluate(doc, XPathConstants.NODE);
+	    Node lexiconNode = (Node)xpath.compile("/aspect-lexicon").evaluate(doc, XPathConstants.NODE);
 	    if (lexiconNode == null) {
-	    	lexiconNode = Validate.notNull(doc.getDocumentElement(), CannedMessages.NULL_ARGUMENT, "/lexicon");
+	    	lexiconNode = Validate.notNull(doc.getDocumentElement(), CannedMessages.NULL_ARGUMENT, "/aspect-lexicon");
 	    }
 	    
 	    String title = (String)xpath.compile("./@title").evaluate(lexiconNode, XPathConstants.STRING);
@@ -96,7 +95,7 @@ public class AspectLexiconFactory
 	    
 	    // if the node is called "lexicon" then we're at the root, so we won't need to add an aspect and its expressions.
 		AspectLexicon aspect = lexicon;
-		if (!"lexicon".equalsIgnoreCase(aspectNode.getLocalName())) {
+		if (!"aspect-lexicon".equalsIgnoreCase(aspectNode.getLocalName())) {
 			String title = Validate.notEmpty((String)xpath.compile("./@title").evaluate(aspectNode, XPathConstants.STRING),
 				CannedMessages.EMPTY_ARGUMENT, "./aspect/@title");;
 			
@@ -171,22 +170,9 @@ public class AspectLexiconFactory
 
 	@Override
 	protected AspectLexicon createNew() {
-		return new AspectLexicon();
+		return new AspectLexicon(this.getBaseStore());
 	}
 	
-	@Override
-	protected AspectLexicon createPrivate(AspectLexicon lexicon)
-		throws IllegalFactoryOptionsException {
-		
-		if (lexicon == null) {
-			lexicon = new AspectLexicon(this.getBaseStore());
-		}
-		
-		super.createPrivate(lexicon);
-		
-		return lexicon;
-	}
-
 	/**
 	 * Gets the base store that will be set for the lexicon.
 	 * @return the {@link PersistentDocumentStore} object representing the base store.

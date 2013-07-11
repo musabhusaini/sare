@@ -19,21 +19,45 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.tests;
+package edu.sabanciuniv.sentilab.sare.models.opinion.tests
 
-import javax.persistence.*;
+import org.junit._
+import org.junit.Assert._
+import edu.sabanciuniv.sentilab.sare.models.opinion.SentimentExpression
 
-import org.junit.*;
-
-import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.SareEntityManagerFactory;
-import edu.sabanciuniv.sentilab.sare.controllers.entitymanagers.SareEntityManagerFactory.DataMode;
-
-public class PersistenceTestsBase {
-
-	protected EntityManager em;
+class SentimentExpressionTest {
 	
+	private val exp = "good"
+	private var sentExp: SentimentExpression = _
+  
 	@Before
-	public void superSetUp() throws Exception {
-		em = SareEntityManagerFactory.createEntityManager(DataMode.TEST);
+	def setup {
+		sentExp = new SentimentExpression(exp)
+	}
+	
+	@Test
+	def testContent {
+		assertEquals(exp, sentExp.getContent)
+	}
+	
+	@Test
+	def testNegative {
+		val neg = 0.25
+		sentExp.setNegative(neg)
+		assertEquals(neg, sentExp.getNegative, 0)
+	}
+	
+	@Test
+	def testNeutral {
+		val neu = 0.25
+		sentExp.setNeutral(neu)
+		assertEquals(neu, sentExp.getNeutral, 0)
+	}
+	
+	@Test
+	def testPositive {
+		val pos = 0.50
+		sentExp.setPositive(pos)
+		assertEquals(pos, sentExp.getPositive, 0)
 	}
 }

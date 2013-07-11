@@ -189,7 +189,7 @@ public class AspectLexicon
 	/**
 	 * Migrates a given expression to this lexicon.
 	 * @param expression the {@link AspectExpression} object to migrate.
-	 * @return {@code true} if theexpression was migrated, {@code false} otherwise.
+	 * @return {@code true} if the expression was migrated, {@code false} otherwise.
 	 */
 	public boolean migrateExpression(AspectExpression expression) {
 		Validate.notNull(expression, CannedMessages.NULL_ARGUMENT, "expression");

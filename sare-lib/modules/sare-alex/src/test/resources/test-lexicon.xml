@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<lexicon title="test lexicon" description="a test lexicon">
+<aspect-lexicon title="test lexicon" description="a test lexicon">
 	<aspects>
 		<aspect title="aspect 1">
 			<aspects>
@@ -38,4 +38,4 @@
 			</expressions>
 		</aspect>
 	</aspects>
-</lexicon>
+</aspect-lexicon>

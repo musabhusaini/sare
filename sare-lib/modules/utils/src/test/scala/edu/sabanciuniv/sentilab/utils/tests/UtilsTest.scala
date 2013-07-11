@@ -30,6 +30,7 @@ import edu.sabanciuniv.sentilab.utils.text.nlp.stanford.tests.StanfordEnglishPro
 
 @RunWith(classOf[Suite])
 @SuiteClasses(Array[Class[_]](
+    classOf[UuidUtilsTest],
 	classOf[LinguisticProcessorFactoryTest],
 	classOf[StanfordEnglishProcessorTest]
 ))
