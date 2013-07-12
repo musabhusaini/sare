@@ -41,10 +41,10 @@ class SentimentExpressionTest {
 	}
 	
 	@Test
-	def testPos {
-		val pos = "adjective"
-		sentExp.setPos(pos)
-		assertEquals(pos, sentExp.getPos)
+	def testPosTag {
+		val posTag = "adjective"
+		sentExp.setPosTag(posTag)
+		assertEquals(posTag, sentExp.getPosTag)
 	}
 	
 	@Test

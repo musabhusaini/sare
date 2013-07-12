@@ -51,7 +51,7 @@ class SentimentLexiconFactoryTest {
 		assertEquals(expected.getDescription, actual.getDescription)
 		assertEquals(expected.getLanguage, actual.getLanguage)
 		assertTrue(expected.getExpressions forall { sentExp =>
-		  	sentExp.equals(actual.findExpression(sentExp.getContent, sentExp.getPos))
+		  	sentExp.equals(actual.findExpression(sentExp.getContent, sentExp.getPosTag))
 		})
 	}
 	

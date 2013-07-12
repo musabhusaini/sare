@@ -44,11 +44,11 @@ class SentimentLexicon extends Lexicon {
 	/**
 	 * Finds the given expression in this lexicon.
 	 * @param expression the expression to search for.
-	 * @param pos the POS of the expression.
+	 * @param posTag the POS tag of the expression.
 	 * @return the {@link SentimentExpression} object found; {@code null} if none.
 	 */
-	def findExpression(expression: String, pos: String) = Option(expression) map { exp =>
-	  	val sentExp = new SentimentExpression(exp, pos)
+	def findExpression(expression: String, posTag: String) = Option(expression) map { exp =>
+	  	val sentExp = new SentimentExpression(exp, posTag)
 	  	getExpressions find { _.equals(sentExp) } getOrElse null
 	} getOrElse null
 	
@@ -67,21 +67,23 @@ class SentimentLexicon extends Lexicon {
 	/**
 	 * Checks if this lexicon has the given expression or not.
 	 * @param expression the expression to look for.
+	 * @param posTag the POS tag to check.
 	 * @return {@code true} if the lexicon contains the given expression; {@code false} otherwise.
 	 */
-	def hasExpression(expression: String, pos: String = null) = findExpression(expression, pos) != null
+	def hasExpression(expression: String, posTag: String = null) = findExpression(expression, posTag) != null
 	
 	/**
 	 * Adds the given expression to this lexicon.
 	 * @param expression the expression to add.
+	 * @param posTag the POS tag of the expression.
 	 * @param negative the negative polarity of the expression.
 	 * @param neutral the neutral polarity of the expression.
 	 * @param positive the positive polarity of the expression.
 	 * @return the {@link SentimentExpression} object added.
 	 */
-	def addExpression(expression: String, pos: String = null, negative: java.lang.Double = null, neutral: java.lang.Double = null, positive: java.lang.Double = null) =
-	  	Option(expression) filter { !hasExpression(_, pos) } map { exp =>
-	  		val sentExp = new SentimentExpression(expression, pos, negative, neutral, positive)
+	def addExpression(expression: String, posTag: String = null, negative: java.lang.Double = null, neutral: java.lang.Double = null, positive: java.lang.Double = null) =
+	  	Option(expression) filter { !hasExpression(_, posTag) } map { exp =>
+	  		val sentExp = new SentimentExpression(expression, posTag, negative, neutral, positive)
 	  		addDocument(sentExp)
 	  		sentExp
 	  	} getOrElse null
@@ -89,10 +91,11 @@ class SentimentLexicon extends Lexicon {
 	/**
 	 * Removes the given expression from this lexicon.
 	 * @param expression the expression to remove.
+	 * @param posTag the POS tag of the expression to remove.
 	 * @return the {@link SentimentExpression} object that was removed; {@code null} if none.
 	 */
-	def removeExpression(expression: String, pos: String) = Option(expression) map {
-	  	findExpression(_, pos)
+	def removeExpression(expression: String, posTag: String) = Option(expression) map {
+	  	findExpression(_, posTag)
 	} filter { _ != null } map { sentExp =>
 	  	removeDocument(sentExp)
 	  	sentExp
@@ -101,13 +104,14 @@ class SentimentLexicon extends Lexicon {
 	/**
 	 * Updates the given expression to a new value.
 	 * @param expression the expression to update.
+	 * @param posTag the POS tag of the expression to update.
 	 * @param newValue the new value of the expression.
 	 * @return the {@link SentimentExpression} that was updated.
 	 */
-	def updateExpression(expression: String, pos: String, newValue: String) = Option(expression) map { exp =>
-	  	findExpression(exp, pos)
+	def updateExpression(expression: String, posTag: String, newValue: String) = Option(expression) map { exp =>
+	  	findExpression(exp, posTag)
 	} filter { _ != null } map { sentExp =>
-	  	Option(newValue) filter { newValue => !hasExpression(newValue, pos) } map { newValue =>
+	  	Option(newValue) filter { newValue => !hasExpression(newValue, posTag) } map { newValue =>
 	  		sentExp.setContent(newValue).asInstanceOf[SentimentExpression]
 	  	} getOrElse null
 	} getOrElse null

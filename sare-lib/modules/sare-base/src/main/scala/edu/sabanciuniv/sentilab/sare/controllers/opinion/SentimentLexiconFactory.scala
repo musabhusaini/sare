@@ -94,8 +94,8 @@ class SentimentLexiconFactory extends NonDerivedStoreFactory[SentimentLexicon] {
 		  	for ( index <- 0 until nodes.getLength ) {
 		  		val node = expressionNodes.item(index)
 		  		lexicon.addExpression(node.getTextContent,
-	  			    Option(xpath.compile("./@pos").evaluate(node, XPathConstants.STRING)) match {
-	  			    	case Some(pos: String) => pos
+	  			    Option(xpath.compile("./@pos-tag").evaluate(node, XPathConstants.STRING)) match {
+	  			    	case Some(posTag: String) => posTag
 	  			    	case _ => null
 	  				},
 	  			    extractPolarity(node, "./@negative"),

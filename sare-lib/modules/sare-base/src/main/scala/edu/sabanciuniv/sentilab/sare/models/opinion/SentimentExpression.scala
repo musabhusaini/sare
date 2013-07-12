@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils._
 import edu.sabanciuniv.sentilab.sare.models.base.document._
 
 object SentimentExpression {
-	private val posString = "pos"
+	private val posTagString = "posTag"
 	private val negativeString = "negative"
 	private val neutralString = "neutral"
 	private val positiveString = "positive"
@@ -40,11 +40,11 @@ object SentimentExpression {
  */
 @Entity
 @DiscriminatorValue("sentiment-expression")
-class SentimentExpression(expression: String, pos: String, negative: java.lang.Double, neutral: java.lang.Double, positive: java.lang.Double)
+class SentimentExpression(expression: String, posTag: String, negative: java.lang.Double, neutral: java.lang.Double, positive: java.lang.Double)
 	extends LexiconDocument {
 	
 	setContent(expression)
-	setPos(pos)
+	setPosTag(posTag)
 	setNegative(negative)
 	setNeutral(neutral)
 	setPositive(positive)
@@ -65,17 +65,17 @@ class SentimentExpression(expression: String, pos: String, negative: java.lang.D
 	)
 	
 	/**
-	 * Gets the POS of this expression.
-	 * @return the POS of this expression.
+	 * Gets the POS tag of this expression.
+	 * @return the POS tag of this expression.
 	 */
-	def getPos = getProperty(SentimentExpression.posString, classOf[String])
+	def getPosTag = getProperty(SentimentExpression.posTagString, classOf[String])
 	
 	/**
-	 * Sets the POS of this expression.
-	 * @param value the POS to set.
+	 * Sets the POS tag of this expression.
+	 * @param value the POS tag to set.
 	 * @return the {@code this} object.
 	 */
-	def setPos(value: String) = setProperty(SentimentExpression.posString,
+	def setPosTag(value: String) = setProperty(SentimentExpression.posTagString,
 	    Option(value) map { _.trim.toLowerCase } getOrElse null
 	).asInstanceOf[SentimentExpression]
 	
@@ -121,8 +121,8 @@ class SentimentExpression(expression: String, pos: String, negative: java.lang.D
 	override def equals(obj: Any) = obj match {
 	  	case sentExp: SentimentExpression => {
 	  		equalsIgnoreCase(getContent, sentExp.getContent) &&
-	  		((Option(getPos), Option(sentExp.getPos)) match {
-	  		  	case (Some(pos), Some(otherPos)) => equalsIgnoreCase(pos, otherPos)
+	  		((Option(getPosTag), Option(sentExp.getPosTag)) match {
+	  		  	case (Some(posTag), Some(otherPosTag)) => equalsIgnoreCase(posTag, otherPosTag)
 	  		  	case _ => true
 	  		}) &&
 	  		((Option(getNegative), Option(sentExp.getNegative)) match {
@@ -146,11 +146,11 @@ class SentimentExpression(expression: String, pos: String, negative: java.lang.D
 		(Option(getNeutral) map { _.hashCode } getOrElse 0) +
 		(Option(getPositive) map { _.hashCode } getOrElse 0) +
 		(Option(getContent) map { _.hashCode } getOrElse 0) +
-		(Option(getPos) map { _.hashCode } getOrElse 0)
+		(Option(getPosTag) map { _.hashCode } getOrElse 0)
 		
-	override def toString = String.format("%s -%s (negative=%f, neutral=%f, positive=%f)",
+	override def toString = String.format("%s - %s (negative=%f, neutral=%f, positive=%f)",
 	    defaultString(getContent),
-	    defaultString(getPos),
+	    defaultString(getPosTag),
 	    getNegative,
 	    getNeutral,
 		getPositive
