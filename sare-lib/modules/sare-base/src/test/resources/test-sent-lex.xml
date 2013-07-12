@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sentiment-lexicon title="test-xml-sent-lex" description="test" language="en">
 	<expressions>
-		<expression negative="0.1" neutral="0.2" positive="0.7">
+		<expression pos="adjective" negative="0.1" neutral="0.2" positive="0.7">
 			good
 		</expression>
-		<expression negative="0.7" neutral="0.2" positive="0.1">
+		<expression pos="noun" negative="0.2" neutral="0.6" positive="0.2">
+			good
+		</expression>
+		<expression pos="adjective" negative="0.7" neutral="0.2" positive="0.1">
 			bad
 		</expression>
 	</expressions>

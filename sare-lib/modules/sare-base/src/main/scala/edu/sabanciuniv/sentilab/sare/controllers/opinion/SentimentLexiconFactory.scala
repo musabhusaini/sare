@@ -93,14 +93,15 @@ class SentimentLexiconFactory extends NonDerivedStoreFactory[SentimentLexicon] {
 		Option(expressionNodes) foreach { nodes =>
 		  	for ( index <- 0 until nodes.getLength ) {
 		  		val node = expressionNodes.item(index)
-		  		val expression = node.getTextContent.trim
-		  		if (!lexicon.hasExpression(expression)) {
-		  			lexicon.addExpression(expression,
-		  			    extractPolarity(node, "./@negative"),
-		  			    extractPolarity(node, "./@neutral"),
-		  			    extractPolarity(node, "./@positive")
-		  			)
-		  		}
+		  		lexicon.addExpression(node.getTextContent,
+	  			    Option(xpath.compile("./@pos").evaluate(node, XPathConstants.STRING)) match {
+	  			    	case Some(pos: String) => pos
+	  			    	case _ => null
+	  				},
+	  			    extractPolarity(node, "./@negative"),
+	  			    extractPolarity(node, "./@neutral"),
+	  			    extractPolarity(node, "./@positive")
+	  			)
 		  	}
 		}
 		
@@ -119,9 +120,10 @@ class SentimentLexiconFactory extends NonDerivedStoreFactory[SentimentLexicon] {
 			val columns = tokenizer.getTokenList
 			columns.size match {
 			  	case size if size == 1 => lexicon.addExpression(columns.get(0))
-			  	case size if size == 2 => lexicon.addExpression(columns.get(0), positive = columns.get(1).toDouble)
-			  	case size if size == 3 => lexicon.addExpression(columns.get(0), columns.get(1).toDouble, positive = columns.get(2).toDouble)
-			  	case size if size >= 4 => lexicon.addExpression(columns.get(0), columns.get(1).toDouble, columns.get(2).toDouble, columns.get(3).toDouble)
+			  	case size if size == 2 => lexicon.addExpression(columns.get(0), columns.get(1))
+			  	case size if size == 3 => lexicon.addExpression(columns.get(0), columns.get(1), positive = columns.get(2).toDouble)
+			  	case size if size == 4 => lexicon.addExpression(columns.get(0), columns.get(1), columns.get(2).toDouble, positive = columns.get(3).toDouble)
+			  	case size if size >= 5 => lexicon.addExpression(columns.get(0), columns.get(1), columns.get(2).toDouble, columns.get(3).toDouble, columns.get(4).toDouble)
 			  	case _ => null
 			}
 		}

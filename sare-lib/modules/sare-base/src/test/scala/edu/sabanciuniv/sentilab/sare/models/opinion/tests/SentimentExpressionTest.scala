@@ -41,6 +41,13 @@ class SentimentExpressionTest {
 	}
 	
 	@Test
+	def testPos {
+		val pos = "adjective"
+		sentExp.setPos(pos)
+		assertEquals(pos, sentExp.getPos)
+	}
+	
+	@Test
 	def testNegative {
 		val neg = 0.25
 		sentExp.setNegative(neg)

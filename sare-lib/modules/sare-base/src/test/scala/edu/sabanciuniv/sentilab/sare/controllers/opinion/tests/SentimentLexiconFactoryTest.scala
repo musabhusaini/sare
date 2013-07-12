@@ -42,15 +42,16 @@ class SentimentLexiconFactoryTest {
 		.setTitle("test-xml-sent-lex")
 		.setDescription("test")
 		.setLanguage("en")
-	expectedLexicon.addExpression("good", 0.1, 0.2, 0.7)
-	expectedLexicon.addExpression("bad", 0.7, 0.2, 0.1)
+	expectedLexicon.addExpression("good", "adjective", 0.1, 0.2, 0.7)
+	expectedLexicon.addExpression("good", "noun", 0.2, 0.6, 0.2)
+	expectedLexicon.addExpression("bad", "adjective", 0.7, 0.2, 0.1)
 	
 	private def assertLexicaEqual(expected: SentimentLexicon, actual: SentimentLexicon) {
 		assertEquals(expected.getTitle, actual.getTitle)
 		assertEquals(expected.getDescription, actual.getDescription)
 		assertEquals(expected.getLanguage, actual.getLanguage)
 		assertTrue(expected.getExpressions forall { sentExp =>
-		  	sentExp.equals(actual.findExpression(sentExp.getContent))
+		  	sentExp.equals(actual.findExpression(sentExp.getContent, sentExp.getPos))
 		})
 	}
 	
@@ -83,7 +84,6 @@ class SentimentLexiconFactoryTest {
 	def testCreateFromXmlFile {
 		val actualLexicon: SentimentLexicon = try {
 			new SentimentLexiconFactory()
-				.setTextDelimiter(",")
 				.setFile(new File(getClass.getResource(testXmlLexiconFilename).getPath))
 				.create
 		} catch {

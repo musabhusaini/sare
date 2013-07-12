@@ -29,6 +29,8 @@ import edu.sabanciuniv.sentilab.sare.models.opinion._
 class SentimentLexiconTest {
 	
 	private val exp = "good"
+	private val pos1 = "adjective"
+	private val pos2 = "noun"
 	private var sentLex: SentimentLexicon = _
 	
 	@Before
@@ -38,76 +40,120 @@ class SentimentLexiconTest {
 	
 	@Test
 	def testAddExpression {
-		val sentExp = sentLex.addExpression(exp)
-		assertNotNull(sentExp)
+		val sentExp1 = sentLex.addExpression(exp, pos1)
 		
-		assertEquals(exp, sentExp.getContent)
-		assertTrue(sentLex.getExpressions.toSeq contains sentExp)
+		assertNotNull(sentExp1)
+		assertEquals(exp, sentExp1.getContent)
+		assertEquals(pos1, sentExp1.getPos)
+		assertTrue(sentLex.getExpressions.toSeq contains sentExp1)
+		assertNull(sentLex.addExpression(exp, pos1))
 		
-		assertNull(sentLex.addExpression(exp))
+		val sentExp2 = sentLex.addExpression(exp, pos2)
+		
+		assertNotNull(sentExp2)
+		assertEquals(exp, sentExp2.getContent)
+		assertEquals(pos2, sentExp2.getPos)
+		assertTrue(sentLex.getExpressions.toSeq contains sentExp2)
 	}
 	
 	@Test
 	def testFindExpressionTrue {
-		val sentExp = sentLex.addExpression(exp)
-		val actualSentExp = sentLex.findExpression(exp)
+		val sentExp1 = sentLex.addExpression(exp, pos1)
+		val sentExp2 = sentLex.addExpression(exp, pos2)
+		val actualSentExp1 = sentLex.findExpression(exp, pos1)
+		val actualSentExp2 = sentLex.findExpression(exp, pos2)
 		
-		assertNotNull(actualSentExp)
-		assertEquals(sentExp, actualSentExp)
+		assertNotNull(actualSentExp1)
+		assertNotNull(actualSentExp2)
+		assertEquals(sentExp1, actualSentExp1)
+		assertEquals(sentExp2, actualSentExp2)
 	}
 	
 	@Test
 	def testFindExpressionIgnoreCaseTrue {
-		val sentExp = sentLex.addExpression(exp)
-		val actualSentExp = sentLex.findExpression(exp.toUpperCase)
+		val sentExp = sentLex.addExpression(exp, pos1)
 		
-		assertNotNull(actualSentExp)
-		assertEquals(sentExp, actualSentExp)
+		assertEquals(sentExp, sentLex.findExpression(exp.toUpperCase, pos1))
 	}
 	
 	@Test
 	def testFindExpressionFalse {
-		val actualSentExp = sentLex.findExpression(exp)
+		assertNull(sentLex.findExpression(exp, pos1))
 		
-		assertNull(actualSentExp)
+		sentLex.addExpression(exp, pos1)
+		assertNull(sentLex.findExpression(exp, pos2))
+	}
+	
+	@Test
+	def testFindExpressionsTrue {
+		val sentExp1 = sentLex.addExpression(exp, pos1)
+		val sentExp2 = sentLex.addExpression(exp, pos2)
+		
+		sentLex.addExpression("something")
+		val sentExps = sentLex.findExpressions(exp)
+		
+		assertNotNull(sentExps)
+		assertEquals(2, sentExps.size)
+		assertTrue(sentExps.toSeq.contains(sentExp1))
+		assertTrue(sentExps.toSeq.contains(sentExp2))
+	}
+	
+	@Test
+	def testFindExpressionsFalse {
+		sentLex.addExpression("something")
+		assertTrue(sentLex.findExpressions(exp).size == 0)
 	}
 	
 	@Test
 	def testHasExpressionTrue {
-		val sentExp = sentLex.addExpression(exp)
+		val sentExp1 = sentLex.addExpression(exp, pos1)
+		val sentExp2 = sentLex.addExpression(exp, pos2)
+		
 		assertTrue(sentLex.hasExpression(exp))
+		assertTrue(sentLex.hasExpression(exp, pos1))
+		assertTrue(sentLex.hasExpression(exp, pos2))
 	}
 	
 	@Test
 	def testHasExpressionFalse {
-		assertFalse(sentLex.hasExpression(exp))
+		assertFalse(sentLex.hasExpression(exp, pos1))
+		
+		sentLex.addExpression(exp, pos1)
+		assertFalse(sentLex.hasExpression(exp, pos2))
 	}
 	
 	@Test
 	def testRemoveExpressionTrue {
-		val sentExp = sentLex.addExpression(exp)
-		val actualSentExp = sentLex.removeExpression(exp)
+		val sentExp1 = sentLex.addExpression(exp, pos1)
+		val sentExp2 = sentLex.addExpression(exp, pos2)
+		val actualSentExp2 = sentLex.removeExpression(exp, pos2)
 		
-		assertNotNull(actualSentExp)
-		assertEquals(sentExp, actualSentExp)
-		assertFalse(sentLex.getExpressions.toSeq contains sentExp)
+		assertNotNull(actualSentExp2)
+		assertEquals(sentExp2, actualSentExp2)
+		assertTrue(sentLex.getExpressions.toSeq contains sentExp1)
+		assertFalse(sentLex.getExpressions.toSeq contains sentExp2)
 	}
 	
 	@Test
 	def testRemoveExpressionFalse {
-		assertNull(sentLex.removeExpression(exp))
+		assertNull(sentLex.removeExpression(exp, pos1))
+		
+		sentLex.addExpression(exp, pos1)
+		assertNull(sentLex.removeExpression(exp, pos2))
 	}
 	
 	@Test
 	def testUpdateExpression {
 		val exp2 = "bad"
-		val sentExp = sentLex.addExpression(exp)
-		val actualSentExp = sentLex.updateExpression(exp, exp2)
+		val sentExp1 = sentLex.addExpression(exp, pos1)
+		val sentExp2 = sentLex.addExpression(exp, pos2)
+		val actualSentExp2 = sentLex.updateExpression(exp, pos2, exp2)
 		
-		assertNotNull(actualSentExp)
-		assertEquals(sentExp, actualSentExp)
-		assertEquals(exp2, actualSentExp.getContent)
-		assertFalse(sentLex.hasExpression(exp))
-		assertTrue(sentLex.hasExpression(exp2))
+		assertNotNull(actualSentExp2)
+		assertEquals(sentExp2, actualSentExp2)
+		assertEquals(exp2, actualSentExp2.getContent)
+		assertTrue(sentLex.hasExpression(exp, pos1))
+		assertFalse(sentLex.hasExpression(exp, pos2))
+		assertTrue(sentLex.hasExpression(exp2, pos2))
 	}
 }

@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils._
 import edu.sabanciuniv.sentilab.sare.models.base.document._
 
 object SentimentExpression {
+	private val posString = "pos"
 	private val negativeString = "negative"
 	private val neutralString = "neutral"
 	private val positiveString = "positive"
@@ -39,75 +40,101 @@ object SentimentExpression {
  */
 @Entity
 @DiscriminatorValue("sentiment-expression")
-class SentimentExpression(expression: String, negative: java.lang.Double, neutral: java.lang.Double, positive: java.lang.Double)
+class SentimentExpression(expression: String, pos: String, negative: java.lang.Double, neutral: java.lang.Double, positive: java.lang.Double)
 	extends LexiconDocument {
 	
 	setContent(expression)
+	setPos(pos)
 	setNegative(negative)
 	setNeutral(neutral)
 	setPositive(positive)
   
-	def this(expression: String, negative: java.lang.Double, positive: java.lang.Double) =
-	  	this(expression, negative, null, positive)
+	def this(expression: String, pos: String, negative: java.lang.Double, positive: java.lang.Double) =
+	  	this(expression, pos, negative, null, positive)
 	
-	def this(expression: String, positive: java.lang.Double) = this(expression, null, positive)
+	def this(expression: String, pos: String, positive: java.lang.Double) = this(expression, pos, null, positive)
+	
+	def this(expression: String, pos: String) = this(expression, pos, null)
 	
 	def this(expression: String) = this(expression, null)
 	
 	def this() = this(null)
 	
+	override def setContent(value: String) = super.setContent(
+	    Option(value) map { _.trim.toLowerCase } getOrElse null
+	)
+	
+	/**
+	 * Gets the POS of this expression.
+	 * @return the POS of this expression.
+	 */
+	def getPos = getProperty(SentimentExpression.posString, classOf[String])
+	
+	/**
+	 * Sets the POS of this expression.
+	 * @param value the POS to set.
+	 * @return the {@code this} object.
+	 */
+	def setPos(value: String) = setProperty(SentimentExpression.posString,
+	    Option(value) map { _.trim.toLowerCase } getOrElse null
+	).asInstanceOf[SentimentExpression]
+	
 	/**
 	 * Gets the negative polarity of this expression.
 	 * @return the negative polarity of this expression.
 	 */
-	def getNegative = getProperty(SentimentExpression.negativeString, classOf[Double])
+	def getNegative = getProperty(SentimentExpression.negativeString, classOf[java.lang.Double])
 	
 	/**
 	 * Sets the negative polarity of this expression.
 	 * @param value the negative polarity to set.
 	 * @return the {@code this} object.
 	 */
-	def setNegative(value: java.lang.Double) = setProperty(SentimentExpression.negativeString, value)
+	def setNegative(value: java.lang.Double) = setProperty(SentimentExpression.negativeString, value).asInstanceOf[SentimentExpression]
 	
 	/**
 	 * Gets the neutral polarity of this expression.
 	 * @return the neutral polarity of this expression.
 	 */
-	def getNeutral = getProperty(SentimentExpression.neutralString, classOf[Double])
+	def getNeutral = getProperty(SentimentExpression.neutralString, classOf[java.lang.Double])
 	
 	/**
 	 * Sets the neutral polarity of this expression.
 	 * @param value the neutral polarity to set.
 	 * @return the {@code this} object.
 	 */
-	def setNeutral(value: java.lang.Double) = setProperty(SentimentExpression.neutralString, value)
+	def setNeutral(value: java.lang.Double) = setProperty(SentimentExpression.neutralString, value).asInstanceOf[SentimentExpression]
 	
 	/**
 	 * Gets the positive polarity of this expression.
 	 * @return the positive polarity of this expression.
 	 */
-	def getPositive = getProperty(SentimentExpression.positiveString, classOf[Double])
+	def getPositive = getProperty(SentimentExpression.positiveString, classOf[java.lang.Double])
 	
 	/**
 	 * Sets the positive polarity of this expression.
 	 * @param value the positive polarity to set.
 	 * @return the {@code this} object.
 	 */
-	def setPositive(value: java.lang.Double) = setProperty(SentimentExpression.positiveString, value)
+	def setPositive(value: java.lang.Double) = setProperty(SentimentExpression.positiveString, value).asInstanceOf[SentimentExpression]
 	
 	override def equals(obj: Any) = obj match {
 	  	case sentExp: SentimentExpression => {
 	  		equalsIgnoreCase(getContent, sentExp.getContent) &&
+	  		((Option(getPos), Option(sentExp.getPos)) match {
+	  		  	case (Some(pos), Some(otherPos)) => equalsIgnoreCase(pos, otherPos)
+	  		  	case _ => true
+	  		}) &&
 	  		((Option(getNegative), Option(sentExp.getNegative)) match {
-	  		  	case (Some(neg), Some(otherNeg)) => neg == otherNeg
+	  		  	case (Some(negative), Some(otherNegative)) => negative == otherNegative
 	  		  	case _ => true
 	  		}) &&
 	  		((Option(getNeutral), Option(sentExp.getNeutral)) match {
-	  		  	case (Some(neu), Some(otherNeu)) => neu == otherNeu
+	  		  	case (Some(neutral), Some(otherNeutral)) => neutral == otherNeutral
 	  		  	case _ => true
 	  		}) &&
 	  		((Option(getPositive), Option(sentExp.getPositive)) match {
-	  		  	case (Some(pos), Some(otherPos)) => pos == otherPos
+	  		  	case (Some(positive), Some(otherPositive)) => positive == otherPositive
 	  		  	case _ => true
 	  		})
 	  	}
@@ -118,10 +145,14 @@ class SentimentExpression(expression: String, negative: java.lang.Double, neutra
 		(Option(getNegative) map { _.hashCode } getOrElse 0) +
 		(Option(getNeutral) map { _.hashCode } getOrElse 0) +
 		(Option(getPositive) map { _.hashCode } getOrElse 0) +
-		(Option(getContent) map { _.hashCode } getOrElse 0)
+		(Option(getContent) map { _.hashCode } getOrElse 0) +
+		(Option(getPos) map { _.hashCode } getOrElse 0)
 		
-	override def toString = defaultString(getContent) + "(" +
-		"negative=" + defaultString(Option(getNegative) map { _.toString } getOrElse null, "null") + "," +
-		"neutral=" + defaultString(Option(getNeutral) map { _.toString } getOrElse null, "null") + "," +
-		"positive=" + defaultString(Option(getPositive) map { _.toString } getOrElse null, "null") + ")"
+	override def toString = String.format("%s -%s (negative=%f, neutral=%f, positive=%f)",
+	    defaultString(getContent),
+	    defaultString(getPos),
+	    getNegative,
+	    getNeutral,
+		getPositive
+	)
 }

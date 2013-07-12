@@ -1,2 +1,3 @@
-good,0.1,0.2,0.7
-bad,0.7,0.2,0.1
+good,adjective,0.1,0.2,0.7
+good,noun,0.2,0.6,0.2
+bad,adjective,0.7,0.2,0.1
