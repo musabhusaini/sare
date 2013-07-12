@@ -19,33 +19,26 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.documentStore;
+package edu.sabanciuniv.sentilab.sare.models.base.documentStore
 
-import javax.persistence.Entity;
+import javax.persistence.Entity
 
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticProcessorLike;
-import edu.sabanciuniv.sentilab.utils.text.nlp.factory.*;
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.LinguisticProcessorLike
+import edu.sabanciuniv.sentilab.utils.text.nlp.factory._
 
 /**
  * The base class for all document corpora.
  * @author Mus'ab Husaini
  */
 @Entity
-public abstract class DocumentCorpus
-		extends PersistentDocumentStore {
+abstract class DocumentCorpus
+	extends PersistentDocumentStore {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6392601190047482976L;
-	
 	/**
 	 * Gets the basic linguistic processor that can be used for this corpus.
 	 * @return the {@link LinguisticProcessorLike} object that can be used.
 	 */
-	public LinguisticProcessorLike getLinguisticProcessor() {
-		return new LinguisticProcessorFactory()
-			.setLanguage(this.getLanguage())
-			.create();
-	}
+	def getLinguisticProcessor = new LinguisticProcessorFactory()
+		.setLanguage(getLanguage)
+		.create
 }

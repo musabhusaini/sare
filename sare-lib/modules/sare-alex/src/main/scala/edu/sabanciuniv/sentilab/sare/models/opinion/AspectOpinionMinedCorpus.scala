@@ -37,11 +37,9 @@ import edu.sabanciuniv.sentilab.sare.models.base.documentStore._
 @Entity
 @DiscriminatorValue("alex-opinion-mined-corpus")
 class AspectOpinionMinedCorpus(corpus: DocumentCorpus, lexicon: AspectLexicon)
-	extends CorpusLexiconHybridStore[AspectLexicon](corpus, lexicon, new Function[PersistentDocument, AspectOpinionMinedDocument]() {
-		override def apply(input: PersistentDocument) = input match {
-		  	case doc: FullTextDocument => new AspectOpinionMinedDocument(doc)
-		  	case _ => null
-		}
+	extends CorpusLexiconHybridStore[AspectLexicon](corpus, lexicon, doc => doc match {
+	  	case doc: FullTextDocument => new AspectOpinionMinedDocument(doc)
+	  	case _ => null
 	})
 	with UserInaccessibleModel with OpinionMinedCorpusLike {
 

@@ -19,45 +19,38 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.sare.models.base.document;
+package edu.sabanciuniv.sentilab.sare.models.base.document
 
-import java.util.*;
+import scala.collection.JavaConversions._
 
-import com.google.common.collect.*;
-
-import edu.sabanciuniv.sentilab.core.models.ModelLike;
-import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag;
+import edu.sabanciuniv.sentilab.core.models.ModelLike
+import edu.sabanciuniv.sentilab.utils.text.nlp.base.PosTag
 
 /**
  * An instance of this class represents tokenizing options for a {@link FullTextDocument}.
  * @author Mus'ab Husaini
  */
-public class TokenizingOptions
-	implements ModelLike {
+class TokenizingOptions
+	extends ModelLike {
 	
-	private List<String> tags;
-	private boolean isLemmatized;
+  
+	private var tags: java.util.List[String] = List()
+	private var lemmatized: Boolean = _
 	
 	/**
 	 * Gets the POS tags that will be captured.
 	 * @return the {@link List} of {@link String} objects representing the POS tag pattern that will be captured.
 	 */
-	public List<String> getTags() {
-		if (this.tags == null) {
-			this.tags = Lists.newArrayList();
-		}
-		
-		return this.tags;
-	}
+	def getTags: java.util.List[String] = { tags = Option(tags) getOrElse List(); tags }
 	
 	/**
 	 * Sets the POS tags that need to be captured.
 	 * @param tags an {@link Iterable} of {@link String} objects representing the POS tag patterns to be captured.
 	 * @return the {@code this} object.
 	 */
-	public TokenizingOptions setTags(Iterable<String> tags) {
-		this.tags = tags == null ? null : Lists.newArrayList(tags);
-		return this;
+	def setTags(tags: java.lang.Iterable[String]): TokenizingOptions = {
+		this.tags = Option(tags) map { _.toList } getOrElse null
+		this
 	}
 	
 	/**
@@ -65,56 +58,31 @@ public class TokenizingOptions
 	 * @param tags a delimited string of tags.
 	 * @return the {@code this} object.
 	 */
-	public TokenizingOptions setTags(String tags) {
-		return this.setTags(PosTag.splitTagsString(tags));
-	}
+	def setTags(tags: String): TokenizingOptions = setTags(PosTag.splitTagsString(tags))
 	
 	/**
 	 * Gets a flag indicating whether tokens will be lemmatized or not.
 	 * @return a {@link Boolean} flag.
 	 */
-	public boolean isLemmatized() {
-		return this.isLemmatized;
-	}
+	def isLemmatized = lemmatized
 	
 	/**
 	 * Sets a flag indicating whether tokens should be lemmatized or not.
 	 * @param isLemmatized the {@link Boolean} flag to be set.
 	 * @return the {@code this} object.
 	 */
-	public TokenizingOptions setLemmatized(boolean isLemmatized) {
-		this.isLemmatized = isLemmatized;
-		return this;
-	}
+	def setLemmatized(lemmatized: Boolean) = { this.lemmatized = lemmatized; this }
 	
-	@Override
-	public TokenizingOptions clone() {
-		return new TokenizingOptions()
-			.setTags(this.getTags())
-			.setLemmatized(this.isLemmatized());
-	}
+	override def clone = new TokenizingOptions()
+		.setTags(getTags)
+		.setLemmatized(isLemmatized)
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof TokenizingOptions)) {
-			return super.equals(obj);
-		}
-		
-		TokenizingOptions otherObj = (TokenizingOptions)obj;
-		if (this.isLemmatized() != otherObj.isLemmatized()) {
-			return false;
-		}
-		
-		if (this.getTags().size() != otherObj.getTags().size()) {
-			return false;
-		}
-		
-		for (String tag : this.getTags()) {
-			if (!otherObj.getTags().contains(tag)) {
-				return false;
-			}
-		}
-		
-		return true;
+	override def equals(obj: Any) = obj match {
+	  	case other: TokenizingOptions => {
+	  		isLemmatized == other.isLemmatized &&
+	  		getTags.size == other.getTags.size &&
+	  		(getTags forall { other.getTags contains _ })
+	  	}
+	  	case _ => super.equals(obj)
 	}
 }

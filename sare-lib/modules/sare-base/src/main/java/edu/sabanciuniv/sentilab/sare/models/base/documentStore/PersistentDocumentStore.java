@@ -257,7 +257,7 @@ public abstract class PersistentDocumentStore
 	 * @param documents the {@link Iterable} of documents to set.
 	 * @return the {@code this} object.
 	 */
-	public PersistentDocumentStore setDocuments(Iterable<? extends PersistentDocument> documents) {
+	public <T extends PersistentDocument> PersistentDocumentStore setDocuments(Iterable<T> documents) {
 		if (documents == null) {
 			if (Iterables.size(this.getDocuments()) != 0) {
 				List<PersistentDocument> tmpDocuments = Lists.newArrayList(this.getDocuments());
