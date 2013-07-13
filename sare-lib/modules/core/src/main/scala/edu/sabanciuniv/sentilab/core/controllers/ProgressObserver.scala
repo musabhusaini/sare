@@ -19,18 +19,18 @@
  * along with SARE. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.sabanciuniv.sentilab.core.controllers;
+package edu.sabanciuniv.sentilab.core.controllers
 
 /**
  * A class that implements this interface can observe progress from {@link ProgressObservable} objects.
  * @author Mus'ab Husaini
  */
-public interface ProgressObserver {
+trait ProgressObserver {
 	
 	/**
 	 * Observes progress from the event host.
 	 * @param progress the fractional progress; with {@code 0.0} indicating no progress and {@code 1.0} indicating completion. 
 	 * @param message any message sent from the host.
 	 */
-	public void observe(double progress, String message);
+	def observe(progress: Double, message: String): Unit
 }

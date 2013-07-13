@@ -56,7 +56,26 @@ trait ProgressObservablePrimitive {
  */
 trait ProgressObservable extends ProgressObservablePrimitive {
 	
-	protected var observers: Set[ProgressObserver] = Set()
+	protected var primitiveObservers: Set[ProgressObserver] = Set()
+	protected var observers: Set[(Double, String) => Unit] = Set()
+	
+	/**
+	 * Adds a progress observer for this object.
+	 * @param observer the method to add as an observer.
+	 * @return the {@code this} object.
+	 */
+	def addProgressObserver(observer: (Double, String) => Unit) = { observers += observer;  observer }
+	
+	/**
+	 * Removes a progress observer from this object.
+	 * @param observer the method to remove.
+	 * @return {@code true} if the observer was removed; {@code false} otherwise.
+	 */
+	def removeProgressObserver(observer: (Double, String) => Unit) = {
+		val oldObservers = observers
+		observers -= observer
+		oldObservers.size == observers.size + 1	  
+	}
 	
 	/**
 	 * Adds a progress observer for this object.
@@ -64,7 +83,7 @@ trait ProgressObservable extends ProgressObservablePrimitive {
 	 * @return the {@code this} object.
 	 */
 	override def addProgessObserver(observer: ProgressObserver) = {
-		observers += observer
+		primitiveObservers += observer
 	  	this
 	}
 	
@@ -74,9 +93,9 @@ trait ProgressObservable extends ProgressObservablePrimitive {
 	 * @return {@code true} if the observer was removed; {@code false} otherwise.
 	 */
 	override def removeProgressObserver(observer: ProgressObserver) = {
-		val oldObservers = observers
-		observers -= observer
-		oldObservers.size == observers.size + 1
+		val oldObservers = primitiveObservers
+		primitiveObservers -= observer
+		oldObservers.size == primitiveObservers.size + 1
 	}
 	
 	/**
@@ -85,8 +104,7 @@ trait ProgressObservable extends ProgressObservablePrimitive {
 	 * @param message the message to send with the progress.
 	 */
 	override def notifyProgress(progress: Double, message: String) = {
-		observers.foreach { observer =>
-			observer.observe(progress, message)
-		}
+		primitiveObservers foreach { _.observe(progress, message) }
+		observers foreach { _(progress, message) }
 	}
 }
