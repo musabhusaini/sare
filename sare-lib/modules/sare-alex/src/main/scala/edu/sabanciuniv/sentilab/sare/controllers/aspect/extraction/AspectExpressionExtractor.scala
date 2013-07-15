@@ -168,12 +168,8 @@ class AspectExpressionExtractor(
 		  		(distr, candidate) match {
 		  		  	case (distr, Some(candidate)) if distr.length >= 2 => {
 		  		  		val Array(neg, pos, _*) = distr
-		  		  		candidate.score = Math.max(neg, pos)
-		  		  		if (candidate.score >= scoreAcceptanceThreshold) {
-		  		  			candidate.label = Option(pos > neg)
-		  		  		} else {
-		  		  			candidate.label = None
-		  		  		}
+		  		  		candidate.score = Option(Math.max(neg, pos))
+		  		  		candidate.label = candidate.score filter { _ >= scoreAcceptanceThreshold } map { _ => pos > neg }
 		  		  	}
 		  		}
 		  	}

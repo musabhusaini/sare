@@ -44,18 +44,18 @@ object ContextualizedAspectExpression {
  * @author Mus'ab Husaini
  */
 class ContextualizedAspectExpression(
-		val token: LinguisticToken = null,
+		val token: LinguisticToken,
 		store: AspectExprExtrDocumentStore = null
 	)
 	extends AspectExpression(Option(token) map { _.getWord } getOrElse null) {
 	
-	token.setIsLemmatized(true)
+	Option(token) foreach { _.setIsLemmatized(true) }
 	setStore(store)
   
 	var label: Option[Boolean] = None
 	var sentences: Seq[LinguisticSentence] = Seq()
 	private var context: Map[String, Double] = Map()
-	var score: Double = _
+	var score: Option[Double] = None
 	
 	def getExtractorStore = getStore match {
 	  	case store: AspectExprExtrDocumentStore => store

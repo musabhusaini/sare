@@ -35,6 +35,8 @@ object SentimentLexicon {
 		new SentimentLexiconFactory()
 			.setFile(new java.io.File(getClass.getResource("/sentiwordnet.txt").getPath))
 			.setTextDelimiter("\t")
+			.setTitle("SentiWordNet")
+			.setLanguage("en")
 			.create
 	} catch {
 	  	case _: Throwable => { null }
