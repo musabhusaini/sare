@@ -25,18 +25,22 @@ import org.junit.runner.RunWith
 import org.junit.runners.Suite
 import org.junit.runners.Suite.SuiteClasses
 
+import edu.sabanciuniv.sentilab.sare.controllers.aspect.extraction.tests.AspectExpressionExtractorTest
 import edu.sabanciuniv.sentilab.sare.controllers.aspect.tests.AspectLexiconFactoryTest
 import edu.sabanciuniv.sentilab.sare.controllers.setcover.tests._
 import edu.sabanciuniv.sentilab.sare.models.aspect.tests.AspectLexiconTest
 import edu.sabanciuniv.sentilab.sare.models.base.document.tests.MergableDocumentTest
 import edu.sabanciuniv.sentilab.sare.models.opinion.tests.AspectOpinionMinedDocumentTest
 import edu.sabanciuniv.sentilab.sare.models.setcover.tests.SetCoverDocumentTest
+import edu.sabanciuniv.sentilab.sare.models.aspect.extraction.tests.AspectExprExtrDocumentStoreTest
 import eu.ubipol.opinionmining.web_package.tests.CommentResultTest
 
 @RunWith(classOf[Suite])
 @SuiteClasses(Array[Class[_]](
 	classOf[AspectLexiconFactoryTest],
 	classOf[AspectLexiconTest],
+	classOf[AspectExprExtrDocumentStoreTest],
+	classOf[AspectExpressionExtractorTest],
 	classOf[MergableDocumentTest],
 	classOf[SetCoverFactoryTest],
 	classOf[AspectOpinionMinedDocumentTest],

@@ -25,6 +25,8 @@ import scala.collection.JavaConversions._
 
 import javax.persistence._
 
+import org.apache.commons.lang3.StringUtils
+
 import edu.sabanciuniv.sentilab.sare.controllers.opinion.SentimentLexiconFactory
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore._
 
@@ -82,7 +84,7 @@ class SentimentLexicon extends Lexicon {
 	 * @param posTag the POS tag to check.
 	 * @return {@code true} if the lexicon contains the given expression; {@code false} otherwise.
 	 */
-	def hasExpression(expression: String, posTag: String = null): Boolean = findExpression(expression, posTag) != null
+	def hasExpression(expression: String, posTag: String = null): Boolean = Option(findExpression(expression, posTag)).isDefined
 	
 	def hasExpression(expression: SentimentExpression): Boolean = Option(expression) map { exp =>
 	  	hasExpression(exp.getContent, exp.getPosTag)
@@ -115,7 +117,7 @@ class SentimentLexicon extends Lexicon {
 	 */
 	def removeExpression(expression: String, posTag: String) = Option(expression) map {
 	  	findExpression(_, posTag)
-	} filter { _ != null } map { sentExp =>
+	} filter { Option(_).isDefined } map { sentExp =>
 	  	removeDocument(sentExp)
 	  	sentExp
 	} getOrElse null
@@ -137,11 +139,14 @@ class SentimentLexicon extends Lexicon {
 	 * @param newValue the new value of the expression.
 	 * @return the {@link SentimentExpression} that was updated.
 	 */
-	def updateExpression(expression: String, posTag: String, newValue: String) = Option(expression) map { exp =>
-	  	findExpression(exp, posTag)
-	} filter { _ != null } map { sentExp =>
-	  	Option(newValue) filter { newValue => !hasExpression(newValue, posTag) } map { newValue =>
-	  		sentExp.setContent(newValue).asInstanceOf[SentimentExpression]
-	  	} getOrElse null
+	def updateExpression(expression: String, posTag: String, newValue: String) = Option(expression) map {
+	  	findExpression(_, posTag)
+	} filter { Option(_).isDefined } map { sentExp =>
+	  	Option(newValue) match {
+	  	  	case Some(newValue) if StringUtils.equalsIgnoreCase(newValue, expression) => sentExp
+	  	  	case Some(newValue) if newValue.isEmpty || hasExpression(newValue, posTag) => null
+	  	  	case Some(newValue) => sentExp.setContent(newValue).asInstanceOf[SentimentExpression]
+	  	  	case _ => null
+	  	}
 	} getOrElse null
 }
