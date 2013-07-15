@@ -37,19 +37,34 @@ import edu.sabanciuniv.sentilab.core.models.UniquelyIdentifiable
  * @author Mus'ab Husaini
  */
 object UuidUtils {
+	private object Uuid {
+		def apply(obj: Any): Uuid = obj match {
+		  	case uuid: String => UuidString(Option(uuid))
+		  	case uuid: Array[Byte] => UuidBytes(Option(uuid))
+		  	case uuid: UUID => UuidUUID(Option(uuid))
+		  	case Some(uuid) => Uuid(uuid)
+		  	case _ => UuidNone()
+		} 
+	}
+	
 	private abstract class Uuid {
 		def isUuid = toUUID != null
 		def toBytes: Array[Byte]
 		def toUUID: UUID
 	}
 	
+	private case class UuidNone extends Uuid {
+		override def toBytes = null
+		override def toUUID = null
+	}
+	
 	private case class UuidString(id: Option[String]) extends Uuid {
-		override def toBytes = UuidUUID(Option(toUUID)).toBytes
+		override def toBytes: Array[Byte] = Uuid(toUUID).toBytes
 		
 		override def toUUID = {
-			val Uuid = "^([a-f0-9]{8})([a-f0-9]{4})([a-f0-9]{4})([a-f0-9]{4})([a-f0-9]{12})$".r
+			val UuidPattern = "^([a-f0-9]{8})([a-f0-9]{4})([a-f0-9]{4})([a-f0-9]{4})([a-f0-9]{12})$".r
 			toString match {
-			  	case Uuid(u1, u2, u3, u4, u5) => {
+			  	case UuidPattern(u1, u2, u3, u4, u5) => {
 			  		try {
 			  			UUID.fromString("%s-%s-%s-%s-%s".format(u1, u2, u3, u4, u5))
 			  		} catch {
@@ -60,10 +75,7 @@ object UuidUtils {
 			}
 		}
 		
-		override def toString = id match {
-		  	case Some(id) => id.replace("-", "").toLowerCase.trim
-		  	case None => null
-		}
+		override def toString = id map { _.replace("-", "").toLowerCase.trim } getOrElse null
 	}
 	
 	private case class UuidBytes(id: Option[Array[Byte]]) extends Uuid {
@@ -78,7 +90,7 @@ object UuidUtils {
 			}
 		}
 		
-		override def toString = UuidUUID(Option(toUUID)).toString
+		override def toString = Uuid(toUUID).toString
 	}
 	
 	private case class UuidUUID(id: Option[UUID]) extends Uuid {
@@ -93,10 +105,7 @@ object UuidUtils {
 		
 		override def toUUID = id.getOrElse(null)
 		
-		override def toString = id match {
-			case Some(id) => UuidString(Option(id.toString)).toString
-		  	case None => null
-		}
+		override def toString = id map { id => Uuid(id.toString).toString } getOrElse null
 	}
 
 	/**
@@ -105,7 +114,7 @@ object UuidUtils {
 	 */
 	def uuidToStringFunction: Function[UUID, String] = {
 		new Function[UUID, String] {
-			override def apply(input: UUID) = UuidUUID(Option(input)).toString
+			override def apply(input: UUID) = Uuid(input).toString
 		};
 	}
 	
@@ -115,7 +124,7 @@ object UuidUtils {
 	 */
 	def uuidToUuidBytesFunction: Function[UUID, Array[Byte]] = {
 		new Function[UUID, Array[Byte]] {
-			override def apply(input: UUID) = UuidUUID(Option(input)).toBytes
+			override def apply(input: UUID) = Uuid(input).toBytes
 		};
 	}
 	
@@ -125,7 +134,7 @@ object UuidUtils {
 	 */
 	def uuidBytesToStringFunction: Function[Array[Byte], String] = {
 		new Function[Array[Byte], String] {
-			override def apply(input: Array[Byte]) = UuidBytes(Option(input)).toString
+			override def apply(input: Array[Byte]) = Uuid(input).toString
 		};
 	}
 	
@@ -135,7 +144,7 @@ object UuidUtils {
 	 */
 	def uuidBytesToUUIDFunction: Function[Array[Byte], UUID] = {
 		new Function[Array[Byte], UUID] {
-			override def apply(input: Array[Byte]) = UuidBytes(Option(input)).toUUID
+			override def apply(input: Array[Byte]) = Uuid(input).toUUID
 		};
 	}
 
@@ -156,7 +165,7 @@ object UuidUtils {
 	 */
 	def toUuidStringFunction[T <: UniquelyIdentifiable]: Function[T, String] = {
 		new Function[T, String] {
-			override def apply(input: T) = UuidUUID(Option(input.getIdentifier)).toString
+			override def apply(input: T) = Uuid(input.getIdentifier).toString
 		};
 	} 
 	
@@ -173,58 +182,65 @@ object UuidUtils {
 
 	/**
 	 * Checks to see if a given string is a valid UUID or not. Ignores the dashes.
-	 * @param uuidString the string containing the UUID.
+	 * @param uuid the string containing the UUID.
 	 * @return {@code true} if the passed string is a valid UUID, {@code false} otherwise.
 	 */
-	def isUuid(uuid: String) = UuidString(Option(uuid)).isUuid
+	def isUuid(uuid: String) = Uuid(uuid).isUuid
+	
+	/**
+	 * Checks to see if a given byte array is a valid UUID or not.
+	 * @params uuid the byte array containing the UUID.
+	 * @return {@code true} if the passed array is a valid UUID, {@code false} otherwise.
+	 */
+	def isUuid(uuid: Array[Byte]) = Uuid(uuid).isUuid
 	
 	/**
 	 * Create UUID from a byte array.
-	 * @param uuidBytes Byte representation of the UUID.
+	 * @param uuid Byte representation of the UUID.
 	 * @return The UUID object.
 	 */
-	def create(uuid: Array[Byte]) = UuidBytes(Option(uuid)).toUUID
+	def create(uuid: Array[Byte]) = Uuid(uuid).toUUID
 	
 	/**
 	 * Creates a {@link UUID} from any valid UUID string.
-	 * @param uuidString the string containing the UUID.
+	 * @param uuid the string containing the UUID.
 	 * @return a {@link UUID} object if the provided string is a valid UUID.
 	 * @throws IllegalArgumentException when the provided string is not a valid UUID representation.
 	 */
-	def create(uuid: String) = UuidString(Option(uuid)).toUUID
+	def create(uuid: String) = Uuid(uuid).toUUID
 	
 	/**
 	 * Converts the UUID to its {@code byte} array equivalent.
 	 * @param uuid The {@link UUID} to convert to bytes.
 	 * @return The byte array representing the UUID.
 	 */
-	def toBytes(uuid: UUID) = UuidUUID(Option(uuid)).toBytes
+	def toBytes(uuid: UUID) = Uuid(uuid).toBytes
 	
 	/**
 	 * Converts the UUID to its {@code byte} array equivalent.
-	 * @param uuidString the {@link String} representation of the UUID.
+	 * @param uuid the {@link String} representation of the UUID.
 	 * @return the byte array representing the UUID.
 	 */
-	def toBytes(uuid: String) = UuidString(Option(uuid)).toBytes
+	def toBytes(uuid: String) = Uuid(uuid).toBytes
 	
 	/**
 	 * Normalizes the UUID string, removing dashes and converting to lower case.
-	 * @param uuidString the UUID {@link String} to normalize.
+	 * @param uuid the UUID {@link String} to normalize.
 	 * @return the normalized UUID string.
 	 */
-	def normalize(uuid: String) = UuidString(Option(uuid)).toString
+	def normalize(uuid: String) = Uuid(uuid).toString
 	
 	/**
 	 * Normalizes the UUID string, removing dashes and converting to lower case.
 	 * @param uuid the {@link UUID} to normalize.
 	 * @return the normalized UUID string.
 	 */
-	def normalize(uuid: UUID) = UuidUUID(Option(uuid)).toString
+	def normalize(uuid: UUID) = Uuid(uuid).toString
 	
 	/**
 	 * Normalizes the UUID string, removing dashes and converting to lower case.
 	 * @param uuid the {@link Byte} array UUID to normalize.
 	 * @return the normalized UUID string.
 	 */
-	def normalize(uuid: Array[Byte]) = UuidBytes(Option(uuid)).toString
+	def normalize(uuid: Array[Byte]) = Uuid(uuid).toString
 }

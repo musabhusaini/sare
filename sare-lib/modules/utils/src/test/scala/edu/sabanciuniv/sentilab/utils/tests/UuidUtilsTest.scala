@@ -65,4 +65,10 @@ class UuidUtilsTest {
 		assertNotNull(uuid)
 		assertEquals(create(uuidBytes), uuid)
 	}
+	
+	@Test
+	def testNullIsNotUuid {
+		assertFalse(isUuid(null.asInstanceOf[String]))
+		assertFalse(isUuid(null.asInstanceOf[Array[Byte]]))
+	}
 }
