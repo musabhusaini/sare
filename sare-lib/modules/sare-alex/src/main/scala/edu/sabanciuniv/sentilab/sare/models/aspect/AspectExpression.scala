@@ -23,6 +23,8 @@ package edu.sabanciuniv.sentilab.sare.models.aspect
 
 import javax.persistence._
 
+import org.apache.commons.lang3.StringUtils._
+
 import edu.sabanciuniv.sentilab.sare.models.base.document._
 
 /**
@@ -31,9 +33,11 @@ import edu.sabanciuniv.sentilab.sare.models.base.document._
  */
 @Entity
 @DiscriminatorValue("aspect-expression")
-class AspectExpression
-	extends LexiconDocument {
-
+class AspectExpression(content: String)
+	extends LexiconDocument(content) {
+	
+	def this() = this(null)
+	
 	/**
 	 * Gets the aspect this expression belongs to.
 	 * @return the {@link AspectLexicon} object this expression belongs to; {@code null} if none.
@@ -41,5 +45,21 @@ class AspectExpression
 	def getAspect = getStore match {
 	  	case store: AspectLexicon => store
 	  	case _ => null
+	}
+	
+	override def equals(obj: Any) = Some(obj) match {
+	  	case Some(other: AspectExpression) =>
+	  	  	equalsIgnoreCase(getContent, other.getContent) &&
+	  		((Option(getAspect), Option(other.getAspect)) match {
+	  			case (Some(aspect), Some(otherAspect)) => aspect.equals(otherAspect)
+	  			case _ => true
+	  		})
+	  	case Some(content: String) => equalsIgnoreCase(getContent, content)
+	  	case _ => super.equals(obj)
+	}
+	
+	override def hashCode = Option(getContent) match {
+		case Some(content) => content.hashCode + (Option(getAspect) map { _.hashCode } getOrElse 0)
+		case _ => super.hashCode
 	}
 }

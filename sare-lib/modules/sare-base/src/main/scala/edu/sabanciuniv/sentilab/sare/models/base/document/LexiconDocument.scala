@@ -29,7 +29,13 @@ import javax.persistence._
  */
 @Entity
 @DiscriminatorValue("lex-doc")
-class LexiconDocument extends EditablePartialDocument {
-	override def setContent(content: String): LexiconDocument =
+class LexiconDocument(content: String)
+	extends EditablePartialDocument {
+ 
+	setContent(content)
+	
+	def this() = this(null)
+	
+	override def setContent(content: String) =
 		super.setContent(Option(content) map { _.toLowerCase.trim } getOrElse null).asInstanceOf[LexiconDocument]
 }

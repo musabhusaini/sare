@@ -21,20 +21,20 @@
 
 package edu.sabanciuniv.sentilab.sare.controllers.opinion
 
-import java.io._
+import java.io.InputStream
 
 import javax.xml.parsers._
 import javax.xml.xpath._
 
+import scala.io.Source
 import scala.collection.JavaConversions._
+
+import org.w3c.dom._
 
 import org.apache.commons.lang3._
 import org.apache.commons.lang3.text._
-import org.w3c.dom._
-
 import org.apache.commons.lang3.Validate._
 import org.apache.commons.lang3.StringUtils._
-import org.apache.commons.lang3.text._
 
 import edu.sabanciuniv.sentilab.sare.controllers.base.documentStore._
 import edu.sabanciuniv.sentilab.sare.models.opinion._
@@ -113,23 +113,23 @@ class SentimentLexiconFactory extends NonDerivedStoreFactory[SentimentLexicon] {
 		notNull(input, CannedMessages.NULL_ARGUMENT, "input")
 		
 		val delim = defaultString(delimiter, "\t")
-		val reader = new BufferedReader(new InputStreamReader(input))
-		var line: String = null
-		while({ line = reader.readLine; line != null }) {
-			val tokenizer = new StrTokenizer(line, StrMatcher.stringMatcher(delim), StrMatcher.quoteMatcher)
+		val expressions = Source.fromInputStream(input).getLines filter { !_.trim.isEmpty } map { line =>
+		  	val tokenizer = new StrTokenizer(line, StrMatcher.stringMatcher(delim), StrMatcher.quoteMatcher)
 			val columns = tokenizer.getTokenList
 			columns.size match {
-			  	case size if size == 1 => lexicon.addExpression(columns.get(0))
-			  	case size if size == 2 => lexicon.addExpression(columns.get(0), columns.get(1))
-			  	case size if size == 3 => lexicon.addExpression(columns.get(0), columns.get(1), positive = columns.get(2).toDouble)
-			  	case size if size == 4 => lexicon.addExpression(columns.get(0), columns.get(1), columns.get(2).toDouble, positive = columns.get(3).toDouble)
-			  	case size if size >= 5 => lexicon.addExpression(columns.get(0), columns.get(1), columns.get(2).toDouble, columns.get(3).toDouble, columns.get(4).toDouble)
+			  	case size if size == 1 => new SentimentExpression(columns.get(0))
+			  	case size if size == 2 => new SentimentExpression(columns.get(0), columns.get(1))
+			  	case size if size == 3 => new SentimentExpression(columns.get(0), columns.get(1), positive = columns.get(2).toDouble)
+			  	case size if size == 4 => new SentimentExpression(columns.get(0), columns.get(1), columns.get(2).toDouble, positive = columns.get(3).toDouble)
+			  	case size if size >= 5 => new SentimentExpression(columns.get(0), columns.get(1), columns.get(2).toDouble, columns.get(3).toDouble, columns.get(4).toDouble)
 			  	case _ => null
 			}
-		}
+		} filter { Option(_).isDefined } toIterable
+		
+		lexicon ++= expressions
 		
 		this
 	}
 	
-	protected override def createNew = new SentimentLexicon()
+	protected override def createNew = new SentimentLexicon
 }

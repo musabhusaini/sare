@@ -25,8 +25,6 @@ import scala.collection.JavaConversions._
 
 import javax.persistence.Entity
 
-import org.apache.commons.lang3.ObjectUtils._
-
 import com.google.common.collect._
 
 /**

@@ -25,7 +25,7 @@ import javax.persistence.*;
 
 import org.apache.commons.lang3.*;
 
-import com.google.common.base.Predicate;
+import com.google.common.base.*;
 import com.google.common.collect.Iterables;
 
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore.*;
@@ -379,5 +379,10 @@ public class AspectLexicon
 	@Override
 	public String getDescription() {
 		return super.getDescription() == null && this.getBaseStore() != null ? this.getBaseStore().getDescription() : super.getDescription();
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s (%s)", this.getTitle(), Joiner.on(",").join(this.getExpressions()));
 	}
 }

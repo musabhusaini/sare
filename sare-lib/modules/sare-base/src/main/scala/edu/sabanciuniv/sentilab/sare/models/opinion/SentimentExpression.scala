@@ -118,8 +118,8 @@ class SentimentExpression(expression: String, posTag: String, negative: java.lan
 	 */
 	def setPositive(value: java.lang.Double) = setProperty(SentimentExpression.positiveString, value).asInstanceOf[SentimentExpression]
 	
-	override def equals(obj: Any) = obj match {
-	  	case sentExp: SentimentExpression => {
+	override def equals(obj: Any) = Option(obj) match {
+	  	case Some(sentExp: SentimentExpression) => {
 	  		equalsIgnoreCase(getContent, sentExp.getContent) &&
 	  		((Option(getPosTag), Option(sentExp.getPosTag)) match {
 	  		  	case (Some(posTag), Some(otherPosTag)) => equalsIgnoreCase(posTag, otherPosTag)

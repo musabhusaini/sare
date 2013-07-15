@@ -25,7 +25,19 @@ import scala.collection.JavaConversions._
 
 import javax.persistence._
 
+import edu.sabanciuniv.sentilab.sare.controllers.opinion.SentimentLexiconFactory
 import edu.sabanciuniv.sentilab.sare.models.base.documentStore._
+
+object SentimentLexicon {
+	lazy val sentiWordNet = try {
+		new SentimentLexiconFactory()
+			.setFile(new java.io.File(getClass.getResource("/sentiwordnet.txt").getPath))
+			.setTextDelimiter("\t")
+			.create
+	} catch {
+	  	case _: Throwable => { null }
+	}
+}
 
 /**
  * A sentiment lexicon.
@@ -70,7 +82,11 @@ class SentimentLexicon extends Lexicon {
 	 * @param posTag the POS tag to check.
 	 * @return {@code true} if the lexicon contains the given expression; {@code false} otherwise.
 	 */
-	def hasExpression(expression: String, posTag: String = null) = findExpression(expression, posTag) != null
+	def hasExpression(expression: String, posTag: String = null): Boolean = findExpression(expression, posTag) != null
+	
+	def hasExpression(expression: SentimentExpression): Boolean = Option(expression) map { exp =>
+	  	hasExpression(exp.getContent, exp.getPosTag)
+	} getOrElse false
 	
 	/**
 	 * Adds the given expression to this lexicon.
@@ -82,11 +98,14 @@ class SentimentLexicon extends Lexicon {
 	 * @return the {@link SentimentExpression} object added.
 	 */
 	def addExpression(expression: String, posTag: String = null, negative: java.lang.Double = null, neutral: java.lang.Double = null, positive: java.lang.Double = null) =
-	  	Option(expression) filter { !hasExpression(_, posTag) } map { exp =>
-	  		val sentExp = new SentimentExpression(expression, posTag, negative, neutral, positive)
+	  	Option(expression) filter { exp => !exp.isEmpty && !hasExpression(exp, posTag) } map { exp =>
+	  	  	val sentExp = new SentimentExpression(expression, posTag, negative, neutral, positive)
 	  		addDocument(sentExp)
 	  		sentExp
 	  	} getOrElse null
+	
+	def +=(expression: String, posTag: String = null, negative: java.lang.Double = null, neutral: java.lang.Double = null, positive: java.lang.Double = null) =
+	  	addExpression(expression, posTag, negative, neutral, positive)
 	
 	/**
 	 * Removes the given expression from this lexicon.
@@ -100,6 +119,16 @@ class SentimentLexicon extends Lexicon {
 	  	removeDocument(sentExp)
 	  	sentExp
 	} getOrElse null
+	
+	def -=(expression: String, posTag: String) = removeExpression(expression, posTag)
+	
+	def ++=(expressions: Iterable[SentimentExpression]) = Option(expressions) map { expressions =>
+	  	// not the best way to this do, but it's faster as long as we are not trying to save it to the database.
+	  	this.documents = (getExpressions ++ (expressions filter { exp => !hasExpression(exp) })) toSeq;
+	  	// this would be the right way.
+	  	// this.setDocuments((getExpressions ++ (expressions filter { exp => !hasExpression(exp) })) toSeq)
+	  	this
+	} getOrElse this
 	
 	/**
 	 * Updates the given expression to a new value.

@@ -187,4 +187,9 @@ public abstract class PersistentDocument
 	public String getOwnerId() {
 		return this.store != null ? this.store.getOwnerId() : null;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getContent();
+	}
 }

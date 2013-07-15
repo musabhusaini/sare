@@ -36,17 +36,21 @@ abstract class CorpusLexiconHybridStore[L <: Lexicon](corpus: DocumentCorpus, le
 	
 	setBaseStore(corpus)
 	
-	(Option(corpus), Option(shadowize)) match {
-	  	case (Some(corpus), Some(shadowize)) => setDocuments(
-	  	    asJavaIterable(corpus.getDocuments map { shadowize(_) } filter { _ != null }) 
-	  	)
-	  	case _ => ()
-	}
-	
 	/**
 	 * Creates a new instance of {@link CorpusLexiconHybridStore}.
 	 */
 	def this() = this(null, null.asInstanceOf[L], null)
+	
+	override def setBaseStore(base: PersistentDocumentStore) = {
+		super.setBaseStore(base)
+		base match {
+		  	case corpus: DocumentCorpus if corpus != null => Option(shadowize) map { shadowize =>
+		  		setDocuments(asJavaIterable(corpus.getDocuments map { shadowize(_) } filter { _ != null }))
+			}
+		  	case _ => setDocuments(null)
+		}
+		this
+	}
 	
 	/**
 	 * Gets the corpus this builder is based on.

@@ -23,8 +23,6 @@ package edu.sabanciuniv.sentilab.sare.models.opinion
 
 import javax.persistence._
 
-import com.google.common.base.Function
-
 import edu.sabanciuniv.sentilab.core.models._
 import edu.sabanciuniv.sentilab.sare.models.aspect.AspectLexicon
 import edu.sabanciuniv.sentilab.sare.models.base.document._
