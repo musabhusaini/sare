@@ -349,6 +349,8 @@ public class Application extends Controller {
 			controllers.modules.routes.javascript.SetCoverBuilder.update(),
 			controllers.modules.routes.javascript.SetCoverBuilder.getSetCover(),
 			controllers.modules.routes.javascript.SetCoverBuilder.redeem(),
+			controllers.modules.routes.javascript.AspectExprExtractor.extract(),
+			controllers.modules.routes.javascript.AspectExprExtractor.redeem(),
 			controllers.modules.opinionMiners.base.routes.javascript.AspectOpinionMiner.getMined(),
 			controllers.modules.opinionMiners.base.routes.javascript.AspectOpinionMiner.mine(),
 			controllers.modules.opinionMiners.base.routes.javascript.AspectOpinionMiner.redeem(),

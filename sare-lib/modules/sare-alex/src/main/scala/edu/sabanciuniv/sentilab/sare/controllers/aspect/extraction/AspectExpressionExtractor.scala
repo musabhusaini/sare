@@ -190,12 +190,17 @@ class AspectExpressionExtractor(
 	}
 	
 	override def create = {
+		notifyProgress(0.1, "create")
+		
 		lexicon = Option(lexicon) getOrElse new AspectLexicon
 		val extractorStore = new AspectExprExtrDocumentStore(corpus, lexicon, sentimentLexicon)
+		notifyProgress(0.4, "create")
+		
 		extractorStore.autoLabelCandidateExpressions(
 		    Math.round(Math.log(extractorStore.getCandidateExpressions.size) + autoLabelingMinimum).toInt
 		)
 		classify(extractorStore)
+		notifyProgress(0.95, "create")
 		
 		val positiveAspect = Option(lexicon findAspect AspectExpressionExtractor.expressionsAspectTitle) getOrElse(
 		    lexicon addAspect "Expressions"
@@ -218,6 +223,8 @@ class AspectExpressionExtractor(
 			unsureAspect addExpression exp.getContent
 		}
 		
+		extractorStore.clearReferences
+		notifyProgress(1, "create")
 		lexicon
 	}
 }

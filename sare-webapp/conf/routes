@@ -105,6 +105,12 @@ GET      /modules/alexica/:lexicon/builder.html                              con
 GET      /modules/corpora/:corpus/alex-builder/documents.html                controllers.modules.AspectLexBuilder.documentsView(corpus: UUID, lexicon: UUID)
 GET      /modules/alexica/:lexicon.html                                      controllers.modules.AspectLexBuilder.lexiconView(lexicon: UUID)
 
+# Aspect expression extraction modules
+GET      /modules/corpora/expr-extractor.html                                controllers.modules.AspectExprExtractor.modulePage(corpus: UUID = null, lexicon: UUID ?= null, partial: Boolean ?= false)
+GET      /modules/corpora/:corpus/expr-extractor.html                        controllers.modules.AspectExprExtractor.modulePage(corpus: UUID, lexicon: UUID ?= null, partial: Boolean ?= false)
+POST	 /modules/corpora/:corpus/expr-extractor.json						 controllers.modules.AspectExprExtractor.extract(corpus: UUID, lexicon: UUID ?= null)
+POST	 /modules/corpora/expr-extractor.json								 controllers.modules.AspectExprExtractor.redeem(token: UUID ?= null)
+
 # Corpus optimization module
 GET      /modules/corpora/optimizations/:setcover.html                       controllers.modules.SetCoverBuilder.modulePage(corpus: UUID = null, setcover: UUID, partial: Boolean ?= false)
 GET      /modules/corpora/:corpus/optimizations.html                         controllers.modules.SetCoverBuilder.modulePage(corpus: UUID, setcover: UUID = null, partial: Boolean ?= false)

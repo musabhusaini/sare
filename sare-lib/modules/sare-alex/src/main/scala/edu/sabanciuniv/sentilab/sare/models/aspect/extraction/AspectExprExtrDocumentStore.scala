@@ -82,5 +82,12 @@ class AspectExprExtrDocumentStore(
 	
 	def getExtractorDocuments = getDocuments(classOf[AspectExprExtrDocument])
 	
+	def clearReferences = {
+		getExtractorDocuments foreach { _.setBaseDocument(null) }
+		removeReference(aspectLexicon)
+		setBaseStore(null)
+		this
+	}
+	
 	override def getAccessible = getCorpus
 }

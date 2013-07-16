@@ -25,9 +25,11 @@ define [
 	"jquery"
 	"jquery-ui"
 	"jsRoutes"
+	"bootstrap-button"
+	"bootstrap-tooltip"
 	minifiableDep "main.html"
 	minifiableDep "Sare.Widget"
-	minifiableDep "widgets.storeList"
+	minifiableDep "widgets.progress"
 	minifiableDep "moduleView.html"
 ], ->
 	# define reusables
@@ -41,6 +43,8 @@ define [
 	Strings = Page.Strings
 	Widgets = Page.Widgets
 	
+	Math = window.Math
+	
 	widget =
 		_sendModuleOutput: (lexicon, corpus) ->
 			lexicon ?= @options.lexicon
@@ -52,27 +56,16 @@ define [
 			Widgets.moduleManager "option", "output", output
 		
 		_create: ->
-			@options.lexicon ?= $(@element).data @options.lexiconKey
 			@options.corpus ?= $(@element).data @options.corpusKey
+			@options.lexicon ?= $(@element).data @options.lexiconKey
 			
-			refreshView = (corpus, lexicon) =>
-				@options.lexicon = lexicon
-				@options.corpus = corpus
-				corpus ?= @options.lexicon?.baseCorpus
-				@_sendModuleOutput @options.lexicon, corpus
-				
-				@_$(@options.documentsContainer).empty()
-				@_$(@options.lexiconContainer).empty()
-				
-				if @options.lexicon?
-					if corpus?
-						@_$(@options.documentsContainer)
-							.removeClass("hide")
-							.load @options.documentsViewRoute(corpus.id, @options.lexicon.id).url
-					else
-						@_$(@options.documentsContainer).addClass "hide"
-					@_$(@options.lexiconContainer)
-						.load @options.lexiconViewRoute(@options.lexicon.id).url
+			@_$(@options.progressContainer).progress
+				callback: (lexicon) =>
+					@_changeInputState @options.applyButton, "reset"
+					@options.lexicon = lexicon
+					@_sendModuleOutput()
+					@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
+						.storeList "selected", lexicon.id
 			
 			if @options.corpus?
 				@_$(@options.corporaContainer).children(Selectors.moduleContainer)
@@ -80,39 +73,53 @@ define [
 			else
 				@_on @_$(@options.corporaContainer).children(Selectors.moduleContainer),
 					storeListSelectionChange: (e, selected) ->
-						refreshView selected.data, @options.lexicon
+						@options.corpus = selected.data
+						@_sendModuleOutput()
 					storeUpdate: (e, data) ->
-						refreshView data.updatedData, @options.lexicon
+						@options.corpus = data.updatedData
+						@_sendModuleOutput()
 						
 				@_$(@options.corporaContainer).children(Selectors.moduleContainer)
 					.storeList "option",
 						suppressOutput: true
-				
+			
 			if @options.lexicon?
 				@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
 					.storeList "disable"
 			else
 				@_on @_$(@options.lexicaContainer).children(Selectors.moduleContainer),
 					storeListSelectionChange: (e, selected) ->
-						refreshView @options.corpus, selected.data
+						@options.lexicon = selected.data
+						@_sendModuleOutput()
 					storeUpdate: (e, data) ->
-						refreshView @options.corpus, data.updatedData
-				
+						@options.lexicon = data.updatedData
+						@_sendModuleOutput()
+						
 				@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
 					.storeList "option",
 						suppressOutput: true
 						addRoute: =>
 							@options.createLexiconRoute(@options.corpus?.id ? null)
 			
-			refreshView @_$(@options.corporaContainer)
-				.children(Selectors.moduleContainer)
-					.storeList("selected").data
-			, @_$(@options.lexicaContainer)
-					.children(Selectors.moduleContainer)
-						.storeList("selected").data
+			@_on @_$(@options.applyButton),
+				click: (e) ->
+					@_changeInputState @options.applyButton, "loading"
+					@options.extractExpressionsRoute(@options.corpus.id, @options.lexicon?.id).ajax
+						data: JSON.stringify
+							autoLabelingMinimum: @_$(@options.minimumLabelTextbox).val()
+							scoreAcceptanceThreshold: @_$(@options.scoreThresholdTextbox).val()
+						contentType: Helpers.ContentTypes.json
+						success: (token) =>
+							@_$(@options.progressContainer).progress "option",
+								redeemAjax: @options.redeemRoute(token.id).ajax
+							@_$(@options.progressContainer).progress "animate"
+					false
+			
+			@_$(@options.minimumLabelTextbox).tooltip()
+			@_$(@options.scoreThresholdTextbox).tooltip()
+			@_$(@options.applyButton).tooltip()
 		
 		refresh: ->
-			@_sendModuleOutput()
 			$(@element).data Strings.widgetKey, @
 			
 		_init: ->
@@ -123,21 +130,21 @@ define [
 		_setOption: (key, value) ->
 			switch key
 				when "disabled"
-					@_$(@options.lexicaContainer).children(Selectors.moduleContainer)
-						.storeList if value then "disable" else "enable"
-					for input in [ @options.documentsContainer, @options.lexiconContainer ]
-						if value then @_$(input).addClass("hide") else @_$(input).removeClass "hide"
+					null
+			
 			$.Widget.prototype._setOption.apply @, arguments
 		
 		_getCreateOptions: ->
 			corporaContainer: ".ctr-corpora"
 			lexicaContainer: ".ctr-lexica"
-			documentsContainer: ".ctr-documents"
-			lexiconContainer: ".ctr-alex"
+			minimumLabelTextbox: ".txt-label-min"
+			scoreThresholdTextbox: ".txt-score-threshold"
+			applyButton: ".btn-apply"
+			progressContainer: ".ctr-aee-progress"
 			createLexiconRoute: jsRoutes.controllers.modules.AspectLexBuilder.create
-			documentsViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.documentsView
-			lexiconViewRoute: jsRoutes.controllers.modules.AspectLexBuilder.lexiconView
-			lexiconKey: "lexicon"
+			extractExpressionsRoute: jsRoutes.controllers.modules.AspectExprExtractor.extract
+			redeemRoute: jsRoutes.controllers.modules.AspectExprExtractor.redeem
 			corpusKey: "corpus"
+			lexiconKey: "lexicon"
 	
-	$.widget "widgets.aspectLexBuilder", Sare.Widget, widget
+	$.widget "widgets.aspectExprExtractor", Sare.Widget, widget
